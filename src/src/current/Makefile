@@ -1,0 +1,10 @@
+# Makefile for building the fortran libraries in the CURP program
+#
+
+CURP_HOME = ../../
+include $(CURP_HOME)/lib/Makefile.in
+
+##### Target definitions #####
+
+install: lib_current.so lib_flux.so lib_hflux.so
+
