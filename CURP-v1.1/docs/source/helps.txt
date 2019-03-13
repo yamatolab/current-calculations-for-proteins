@@ -1,0 +1,92 @@
+curp
+---------------
+
+
+::
+
+
+
+conv-trj
+---------------
+
+
+::
+
+
+
+cal-tc
+---------------
+
+
+::
+
+
+
+sum-acf
+---------------
+
+
+::
+
+
+
+simplify_tensor
+---------------
+
+
+::
+
+   usage: simplify_tensor.py [-h] -i DATA_FILENAME [-l LABEL_LINE] [-s]
+                             [fns [fns ...]]
+   
+   Show and make figure for stress ratio.
+   
+   positional arguments:
+     fns                   specify additive filenames. ex.) label_data1,
+                           label_data2, ...
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     -i DATA_FILENAME, --input-data DATA_FILENAME
+                           specify input filename for the stress data.
+     -l LABEL_LINE, --label-line LABEL_LINE
+                           specify additive label string. ex.)
+                           "label1,label2,..."
+     -s, --every-snapshot  specify flog to average the magnitude for every
+                           snapshot.
+
+
+graph-een
+---------------
+
+
+::
+
+
+
+get_ncdata
+---------------
+
+
+::
+
+   usage: get_ncdata.py [-h] -r [FRIST:LAST [FRIST:LAST ...]] [-n DATANAME]
+                        [-o PREFIX]
+                        ACF_FILE
+   
+   Get simple text data from file in netcdf format by given arguments.
+   
+   positional arguments:
+     ACF_FILE              The filepath of auto-correlation function data.
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     -r [FRIST:LAST [FRIST:LAST ...]], --group-ranges [FRIST:LAST [FRIST:LAST ...]]
+                           The pair range list to want to gain.
+     -n DATANAME, --dataname DATANAME
+                           The name of the netcdf data you want to gain.
+     -o PREFIX, --output-prefix PREFIX
+                           The prefix of the files to want to write, that
+                           includes directory path.
+
+

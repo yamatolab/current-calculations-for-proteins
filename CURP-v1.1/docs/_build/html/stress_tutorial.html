@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.2. Atomic stress tensor analysis &mdash; CURP 1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="CURP 1.1 documentation" href="index.html" />
+    <link rel="up" title="4. Tutorials" href="tutorials.html" />
+    <link rel="next" title="4.3. Energy flow analysis" href="eflow_tutorial.html" />
+    <link rel="prev" title="4.1. General instructions" href="general_tutorial.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="eflow_tutorial.html" title="4.3. Energy flow analysis"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="general_tutorial.html" title="4.1. General instructions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">CURP 1.1 documentation</a> &raquo;</li>
+          <li><a href="tutorials.html" accesskey="U">4. Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4.2. Atomic stress tensor analysis</a><ul>
+<li><a class="reference internal" href="#obtaining-the-md-trajectory">4.2.1. Obtaining the MD trajectory</a></li>
+<li><a class="reference internal" href="#stress-tensor-calculation">4.2.2. Stress tensor calculation</a><ul>
+<li><a class="reference internal" href="#running-the-program">Running the program</a></li>
+<li><a class="reference internal" href="#setting-run-cfg">Setting run.cfg</a><ul>
+<li><a class="reference internal" href="#input">[input]</a></li>
+<li><a class="reference internal" href="#input-amber">[input_amber]</a></li>
+<li><a class="reference internal" href="#curp">[curp]</a></li>
+<li><a class="reference internal" href="#volume">[volume]</a></li>
+<li><a class="reference internal" href="#output">[output]</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setting-group-ndx">Setting group.ndx</a></li>
+<li><a class="reference internal" href="#output-files">Output files</a><ul>
+<li><a class="reference internal" href="#stress-tensor-data-file">stress tensor data file</a></li>
+<li><a class="reference internal" href="#voluemes-dat-gvoluems-dat">voluemes.dat, gvoluems.dat</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#analysis-of-stress-tensor">4.2.3. Analysis of stress tensor</a><ul>
+<li><a class="reference internal" href="#result">Result</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="general_tutorial.html"
+                        title="previous chapter">4.1. General instructions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="eflow_tutorial.html"
+                        title="next chapter">4.3. Energy flow analysis</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/stress_tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="atomic-stress-tensor-analysis">
+<h1>4.2. Atomic stress tensor analysis<a class="headerlink" href="#atomic-stress-tensor-analysis" title="Permalink to this headline">¶</a></h1>
+<p>CURP performs atomistic stress tensor analysis. According to Hardy&#8217;s forluma,
+the Cauchy stress tensor of the <em>i</em>th atom is given by:</p>
+<a class="reference internal image-reference" href="_images/stress.png"><img alt="_images/stress.png" class="align-center" src="_images/stress.png" style="height: 60px;" /></a>
+<p>where <span class="math">\(\Omega_i\)</span> is the volume of atom <span class="math">\(i\)</span>,
+<span class="math">\(\boldsymbol{F}_{ij}\)</span> is the pairwise interatomic force
+acting on <span class="math">\(i\)</span> from <span class="math">\(j\)</span>,
+<span class="math">\(\boldsymbol{r}_{ij}\)</span> is the relative displacement vector
+from atom <span class="math">\(j\)</span> to atom <span class="math">\(i\)</span>,
+<span class="math">\(m_i\)</span>  is the mass of atom <span class="math">\(i\)</span>, and
+<span class="math">\(\boldsymbol{v}_i\)</span> is the velocity vector of atom <span class="math">\(i\)</span>.</p>
+<p>As can be seen from the above formula, the atomic stress tensor of atom <span class="math">\(i\)</span> depends on both the
+position and the velocity trajectories during the MD simulations.</p>
+<p>The calculation procedure consists of the following steps:</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#obtaining-the-md-trajectory" id="id1">Obtaining the MD trajectory</a></li>
+<li><a class="reference internal" href="#stress-tensor-calculation" id="id2">Stress tensor calculation</a></li>
+<li><a class="reference internal" href="#analysis-of-stress-tensor" id="id3">Analysis of stress tensor</a></li>
+</ul>
+</div>
+<div class="section" id="obtaining-the-md-trajectory">
+<h2><a class="toc-backref" href="#id1">4.2.1. Obtaining the MD trajectory</a><a class="headerlink" href="#obtaining-the-md-trajectory" title="Permalink to this headline">¶</a></h2>
+<p>We show two examples of calculations for <strong>ALA-ALA-ALA in vacuum/solvent</strong>.
+NVT MD simulations were performed using the Amber12 program with the time step
+of 0.5 fs at room temperature. In addition to the trajectory files,
+a parameter topology file is required for each system.</p>
+</div>
+<div class="section" id="stress-tensor-calculation">
+<h2><a class="toc-backref" href="#id2">4.2.2. Stress tensor calculation</a><a class="headerlink" href="#stress-tensor-calculation" title="Permalink to this headline">¶</a></h2>
+<p>Examples for the alanine tripeptide in the vacuum and solvent environments
+are found in the directories <tt class="docutils literal"><span class="pre">ala3invac-stress</span></tt> and <tt class="docutils literal"><span class="pre">ala3insol-stress</span></tt>,
+respectively.
+Each directory contains three subdirectories named (1) united, (2) residue and (3) whole.</p>
+<p>In practice, it is possible to calculate atomic stress tensors for all atoms including the hydrogen atoms, and CURP considiers all atoms in the calculations. However, the all-atom representation is often inconvenient for the stress tensor analysis because the values of the atomic volume obtained by the Voronoi tessellation are sometimes quite small for the hydrogen atoms, leading to large and significant fluctuations.
+To overcome this issue, a united-atom approach has been employed.</p>
+<div class="math">
+\[\boldsymbol{\sigma}_{J} =
+   \frac{1}{{{\Omega _J}}}\sum\limits_{i \in J}
+   {\left( {\frac{1}{2}\sum\limits_{k \ne i}
+   {{{\boldsymbol{F}}_{{\boldsymbol{ik}}}} \otimes {{\boldsymbol{r}}_{{\boldsymbol{ik}}}}} }
+   \right)}\]</div>
+<p>,where <span class="math">\(J\)</span> represents a group of atoms. Here, each unit of the atom group could be either (1) united atom (heavy atom together with the attached hydrogen) or (2) amino acid residue, or (3) the whole molecule.</p>
+<div class="section" id="running-the-program">
+<h3>Running the program<a class="headerlink" href="#running-the-program" title="Permalink to this headline">¶</a></h3>
+<p>First, change the directory to the working directory for the stress tensor analysis.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd</span> <span class="nv">$CURP_HOME</span>/tutorial/ala3invac-stress/united
+</pre></div>
+</div>
+<p>To start the calculations, type the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ $CURP_HOME</span>/bin/curp &lt; run.cfg &gt; log
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">run.cfg</span></tt> (see below for details) is the configuration file
+for the analysis. An alternative way is to run the following script:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./run.sh
+</pre></div>
+</div>
+<p>The calculations will be completed shortly and the prompt will appear at the shell.
+The results are stored in the files in two forms: (1) <tt class="docutils literal"><span class="pre">stress_atm_dat00000</span></tt>:
+individual stress tensors for every atom, (2) <tt class="docutils literal"><span class="pre">stress_grp_dat00000</span></tt>:
+averaged stress tensors for each group, where a group can be either united atom, residue, or the whole molecule.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The following lines appear at the bottom of the log file.
+<strong>Detailed timing in calculator object</strong>,
+<strong>Detailed timing for parallel prossing</strong>,
+<strong>The summary of the elapsed times</strong>
+The timging information is currently incorrect. Please ignore these lines for now.</p>
+</div>
+</div>
+<div class="section" id="setting-run-cfg">
+<h3>Setting run.cfg<a class="headerlink" href="#setting-run-cfg" title="Permalink to this headline">¶</a></h3>
+<p>An example of <cite>run.cfg</cite> is shown below.</p>
+<div class="highlight-python"><div class="highlight"><pre>[input]
+format = amber
+first_last_interval = 1 200 1
+# group_file = group.ndx
+
+[input_amber]
+target = trajectory
+topology_file = ../system.prmtop
+coordinate_format = ascii
+coordinate_file = ../sam.mdcrd.gz
+velocity_format = ascii
+velocity_file = ../sam.mdvel.gz
+
+[volume]
+method = voronoi
+output_volume_file  = outdata/volumes.dat
+output_gvolume_file = outdata/gvolumes.dat
+voronoi_cutoff = 6.0
+voronoi_no_hydrogen = yes
+voronoi_solvation = RANDOM20
+voronoi_probe_length = 2.8
+# voronoi_output_solvation_file = outdata/solvated.pdb
+
+[curp]
+potential = amber99
+method = momentum-current
+
+group_method = united
+decomp_group_current = no
+target_atoms = 1-33
+
+remove_trans = yes
+remove_rotate = yes
+log_frequency = 10
+
+[output]
+filename = outdata/stress.dat
+decomp = yes
+frequency = 10000
+</pre></div>
+</div>
+<div class="section" id="input">
+<h4>[input]<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h4>
+<p>In this section, we specify the input file format.</p>
+<dl class="docutils">
+<dt>format = amber</dt>
+<dd>CURP reads the input files in the Amber format.</dd>
+<dt>first_last_interval = 1 200 1</dt>
+<dd>Three numbers, &lt;first&gt;, &lt;last&gt;, and &lt;interval&gt; are given in this order, to specify that CURP will read the MD frames from the &lt;first&gt; to the &lt;last&gt; position at intervals of &lt;interval&gt; frames.</dd>
+<dt>group_file = group.ndx</dt>
+<dd>Specifies the name of the &#8216;group definition file&#8217;. Each group is defined as a list of atoms. A group could be either a residue or an arbitrary set of atoms.</dd>
+</dl>
+</div>
+<div class="section" id="input-amber">
+<h4>[input_amber]<a class="headerlink" href="#input-amber" title="Permalink to this headline">¶</a></h4>
+<p>This section name depends on the <cite>format</cite> keyword specified in the <tt class="docutils literal"><span class="pre">[input]</span></tt> section. The name of this section is <cite>[input_amber]</cite> because the <cite>format</cite> keyword in the <tt class="docutils literal"><span class="pre">[input]</span></tt> section is &#8220;amber&#8221;.</p>
+<p>For the <tt class="docutils literal"><span class="pre">[input_amber]</span></tt> section, the following parameters must be specified.</p>
+<dl class="docutils">
+<dt>target = trajectory | restart</dt>
+<dd>If <cite>trajectory</cite> is specified, CURP assumes that the input files are trajectory files.</dd>
+<dt>topology_file = ../system.prmtop</dt>
+<dd>Parameter and topology file.</dd>
+<dt>coordinate_format = ascii | netcdf</dt>
+<dd>Format of the trajectory files.</dd>
+<dt>coordinate_file = &lt;mdcrd_file&gt;</dt>
+<dd>The name of the coordinates trajectory file.</dd>
+<dt>velocity_format = ascii | netcdf</dt>
+<dd>Format of the velocity trajectory files.</dd>
+<dt>velocity_file = &lt;mdvel_file&gt;</dt>
+<dd>The name of the velocity trajectory file.</dd>
+</dl>
+</div>
+<div class="section" id="curp">
+<h4>[curp]<a class="headerlink" href="#curp" title="Permalink to this headline">¶</a></h4>
+<p>In this section, we set the parameters for the calculations of pairwise interatomic forces.</p>
+<dl class="docutils">
+<dt>potential = amberbase | amber94 | amber96 | amber99 | amber99SB | amber03 | amber12SB</dt>
+<dd>Type of force-field functions.</dd>
+<dt>method = momentum-current | energy-flux</dt>
+<dd><cite>momentum-current</cite>: Atomic stress tensors analysis.
+<cite>energy-flux</cite>: Interatomic energy flow analysis.</dd>
+<dt>group_method = none | united | residue | file</dt>
+<dd>Unit of atom groups.
+<tt class="docutils literal"><span class="pre">none</span></tt>: No groups are defined.
+<tt class="docutils literal"><span class="pre">united</span></tt>: Each heavy atom, either polar or nonpolar, represents a united atom &#8220;group&#8221; and all hydrogen atoms attached to the heavy atom  belong to the &#8220;group&#8221;.
+<tt class="docutils literal"><span class="pre">residue</span></tt>: Groups are defined by residues unit.
+<tt class="docutils literal"><span class="pre">file</span></tt>: Groups are defined by the file specified by the <tt class="docutils literal"><span class="pre">group_file</span></tt> keyword in the input section.</dd>
+<dt>target_atoms = 1-33</dt>
+<dd>The target region for the analysis.
+In this case, atomic stress tensors are calculated for the 1st to the 33rd atoms.</dd>
+<dt>remove_trans = yes | no</dt>
+<dd>Translational motions are removed from the trajectory, if this keyword is set to &#8220;yes&#8221; (strongly recommended).</dd>
+<dt>remove_rotate = yes | no</dt>
+<dd>Rotational motions are removed form the trajectory, if this keyword is set to &#8220;yes&#8221; (strongly recommended).</dd>
+<dt>log_frequency = 10</dt>
+<dd>Print results to stdout every log_frequency steps.</dd>
+</dl>
+</div>
+<div class="section" id="volume">
+<h4>[volume]<a class="headerlink" href="#volume" title="Permalink to this headline">¶</a></h4>
+<p>For the atomic stress tensor analysis, CURP performs Voronoi tessellation
+to calculate the atomic volumes.</p>
+<dl class="docutils">
+<dt>method = voronoi | none | vdw | outer</dt>
+<dd><tt class="docutils literal"><span class="pre">voronoi</span></tt>: Atomic volume calculations are performed by Voronoi tesselation.
+See <cite>Specification of curp setting file</cite> in the reference section for other values.
+We coded a Fortran90 program for the atomic volume calculation based on Voronoi
+tesselation algorithm found in the literature (&#8220;Computer Simulation of Liquids&#8221;,
+M.P. Allen and D.J. Tildesley eds., Oxford Univ. Press (1987)).</dd>
+<dt>output_volume_file = &lt;file_path&gt;</dt>
+<dd>The path to the output file for the atomic volumes.</dd>
+<dt>output_gvolume_file = &lt;file_path&gt;</dt>
+<dd>The path to the output file for the group volumes.</dd>
+<dt>voronoi_cutoff = 6.0</dt>
+<dd>The cutoff length for the neighbor candidate search in voronoi tessellation.</dd>
+<dt>voronoi_no_hydrogen = yes | no</dt>
+<dd>Treatment of the hydrogen atoms in Voronoi tessellation.
+If this option is &#8220;yes&#8221;, then the hydrogen atoms are neglected for the Voronoi tessellation and the evaluation of the group stress tensors, even when a hydrogen atom is included in the target for the calculation in the [curp] section. Within the program, in this case, the atomic volume of a hydrogen atom is set to be 8.0 Å <sup>3</sup> to avoid division by zero for convenience.</dd>
+<dt>voronoi_solvation = RANDOM20 | none</dt>
+<dd><p class="first">For atoms exposed on the surface of a target protein molecule
+in vacuum, it is not possible to define the Volonoi polyhedron.</p>
+<p><cite>RANDOM20</cite>: To avoid this problem, the protein molecule is placed
+in a hydration sphere (radius = 20 Å) of randomly generated
+non-overlapping water molecules. If your target system is so large
+that the hydration sphere is not able to cover the system, plase use
+the <cite>none</cite> option and solvate the system with a sufficiently large number of
+hydration layers. (see below)</p>
+<p class="last"><cite>none</cite>: This keyword is specified when CURP performes the stress
+tensor analysis for the system including explicit solvent layers.</p>
+</dd>
+<dt>voronoi_probe_length = 2.8</dt>
+<dd>The probe length [Å] of the solvation for the Voronoi method.
+If voronoi_solvation is set, CURP removes water molecules within
+&lt;voronoi_prove_length&gt; [Å] from all atom of the system.</dd>
+</dl>
+</div>
+<div class="section" id="output">
+<h4>[output]<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h4>
+<p>Output format specification.</p>
+<dl class="docutils">
+<dt>filename = outdata/stress.dat</dt>
+<dd><p class="first">Specify the naming convention of the datafile for the stress tensor analysis.
+In this example, the file name is <cite>outdata/stress_grp.dat00001</cite>,
+<cite>outdata/stress_grp.dat00002</cite> , ... and so on.</p>
+<p class="last">Please note that the datafile is generated for each force component if <cite>decomp = yes</cite>. (see below)</p>
+</dd>
+<dt>frequency = 10000</dt>
+<dd>The number of frames output to a single datafile. It is highly recommended to estimate the file size of a single datafile in advance.</dd>
+<dt>decomp = no | yes</dt>
+<dd>If &#8220;yes&#8221;, stress tensors are separated into different components.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="setting-group-ndx">
+<h3>Setting group.ndx<a class="headerlink" href="#setting-group-ndx" title="Permalink to this headline">¶</a></h3>
+<p>As mentioned above, the user can define any group of atoms for the
+stress tensor analysis. When the <cite>group_method</cite> keyword is set to be
+<cite>file</cite> in the [curp] section, and <cite>group_file</cite> name is specified in the
+[input] section, user defined grouping is applied.</p>
+<p>In the following example, stress tensor analysis is performed separately
+for the main chain parts and for the side chain parts.</p>
+<div class="highlight-python"><div class="highlight"><pre>[01_ALA_M]
+1-6 11-12
+
+[01_ALA_S]
+7-10
+
+[02_ALA_M]
+13-16 21-22
+
+[02_ALA_S]
+17-20
+
+[03_ALA_M]
+23-26 31-33
+
+[03_ALA_S]
+27-30
+</pre></div>
+</div>
+<p>Here, each group name is surrounded by <cite>[</cite> and <cite>]</cite>.
+Then the list of the individual atoms is given in which each atom is separated
+by a space, tab or a blank line. Alternatively, a range of atoms can
+be indicated by using <cite>-</cite>.</p>
+</div>
+<div class="section" id="output-files">
+<h3>Output files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="stress-tensor-data-file">
+<h4>stress tensor data file<a class="headerlink" href="#stress-tensor-data-file" title="Permalink to this headline">¶</a></h4>
+<p>For each snapshot of the MD trajectory, 3x3 stress tensors are output to
+<cite>outdata/stress_grp.dat00000</cite>. An example is shown below:</p>
+<img alt="_images/stress_grp.png" class="align-center" src="_images/stress_grp.png" />
+<p>Comment lines begin with <tt class="docutils literal"><span class="pre">%</span></tt>.
+For each time frame, nine elements (xx, xy, xz, yx, yy, yz, zx, zy, zz) are printed for each group.</p>
+</div>
+<div class="section" id="voluemes-dat-gvoluems-dat">
+<h4>voluemes.dat, gvoluems.dat<a class="headerlink" href="#voluemes-dat-gvoluems-dat" title="Permalink to this headline">¶</a></h4>
+<p>Atomic volumes and group volumes are printed to the files
+specified by the <cite>output_volume_file</cite> and
+<cite>output_gvolume_file</cite> keywards in the [volume] section.
+If no file names are specified, no data is printed.</p>
+</div>
+</div>
+</div>
+<div class="section" id="analysis-of-stress-tensor">
+<h2><a class="toc-backref" href="#id3">4.2.3. Analysis of stress tensor</a><a class="headerlink" href="#analysis-of-stress-tensor" title="Permalink to this headline">¶</a></h2>
+<p>The direct output of the stress tensor analysis itself is inconvenient for
+two reasons: (1) the output file contains a large amount of data
+of the time-series of the MD trajectory and (2) the stress tensor has 3x3=9
+components.</p>
+<p>To simplify the analysis,
+we show how to diagonalize and time average the stress tensor as follows:</p>
+<p>Time-averaging:</p>
+<div class="math">
+\[\boldsymbol{\sigma}_{J} = \left\langle
+   {\frac{1}{{{\Omega _J}}}\sum\limits_{i \in J} {\left( {\frac{1}{2}\sum\limits_{k \ne i} {{{\boldsymbol{F}}_{{\boldsymbol{ik}}}} \otimes {{\boldsymbol{r}}_{{\boldsymbol{ik}}}}} }
+   \right)} } \right\rangle\]</div>
+<p>Diagonalization:</p>
+<div class="math">
+\[\begin{split}\boldsymbol{\sigma '} = \begin{pmatrix}
+   \sigma _{x'x'}&amp;0&amp;0 \\
+   0&amp;\sigma _{y'y'}&amp;0 \\
+    0&amp;0&amp;\sigma _{z'z'}
+\end{pmatrix}\end{split}\]</div>
+<p>Root-mean-square amplitude of the diagonal components:</p>
+<div class="math">
+\[\bar{\sigma '} =
+   \sqrt {\sigma _{x'x'}^2 + \sigma _{y'y'}^2 + \sigma _{z'z'}^2}\]</div>
+<p>The last quantity is used to measure the magnitude of the stress tensor.</p>
+<p>These calculations are performed by the <cite>ana.sh</cite> script.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>./ana.sh
+</pre></div>
+</div>
+<p><cite>ana.sh</cite> uses  <cite>$CURP_HOME/script/simplify_tensor.py</cite>,
+which is executed as an argument to <cite>$CURP_HOME/bin/ana-curp</cite>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ $CURP_HOME</span>/bin/ana-curp simplify_tensor.py
+</pre></div>
+</div>
+<div class="section" id="result">
+<h3>Result<a class="headerlink" href="#result" title="Permalink to this headline">¶</a></h3>
+<p>Finally, a detailed summary of the calculated data is output to <cite>grp-sim.dat</cite>.</p>
+<img alt="_images/grp-sim.png" class="align-center" src="_images/grp-sim.png" />
+<p>Examination of these results reveals the following characteristic features:</p>
+<ul class="simple">
+<li>The improper and torsion componets show relatively large values.</li>
+<li>Main chain carbonyl carbons show particularly large values for two reasons:
+(1) They are involved in the two improper torsions, C-O-Cα-N and N-H-C-Cα.
+(2) Their atomic volume is small because of the tight packing by the nearby atoms.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="eflow_tutorial.html" title="4.3. Energy flow analysis"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="general_tutorial.html" title="4.1. General instructions"
+             >previous</a> |</li>
+        <li><a href="index.html">CURP 1.1 documentation</a> &raquo;</li>
+          <li><a href="tutorials.html" >4. Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2017, Yamato Labaratory.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
