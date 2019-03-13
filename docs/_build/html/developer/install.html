@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Install on Mac &mdash; CURP 1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="CURP 1.1 documentation" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../index.html">CURP 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Install on Mac</a><ul>
+<li><a class="reference internal" href="#install-xcode">1.1. Install Xcode</a></li>
+<li><a class="reference internal" href="#install-python">1.2. Install Python</a></li>
+<li><a class="reference internal" href="#install-openmpi">1.3. Install OpenMPI</a></li>
+<li><a class="reference internal" href="#install-gfortran">1.4. Install GFortran</a></li>
+<li><a class="reference internal" href="#install-mercurial">1.5. Install Mercurial</a></li>
+<li><a class="reference internal" href="#install-curp">1.6. Install CURP</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#try-to-run">2. Try to run</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/developer/install.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>このページでは、開発者のためのインストールの手順を紹介する.
+以下ではLinuxとMacでのインストール手順を述べる.</p>
+<p>安定板だけを試したい方は <a class="reference external" href="./install">こちら</a>.</p>
+<div class="section" id="install-on-mac">
+<h1>1. Install on Mac<a class="headerlink" href="#install-on-mac" title="Permalink to this headline">¶</a></h1>
+<p>Macはバージョン毎にアプリケーションの揃え方が異なるので注意すること。
+ちなみに、各バージョンの名前は次のように使う。</p>
+<ul class="simple">
+<li>Mac OS X 10.6.x (Snow Leopard) ⇒ SLeopard</li>
+<li>Mac OS X 10.7.x (Lion) ⇒ Lion</li>
+<li>OS X 10.8.x (Mountain Lion) ⇒ MLion</li>
+</ul>
+<p>また、MacでCurpを動かすために必要となるアプリケーションは次の通り：</p>
+<ul class="simple">
+<li>Xcode Command Line Tools &gt;= 4.5.4</li>
+<li>Python ≧2.7.3</li>
+<li>OpenMPI ≧1.4.3</li>
+<li>gfortran ≧</li>
+<li>Mercurial ≧2.2.3</li>
+</ul>
+<p>出来るだけ最新のバージョンを揃えておいた方が良い.</p>
+<div class="section" id="install-xcode">
+<h2>1.1. Install Xcode<a class="headerlink" href="#install-xcode" title="Permalink to this headline">¶</a></h2>
+<p>Mac上での開発環境(gcc等)を整えるためにXcodeをインストールする必要がある。
+SLeopardではXcodeをインストールすれば、自動的にCommand Line Toolsも
+インストールされる。LionとMLionではComman Line ToolsはXcodeの標準ライブラリとは別になっているので、別途インストールする必要がある。</p>
+<p>Xcodeを立ち上げてから、メニューで、</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Xcode</span> <span class="o">&gt;</span> <span class="n">Preference</span> <span class="o">&gt;</span> <span class="n">Downloads</span> <span class="o">&gt;</span> <span class="n">Components</span>
+</pre></div>
+</div>
+<p>で Command Line Toolsをインストール出来る。</p>
+</div>
+<div class="section" id="install-python">
+<h2>1.2. Install Python<a class="headerlink" href="#install-python" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Download Python</p>
+<p>以下からPython-2.7.xの最新バージョンをダウンロードする:</p>
+<p><a class="reference external" href="http://www.python.org/download/">http://www.python.org/download/</a></p>
+<p>の「Python 2.7.5 Mac OS X 64-bit/32-bit x86-64/i386 Installer」
+を選ぶこと。</p>
+</li>
+<li><p class="first">Install Python</p>
+<p>ダウンロードしたdmgファイルをダブルクリックして、
+他のアプリケーションと同じようにインストールすれば良い。</p>
+</li>
+</ol>
+</div>
+<div class="section" id="install-openmpi">
+<h2>1.3. Install OpenMPI<a class="headerlink" href="#install-openmpi" title="Permalink to this headline">¶</a></h2>
+<p>SLeopardまではOpenMPIが標準でインストールされていた。
+しかし、LionとMLionではOpenMPIはインストールされていないので、
+自分でインストールしなければならない。
+SLeopardでは以下の作業は必要無い。</p>
+<ol class="arabic">
+<li><p class="first">以下のサイトからOpenMPIをインストールする。</p>
+<p><a class="reference external" href="http://www.open-mpi.org/software/ompi/v1.6/">http://www.open-mpi.org/software/ompi/v1.6/</a></p>
+<p>のopenmpi-1.6.tar.gz をダウンロードする。
+最新版があればそれを使うことにする。
+以降、バージョン番号は最新のものに読み替えること。</p>
+</li>
+<li><p class="first">openmpiのソースコードをダウンロードしたディレクトリに移動して、
+次のようにコマンドを実行する:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ tar xzvf openmpi-1.6.tar.gz
+$ cd openmpi-1.6
+$ ./configure --prefix=&lt;directory_path_to_want_to_install&gt;
+$ make
+$ make install
+</pre></div>
+</div>
+</li>
+<li><p class="first">環境変数を設定する。</p>
+<p>bashrcに以下の設定を追加する:</p>
+<div class="highlight-python"><div class="highlight"><pre>OPENMPI_PATH=&lt;installed_directory_path&gt;
+export PATH=$OPENMPI_PATH/bin:$PATH
+export LD_LIBRARY_PATH=$OPENMPI_PATH/lib:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$OPENMPI_PATH/lib:$DYLD_LIBRARY_PATH
+export MANPATH=$OPENMPI_PATH/share/man:$OPENMPI_PATH
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="install-gfortran">
+<h2>1.4. Install GFortran<a class="headerlink" href="#install-gfortran" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">gfortranを以下のURLからダウンロードする。
+64bit版を選ぶこと。</p>
+<p><a class="reference external" href="http://gcc.gnu.org/wiki/GFortranBinaries">http://gcc.gnu.org/wiki/GFortranBinaries</a></p>
+</li>
+<li><p class="first">gfortranを解凍して、任意の場所に配置する。</p>
+<p>例：&lt;DIRPATH_TO_GFORTRAN&gt;</p>
+</li>
+<li><p class="first">gfortranを使うための環境変数を設定する。</p>
+<p>/usr/local等に配置した場合には、この手順は必要無い。
+二つの環境変数を~/.bashrc等に追記する:</p>
+<div class="highlight-python"><div class="highlight"><pre>GFORTRAN_PATH=&lt;DIRPATH_TO_GFORTRAN&gt;
+export PATH=$GFORTRAN_PATH/bin:$PATH
+export LD_LIBRARY_PATH=$GFORTRAN_PATH/lib:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$GFORTRAN_PATH/lib:$DYLD_LIBRARY_PATH
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="install-mercurial">
+<h2>1.5. Install Mercurial<a class="headerlink" href="#install-mercurial" title="Permalink to this headline">¶</a></h2>
+<p>次のサイトからダウンロードしてインストールする．</p>
+<p><a class="reference external" href="http://mercurial.selenic.com/">http://mercurial.selenic.com/</a></p>
+</div>
+<div class="section" id="install-curp">
+<h2>1.6. Install CURP<a class="headerlink" href="#install-curp" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">ターミナル上で、Curpを置きたいディレクトリを作成して移動する。
+仮にインストールしたい場所を~/programs/curpにしたいのであれば、</p>
+<div class="highlight-python"><div class="highlight"><pre>$ mkdir ~/programs/curp
+$ cd ~/programs/curp
+</pre></div>
+</div>
+</li>
+<li><p class="first">curpのcloneをダウンロードする。</p>
+<ol class="arabic simple">
+<li>で mkdir を行ったディレクトリで、次のようにコマンドを打つ。</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre>$ hg clone ssh://hg@bitbucket.org/takayamato/curp/wiki &lt;1. で作ったディレクトリ&gt;
+</pre></div>
+</div>
+</li>
+</ol>
+<ol class="arabic" start="3">
+<li><p class="first">CURP_HOMEを$HOME/.bashrc等に追記する。</p>
+<p>例：export CURP_HOME=$HOME/opt/curp</p>
+</li>
+<li><p class="first">CURPを構築する。</p>
+<p>次のようにする。少々時間が掛かる。</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd $CURP_HOME
+$ make
+</pre></div>
+</div>
+<p>CURPにはvirtualenvによるPython環境が必要であるが、
+これはPython環境の構築からCURPライブラリのビルドまでを全て行っている。</p>
+<p>ここで、 <cite>make</cite> に他のターゲットを与えることが出来る。</p>
+<p>fortranライブラリのコンパイルに使われるものはデフォルトではgfortranである。
+<tt class="docutils literal"><span class="pre">intel</span></tt> を指定するとifortが使われる:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make intel
+</pre></div>
+</div>
+<p>また、並列計算バージョンを使いたくない時には、</p>
+<div class="highlight-python"><div class="highlight"><pre>$make serial
+</pre></div>
+</div>
+<p>とすれば、pythonのmpiライブラリをビルドしない。</p>
+<p>環境を全て真っ新にしたい場合には、</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make clean
+</pre></div>
+</div>
+<p>とすれば良い。</p>
+</li>
+</ol>
+<ol class="arabic" start="6">
+<li><p class="first">(オプション)CURPのAPIドキュメントをビルドする。</p>
+<p>CURPの技術仕様ドキュメントを自動生成することが出来る:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd $CURP_HOME
+$ make apihtml
+
+   # ここで、生成が完了する。
+
+$ cd $CURP_HOME/docs/_api/
+$ open index.html
+</pre></div>
+</div>
+<p>PDFファイルも生成することが出来る:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd $CURP_HOME
+$ make apipdf
+
+   # ここで、生成が完了する。
+
+$ cd $CURP_HOME/docs/_api/
+$ open api.pdf
+</pre></div>
+</div>
+<p>ただし、pdfを生成する場合にはさらにLaTeXが必要なので、
+インストールされていることを確認しておくこと。</p>
+</li>
+<li><p class="first">最新のcurpを取得する。</p>
+<p>curpのディレクトリに移動して、次のようにコマンドを打つ:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ hg pull # BitBucketサーバからソースの最新版の履歴を取得。
+(パスワードを聞かれる)
+$ hg update # 履歴の最新版のファイルにアップデートする。
+</pre></div>
+</div>
+<p>もし, SSHの公開鍵を自分のアカウントに追加している場合にはパスワードを
+聞かれることはない．</p>
+</li>
+</ol>
+<p>以上の作業によって、最新のCurpを使うことが出来るようになる。
+4.と5.で行った、Python環境の構築とfortranライブラリのビルドは基本的には
+必要無い。
+ただし、fortranライブラリが変更されている場合には、再ビルドを行うこと。</p>
+</div>
+</div>
+<div class="section" id="try-to-run">
+<h1>2. Try to run<a class="headerlink" href="#try-to-run" title="Permalink to this headline">¶</a></h1>
+<p>現時点では次のように実行する:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ $CURP_HOME/buildout/bin/curp-python $CURP_HOME/src/curp.py &lt;input_file&gt; &gt; log
+</pre></div>
+</div>
+<p>いくつかの例が$CURP_HOME/exampleにあるので、run.shを実行して試してみると良い。</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../index.html">CURP 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2017, Yamato Labaratory.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

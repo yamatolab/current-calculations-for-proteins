@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Installation &mdash; CURP 1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="CURP 1.1 documentation" href="index.html" />
+    <link rel="next" title="4. Tutorials" href="tutorials.html" />
+    <link rel="prev" title="1. About CURP" href="intro.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorials.html" title="4. Tutorials"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="1. About CURP"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">CURP 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. Installation</a><ul>
+<li><a class="reference internal" href="#system-requirements">3.1. System Requirements</a><ul>
+<li><a class="reference internal" href="#linux">3.1.1. Linux</a></li>
+<li><a class="reference internal" href="#mac">3.1.2. Mac</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">3.2. Installation</a></li>
+<li><a class="reference internal" href="#running-curp">3.3. Running CURP</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">1. About CURP</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorials.html"
+                        title="next chapter">4. Tutorials</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/install.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation">
+<h1>3. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>The current version of the CURP program supports Mac and Linux systems.</p>
+<div class="section" id="system-requirements">
+<h2>3.1. System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
+<p>The CURP program runs on the following operating system.</p>
+<div class="section" id="linux">
+<h3>3.1.1. Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>OS Version: CentOS 6.x</li>
+</ul>
+</div>
+<div class="section" id="mac">
+<h3>3.1.2. Mac<a class="headerlink" href="#mac" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>OS Version: Marvericks or Yosemite with XCode 6.1</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>3.2. Installation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>To build the standard (parallel) version of CURP, it is assumed that
+<tt class="docutils literal"><span class="pre">Open</span> <span class="pre">MPI,</span> <span class="pre">gfortran,</span> <span class="pre">graphviz,</span> <span class="pre">graphviz-dev</span> <span class="pre">and</span> <span class="pre">Python</span> <span class="pre">2.7.x</span></tt> are already installed on your local machine. To install these packages, you can use <cite>yum</cite> for linux, and <cite>MacPorts</cite> or <cite>Homebrew</cite> for Mac.
+It is possible to build the serial version of CURP by running <tt class="docutils literal"><span class="pre">make</span></tt> with the &#8220;serial&#8221; option.</p>
+<ol class="arabic">
+<li><p class="first">Please download the CURP package from the following URL:</p>
+<p><a class="reference external" href="http://www.comp-biophys.com/yamato-html/curp.html">http://www.comp-biophys.com/yamato-html/curp.html</a></p>
+</li>
+<li><p class="first">Set the home directory for the CURP package</p>
+<p>If you use the bash interpreter, the setting is done on your machine by editing <tt class="docutils literal"><span class="pre">$HOME/.bashrc</span></tt> file. For instance, if the CURP directory is $HOME/opt/curp``, append the following line to the .bashrc file.</p>
+<div class="highlight-python"><div class="highlight"><pre>export CURP_HOME=$HOME/opt/curp
+</pre></div>
+</div>
+<p>Then, type in the following command:</p>
+<blockquote>
+<div><p>$ source $HOME/.bashrc</p>
+</div></blockquote>
+</li>
+<li><p class="first">Change directory to $CURP_HOME, and run <tt class="docutils literal"><span class="pre">make</span></tt> to build the standard version of CURP:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make
+</pre></div>
+</div>
+<p>The CURP scripts chooses the <cite>gfortran</cite> compiler by default. Alternatively, you can build the intel version of the program by running <tt class="docutils literal"><span class="pre">make</span> <span class="pre">intel</span></tt> if you have the Intel Fortran Compiler (ifort) installed</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make intel
+</pre></div>
+</div>
+<p>The serial version of CURP is built by:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make serial
+</pre></div>
+</div>
+<p>To clean up the library files and temporary files under <tt class="docutils literal"><span class="pre">$CURP_HOME</span></tt>,
+enter the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make clean
+</pre></div>
+</div>
+<p>Note that <cite>hdf5</cite> and <cite>netcdf</cite> source files are downloaded from the Internet by running the <cite>make</cite> command to build CURP. These files remain in the <cite>curp-environ</cite> directory under <tt class="docutils literal"><span class="pre">$CURP_HOME</span></tt> and are not removed by <cite>make clean</cite>.
+If you want to delete the curp-environ directory, enter the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make allclean
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="running-curp">
+<h2>3.3. Running CURP<a class="headerlink" href="#running-curp" title="Permalink to this headline">¶</a></h2>
+<p>To run CURP, enter the following command:</p>
+<blockquote>
+<div>$ $CURP_HOME/bin/curp &lt;input_file&gt; &gt; log</div></blockquote>
+<p>The users set the CURP parameters in &lt;input_file&gt; and the messages will be written to <tt class="docutils literal"><span class="pre">log</span></tt>.</p>
+<p>For test calculations of CURP, some examples are provided in the <tt class="docutils literal"><span class="pre">$CURP_HOME/test</span></tt> directory with more examples found in <tt class="docutils literal"><span class="pre">$CURP_HOME/tutorial</span></tt>.</p>
+<p>By running <tt class="docutils literal"><span class="pre">$CURP_HOME/test/runall.sh</span></tt>, all of the test examples will be tested.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorials.html" title="4. Tutorials"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="1. About CURP"
+             >previous</a> |</li>
+        <li><a href="index.html">CURP 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2017, Yamato Labaratory.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
