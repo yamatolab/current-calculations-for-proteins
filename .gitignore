@@ -1,0 +1,7 @@
+#Ignores library files
+**.so
+**.pyc
+
+#Ignores curp-environ and tutorial directory
+curp-environ/
+tutorial
