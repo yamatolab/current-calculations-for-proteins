@@ -1,0 +1,24 @@
+syntax: glob
+*log
+*.pyc
+*.pyo
+*.xcfg
+*.o
+*.orig
+*.mod
+*.un~
+_build
+_api
+hg-checklink-*
+build
+curp-environ
+eggs
+.DS_Store
+Thumbs.db
+[quickrun Output]
+*.so
+buildout
+_data
+outdata
+helps.txt
+setting.txt
