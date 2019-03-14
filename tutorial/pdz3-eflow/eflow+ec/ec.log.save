@@ -1,0 +1,2316 @@
+preparing time: 0.003 [s]
+loading for 1/770 00001_ACE 00004_ARG ... ** load time: 0.001 [s]
+loading for 2/770 00001_ACE 00002_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00001_ACE 00004_ARG
+    writing acf: 0.0007 [s]
+    cal time: 0.000 [s] for 00001_ACE 00002_ILE
+    writing acf: 0.0010 [s]
+loading for 3/770 00001_ACE 00087_TYR ... ** load time: 0.001 [s]
+loading for 4/770 00001_ACE 00003_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00001_ACE 00087_TYR
+    cal time: 0.000 [s] for 00001_ACE 00003_PRO
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 5/770 00002_ILE 00004_ARG ... ** load time: 0.001 [s]
+loading for 6/770 00002_ILE 00087_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00002_ILE 00004_ARG
+    cal time: 0.000 [s] for 00002_ILE 00087_TYR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 7/770 00002_ILE 00005_GLU ... ** load time: 0.001 [s]
+loading for 8/770 00002_ILE 00003_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00002_ILE 00005_GLU
+    cal time: 0.000 [s] for 00002_ILE 00003_PRO
+    writing acf: 0.0012 [s]
+    writing acf: 0.0013 [s]
+loading for 9/770 00002_ILE 00086_GLN ... ** load time: 0.001 [s]
+loading for 10/770 00003_PRO 00088_LYS ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00002_ILE 00086_GLN
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 11/770 00003_PRO 00087_TYR ... **     cal time: 0.000 [s] for 00003_PRO 00088_LYS
+load time: 0.001 [s]
+loading for 12/770 00003_PRO 00086_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00003_PRO 00087_TYR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 13/770 00003_PRO 00090_GLU ... **     cal time: 0.000 [s] for 00003_PRO 00086_GLN
+load time: 0.002 [s]
+loading for 14/770 00003_PRO 00004_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00003_PRO 00090_GLU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 15/770 00003_PRO 00055_LEU ... **     cal time: 0.000 [s] for 00003_PRO 00004_ARG
+load time: 0.001 [s]
+loading for 16/770 00003_PRO 00005_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00003_PRO 00055_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 17/770 00003_PRO 00053_GLN ... ** load time: 0.001 [s]
+loading for 18/770 00004_ARG 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00003_PRO 00005_GLU
+    cal time: 0.000 [s] for 00003_PRO 00053_GLN
+    writing acf: 0.0011 [s]
+    writing acf: 0.0014 [s]
+loading for 19/770 00004_ARG 00087_TYR ... **     cal time: 0.000 [s] for 00004_ARG 00084_ILE
+load time: 0.001 [s]
+loading for 20/770 00004_ARG 00006_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00004_ARG 00087_TYR
+    writing acf: 0.0016 [s]
+    writing acf: 0.0012 [s]
+loading for 21/770 00004_ARG 00086_GLN ... **     cal time: 0.000 [s] for 00004_ARG 00006_PRO
+load time: 0.001 [s]
+loading for 22/770 00004_ARG 00007_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00004_ARG 00086_GLN
+    cal time: 0.000 [s] for 00004_ARG 00007_ARG
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 23/770 00004_ARG 00005_GLU ... ** load time: 0.001 [s]
+loading for 24/770 00005_GLU 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00004_ARG 00005_GLU
+    cal time: 0.000 [s] for 00005_GLU 00084_ILE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 25/770 00005_GLU 00087_TYR ... ** load time: 0.001 [s]
+loading for 26/770 00005_GLU 00086_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00005_GLU 00087_TYR
+    cal time: 0.000 [s] for 00005_GLU 00086_GLN
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 27/770 00005_GLU 00085_ALA ... ** load time: 0.001 [s]
+loading for 28/770 00005_GLU 00007_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00005_GLU 00085_ALA
+    cal time: 0.000 [s] for 00005_GLU 00007_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 29/770 00005_GLU 00006_PRO ... ** load time: 0.001 [s]
+loading for 30/770 00005_GLU 00055_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00005_GLU 00006_PRO
+    cal time: 0.000 [s] for 00005_GLU 00055_LEU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 31/770 00005_GLU 00009_ILE ... ** load time: 0.001 [s]
+loading for 32/770 00005_GLU 00008_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00005_GLU 00009_ILE
+    cal time: 0.000 [s] for 00005_GLU 00008_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0024 [s]
+loading for 33/770 00006_PRO 00084_ILE ... ** load time: 0.001 [s]
+loading for 34/770 00006_PRO 00048_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00006_PRO 00084_ILE
+    cal time: 0.000 [s] for 00006_PRO 00048_LEU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0011 [s]
+loading for 35/770 00006_PRO 00085_ALA ... ** load time: 0.001 [s]
+loading for 36/770 00006_PRO 00007_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00006_PRO 00085_ALA
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00006_PRO 00007_ARG
+    writing acf: 0.0011 [s]
+loading for 37/770 00006_PRO 00009_ILE ... ** load time: 0.001 [s]
+loading for 38/770 00006_PRO 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00006_PRO 00009_ILE
+    cal time: 0.000 [s] for 00006_PRO 00082_THR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 39/770 00006_PRO 00011_ILE ... ** load time: 0.001 [s]
+loading for 40/770 00006_PRO 00087_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00006_PRO 00087_TYR
+    cal time: 0.000 [s] for 00006_PRO 00011_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 41/770 00006_PRO 00086_GLN ... ** load time: 0.001 [s]
+loading for 42/770 00006_PRO 00052_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00006_PRO 00086_GLN
+    cal time: 0.000 [s] for 00006_PRO 00052_ASP
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 43/770 00006_PRO 00083_ILE ... ** load time: 0.001 [s]
+loading for 44/770 00006_PRO 00008_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00006_PRO 00083_ILE
+    cal time: 0.000 [s] for 00006_PRO 00008_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 45/770 00006_PRO 00049_ARG ... ** load time: 0.001 [s]
+loading for 46/770 00007_ARG 00008_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00006_PRO 00049_ARG
+    cal time: 0.000 [s] for 00007_ARG 00008_ARG
+    writing acf: 0.0014 [s]
+    writing acf: 0.0010 [s]
+loading for 47/770 00007_ARG 00009_ILE ... ** load time: 0.001 [s]
+loading for 48/770 00007_ARG 00049_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00007_ARG 00009_ILE
+    cal time: 0.000 [s] for 00007_ARG 00049_ARG
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 49/770 00008_ARG 00046_GLY ... ** load time: 0.001 [s]
+loading for 50/770 00008_ARG 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00008_ARG 00046_GLY
+    cal time: 0.000 [s] for 00008_ARG 00084_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 51/770 00008_ARG 00048_LEU ... ** load time: 0.001 [s]
+loading for 52/770 00008_ARG 00012_HIE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00008_ARG 00012_HIE
+    cal time: 0.000 [s] for 00008_ARG 00048_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 53/770 00008_ARG 00013_ARG ... ** load time: 0.001 [s]
+loading for 54/770 00008_ARG 00010_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00008_ARG 00013_ARG
+    cal time: 0.000 [s] for 00008_ARG 00010_VAL
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 55/770 00008_ARG 00009_ILE ... ** load time: 0.001 [s]
+loading for 56/770 00008_ARG 00042_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00008_ARG 00009_ILE
+    cal time: 0.000 [s] for 00008_ARG 00042_ALA
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 57/770 00008_ARG 00082_THR ... ** load time: 0.001 [s]
+loading for 58/770 00008_ARG 00011_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00008_ARG 00011_ILE
+    cal time: 0.000 [s] for 00008_ARG 00082_THR
+    writing acf: 0.0016 [s]
+    writing acf: 0.0012 [s]
+loading for 59/770 00008_ARG 00045_SER ... ** load time: 0.001 [s]
+loading for 60/770 00008_ARG 00044_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00008_ARG 00045_SER
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00008_ARG 00044_LEU
+    writing acf: 0.0010 [s]
+loading for 61/770 00008_ARG 00043_ASP ... ** load time: 0.001 [s]
+loading for 62/770 00008_ARG 00049_ARG ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00008_ARG 00043_ASP
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 63/770 00009_ILE 00084_ILE ... ** load time: 0.001 [s]
+loading for 64/770 00009_ILE 00059_GLY ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00009_ILE 00084_ILE
+    cal time: 0.000 [s] for 00008_ARG 00049_ARG
+    cal time: 0.000 [s] for 00009_ILE 00059_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0008 [s]
+loading for 65/770 00009_ILE 00081_VAL ... ** load time: 0.001 [s]
+loading for 66/770 00009_ILE 00011_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00009_ILE 00081_VAL
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00009_ILE 00011_ILE
+    writing acf: 0.0011 [s]
+loading for 67/770 00009_ILE 00083_ILE ... ** load time: 0.001 [s]
+loading for 68/770 00009_ILE 00080_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00009_ILE 00083_ILE
+    cal time: 0.000 [s] for 00009_ILE 00080_THR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 69/770 00009_ILE 00082_THR ... ** load time: 0.001 [s]
+loading for 70/770 00009_ILE 00058_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00009_ILE 00082_THR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 71/770 00009_ILE 00010_VAL ... **     cal time: 0.000 [s] for 00009_ILE 00058_ASN
+load time: 0.001 [s]
+loading for 72/770 00009_ILE 00056_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00009_ILE 00010_VAL
+    cal time: 0.000 [s] for 00009_ILE 00056_SER
+    writing acf: 0.0011 [s]
+    writing acf: 0.0008 [s]
+loading for 73/770 00009_ILE 00012_HIE ... ** load time: 0.001 [s]
+loading for 74/770 00009_ILE 00049_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00009_ILE 00012_HIE
+    cal time: 0.000 [s] for 00009_ILE 00049_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 75/770 00010_VAL 00084_ILE ... ** load time: 0.001 [s]
+loading for 76/770 00010_VAL 00048_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00010_VAL 00084_ILE
+    cal time: 0.000 [s] for 00010_VAL 00048_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 77/770 00010_VAL 00081_VAL ... ** load time: 0.001 [s]
+loading for 78/770 00010_VAL 00012_HIE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00010_VAL 00081_VAL
+    cal time: 0.000 [s] for 00010_VAL 00012_HIE
+    writing acf: 0.0013 [s]
+    writing acf: 0.0011 [s]
+loading for 79/770 00010_VAL 00013_ARG ... ** load time: 0.001 [s]
+loading for 80/770 00010_VAL 00011_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00010_VAL 00013_ARG
+    cal time: 0.000 [s] for 00010_VAL 00011_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0020 [s]
+loading for 81/770 00010_VAL 00079_GLN ... ** load time: 0.001 [s]
+loading for 82/770 00010_VAL 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00010_VAL 00079_GLN
+    cal time: 0.000 [s] for 00010_VAL 00083_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0013 [s]
+loading for 83/770 00010_VAL 00080_THR ... ** load time: 0.001 [s]
+loading for 84/770 00010_VAL 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00010_VAL 00080_THR
+    cal time: 0.000 [s] for 00010_VAL 00082_THR
+    writing acf: 0.0012 [s]
+    writing acf: 0.0009 [s]
+loading for 85/770 00010_VAL 00049_ARG ... ** load time: 0.001 [s]
+loading for 86/770 00011_ILE 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00010_VAL 00049_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 87/770 00011_ILE 00048_LEU ... ** load time: 0.001 [s]
+loading for 88/770 00011_ILE 00043_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00011_ILE 00048_LEU
+    cal time: 0.000 [s] for 00011_ILE 00084_ILE
+    cal time: 0.000 [s] for 00011_ILE 00043_ASP
+    writing acf: 0.0011 [s]
+    writing acf: 0.0009 [s]
+loading for 89/770 00011_ILE 00081_VAL ... ** load time: 0.001 [s]
+loading for 90/770 00011_ILE 00013_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00011_ILE 00081_VAL
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 91/770 00011_ILE 00085_ALA ... **     cal time: 0.000 [s] for 00011_ILE 00013_ARG
+load time: 0.001 [s]
+loading for 92/770 00011_ILE 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00011_ILE 00085_ALA
+    cal time: 0.000 [s] for 00011_ILE 00083_ILE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0046 [s]
+loading for 93/770 00011_ILE 00018_LEU ... ** load time: 0.001 [s]
+loading for 94/770 00011_ILE 00042_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00011_ILE 00018_LEU
+    cal time: 0.000 [s] for 00011_ILE 00042_ALA
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 95/770 00011_ILE 00082_THR ... ** load time: 0.001 [s]
+loading for 96/770 00011_ILE 00017_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00011_ILE 00082_THR
+    cal time: 0.000 [s] for 00011_ILE 00017_GLY
+    writing acf: 0.0008 [s]
+    writing acf: 0.0009 [s]
+loading for 97/770 00011_ILE 00012_HIE ... ** load time: 0.001 [s]
+loading for 98/770 00011_ILE 00014_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00011_ILE 00012_HIE
+    cal time: 0.000 [s] for 00011_ILE 00014_GLY
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 99/770 00011_ILE 00041_PRO ... ** load time: 0.001 [s]
+loading for 100/770 00011_ILE 00049_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00011_ILE 00041_PRO
+    cal time: 0.000 [s] for 00011_ILE 00049_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0086 [s]
+loading for 101/770 00012_HIE 00016_THR ... ** load time: 0.001 [s]
+loading for 102/770 00012_HIE 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00012_HIE 00016_THR
+    cal time: 0.000 [s] for 00012_HIE 00081_VAL
+    writing acf: 0.0011 [s]
+    writing acf: 0.0007 [s]
+loading for 103/770 00012_HIE 00013_ARG ... ** load time: 0.001 [s]
+loading for 104/770 00012_HIE 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00012_HIE 00013_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 105/770 00012_HIE 00018_LEU ... ** load time: 0.001 [s]
+loading for 106/770 00012_HIE 00042_ALA ... **     cal time: 0.000 [s] for 00012_HIE 00083_ILE
+load time: 0.001 [s]
+    cal time: 0.000 [s] for 00012_HIE 00018_LEU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 107/770 00012_HIE 00082_THR ... **     cal time: 0.000 [s] for 00012_HIE 00042_ALA
+load time: 0.001 [s]
+loading for 108/770 00012_HIE 00080_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00012_HIE 00082_THR
+    cal time: 0.000 [s] for 00012_HIE 00080_THR
+    writing acf: 0.0014 [s]
+    writing acf: 0.0012 [s]
+loading for 109/770 00012_HIE 00015_SER ... ** load time: 0.001 [s]
+loading for 110/770 00012_HIE 00017_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00012_HIE 00015_SER
+    cal time: 0.000 [s] for 00012_HIE 00017_GLY
+    writing acf: 0.0011 [s]
+    writing acf: 0.0012 [s]
+loading for 111/770 00012_HIE 00079_GLN ... ** load time: 0.001 [s]
+loading for 112/770 00012_HIE 00014_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00012_HIE 00079_GLN
+    cal time: 0.000 [s] for 00012_HIE 00014_GLY
+    writing acf: 0.0010 [s]
+    writing acf: 0.0008 [s]
+loading for 113/770 00012_HIE 00041_PRO ... ** load time: 0.001 [s]
+loading for 114/770 00013_ARG 00015_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00012_HIE 00041_PRO
+    cal time: 0.000 [s] for 00013_ARG 00015_SER
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 115/770 00013_ARG 00017_GLY ... ** load time: 0.001 [s]
+loading for 116/770 00013_ARG 00045_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00013_ARG 00017_GLY
+    cal time: 0.000 [s] for 00013_ARG 00045_SER
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 117/770 00013_ARG 00044_LEU ... ** load time: 0.001 [s]
+loading for 118/770 00013_ARG 00016_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00013_ARG 00044_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 119/770 00013_ARG 00043_ASP ... ** load time: 0.001 [s]
+loading for 120/770 00013_ARG 00079_GLN ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00013_ARG 00016_THR
+    cal time: 0.000 [s] for 00013_ARG 00043_ASP
+    cal time: 0.000 [s] for 00013_ARG 00079_GLN
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 121/770 00013_ARG 00014_GLY ... ** load time: 0.001 [s]
+loading for 122/770 00013_ARG 00041_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00013_ARG 00014_GLY
+    cal time: 0.000 [s] for 00013_ARG 00041_PRO
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 123/770 00013_ARG 00018_LEU ... ** load time: 0.001 [s]
+loading for 124/770 00013_ARG 00042_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00013_ARG 00018_LEU
+    cal time: 0.000 [s] for 00013_ARG 00042_ALA
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 125/770 00014_GLY 00015_SER ... ** load time: 0.001 [s]
+loading for 126/770 00014_GLY 00017_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00014_GLY 00015_SER
+    cal time: 0.000 [s] for 00014_GLY 00017_GLY
+    writing acf: 0.0011 [s]
+    writing acf: 0.0014 [s]
+loading for 127/770 00014_GLY 00044_LEU ... ** load time: 0.001 [s]
+loading for 128/770 00014_GLY 00016_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00014_GLY 00044_LEU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 129/770 00014_GLY 00043_ASP ... ** load time: 0.001 [s]
+loading for 130/770 00014_GLY 00079_GLN ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00014_GLY 00043_ASP
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 131/770 00014_GLY 00041_PRO ... ** load time: 0.001 [s]
+loading for 132/770 00014_GLY 00018_LEU ... **     cal time: 0.000 [s] for 00014_GLY 00016_THR
+    cal time: 0.000 [s] for 00014_GLY 00079_GLN
+load time: 0.000 [s]
+    cal time: 0.000 [s] for 00014_GLY 00041_PRO
+    cal time: 0.000 [s] for 00014_GLY 00018_LEU
+    writing acf: 0.0008 [s]
+    writing acf: 0.0011 [s]
+loading for 133/770 00014_GLY 00042_ALA ... ** load time: 0.001 [s]
+loading for 134/770 00015_SER 00017_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00014_GLY 00042_ALA
+    cal time: 0.000 [s] for 00015_SER 00017_GLY
+    writing acf: 0.0008 [s]
+    writing acf: 0.0010 [s]
+loading for 135/770 00015_SER 00039_GLY ... ** load time: 0.001 [s]
+loading for 136/770 00015_SER 00044_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00015_SER 00039_GLY
+    cal time: 0.000 [s] for 00015_SER 00044_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 137/770 00015_SER 00016_THR ... ** load time: 0.001 [s]
+loading for 138/770 00015_SER 00040_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00015_SER 00016_THR
+    cal time: 0.000 [s] for 00015_SER 00040_GLY
+    writing acf: 0.0014 [s]
+    writing acf: 0.0007 [s]
+loading for 139/770 00015_SER 00043_ASP ... ** load time: 0.001 [s]
+loading for 140/770 00015_SER 00041_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00015_SER 00043_ASP
+    writing acf: 0.0013 [s]
+    writing acf: 0.0011 [s]
+loading for 141/770 00015_SER 00018_LEU ... ** load time: 0.001 [s]
+loading for 142/770 00015_SER 00042_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00015_SER 00041_PRO
+    cal time: 0.000 [s] for 00015_SER 00018_LEU
+    cal time: 0.000 [s] for 00015_SER 00042_ALA
+    writing acf: 0.0017 [s]
+    writing acf: 0.0012 [s]
+loading for 143/770 00016_THR 00019_GLY ... ** load time: 0.001 [s]
+loading for 144/770 00016_THR 00038_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00016_THR 00019_GLY
+    cal time: 0.000 [s] for 00016_THR 00038_ALA
+    writing acf: 0.0014 [s]
+    writing acf: 0.0012 [s]
+loading for 145/770 00016_THR 00017_GLY ... ** load time: 0.001 [s]
+loading for 146/770 00016_THR 00039_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00016_THR 00017_GLY
+    cal time: 0.000 [s] for 00016_THR 00039_GLY
+    writing acf: 0.0013 [s]
+    writing acf: 0.0025 [s]
+loading for 147/770 00016_THR 00040_GLY ... ** load time: 0.001 [s]
+loading for 148/770 00016_THR 00043_ASP ... ** load time: 0.002 [s]
+    cal time: 0.000 [s] for 00016_THR 00040_GLY
+    cal time: 0.000 [s] for 00016_THR 00043_ASP
+    writing acf: 0.0013 [s]
+    writing acf: 0.0014 [s]
+loading for 149/770 00016_THR 00079_GLN ... ** load time: 0.001 [s]
+loading for 150/770 00016_THR 00041_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00016_THR 00079_GLN
+    cal time: 0.000 [s] for 00016_THR 00041_PRO
+    writing acf: 0.0013 [s]
+    writing acf: 0.0012 [s]
+loading for 151/770 00016_THR 00037_LEU ... ** load time: 0.001 [s]
+loading for 152/770 00016_THR 00018_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00016_THR 00037_LEU
+    cal time: 0.000 [s] for 00016_THR 00018_LEU
+    writing acf: 0.0017 [s]
+    writing acf: 0.0011 [s]
+loading for 153/770 00016_THR 00042_ALA ... ** load time: 0.001 [s]
+loading for 154/770 00016_THR 00020_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00016_THR 00042_ALA
+    cal time: 0.000 [s] for 00016_THR 00020_PHE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 155/770 00017_GLY 00019_GLY ... ** load time: 0.001 [s]
+loading for 156/770 00017_GLY 00040_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00017_GLY 00019_GLY
+    cal time: 0.000 [s] for 00017_GLY 00040_GLY
+    writing acf: 0.0010 [s]
+    writing acf: 0.0011 [s]
+loading for 157/770 00017_GLY 00043_ASP ... ** load time: 0.001 [s]
+loading for 158/770 00017_GLY 00079_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00017_GLY 00043_ASP
+    cal time: 0.000 [s] for 00017_GLY 00079_GLN
+    writing acf: 0.0014 [s]
+    writing acf: 0.0010 [s]
+loading for 159/770 00017_GLY 00083_ILE ... ** load time: 0.001 [s]
+loading for 160/770 00017_GLY 00041_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00017_GLY 00083_ILE
+    cal time: 0.000 [s] for 00017_GLY 00041_PRO
+    writing acf: 0.0010 [s]
+    writing acf: 0.0010 [s]
+loading for 161/770 00017_GLY 00018_LEU ... ** load time: 0.001 [s]
+loading for 162/770 00017_GLY 00042_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00017_GLY 00018_LEU
+    cal time: 0.000 [s] for 00017_GLY 00042_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0007 [s]
+loading for 163/770 00018_LEU 00019_GLY ... ** load time: 0.001 [s]
+loading for 164/770 00018_LEU 00039_GLY ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00018_LEU 00019_GLY
+    cal time: 0.000 [s] for 00018_LEU 00039_GLY
+    writing acf: 0.0011 [s]
+    writing acf: 0.0008 [s]
+loading for 165/770 00018_LEU 00081_VAL ... ** load time: 0.001 [s]
+loading for 166/770 00018_LEU 00040_GLY ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00018_LEU 00081_VAL
+    cal time: 0.000 [s] for 00018_LEU 00040_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0011 [s]
+loading for 167/770 00018_LEU 00083_ILE ... ** load time: 0.001 [s]
+loading for 168/770 00018_LEU 00080_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00018_LEU 00083_ILE
+    cal time: 0.000 [s] for 00018_LEU 00080_THR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0064 [s]
+loading for 169/770 00018_LEU 00042_ALA ... ** load time: 0.001 [s]
+loading for 170/770 00018_LEU 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00018_LEU 00042_ALA
+    cal time: 0.000 [s] for 00018_LEU 00074_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 171/770 00018_LEU 00082_THR ... ** load time: 0.001 [s]
+loading for 172/770 00018_LEU 00021_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00018_LEU 00082_THR
+    cal time: 0.000 [s] for 00018_LEU 00021_ASN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0009 [s]
+loading for 173/770 00018_LEU 00079_GLN ... ** load time: 0.001 [s]
+loading for 174/770 00018_LEU 00078_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00018_LEU 00079_GLN
+    cal time: 0.000 [s] for 00018_LEU 00078_GLY
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 175/770 00018_LEU 00041_PRO ... ** load time: 0.001 [s]
+loading for 176/770 00018_LEU 00020_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00018_LEU 00041_PRO
+    cal time: 0.000 [s] for 00018_LEU 00020_PHE
+    writing acf: 0.0015 [s]
+    writing acf: 0.0012 [s]
+loading for 177/770 00019_GLY 00074_LEU ... ** load time: 0.001 [s]
+loading for 178/770 00019_GLY 00039_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00019_GLY 00074_LEU
+    cal time: 0.000 [s] for 00019_GLY 00039_GLY
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 179/770 00019_GLY 00081_VAL ... ** load time: 0.001 [s]
+loading for 180/770 00019_GLY 00040_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00019_GLY 00040_GLY
+    cal time: 0.000 [s] for 00019_GLY 00081_VAL
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 181/770 00019_GLY 00021_ASN ... ** load time: 0.001 [s]
+loading for 182/770 00019_GLY 00022_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00019_GLY 00021_ASN
+    writing acf: 0.0012 [s]
+    cal time: 0.000 [s] for 00019_GLY 00022_ILE
+    writing acf: 0.0011 [s]
+loading for 183/770 00019_GLY 00037_LEU ... ** load time: 0.001 [s]
+loading for 184/770 00019_GLY 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00019_GLY 00037_LEU
+    cal time: 0.000 [s] for 00019_GLY 00083_ILE
+    writing acf: 0.0014 [s]
+    writing acf: 0.0010 [s]
+loading for 185/770 00019_GLY 00041_PRO ... ** load time: 0.001 [s]
+loading for 186/770 00019_GLY 00020_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00019_GLY 00041_PRO
+    cal time: 0.000 [s] for 00019_GLY 00020_PHE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 187/770 00019_GLY 00035_PHE ... ** load time: 0.001 [s]
+loading for 188/770 00020_PHE 00071_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00019_GLY 00035_PHE
+    cal time: 0.000 [s] for 00020_PHE 00071_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 189/770 00020_PHE 00081_VAL ... ** load time: 0.001 [s]
+loading for 190/770 00020_PHE 00033_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00081_VAL
+    cal time: 0.000 [s] for 00020_PHE 00033_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 191/770 00020_PHE 00036_ILE ... ** load time: 0.001 [s]
+loading for 192/770 00020_PHE 00073_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00073_ALA
+    cal time: 0.000 [s] for 00020_PHE 00036_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0007 [s]
+loading for 193/770 00020_PHE 00083_ILE ... ** load time: 0.001 [s]
+loading for 194/770 00020_PHE 00037_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00083_ILE
+    cal time: 0.000 [s] for 00020_PHE 00037_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 195/770 00020_PHE 00075_LYS ... ** load time: 0.001 [s]
+loading for 196/770 00020_PHE 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00075_LYS
+    cal time: 0.000 [s] for 00020_PHE 00074_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 197/770 00020_PHE 00021_ASN ... ** load time: 0.001 [s]
+loading for 198/770 00020_PHE 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00077_ALA
+    cal time: 0.000 [s] for 00020_PHE 00021_ASN
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 199/770 00020_PHE 00022_ILE ... ** load time: 0.001 [s]
+loading for 200/770 00020_PHE 00076_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00022_ILE
+    cal time: 0.000 [s] for 00020_PHE 00076_ASN
+    writing acf: 0.0013 [s]
+    writing acf: 0.0012 [s]
+loading for 201/770 00020_PHE 00079_GLN ... ** load time: 0.001 [s]
+loading for 202/770 00020_PHE 00078_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00079_GLN
+    cal time: 0.000 [s] for 00020_PHE 00078_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 203/770 00020_PHE 00070_ALA ... ** load time: 0.001 [s]
+loading for 204/770 00020_PHE 00072_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00070_ALA
+    cal time: 0.000 [s] for 00020_PHE 00072_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 205/770 00020_PHE 00041_PRO ... ** load time: 0.001 [s]
+loading for 206/770 00020_PHE 00035_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00020_PHE 00041_PRO
+    cal time: 0.000 [s] for 00020_PHE 00035_PHE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 207/770 00021_ASN 00054_ILE ... ** load time: 0.001 [s]
+loading for 208/770 00021_ASN 00033_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00021_ASN 00054_ILE
+    cal time: 0.000 [s] for 00021_ASN 00033_ILE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 209/770 00021_ASN 00023_VAL ... ** load time: 0.001 [s]
+loading for 210/770 00021_ASN 00036_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00021_ASN 00023_VAL
+    cal time: 0.000 [s] for 00021_ASN 00036_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 211/770 00021_ASN 00037_LEU ... ** load time: 0.001 [s]
+loading for 212/770 00021_ASN 00083_ILE ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00021_ASN 00037_LEU
+    cal time: 0.000 [s] for 00021_ASN 00083_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 213/770 00021_ASN 00031_ILE ... ** load time: 0.001 [s]
+loading for 214/770 00021_ASN 00034_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00021_ASN 00031_ILE
+    cal time: 0.000 [s] for 00021_ASN 00034_SER
+    writing acf: 0.0007 [s]
+    writing acf: 0.0008 [s]
+loading for 215/770 00021_ASN 00024_GLY ... ** load time: 0.001 [s]
+loading for 216/770 00021_ASN 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00021_ASN 00024_GLY
+    cal time: 0.000 [s] for 00021_ASN 00074_LEU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0013 [s]
+loading for 217/770 00021_ASN 00032_PHE ... ** load time: 0.001 [s]
+loading for 218/770 00021_ASN 00022_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00021_ASN 00032_PHE
+    cal time: 0.000 [s] for 00021_ASN 00022_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0011 [s]
+loading for 219/770 00021_ASN 00050_LYS ... ** load time: 0.001 [s]
+loading for 220/770 00021_ASN 00040_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00021_ASN 00050_LYS
+    cal time: 0.000 [s] for 00021_ASN 00040_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 221/770 00021_ASN 00041_PRO ... ** load time: 0.001 [s]
+loading for 222/770 00021_ASN 00035_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00021_ASN 00041_PRO
+    cal time: 0.000 [s] for 00021_ASN 00035_PHE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0012 [s]
+loading for 223/770 00022_ILE 00071_ALA ... ** load time: 0.001 [s]
+loading for 224/770 00022_ILE 00033_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00022_ILE 00071_ALA
+    cal time: 0.000 [s] for 00022_ILE 00033_ILE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0007 [s]
+loading for 225/770 00022_ILE 00023_VAL ... ** load time: 0.001 [s]
+loading for 226/770 00022_ILE 00067_HID ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00022_ILE 00023_VAL
+    cal time: 0.000 [s] for 00022_ILE 00067_HID
+    writing acf: 0.0007 [s]
+    writing acf: 0.0012 [s]
+loading for 227/770 00022_ILE 00031_ILE ... ** load time: 0.001 [s]
+loading for 228/770 00022_ILE 00034_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00022_ILE 00031_ILE
+    cal time: 0.000 [s] for 00022_ILE 00034_SER
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 229/770 00022_ILE 00024_GLY ... ** load time: 0.001 [s]
+loading for 230/770 00022_ILE 00075_LYS ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00022_ILE 00024_GLY
+    cal time: 0.000 [s] for 00022_ILE 00075_LYS
+    writing acf: 0.0016 [s]
+    writing acf: 0.0012 [s]
+loading for 231/770 00022_ILE 00074_LEU ... ** load time: 0.001 [s]
+loading for 232/770 00022_ILE 00032_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00022_ILE 00074_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 233/770 00022_ILE 00070_ALA ... **     cal time: 0.000 [s] for 00022_ILE 00032_PHE
+load time: 0.001 [s]
+loading for 234/770 00022_ILE 00072_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00022_ILE 00070_ALA
+    cal time: 0.000 [s] for 00022_ILE 00072_ILE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 235/770 00022_ILE 00035_PHE ... ** load time: 0.001 [s]
+loading for 236/770 00023_VAL 00071_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00022_ILE 00035_PHE
+    cal time: 0.000 [s] for 00023_VAL 00071_ALA
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 237/770 00023_VAL 00025_GLY ... ** load time: 0.001 [s]
+loading for 238/770 00023_VAL 00066_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00023_VAL 00025_GLY
+    cal time: 0.000 [s] for 00023_VAL 00066_SER
+    writing acf: 0.0013 [s]
+    writing acf: 0.0012 [s]
+loading for 239/770 00023_VAL 00067_HID ... ** load time: 0.001 [s]
+loading for 240/770 00023_VAL 00031_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00023_VAL 00067_HID
+    writing acf: 0.0013 [s]
+    cal time: 0.000 [s] for 00023_VAL 00031_ILE
+    writing acf: 0.0012 [s]
+loading for 241/770 00023_VAL 00069_GLN ... ** load time: 0.001 [s]
+loading for 242/770 00023_VAL 00034_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00023_VAL 00069_GLN
+    cal time: 0.000 [s] for 00023_VAL 00034_SER
+    writing acf: 0.0012 [s]
+    writing acf: 0.0013 [s]
+loading for 243/770 00023_VAL 00024_GLY ... ** load time: 0.001 [s]
+loading for 244/770 00023_VAL 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00023_VAL 00024_GLY
+    writing acf: 0.0012 [s]
+    cal time: 0.000 [s] for 00023_VAL 00074_LEU
+    writing acf: 0.0012 [s]
+loading for 245/770 00023_VAL 00032_PHE ... ** load time: 0.001 [s]
+loading for 246/770 00023_VAL 00035_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00023_VAL 00032_PHE
+    cal time: 0.000 [s] for 00023_VAL 00035_PHE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 247/770 00023_VAL 00070_ALA ... ** load time: 0.001 [s]
+loading for 248/770 00023_VAL 00072_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00023_VAL 00070_ALA
+    cal time: 0.000 [s] for 00023_VAL 00072_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 249/770 00023_VAL 00068_GLU ... ** load time: 0.001 [s]
+loading for 250/770 00023_VAL 00033_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00023_VAL 00068_GLU
+    cal time: 0.000 [s] for 00023_VAL 00033_ILE
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 251/770 00024_GLY 00095_PHE ... ** load time: 0.001 [s]
+loading for 252/770 00024_GLY 00071_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00095_PHE
+    cal time: 0.000 [s] for 00024_GLY 00071_ALA
+    writing acf: 0.0008 [s]
+    writing acf: 0.0010 [s]
+loading for 253/770 00024_GLY 00030_GLY ... ** load time: 0.001 [s]
+loading for 254/770 00024_GLY 00025_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00030_GLY
+    cal time: 0.000 [s] for 00024_GLY 00025_GLY
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 255/770 00024_GLY 00033_ILE ... ** load time: 0.001 [s]
+loading for 256/770 00024_GLY 00067_HID ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00033_ILE
+    cal time: 0.000 [s] for 00024_GLY 00067_HID
+    writing acf: 0.0009 [s]
+    writing acf: 0.0010 [s]
+loading for 257/770 00024_GLY 00031_ILE ... ** load time: 0.001 [s]
+loading for 258/770 00024_GLY 00069_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00031_ILE
+    cal time: 0.000 [s] for 00024_GLY 00069_GLN
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 259/770 00024_GLY 00034_SER ... ** load time: 0.001 [s]
+loading for 260/770 00024_GLY 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00034_SER
+    cal time: 0.000 [s] for 00024_GLY 00065_ALA
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 261/770 00024_GLY 00032_PHE ... ** load time: 0.001 [s]
+loading for 262/770 00024_GLY 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00032_PHE
+    cal time: 0.000 [s] for 00024_GLY 00074_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 263/770 00024_GLY 00066_SER ... ** load time: 0.001 [s]
+loading for 264/770 00024_GLY 00070_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00066_SER
+    cal time: 0.000 [s] for 00024_GLY 00070_ALA
+    writing acf: 0.0011 [s]
+    writing acf: 0.0013 [s]
+loading for 265/770 00024_GLY 00068_GLU ... ** load time: 0.001 [s]
+loading for 266/770 00024_GLY 00026_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00024_GLY 00068_GLU
+    cal time: 0.000 [s] for 00024_GLY 00026_GLU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0010 [s]
+loading for 267/770 00025_GLY 00064_ASN ... ** load time: 0.001 [s]
+loading for 268/770 00025_GLY 00030_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00064_ASN
+    cal time: 0.000 [s] for 00025_GLY 00030_GLY
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 269/770 00025_GLY 00092_TYR ... ** load time: 0.001 [s]
+loading for 270/770 00025_GLY 00026_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00092_TYR
+    cal time: 0.000 [s] for 00025_GLY 00026_GLU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 271/770 00025_GLY 00067_HID ... ** load time: 0.001 [s]
+loading for 272/770 00025_GLY 00029_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00067_HID
+    cal time: 0.000 [s] for 00025_GLY 00029_GLU
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 273/770 00025_GLY 00031_ILE ... ** load time: 0.001 [s]
+loading for 274/770 00025_GLY 00069_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00031_ILE
+    cal time: 0.000 [s] for 00025_GLY 00069_GLN
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 275/770 00025_GLY 00034_SER ... ** load time: 0.001 [s]
+loading for 276/770 00025_GLY 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00034_SER
+    cal time: 0.000 [s] for 00025_GLY 00065_ALA
+    writing acf: 0.0013 [s]
+    writing acf: 0.0011 [s]
+loading for 277/770 00025_GLY 00032_PHE ... ** load time: 0.001 [s]
+loading for 278/770 00025_GLY 00027_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00032_PHE
+    cal time: 0.000 [s] for 00025_GLY 00027_ASP
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 279/770 00025_GLY 00070_ALA ... ** load time: 0.001 [s]
+loading for 280/770 00025_GLY 00068_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00070_ALA
+    cal time: 0.000 [s] for 00025_GLY 00068_GLU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0010 [s]
+loading for 281/770 00025_GLY 00066_SER ... ** load time: 0.001 [s]
+loading for 282/770 00026_GLU 00064_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00025_GLY 00066_SER
+    cal time: 0.000 [s] for 00026_GLU 00064_ASN
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 283/770 00026_GLU 00030_GLY ... ** load time: 0.001 [s]
+loading for 284/770 00026_GLU 00092_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00026_GLU 00030_GLY
+    cal time: 0.000 [s] for 00026_GLU 00092_TYR
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 285/770 00026_GLU 00066_SER ... ** load time: 0.001 [s]
+loading for 286/770 00026_GLU 00028_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00026_GLU 00066_SER
+    cal time: 0.000 [s] for 00026_GLU 00028_GLY
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 287/770 00026_GLU 00067_HID ... ** load time: 0.001 [s]
+loading for 288/770 00026_GLU 00029_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00026_GLU 00067_HID
+    cal time: 0.000 [s] for 00026_GLU 00029_GLU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 289/770 00026_GLU 00031_ILE ... ** load time: 0.001 [s]
+loading for 290/770 00026_GLU 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00026_GLU 00031_ILE
+    cal time: 0.000 [s] for 00026_GLU 00065_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 291/770 00026_GLU 00053_GLN ... ** load time: 0.001 [s]
+loading for 292/770 00026_GLU 00032_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00026_GLU 00053_GLN
+    cal time: 0.000 [s] for 00026_GLU 00032_PHE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 293/770 00026_GLU 00068_GLU ... ** load time: 0.001 [s]
+loading for 294/770 00026_GLU 00027_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00026_GLU 00068_GLU
+    cal time: 0.000 [s] for 00026_GLU 00027_ASP
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 295/770 00026_GLU 00070_ALA ... ** load time: 0.001 [s]
+loading for 296/770 00026_GLU 00091_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00026_GLU 00070_ALA
+    cal time: 0.000 [s] for 00026_GLU 00091_GLU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 297/770 00027_ASP 00064_ASN ... ** load time: 0.001 [s]
+loading for 298/770 00027_ASP 00030_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00027_ASP 00064_ASN
+    cal time: 0.000 [s] for 00027_ASP 00030_GLY
+    writing acf: 0.0009 [s]
+    writing acf: 0.0010 [s]
+loading for 299/770 00027_ASP 00092_TYR ... ** load time: 0.001 [s]
+loading for 300/770 00027_ASP 00066_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00027_ASP 00092_TYR
+    cal time: 0.000 [s] for 00027_ASP 00066_SER
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 301/770 00027_ASP 00028_GLY ... ** load time: 0.001 [s]
+loading for 302/770 00027_ASP 00067_HID ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00027_ASP 00028_GLY
+    cal time: 0.000 [s] for 00027_ASP 00067_HID
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 303/770 00027_ASP 00029_GLU ... ** load time: 0.001 [s]
+loading for 304/770 00027_ASP 00069_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00027_ASP 00029_GLU
+    cal time: 0.000 [s] for 00027_ASP 00069_GLN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 305/770 00027_ASP 00065_ALA ... ** load time: 0.001 [s]
+loading for 306/770 00027_ASP 00068_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00027_ASP 00065_ALA
+    cal time: 0.000 [s] for 00027_ASP 00068_GLU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 307/770 00027_ASP 00032_PHE ... ** load time: 0.001 [s]
+loading for 308/770 00028_GLY 00064_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00028_GLY 00064_ASN
+    cal time: 0.000 [s] for 00027_ASP 00032_PHE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 309/770 00028_GLY 00030_GLY ... ** load time: 0.001 [s]
+loading for 310/770 00028_GLY 00063_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00028_GLY 00030_GLY
+    cal time: 0.000 [s] for 00028_GLY 00063_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0013 [s]
+loading for 311/770 00028_GLY 00066_SER ... ** load time: 0.001 [s]
+loading for 312/770 00028_GLY 00029_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00028_GLY 00066_SER
+    cal time: 0.000 [s] for 00028_GLY 00029_GLU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 313/770 00028_GLY 00055_LEU ... ** load time: 0.001 [s]
+loading for 314/770 00028_GLY 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00028_GLY 00055_LEU
+    cal time: 0.000 [s] for 00028_GLY 00065_ALA
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 315/770 00028_GLY 00053_GLN ... ** load time: 0.001 [s]
+loading for 316/770 00029_GLU 00054_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00028_GLY 00053_GLN
+    cal time: 0.000 [s] for 00029_GLU 00054_ILE
+    writing acf: 0.0009 [s]
+    writing acf: 0.0011 [s]
+loading for 317/770 00029_GLU 00064_ASN ... ** load time: 0.001 [s]
+loading for 318/770 00029_GLU 00030_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00029_GLU 00064_ASN
+    cal time: 0.000 [s] for 00029_GLU 00030_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 319/770 00029_GLU 00092_TYR ... ** load time: 0.001 [s]
+loading for 320/770 00029_GLU 00066_SER ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00029_GLU 00092_TYR
+    cal time: 0.000 [s] for 00029_GLU 00066_SER
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 321/770 00029_GLU 00090_GLU ... ** load time: 0.001 [s]
+loading for 322/770 00029_GLU 00055_LEU ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00029_GLU 00090_GLU
+    cal time: 0.000 [s] for 00029_GLU 00055_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 323/770 00029_GLU 00065_ALA ... ** load time: 0.001 [s]
+loading for 324/770 00029_GLU 00053_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00029_GLU 00053_GLN
+    cal time: 0.000 [s] for 00029_GLU 00065_ALA
+    writing acf: 0.0010 [s]
+    writing acf: 0.0008 [s]
+loading for 325/770 00029_GLU 00032_PHE ... ** load time: 0.001 [s]
+loading for 326/770 00029_GLU 00091_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00029_GLU 00032_PHE
+    cal time: 0.000 [s] for 00029_GLU 00091_GLU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 327/770 00029_GLU 00031_ILE ... ** load time: 0.001 [s]
+loading for 328/770 00029_GLU 00089_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00029_GLU 00031_ILE
+    cal time: 0.000 [s] for 00029_GLU 00089_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 329/770 00030_GLY 00054_ILE ... ** load time: 0.001 [s]
+loading for 330/770 00030_GLY 00064_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00030_GLY 00054_ILE
+    cal time: 0.000 [s] for 00030_GLY 00064_ASN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 331/770 00030_GLY 00092_TYR ... ** load time: 0.001 [s]
+loading for 332/770 00030_GLY 00063_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00030_GLY 00092_TYR
+    cal time: 0.000 [s] for 00030_GLY 00063_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 333/770 00030_GLY 00066_SER ... ** load time: 0.001 [s]
+loading for 334/770 00030_GLY 00055_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00030_GLY 00066_SER
+    cal time: 0.000 [s] for 00030_GLY 00055_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 335/770 00030_GLY 00031_ILE ... ** load time: 0.001 [s]
+loading for 336/770 00030_GLY 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00030_GLY 00031_ILE
+    cal time: 0.000 [s] for 00030_GLY 00065_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 337/770 00030_GLY 00089_PRO ... ** load time: 0.001 [s]
+loading for 338/770 00030_GLY 00053_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00030_GLY 00089_PRO
+    cal time: 0.000 [s] for 00030_GLY 00053_GLN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 339/770 00030_GLY 00032_PHE ... ** load time: 0.001 [s]
+loading for 340/770 00031_ILE 00054_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00030_GLY 00032_PHE
+    cal time: 0.000 [s] for 00031_ILE 00054_ILE
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 341/770 00031_ILE 00064_ASN ... ** load time: 0.001 [s]
+loading for 342/770 00031_ILE 00092_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00064_ASN
+    cal time: 0.000 [s] for 00031_ILE 00092_TYR
+    writing acf: 0.0012 [s]
+    writing acf: 0.0008 [s]
+loading for 343/770 00031_ILE 00033_ILE ... ** load time: 0.001 [s]
+loading for 344/770 00031_ILE 00057_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00033_ILE
+    cal time: 0.000 [s] for 00031_ILE 00057_VAL
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 345/770 00031_ILE 00067_HID ... ** load time: 0.001 [s]
+loading for 346/770 00031_ILE 00073_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00067_HID
+    cal time: 0.000 [s] for 00031_ILE 00073_ALA
+    writing acf: 0.0009 [s]
+    writing acf: 0.0012 [s]
+loading for 347/770 00031_ILE 00055_LEU ... ** load time: 0.001 [s]
+loading for 348/770 00031_ILE 00069_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00055_LEU
+    cal time: 0.000 [s] for 00031_ILE 00069_GLN
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 349/770 00031_ILE 00034_SER ... ** load time: 0.001 [s]
+loading for 350/770 00031_ILE 00071_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00034_SER
+    cal time: 0.000 [s] for 00031_ILE 00071_ALA
+    writing acf: 0.0010 [s]
+    writing acf: 0.0010 [s]
+loading for 351/770 00031_ILE 00074_LEU ... ** load time: 0.001 [s]
+loading for 352/770 00031_ILE 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00065_ALA
+    cal time: 0.000 [s] for 00031_ILE 00074_LEU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 353/770 00031_ILE 00053_GLN ... ** load time: 0.001 [s]
+loading for 354/770 00031_ILE 00032_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00053_GLN
+    cal time: 0.000 [s] for 00031_ILE 00032_PHE
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 355/770 00031_ILE 00056_SER ... ** load time: 0.001 [s]
+loading for 356/770 00031_ILE 00052_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00056_SER
+    cal time: 0.000 [s] for 00031_ILE 00052_ASP
+    writing acf: 0.0010 [s]
+    writing acf: 0.0015 [s]
+loading for 357/770 00031_ILE 00070_ALA ... ** load time: 0.001 [s]
+loading for 358/770 00031_ILE 00089_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00070_ALA
+    cal time: 0.000 [s] for 00031_ILE 00089_PRO
+    writing acf: 0.0010 [s]
+    writing acf: 0.0011 [s]
+loading for 359/770 00031_ILE 00066_SER ... ** load time: 0.001 [s]
+loading for 360/770 00032_PHE 00054_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00031_ILE 00066_SER
+    cal time: 0.000 [s] for 00032_PHE 00054_ILE
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 361/770 00032_PHE 00092_TYR ... ** load time: 0.001 [s]
+loading for 362/770 00032_PHE 00033_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00032_PHE 00092_TYR
+    cal time: 0.000 [s] for 00032_PHE 00033_ILE
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 363/770 00032_PHE 00067_HID ... ** load time: 0.001 [s]
+loading for 364/770 00032_PHE 00095_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00032_PHE 00067_HID
+    cal time: 0.000 [s] for 00032_PHE 00095_PHE
+    writing acf: 0.0008 [s]
+    writing acf: 0.0009 [s]
+loading for 365/770 00032_PHE 00034_SER ... ** load time: 0.001 [s]
+loading for 366/770 00032_PHE 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00032_PHE 00034_SER
+    cal time: 0.000 [s] for 00032_PHE 00065_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 367/770 00032_PHE 00053_GLN ... ** load time: 0.001 [s]
+loading for 368/770 00032_PHE 00035_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00032_PHE 00053_GLN
+    cal time: 0.000 [s] for 00032_PHE 00035_PHE
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 369/770 00032_PHE 00052_ASP ... ** load time: 0.001 [s]
+loading for 370/770 00032_PHE 00070_ALA ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00032_PHE 00052_ASP
+    cal time: 0.000 [s] for 00032_PHE 00070_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 371/770 00032_PHE 00089_PRO ... ** load time: 0.001 [s]
+loading for 372/770 00032_PHE 00066_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00032_PHE 00089_PRO
+    cal time: 0.000 [s] for 00032_PHE 00066_SER
+    writing acf: 0.0012 [s]
+    writing acf: 0.0010 [s]
+loading for 373/770 00033_ILE 00054_ILE ... ** load time: 0.001 [s]
+loading for 374/770 00033_ILE 00092_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00054_ILE
+    cal time: 0.000 [s] for 00033_ILE 00092_TYR
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 375/770 00033_ILE 00051_GLY ... ** load time: 0.001 [s]
+loading for 376/770 00033_ILE 00085_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00051_GLY
+    cal time: 0.000 [s] for 00033_ILE 00085_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 377/770 00033_ILE 00036_ILE ... ** load time: 0.001 [s]
+loading for 378/770 00033_ILE 00095_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00095_PHE
+    cal time: 0.000 [s] for 00033_ILE 00036_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 379/770 00033_ILE 00034_SER ... ** load time: 0.001 [s]
+loading for 380/770 00033_ILE 00037_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00034_SER
+    cal time: 0.000 [s] for 00033_ILE 00037_LEU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 381/770 00033_ILE 00053_GLN ... ** load time: 0.001 [s]
+loading for 382/770 00033_ILE 00035_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00053_GLN
+    cal time: 0.000 [s] for 00033_ILE 00035_PHE
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 383/770 00033_ILE 00050_LYS ... ** load time: 0.001 [s]
+loading for 384/770 00033_ILE 00052_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00052_ASP
+    cal time: 0.000 [s] for 00033_ILE 00050_LYS
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 385/770 00033_ILE 00083_ILE ... ** load time: 0.001 [s]
+loading for 386/770 00033_ILE 00089_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00083_ILE
+    cal time: 0.000 [s] for 00033_ILE 00089_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 387/770 00033_ILE 00049_ARG ... ** load time: 0.001 [s]
+loading for 388/770 00033_ILE 00096_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00033_ILE 00049_ARG
+    cal time: 0.000 [s] for 00033_ILE 00096_GLU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0009 [s]
+loading for 389/770 00034_SER 00095_PHE ... ** load time: 0.001 [s]
+loading for 390/770 00034_SER 00067_HID ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00034_SER 00095_PHE
+    cal time: 0.000 [s] for 00034_SER 00067_HID
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 391/770 00034_SER 00035_PHE ... ** load time: 0.001 [s]
+loading for 392/770 00034_SER 00036_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00034_SER 00035_PHE
+    cal time: 0.000 [s] for 00034_SER 00036_ILE
+    writing acf: 0.0008 [s]
+    writing acf: 0.0008 [s]
+loading for 393/770 00035_PHE 00037_LEU ... ** load time: 0.001 [s]
+loading for 394/770 00035_PHE 00036_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00035_PHE 00037_LEU
+    cal time: 0.000 [s] for 00035_PHE 00036_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0009 [s]
+loading for 395/770 00036_ILE 00038_ALA ... ** load time: 0.001 [s]
+loading for 396/770 00036_ILE 00039_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00036_ILE 00038_ALA
+    cal time: 0.000 [s] for 00036_ILE 00039_GLY
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 397/770 00036_ILE 00040_GLY ... ** load time: 0.001 [s]
+loading for 398/770 00036_ILE 00050_LYS ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00036_ILE 00040_GLY
+    cal time: 0.000 [s] for 00036_ILE 00050_LYS
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 399/770 00036_ILE 00041_PRO ... ** load time: 0.001 [s]
+loading for 400/770 00036_ILE 00037_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00036_ILE 00041_PRO
+    cal time: 0.000 [s] for 00036_ILE 00037_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0010 [s]
+loading for 401/770 00036_ILE 00047_GLU ... ** load time: 0.001 [s]
+loading for 402/770 00036_ILE 00096_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00036_ILE 00047_GLU
+    cal time: 0.000 [s] for 00036_ILE 00096_GLU
+    writing acf: 0.0010 [s]
+    writing acf: 0.0011 [s]
+loading for 403/770 00037_LEU 00038_ALA ... ** load time: 0.001 [s]
+loading for 404/770 00037_LEU 00039_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00037_LEU 00038_ALA
+    cal time: 0.000 [s] for 00037_LEU 00039_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 405/770 00037_LEU 00040_GLY ... ** load time: 0.001 [s]
+loading for 406/770 00037_LEU 00041_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00037_LEU 00040_GLY
+    cal time: 0.000 [s] for 00037_LEU 00041_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 407/770 00038_ALA 00039_GLY ... ** load time: 0.001 [s]
+loading for 408/770 00038_ALA 00041_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00038_ALA 00039_GLY
+    cal time: 0.000 [s] for 00038_ALA 00041_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0009 [s]
+loading for 409/770 00038_ALA 00040_GLY ... ** load time: 0.001 [s]
+loading for 410/770 00038_ALA 00047_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00038_ALA 00047_GLU
+    cal time: 0.000 [s] for 00038_ALA 00040_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 411/770 00038_ALA 00050_LYS ... ** load time: 0.001 [s]
+loading for 412/770 00039_GLY 00040_GLY ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00038_ALA 00050_LYS
+    cal time: 0.000 [s] for 00039_GLY 00040_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 413/770 00039_GLY 00050_LYS ... ** load time: 0.000 [s]
+loading for 414/770 00039_GLY 00041_PRO ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00039_GLY 00050_LYS
+    cal time: 0.000 [s] for 00039_GLY 00041_PRO
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 415/770 00039_GLY 00042_ALA ... ** load time: 0.001 [s]
+loading for 416/770 00039_GLY 00047_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00039_GLY 00047_GLU
+    cal time: 0.000 [s] for 00039_GLY 00042_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 417/770 00040_GLY 00048_LEU ... ** load time: 0.001 [s]
+loading for 418/770 00040_GLY 00043_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00040_GLY 00048_LEU
+    cal time: 0.000 [s] for 00040_GLY 00043_ASP
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 419/770 00040_GLY 00050_LYS ... ** load time: 0.001 [s]
+loading for 420/770 00040_GLY 00041_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00040_GLY 00050_LYS
+    cal time: 0.000 [s] for 00040_GLY 00041_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 421/770 00040_GLY 00042_ALA ... ** load time: 0.001 [s]
+loading for 422/770 00040_GLY 00047_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00040_GLY 00042_ALA
+    cal time: 0.000 [s] for 00040_GLY 00047_GLU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0008 [s]
+loading for 423/770 00041_PRO 00049_ARG ... ** load time: 0.001 [s]
+loading for 424/770 00041_PRO 00048_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00041_PRO 00049_ARG
+    cal time: 0.000 [s] for 00041_PRO 00048_LEU
+    writing acf: 0.0008 [s]
+    writing acf: 0.0012 [s]
+loading for 425/770 00041_PRO 00044_LEU ... ** load time: 0.001 [s]
+loading for 426/770 00041_PRO 00043_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00041_PRO 00044_LEU
+    cal time: 0.000 [s] for 00041_PRO 00043_ASP
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 427/770 00041_PRO 00050_LYS ... ** load time: 0.001 [s]
+loading for 428/770 00041_PRO 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00041_PRO 00083_ILE
+    cal time: 0.000 [s] for 00041_PRO 00050_LYS
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 429/770 00041_PRO 00042_ALA ... ** load time: 0.001 [s]
+loading for 430/770 00041_PRO 00047_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00041_PRO 00047_GLU
+    cal time: 0.000 [s] for 00041_PRO 00042_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 431/770 00042_ALA 00046_GLY ... ** load time: 0.001 [s]
+loading for 432/770 00042_ALA 00048_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00042_ALA 00046_GLY
+    cal time: 0.000 [s] for 00042_ALA 00048_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 433/770 00042_ALA 00045_SER ... ** load time: 0.001 [s]
+loading for 434/770 00042_ALA 00044_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00042_ALA 00045_SER
+    cal time: 0.000 [s] for 00042_ALA 00044_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 435/770 00042_ALA 00043_ASP ... ** load time: 0.001 [s]
+loading for 436/770 00042_ALA 00047_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00042_ALA 00043_ASP
+    cal time: 0.000 [s] for 00042_ALA 00047_GLU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 437/770 00042_ALA 00083_ILE ... ** load time: 0.001 [s]
+loading for 438/770 00042_ALA 00049_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00042_ALA 00083_ILE
+    cal time: 0.000 [s] for 00042_ALA 00049_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0010 [s]
+loading for 439/770 00043_ASP 00046_GLY ... ** load time: 0.001 [s]
+loading for 440/770 00043_ASP 00048_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00043_ASP 00046_GLY
+    cal time: 0.000 [s] for 00043_ASP 00048_LEU
+    writing acf: 0.0010 [s]
+    writing acf: 0.0010 [s]
+loading for 441/770 00043_ASP 00045_SER ... ** load time: 0.001 [s]
+loading for 442/770 00043_ASP 00044_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00043_ASP 00045_SER
+    cal time: 0.000 [s] for 00043_ASP 00044_LEU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 443/770 00043_ASP 00047_GLU ... ** load time: 0.001 [s]
+loading for 444/770 00044_LEU 00046_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00043_ASP 00047_GLU
+    cal time: 0.000 [s] for 00044_LEU 00046_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0009 [s]
+loading for 445/770 00044_LEU 00048_LEU ... ** load time: 0.001 [s]
+loading for 446/770 00044_LEU 00045_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00044_LEU 00048_LEU
+    cal time: 0.000 [s] for 00044_LEU 00045_SER
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 447/770 00044_LEU 00047_GLU ... ** load time: 0.001 [s]
+loading for 448/770 00045_SER 00046_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00044_LEU 00047_GLU
+    cal time: 0.000 [s] for 00045_SER 00046_GLY
+    writing acf: 0.0009 [s]
+    writing acf: 0.0012 [s]
+loading for 449/770 00045_SER 00048_LEU ... ** load time: 0.001 [s]
+loading for 450/770 00045_SER 00047_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00045_SER 00048_LEU
+    cal time: 0.000 [s] for 00045_SER 00047_GLU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0012 [s]
+loading for 451/770 00046_GLY 00048_LEU ... ** load time: 0.001 [s]
+loading for 452/770 00046_GLY 00047_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00046_GLY 00048_LEU
+    cal time: 0.000 [s] for 00046_GLY 00047_GLU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 453/770 00047_GLU 00048_LEU ... ** load time: 0.001 [s]
+loading for 454/770 00047_GLU 00049_ARG ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00047_GLU 00048_LEU
+    cal time: 0.000 [s] for 00047_GLU 00049_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 455/770 00047_GLU 00050_LYS ... ** load time: 0.001 [s]
+loading for 456/770 00048_LEU 00083_ILE ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00047_GLU 00050_LYS
+    cal time: 0.000 [s] for 00048_LEU 00083_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 457/770 00048_LEU 00050_LYS ... ** load time: 0.001 [s]
+loading for 458/770 00048_LEU 00049_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00048_LEU 00050_LYS
+    cal time: 0.000 [s] for 00048_LEU 00049_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0011 [s]
+loading for 459/770 00048_LEU 00085_ALA ... ** load time: 0.001 [s]
+loading for 460/770 00049_ARG 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00049_ARG 00084_ILE
+    cal time: 0.000 [s] for 00048_LEU 00085_ALA
+    writing acf: 0.0013 [s]
+    writing acf: 0.0007 [s]
+loading for 461/770 00049_ARG 00054_ILE ... ** load time: 0.001 [s]
+loading for 462/770 00049_ARG 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00049_ARG 00054_ILE
+    cal time: 0.000 [s] for 00049_ARG 00081_VAL
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 463/770 00049_ARG 00086_GLN ... ** load time: 0.001 [s]
+loading for 464/770 00049_ARG 00051_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00049_ARG 00086_GLN
+    cal time: 0.000 [s] for 00049_ARG 00051_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 465/770 00049_ARG 00085_ALA ... ** load time: 0.001 [s]
+loading for 466/770 00049_ARG 00050_LYS ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00049_ARG 00085_ALA
+    cal time: 0.000 [s] for 00049_ARG 00050_LYS
+    writing acf: 0.0007 [s]
+    writing acf: 0.0008 [s]
+loading for 467/770 00049_ARG 00052_ASP ... ** load time: 0.001 [s]
+loading for 468/770 00049_ARG 00056_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00049_ARG 00056_SER
+    cal time: 0.000 [s] for 00049_ARG 00052_ASP
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 469/770 00049_ARG 00083_ILE ... ** load time: 0.001 [s]
+loading for 470/770 00049_ARG 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00049_ARG 00083_ILE
+    cal time: 0.000 [s] for 00049_ARG 00082_THR
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 471/770 00050_LYS 00054_ILE ... ** load time: 0.001 [s]
+loading for 472/770 00050_LYS 00088_LYS ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00050_LYS 00054_ILE
+    cal time: 0.000 [s] for 00050_LYS 00088_LYS
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 473/770 00050_LYS 00051_GLY ... ** load time: 0.001 [s]
+loading for 474/770 00050_LYS 00085_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00050_LYS 00051_GLY
+    cal time: 0.000 [s] for 00050_LYS 00085_ALA
+    writing acf: 0.0008 [s]
+    writing acf: 0.0012 [s]
+loading for 475/770 00050_LYS 00052_ASP ... ** load time: 0.001 [s]
+loading for 476/770 00050_LYS 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00050_LYS 00052_ASP
+    cal time: 0.000 [s] for 00050_LYS 00083_ILE
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 477/770 00050_LYS 00096_GLU ... ** load time: 0.001 [s]
+loading for 478/770 00051_GLY 00054_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00050_LYS 00096_GLU
+    cal time: 0.000 [s] for 00051_GLY 00054_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 479/770 00051_GLY 00088_LYS ... ** load time: 0.001 [s]
+loading for 480/770 00051_GLY 00087_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00051_GLY 00088_LYS
+    cal time: 0.000 [s] for 00051_GLY 00087_TYR
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 481/770 00051_GLY 00085_ALA ... ** load time: 0.001 [s]
+loading for 482/770 00051_GLY 00052_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00051_GLY 00052_ASP
+    cal time: 0.000 [s] for 00051_GLY 00085_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 483/770 00051_GLY 00089_PRO ... ** load time: 0.001 [s]
+loading for 484/770 00051_GLY 00053_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00051_GLY 00089_PRO
+    cal time: 0.000 [s] for 00051_GLY 00053_GLN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 485/770 00051_GLY 00093_SER ... ** load time: 0.001 [s]
+loading for 486/770 00051_GLY 00096_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00051_GLY 00096_GLU
+    cal time: 0.000 [s] for 00051_GLY 00093_SER
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 487/770 00052_ASP 00084_ILE ... ** load time: 0.001 [s]
+loading for 488/770 00052_ASP 00054_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00052_ASP 00054_ILE
+    cal time: 0.000 [s] for 00052_ASP 00084_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0008 [s]
+loading for 489/770 00052_ASP 00088_LYS ... ** load time: 0.001 [s]
+loading for 490/770 00052_ASP 00087_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00052_ASP 00088_LYS
+    cal time: 0.000 [s] for 00052_ASP 00087_TYR
+    writing acf: 0.0012 [s]
+    writing acf: 0.0007 [s]
+loading for 491/770 00052_ASP 00086_GLN ... ** load time: 0.001 [s]
+loading for 492/770 00052_ASP 00085_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00052_ASP 00086_GLN
+    cal time: 0.000 [s] for 00052_ASP 00085_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 493/770 00052_ASP 00055_LEU ... ** load time: 0.001 [s]
+loading for 494/770 00052_ASP 00089_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00052_ASP 00055_LEU
+    cal time: 0.000 [s] for 00052_ASP 00089_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0011 [s]
+loading for 495/770 00052_ASP 00053_GLN ... ** load time: 0.001 [s]
+loading for 496/770 00052_ASP 00096_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00052_ASP 00053_GLN
+    cal time: 0.000 [s] for 00052_ASP 00096_GLU
+    writing acf: 0.0008 [s]
+    writing acf: 0.0010 [s]
+loading for 497/770 00053_GLN 00084_ILE ... ** load time: 0.001 [s]
+loading for 498/770 00053_GLN 00054_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00053_GLN 00084_ILE
+    cal time: 0.000 [s] for 00053_GLN 00054_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 499/770 00053_GLN 00064_ASN ... ** load time: 0.001 [s]
+loading for 500/770 00053_GLN 00092_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00053_GLN 00064_ASN
+    cal time: 0.000 [s] for 00053_GLN 00092_TYR
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 501/770 00053_GLN 00085_ALA ... ** load time: 0.001 [s]
+loading for 502/770 00053_GLN 00090_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00053_GLN 00085_ALA
+    cal time: 0.000 [s] for 00053_GLN 00090_GLU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 503/770 00053_GLN 00055_LEU ... ** load time: 0.001 [s]
+loading for 504/770 00053_GLN 00088_LYS ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00053_GLN 00088_LYS
+    cal time: 0.000 [s] for 00053_GLN 00055_LEU
+    writing acf: 0.0013 [s]
+    writing acf: 0.0010 [s]
+loading for 505/770 00053_GLN 00091_GLU ... ** load time: 0.001 [s]
+loading for 506/770 00053_GLN 00056_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00053_GLN 00091_GLU
+    cal time: 0.000 [s] for 00053_GLN 00056_SER
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 507/770 00053_GLN 00087_TYR ... ** load time: 0.001 [s]
+loading for 508/770 00053_GLN 00063_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00053_GLN 00087_TYR
+    cal time: 0.000 [s] for 00053_GLN 00063_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 509/770 00053_GLN 00086_GLN ... ** load time: 0.001 [s]
+loading for 510/770 00053_GLN 00089_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00053_GLN 00086_GLN
+    cal time: 0.000 [s] for 00053_GLN 00089_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 511/770 00054_ILE 00084_ILE ... ** load time: 0.001 [s]
+loading for 512/770 00054_ILE 00064_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00054_ILE 00084_ILE
+    cal time: 0.000 [s] for 00054_ILE 00064_ASN
+    writing acf: 0.0012 [s]
+    writing acf: 0.0010 [s]
+loading for 513/770 00054_ILE 00081_VAL ... ** load time: 0.001 [s]
+loading for 514/770 00054_ILE 00057_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00054_ILE 00081_VAL
+    cal time: 0.000 [s] for 00054_ILE 00057_VAL
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 515/770 00054_ILE 00085_ALA ... ** load time: 0.001 [s]
+loading for 516/770 00054_ILE 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00054_ILE 00085_ALA
+    cal time: 0.000 [s] for 00054_ILE 00083_ILE
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 517/770 00054_ILE 00055_LEU ... ** load time: 0.001 [s]
+loading for 518/770 00054_ILE 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00054_ILE 00055_LEU
+    cal time: 0.000 [s] for 00054_ILE 00074_LEU
+    writing acf: 0.0007 [s]
+    writing acf: 0.0011 [s]
+loading for 519/770 00054_ILE 00065_ALA ... ** load time: 0.001 [s]
+loading for 520/770 00054_ILE 00056_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00054_ILE 00065_ALA
+    writing acf: 0.0012 [s]
+    cal time: 0.000 [s] for 00054_ILE 00056_SER
+    writing acf: 0.0008 [s]
+loading for 521/770 00054_ILE 00063_ARG ... ** load time: 0.001 [s]
+loading for 522/770 00054_ILE 00086_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00054_ILE 00063_ARG
+    cal time: 0.000 [s] for 00054_ILE 00086_GLN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 523/770 00054_ILE 00089_PRO ... ** load time: 0.001 [s]
+loading for 524/770 00055_LEU 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00084_ILE
+    cal time: 0.000 [s] for 00054_ILE 00089_PRO
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 525/770 00055_LEU 00059_GLY ... ** load time: 0.001 [s]
+loading for 526/770 00055_LEU 00057_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00057_VAL
+    cal time: 0.000 [s] for 00055_LEU 00059_GLY
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 527/770 00055_LEU 00085_ALA ... ** load time: 0.001 [s]
+loading for 528/770 00055_LEU 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00085_ALA
+    cal time: 0.000 [s] for 00055_LEU 00083_ILE
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 529/770 00055_LEU 00064_ASN ... ** load time: 0.001 [s]
+loading for 530/770 00055_LEU 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00064_ASN
+    cal time: 0.000 [s] for 00055_LEU 00065_ALA
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 531/770 00055_LEU 00082_THR ... ** load time: 0.001 [s]
+loading for 532/770 00055_LEU 00058_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00082_THR
+    cal time: 0.000 [s] for 00055_LEU 00058_ASN
+    writing acf: 0.0012 [s]
+    writing acf: 0.0010 [s]
+loading for 533/770 00055_LEU 00062_LEU ... ** load time: 0.001 [s]
+loading for 534/770 00055_LEU 00056_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00062_LEU
+    cal time: 0.000 [s] for 00055_LEU 00056_SER
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 535/770 00055_LEU 00087_TYR ... ** load time: 0.001 [s]
+loading for 536/770 00055_LEU 00063_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00087_TYR
+    cal time: 0.000 [s] for 00055_LEU 00063_ARG
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 537/770 00055_LEU 00086_GLN ... ** load time: 0.001 [s]
+loading for 538/770 00055_LEU 00061_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00055_LEU 00086_GLN
+    cal time: 0.000 [s] for 00055_LEU 00061_ASP
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 539/770 00056_SER 00084_ILE ... ** load time: 0.001 [s]
+loading for 540/770 00056_SER 00059_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00059_GLY
+    cal time: 0.000 [s] for 00056_SER 00084_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0013 [s]
+loading for 541/770 00056_SER 00081_VAL ... ** load time: 0.001 [s]
+loading for 542/770 00056_SER 00057_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00081_VAL
+    cal time: 0.000 [s] for 00056_SER 00057_VAL
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 543/770 00056_SER 00085_ALA ... ** load time: 0.001 [s]
+loading for 544/770 00056_SER 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00085_ALA
+    cal time: 0.000 [s] for 00056_SER 00083_ILE
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 545/770 00056_SER 00065_ALA ... ** load time: 0.001 [s]
+loading for 546/770 00056_SER 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00065_ALA
+    cal time: 0.000 [s] for 00056_SER 00082_THR
+    writing acf: 0.0009 [s]
+    writing acf: 0.0010 [s]
+loading for 547/770 00056_SER 00058_ASN ... ** load time: 0.001 [s]
+loading for 548/770 00056_SER 00062_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00058_ASN
+    cal time: 0.000 [s] for 00056_SER 00062_LEU
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 549/770 00056_SER 00074_LEU ... ** load time: 0.001 [s]
+loading for 550/770 00056_SER 00060_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00074_LEU
+    cal time: 0.000 [s] for 00056_SER 00060_VAL
+    writing acf: 0.0009 [s]
+    writing acf: 0.0010 [s]
+loading for 551/770 00056_SER 00063_ARG ... ** load time: 0.001 [s]
+loading for 552/770 00056_SER 00086_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00063_ARG
+    cal time: 0.000 [s] for 00056_SER 00086_GLN
+    writing acf: 0.0013 [s]
+    writing acf: 0.0010 [s]
+loading for 553/770 00056_SER 00061_ASP ... ** load time: 0.001 [s]
+loading for 554/770 00057_VAL 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00056_SER 00061_ASP
+    cal time: 0.000 [s] for 00057_VAL 00084_ILE
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 555/770 00057_VAL 00059_GLY ... ** load time: 0.001 [s]
+loading for 556/770 00057_VAL 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00059_GLY
+    cal time: 0.000 [s] for 00057_VAL 00081_VAL
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 557/770 00057_VAL 00073_ALA ... ** load time: 0.001 [s]
+loading for 558/770 00057_VAL 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00073_ALA
+    cal time: 0.000 [s] for 00057_VAL 00083_ILE
+    writing acf: 0.0010 [s]
+    writing acf: 0.0010 [s]
+loading for 559/770 00057_VAL 00069_GLN ... ** load time: 0.001 [s]
+loading for 560/770 00057_VAL 00064_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00069_GLN
+    cal time: 0.000 [s] for 00057_VAL 00064_ASN
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 561/770 00057_VAL 00080_THR ... ** load time: 0.001 [s]
+loading for 562/770 00057_VAL 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00080_THR
+    cal time: 0.000 [s] for 00057_VAL 00074_LEU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 563/770 00057_VAL 00082_THR ... ** load time: 0.001 [s]
+loading for 564/770 00057_VAL 00058_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00082_THR
+    cal time: 0.000 [s] for 00057_VAL 00058_ASN
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 565/770 00057_VAL 00062_LEU ... ** load time: 0.001 [s]
+loading for 566/770 00057_VAL 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00062_LEU
+    cal time: 0.000 [s] for 00057_VAL 00065_ALA
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 567/770 00057_VAL 00060_VAL ... ** load time: 0.001 [s]
+loading for 568/770 00057_VAL 00063_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00060_VAL
+    cal time: 0.000 [s] for 00057_VAL 00063_ARG
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 569/770 00057_VAL 00076_ASN ... ** load time: 0.001 [s]
+loading for 570/770 00057_VAL 00078_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00078_GLY
+    cal time: 0.000 [s] for 00057_VAL 00076_ASN
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 571/770 00057_VAL 00077_ALA ... ** load time: 0.001 [s]
+loading for 572/770 00057_VAL 00061_ASP ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00077_ALA
+    cal time: 0.000 [s] for 00057_VAL 00061_ASP
+    writing acf: 0.0010 [s]
+    writing acf: 0.0010 [s]
+loading for 573/770 00057_VAL 00075_LYS ... ** load time: 0.001 [s]
+loading for 574/770 00057_VAL 00070_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00057_VAL 00075_LYS
+    cal time: 0.000 [s] for 00057_VAL 00070_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 575/770 00058_ASN 00084_ILE ... ** load time: 0.001 [s]
+loading for 576/770 00058_ASN 00059_GLY ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00058_ASN 00084_ILE
+    cal time: 0.000 [s] for 00058_ASN 00059_GLY
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 577/770 00058_ASN 00081_VAL ... ** load time: 0.001 [s]
+loading for 578/770 00058_ASN 00073_ALA ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00058_ASN 00081_VAL
+    cal time: 0.000 [s] for 00058_ASN 00073_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 579/770 00058_ASN 00083_ILE ... ** load time: 0.001 [s]
+loading for 580/770 00058_ASN 00080_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00058_ASN 00083_ILE
+    cal time: 0.000 [s] for 00058_ASN 00080_THR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0009 [s]
+loading for 581/770 00058_ASN 00074_LEU ... ** load time: 0.001 [s]
+loading for 582/770 00058_ASN 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00058_ASN 00074_LEU
+    cal time: 0.000 [s] for 00058_ASN 00082_THR
+    writing acf: 0.0009 [s]
+    writing acf: 0.0011 [s]
+loading for 583/770 00058_ASN 00062_LEU ... ** load time: 0.001 [s]
+loading for 584/770 00058_ASN 00060_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00058_ASN 00062_LEU
+    cal time: 0.000 [s] for 00058_ASN 00060_VAL
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 585/770 00058_ASN 00063_ARG ... ** load time: 0.001 [s]
+loading for 586/770 00058_ASN 00076_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00058_ASN 00063_ARG
+    cal time: 0.000 [s] for 00058_ASN 00076_ASN
+    writing acf: 0.0010 [s]
+    writing acf: 0.0012 [s]
+loading for 587/770 00058_ASN 00078_GLY ... ** load time: 0.001 [s]
+loading for 588/770 00058_ASN 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00058_ASN 00078_GLY
+    cal time: 0.000 [s] for 00058_ASN 00077_ALA
+    writing acf: 0.0010 [s]
+    writing acf: 0.0011 [s]
+loading for 589/770 00058_ASN 00061_ASP ... ** load time: 0.001 [s]
+loading for 590/770 00059_GLY 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00058_ASN 00061_ASP
+    cal time: 0.000 [s] for 00059_GLY 00084_ILE
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 591/770 00059_GLY 00060_VAL ... ** load time: 0.001 [s]
+loading for 592/770 00059_GLY 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00059_GLY 00060_VAL
+    cal time: 0.000 [s] for 00059_GLY 00081_VAL
+    writing acf: 0.0009 [s]
+    writing acf: 0.0009 [s]
+loading for 593/770 00059_GLY 00063_ARG ... ** load time: 0.001 [s]
+loading for 594/770 00059_GLY 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00059_GLY 00063_ARG
+    cal time: 0.000 [s] for 00059_GLY 00077_ALA
+    writing acf: 0.0009 [s]
+    writing acf: 0.0011 [s]
+loading for 595/770 00059_GLY 00061_ASP ... ** load time: 0.001 [s]
+loading for 596/770 00059_GLY 00080_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00059_GLY 00061_ASP
+    cal time: 0.000 [s] for 00059_GLY 00080_THR
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 597/770 00059_GLY 00082_THR ... ** load time: 0.001 [s]
+loading for 598/770 00059_GLY 00062_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00059_GLY 00082_THR
+    cal time: 0.000 [s] for 00059_GLY 00062_LEU
+    writing acf: 0.0013 [s]
+    writing acf: 0.0009 [s]
+loading for 599/770 00060_VAL 00061_ASP ... ** load time: 0.001 [s]
+loading for 600/770 00060_VAL 00076_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00060_VAL 00061_ASP
+    cal time: 0.000 [s] for 00060_VAL 00076_ASN
+    writing acf: 0.0010 [s]
+    writing acf: 0.0010 [s]
+loading for 601/770 00060_VAL 00080_THR ... ** load time: 0.001 [s]
+loading for 602/770 00060_VAL 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00060_VAL 00080_THR
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 603/770 00060_VAL 00062_LEU ... ** load time: 0.001 [s]
+loading for 604/770 00060_VAL 00063_ARG ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00060_VAL 00082_THR
+    cal time: 0.000 [s] for 00060_VAL 00062_LEU
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 605/770 00061_ASP 00074_LEU ... **     cal time: 0.000 [s] for 00060_VAL 00063_ARG
+load time: 0.001 [s]
+loading for 606/770 00061_ASP 00064_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00061_ASP 00074_LEU
+    cal time: 0.000 [s] for 00061_ASP 00064_ASN
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 607/770 00061_ASP 00081_VAL ... ** load time: 0.001 [s]
+loading for 608/770 00061_ASP 00063_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00061_ASP 00081_VAL
+    writing acf: 0.0008 [s]
+    cal time: 0.000 [s] for 00061_ASP 00063_ARG
+    writing acf: 0.0007 [s]
+loading for 609/770 00061_ASP 00073_ALA ... ** load time: 0.001 [s]
+loading for 610/770 00061_ASP 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00061_ASP 00073_ALA
+    cal time: 0.000 [s] for 00061_ASP 00077_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 611/770 00061_ASP 00069_GLN ... ** load time: 0.001 [s]
+loading for 612/770 00061_ASP 00076_ASN ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00061_ASP 00069_GLN
+    cal time: 0.000 [s] for 00061_ASP 00076_ASN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0008 [s]
+loading for 613/770 00061_ASP 00065_ALA ... ** load time: 0.001 [s]
+loading for 614/770 00061_ASP 00062_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00061_ASP 00065_ALA
+    cal time: 0.000 [s] for 00061_ASP 00062_LEU
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 615/770 00062_LEU 00064_ASN ... ** load time: 0.001 [s]
+loading for 616/770 00062_LEU 00076_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00062_LEU 00064_ASN
+    cal time: 0.000 [s] for 00062_LEU 00076_ASN
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 617/770 00062_LEU 00073_ALA ... ** load time: 0.001 [s]
+loading for 618/770 00062_LEU 00069_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00062_LEU 00073_ALA
+    writing acf: 0.0008 [s]
+    cal time: 0.000 [s] for 00062_LEU 00069_GLN
+    writing acf: 0.0007 [s]
+loading for 619/770 00062_LEU 00063_ARG ... ** load time: 0.001 [s]
+loading for 620/770 00062_LEU 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00062_LEU 00063_ARG
+    cal time: 0.000 [s] for 00062_LEU 00065_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 621/770 00063_ARG 00084_ILE ... ** load time: 0.001 [s]
+loading for 622/770 00063_ARG 00064_ASN ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00063_ARG 00084_ILE
+    cal time: 0.000 [s] for 00063_ARG 00064_ASN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 623/770 00063_ARG 00086_GLN ... ** load time: 0.000 [s]
+loading for 624/770 00063_ARG 00065_ALA ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00063_ARG 00086_GLN
+    cal time: 0.000 [s] for 00063_ARG 00065_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 625/770 00063_ARG 00082_THR ... ** load time: 0.001 [s]
+loading for 626/770 00064_ASN 00066_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00063_ARG 00082_THR
+    cal time: 0.000 [s] for 00064_ASN 00066_SER
+    writing acf: 0.0008 [s]
+    writing acf: 0.0007 [s]
+loading for 627/770 00064_ASN 00073_ALA ... ** load time: 0.001 [s]
+loading for 628/770 00064_ASN 00070_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00064_ASN 00073_ALA
+    cal time: 0.000 [s] for 00064_ASN 00070_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 629/770 00064_ASN 00069_GLN ... ** load time: 0.001 [s]
+loading for 630/770 00064_ASN 00065_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00064_ASN 00069_GLN
+    cal time: 0.000 [s] for 00064_ASN 00065_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 631/770 00065_ALA 00071_ALA ... ** load time: 0.001 [s]
+loading for 632/770 00065_ALA 00066_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00065_ALA 00066_SER
+    cal time: 0.000 [s] for 00065_ALA 00071_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0018 [s]
+loading for 633/770 00065_ALA 00067_HID ... ** load time: 0.001 [s]
+loading for 634/770 00065_ALA 00073_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00065_ALA 00067_HID
+    cal time: 0.000 [s] for 00065_ALA 00073_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 635/770 00065_ALA 00070_ALA ... ** load time: 0.001 [s]
+loading for 636/770 00065_ALA 00069_GLN ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00065_ALA 00070_ALA
+    cal time: 0.000 [s] for 00065_ALA 00069_GLN
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 637/770 00065_ALA 00072_ILE ... ** load time: 0.001 [s]
+loading for 638/770 00065_ALA 00074_LEU ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00065_ALA 00072_ILE
+    cal time: 0.000 [s] for 00065_ALA 00074_LEU
+    writing acf: 0.0008 [s]
+    writing acf: 0.0011 [s]
+loading for 639/770 00065_ALA 00068_GLU ... ** load time: 0.001 [s]
+loading for 640/770 00066_SER 00071_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00065_ALA 00068_GLU
+    cal time: 0.000 [s] for 00066_SER 00071_ALA
+    writing acf: 0.0010 [s]
+    writing acf: 0.0009 [s]
+loading for 641/770 00066_SER 00067_HID ... ** load time: 0.001 [s]
+loading for 642/770 00066_SER 00073_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00066_SER 00067_HID
+    cal time: 0.000 [s] for 00066_SER 00073_ALA
+    writing acf: 0.0010 [s]
+    writing acf: 0.0010 [s]
+loading for 643/770 00066_SER 00070_ALA ... ** load time: 0.001 [s]
+loading for 644/770 00066_SER 00069_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00066_SER 00070_ALA
+    cal time: 0.000 [s] for 00066_SER 00069_GLN
+    writing acf: 0.0015 [s]
+    writing acf: 0.0010 [s]
+loading for 645/770 00066_SER 00068_GLU ... ** load time: 0.001 [s]
+loading for 646/770 00067_HID 00071_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00066_SER 00068_GLU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 647/770 00067_HID 00070_ALA ... ** load time: 0.001 [s]
+loading for 648/770 00067_HID 00069_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00067_HID 00070_ALA
+    cal time: 0.000 [s] for 00067_HID 00071_ALA
+    cal time: 0.000 [s] for 00067_HID 00069_GLN
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 649/770 00067_HID 00072_ILE ... ** load time: 0.001 [s]
+loading for 650/770 00067_HID 00068_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00067_HID 00072_ILE
+    cal time: 0.000 [s] for 00067_HID 00068_GLU
+    writing acf: 0.0009 [s]
+    writing acf: 0.0007 [s]
+loading for 651/770 00068_GLU 00071_ALA ... ** load time: 0.001 [s]
+loading for 652/770 00068_GLU 00070_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00068_GLU 00071_ALA
+    writing acf: 0.0007 [s]
+    writing acf: 0.0007 [s]
+loading for 653/770 00068_GLU 00069_GLN ... ** load time: 0.001 [s]
+loading for 654/770 00068_GLU 00072_ILE ... **     cal time: 0.000 [s] for 00068_GLU 00070_ALA
+load time: 0.001 [s]
+    cal time: 0.000 [s] for 00068_GLU 00069_GLN
+    cal time: 0.000 [s] for 00068_GLU 00072_ILE
+    writing acf: 0.0008 [s]
+    writing acf: 0.0010 [s]
+loading for 655/770 00069_GLN 00071_ALA ... ** load time: 0.001 [s]
+loading for 656/770 00069_GLN 00073_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00069_GLN 00071_ALA
+    cal time: 0.000 [s] for 00069_GLN 00073_ALA
+    writing acf: 0.0011 [s]
+    writing acf: 0.0007 [s]
+loading for 657/770 00069_GLN 00070_ALA ... ** load time: 0.001 [s]
+loading for 658/770 00069_GLN 00072_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00069_GLN 00070_ALA
+    cal time: 0.000 [s] for 00069_GLN 00072_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0012 [s]
+loading for 659/770 00069_GLN 00075_LYS ... ** load time: 0.001 [s]
+loading for 660/770 00069_GLN 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00069_GLN 00075_LYS
+    cal time: 0.000 [s] for 00069_GLN 00074_LEU
+    writing acf: 0.0013 [s]
+    writing acf: 0.0012 [s]
+loading for 661/770 00070_ALA 00075_LYS ... ** load time: 0.001 [s]
+loading for 662/770 00070_ALA 00076_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00070_ALA 00075_LYS
+    writing acf: 0.0014 [s]
+    cal time: 0.000 [s] for 00070_ALA 00076_ASN
+    writing acf: 0.0013 [s]
+loading for 663/770 00070_ALA 00073_ALA ... ** load time: 0.001 [s]
+loading for 664/770 00070_ALA 00072_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00070_ALA 00073_ALA
+    cal time: 0.000 [s] for 00070_ALA 00072_ILE
+    writing acf: 0.0016 [s]
+    writing acf: 0.0012 [s]
+loading for 665/770 00070_ALA 00071_ALA ... ** load time: 0.001 [s]
+loading for 666/770 00070_ALA 00074_LEU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00070_ALA 00071_ALA
+    cal time: 0.000 [s] for 00070_ALA 00074_LEU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 667/770 00071_ALA 00075_LYS ... ** load time: 0.001 [s]
+loading for 668/770 00071_ALA 00076_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00071_ALA 00075_LYS
+    cal time: 0.000 [s] for 00071_ALA 00076_ASN
+    writing acf: 0.0041 [s]
+    writing acf: 0.0011 [s]
+loading for 669/770 00071_ALA 00073_ALA ... ** load time: 0.001 [s]
+loading for 670/770 00071_ALA 00072_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00071_ALA 00073_ALA
+    cal time: 0.000 [s] for 00071_ALA 00072_ILE
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 671/770 00071_ALA 00074_LEU ... ** load time: 0.001 [s]
+loading for 672/770 00071_ALA 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00071_ALA 00074_LEU
+    cal time: 0.000 [s] for 00071_ALA 00077_ALA
+    writing acf: 0.0013 [s]
+    writing acf: 0.0013 [s]
+loading for 673/770 00072_ILE 00075_LYS ... ** load time: 0.001 [s]
+loading for 674/770 00072_ILE 00076_ASN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00072_ILE 00075_LYS
+    writing acf: 0.0012 [s]
+    cal time: 0.000 [s] for 00072_ILE 00076_ASN
+    writing acf: 0.0011 [s]
+loading for 675/770 00072_ILE 00073_ALA ... ** load time: 0.001 [s]
+loading for 676/770 00072_ILE 00078_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00072_ILE 00073_ALA
+    writing acf: 0.0013 [s]
+    cal time: 0.000 [s] for 00072_ILE 00078_GLY
+    writing acf: 0.0036 [s]
+loading for 677/770 00072_ILE 00074_LEU ... ** load time: 0.001 [s]
+loading for 678/770 00072_ILE 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00072_ILE 00074_LEU
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00072_ILE 00077_ALA
+    writing acf: 0.0014 [s]
+loading for 679/770 00073_ALA 00075_LYS ... ** load time: 0.001 [s]
+loading for 680/770 00073_ALA 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00073_ALA 00075_LYS
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00073_ALA 00081_VAL
+    writing acf: 0.0018 [s]
+loading for 681/770 00073_ALA 00076_ASN ... ** load time: 0.001 [s]
+loading for 682/770 00073_ALA 00078_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00073_ALA 00076_ASN
+    writing acf: 0.0013 [s]
+    cal time: 0.000 [s] for 00073_ALA 00078_GLY
+    writing acf: 0.0012 [s]
+loading for 683/770 00073_ALA 00074_LEU ... ** load time: 0.001 [s]
+loading for 684/770 00073_ALA 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00073_ALA 00074_LEU
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00073_ALA 00077_ALA
+    writing acf: 0.0011 [s]
+loading for 685/770 00074_LEU 00075_LYS ... ** load time: 0.001 [s]
+loading for 686/770 00074_LEU 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00074_LEU 00075_LYS
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 687/770 00074_LEU 00076_ASN ... **     cal time: 0.000 [s] for 00074_LEU 00081_VAL
+load time: 0.001 [s]
+loading for 688/770 00074_LEU 00079_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00074_LEU 00076_ASN
+    writing acf: 0.0013 [s]
+    cal time: 0.000 [s] for 00074_LEU 00079_GLN
+    writing acf: 0.0012 [s]
+loading for 689/770 00074_LEU 00078_GLY ... ** load time: 0.001 [s]
+loading for 690/770 00074_LEU 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00074_LEU 00078_GLY
+    writing acf: 0.0015 [s]
+    writing acf: 0.0011 [s]
+loading for 691/770 00074_LEU 00077_ALA ... ** load time: 0.001 [s]
+loading for 692/770 00075_LYS 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00074_LEU 00083_ILE
+    cal time: 0.000 [s] for 00074_LEU 00077_ALA
+    writing acf: 0.0012 [s]
+    cal time: 0.000 [s] for 00075_LYS 00081_VAL
+    writing acf: 0.0012 [s]
+loading for 693/770 00075_LYS 00076_ASN ... ** load time: 0.001 [s]
+loading for 694/770 00075_LYS 00079_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00075_LYS 00076_ASN
+    cal time: 0.000 [s] for 00075_LYS 00079_GLN
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 695/770 00075_LYS 00078_GLY ... ** load time: 0.001 [s]
+loading for 696/770 00075_LYS 00077_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00075_LYS 00078_GLY
+    cal time: 0.000 [s] for 00075_LYS 00077_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 697/770 00076_ASN 00080_THR ... ** load time: 0.001 [s]
+loading for 698/770 00076_ASN 00078_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00076_ASN 00080_THR
+    cal time: 0.000 [s] for 00076_ASN 00078_GLY
+    writing acf: 0.0013 [s]
+    writing acf: 0.0012 [s]
+loading for 699/770 00076_ASN 00077_ALA ... ** load time: 0.001 [s]
+loading for 700/770 00077_ALA 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00076_ASN 00077_ALA
+    cal time: 0.000 [s] for 00077_ALA 00081_VAL
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 701/770 00077_ALA 00079_GLN ... ** load time: 0.001 [s]
+loading for 702/770 00077_ALA 00078_GLY ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00077_ALA 00079_GLN
+    cal time: 0.000 [s] for 00077_ALA 00078_GLY
+    writing acf: 0.0013 [s]
+    writing acf: 0.0013 [s]
+loading for 703/770 00077_ALA 00080_THR ... ** load time: 0.001 [s]
+loading for 704/770 00077_ALA 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00077_ALA 00080_THR
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00077_ALA 00082_THR
+    writing acf: 0.0011 [s]
+loading for 705/770 00078_GLY 00081_VAL ... ** load time: 0.001 [s]
+loading for 706/770 00078_GLY 00080_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00078_GLY 00081_VAL
+    cal time: 0.000 [s] for 00078_GLY 00080_THR
+    writing acf: 0.0016 [s]
+    writing acf: 0.0012 [s]
+loading for 707/770 00078_GLY 00079_GLN ... ** load time: 0.001 [s]
+loading for 708/770 00079_GLN 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00078_GLY 00079_GLN
+    cal time: 0.000 [s] for 00079_GLN 00083_ILE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 709/770 00079_GLN 00081_VAL ... ** load time: 0.001 [s]
+loading for 710/770 00079_GLN 00080_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00079_GLN 00081_VAL
+    cal time: 0.000 [s] for 00079_GLN 00080_THR
+    writing acf: 0.0013 [s]
+    writing acf: 0.0011 [s]
+loading for 711/770 00079_GLN 00082_THR ... ** load time: 0.001 [s]
+loading for 712/770 00080_THR 00081_VAL ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00079_GLN 00082_THR
+    cal time: 0.000 [s] for 00080_THR 00081_VAL
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 713/770 00080_THR 00083_ILE ... ** load time: 0.001 [s]
+loading for 714/770 00080_THR 00082_THR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00080_THR 00083_ILE
+    writing acf: 0.0012 [s]
+    cal time: 0.000 [s] for 00080_THR 00082_THR
+    writing acf: 0.0012 [s]
+loading for 715/770 00081_VAL 00084_ILE ... ** load time: 0.001 [s]
+loading for 716/770 00081_VAL 00083_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00081_VAL 00084_ILE
+    writing acf: 0.0012 [s]
+    cal time: 0.000 [s] for 00081_VAL 00083_ILE
+    writing acf: 0.0012 [s]
+loading for 717/770 00081_VAL 00082_THR ... ** load time: 0.001 [s]
+loading for 718/770 00082_THR 00084_ILE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00081_VAL 00082_THR
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 719/770 00082_THR 00083_ILE ... **     cal time: 0.000 [s] for 00082_THR 00084_ILE
+load time: 0.001 [s]
+loading for 720/770 00082_THR 00085_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00082_THR 00083_ILE
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 721/770 00083_ILE 00084_ILE ... **     cal time: 0.000 [s] for 00082_THR 00085_ALA
+load time: 0.001 [s]
+loading for 722/770 00083_ILE 00085_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00083_ILE 00084_ILE
+    cal time: 0.000 [s] for 00083_ILE 00085_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0018 [s]
+loading for 723/770 00084_ILE 00086_GLN ... ** load time: 0.001 [s]
+loading for 724/770 00084_ILE 00085_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00084_ILE 00086_GLN
+    cal time: 0.000 [s] for 00084_ILE 00085_ALA
+    writing acf: 0.0011 [s]
+    writing acf: 0.0016 [s]
+loading for 725/770 00084_ILE 00087_TYR ... ** load time: 0.001 [s]
+loading for 726/770 00085_ALA 00086_GLN ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00084_ILE 00087_TYR
+    cal time: 0.000 [s] for 00085_ALA 00086_GLN
+    writing acf: 0.0012 [s]
+    writing acf: 0.0019 [s]
+loading for 727/770 00085_ALA 00087_TYR ... ** load time: 0.001 [s]
+loading for 728/770 00086_GLN 00088_LYS ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00085_ALA 00087_TYR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 729/770 00086_GLN 00087_TYR ... ** load time: 0.001 [s]
+loading for 730/770 00086_GLN 00089_PRO ... **     cal time: 0.000 [s] for 00086_GLN 00088_LYS
+load time: 0.001 [s]
+    cal time: 0.000 [s] for 00086_GLN 00087_TYR
+    writing acf: 0.0011 [s]
+    cal time: 0.000 [s] for 00086_GLN 00089_PRO
+    writing acf: 0.0012 [s]
+loading for 731/770 00087_TYR 00088_LYS ... ** load time: 0.003 [s]
+loading for 732/770 00087_TYR 00089_PRO ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00087_TYR 00088_LYS
+    writing acf: 0.0013 [s]
+    cal time: 0.000 [s] for 00087_TYR 00089_PRO
+    writing acf: 0.0016 [s]
+loading for 733/770 00087_TYR 00090_GLU ... ** load time: 0.001 [s]
+loading for 734/770 00088_LYS 00091_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00087_TYR 00090_GLU
+    cal time: 0.000 [s] for 00088_LYS 00091_GLU
+    writing acf: 0.0013 [s]
+    writing acf: 0.0017 [s]
+loading for 735/770 00088_LYS 00094_ARG ... ** load time: 0.001 [s]
+loading for 736/770 00088_LYS 00090_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00088_LYS 00094_ARG
+    cal time: 0.000 [s] for 00088_LYS 00090_GLU
+    writing acf: 0.0019 [s]
+    writing acf: 0.0012 [s]
+loading for 737/770 00088_LYS 00089_PRO ... ** load time: 0.001 [s]
+loading for 738/770 00088_LYS 00093_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00088_LYS 00089_PRO
+    cal time: 0.000 [s] for 00088_LYS 00093_SER
+    writing acf: 0.0013 [s]
+    writing acf: 0.0016 [s]
+loading for 739/770 00088_LYS 00096_GLU ... ** load time: 0.001 [s]
+loading for 740/770 00089_PRO 00095_PHE ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00088_LYS 00096_GLU
+    writing acf: 0.0015 [s]
+    writing acf: 0.0011 [s]
+loading for 741/770 00089_PRO 00092_TYR ... **     cal time: 0.000 [s] for 00089_PRO 00095_PHE
+load time: 0.001 [s]
+loading for 742/770 00089_PRO 00094_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00089_PRO 00092_TYR
+    cal time: 0.000 [s] for 00089_PRO 00094_ARG
+    writing acf: 0.0013 [s]
+    writing acf: 0.0020 [s]
+loading for 743/770 00089_PRO 00090_GLU ... ** load time: 0.001 [s]
+loading for 744/770 00089_PRO 00091_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00089_PRO 00090_GLU
+    cal time: 0.000 [s] for 00089_PRO 00091_GLU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0012 [s]
+loading for 745/770 00089_PRO 00093_SER ... ** load time: 0.001 [s]
+loading for 746/770 00089_PRO 00096_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00089_PRO 00093_SER
+    cal time: 0.000 [s] for 00089_PRO 00096_GLU
+    writing acf: 0.0012 [s]
+    writing acf: 0.0013 [s]
+loading for 747/770 00090_GLU 00092_TYR ... ** load time: 0.001 [s]
+loading for 748/770 00090_GLU 00094_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00090_GLU 00092_TYR
+    cal time: 0.000 [s] for 00090_GLU 00094_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+loading for 749/770 00090_GLU 00091_GLU ... ** load time: 0.001 [s]
+loading for 750/770 00090_GLU 00093_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00090_GLU 00091_GLU
+    cal time: 0.000 [s] for 00090_GLU 00093_SER
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 751/770 00091_GLU 00095_PHE ... ** load time: 0.001 [s]
+loading for 752/770 00091_GLU 00092_TYR ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00091_GLU 00095_PHE
+    cal time: 0.000 [s] for 00091_GLU 00092_TYR
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 753/770 00091_GLU 00094_ARG ... ** load time: 0.001 [s]
+loading for 754/770 00091_GLU 00093_SER ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00091_GLU 00094_ARG
+    cal time: 0.000 [s] for 00091_GLU 00093_SER
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 755/770 00092_TYR 00095_PHE ... ** load time: 0.001 [s]
+loading for 756/770 00092_TYR 00094_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00092_TYR 00095_PHE
+    cal time: 0.000 [s] for 00092_TYR 00094_ARG
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 757/770 00092_TYR 00093_SER ... ** load time: 0.001 [s]
+loading for 758/770 00092_TYR 00096_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00092_TYR 00093_SER
+    cal time: 0.000 [s] for 00092_TYR 00096_GLU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 759/770 00093_SER 00095_PHE ... ** load time: 0.001 [s]
+loading for 760/770 00093_SER 00094_ARG ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00093_SER 00095_PHE
+    cal time: 0.000 [s] for 00093_SER 00094_ARG
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 761/770 00093_SER 00097_ALA ... ** load time: 0.001 [s]
+loading for 762/770 00093_SER 00096_GLU ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00093_SER 00097_ALA
+    cal time: 0.000 [s] for 00093_SER 00096_GLU
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 763/770 00094_ARG 00095_PHE ... ** load time: 0.001 [s]
+loading for 764/770 00094_ARG 00097_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00094_ARG 00095_PHE
+    cal time: 0.000 [s] for 00094_ARG 00097_ALA
+    writing acf: 0.0011 [s]
+    writing acf: 0.0010 [s]
+loading for 765/770 00094_ARG 00096_GLU ... ** load time: 0.001 [s]
+loading for 766/770 00095_PHE 00097_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00094_ARG 00096_GLU
+    cal time: 0.000 [s] for 00095_PHE 00097_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 767/770 00095_PHE 00096_GLU ... ** load time: 0.001 [s]
+loading for 768/770 00096_GLU 00097_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00095_PHE 00096_GLU
+    cal time: 0.000 [s] for 00096_GLU 00097_ALA
+    writing acf: 0.0012 [s]
+    writing acf: 0.0011 [s]
+loading for 769/770 00096_GLU 00098_NME ... ** load time: 0.001 [s]
+loading for 770/770 00097_ALA 00098_NME ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00097_ALA 00098_NME
+    cal time: 0.000 [s] for 00096_GLU 00098_NME
+    writing acf: 0.0011 [s]
+    writing acf: 0.0011 [s]
+total load time: 0.556 [s]
+total time: 1.552 [s]
+==========================
+    finished completely   
+==========================

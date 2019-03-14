@@ -1,0 +1,73 @@
+# Makefile for building the CURP program
+#
+
+MAKE = make -w
+NETCDF_VERSION=4.3.2
+HDF_MJR=1
+HDF_MNR=8
+HDF_BLD=12
+HDF_VERSION=$(HDF_MJR).$(HDF_MNR).$(HDF_BLD)
+
+#######
+CURP_HOME=$(shell cd ../;pwd)
+VIRTUAL_DIR=$(shell cd ./;pwd)
+
+all: netcdf
+
+intel:
+	$(MAKE) CC=icc CXX=icpc \
+		CFLAGS='-O3 -xHost -ip -no-prec-div -static-intel' \
+		CXXFLAGS='-O3 -xHost -ip -no-prec-div -static-intel' \
+		F77=ifort FC=ifort F90=ifort \
+		FFLAGS='-O3 -xHost -ip -no-prec-div -static-intel' \
+		CPP='icc -E' CXXCPP='icpc -E'
+
+clean:
+	@rm -rf bin lib include logs share
+	echo $(VIRTUAL_DIR)/hdf5-$(HDF_VERSION)
+	$(MAKE) clean -C $(VIRTUAL_DIR)/hdf5-$(HDF_VERSION)
+	$(MAKE) clean -C $(VIRTUAL_DIR)/netcdf-$(NETCDF_VERSION)
+
+export NETCDF4_DIR = $(VIRTUAL_DIR)
+export HDF5_DIR    = $(VIRTUAL_DIR)
+netcdf: hdf5-lib netcdf4-lib
+
+hdf_dir = $(VIRTUAL_DIR)/hdf5-$(HDF_VERSION)
+hdf5-lib: $(hdf_dir) bin/h5dump
+
+$(hdf_dir):
+	@echo "Downloading $@.tar.gz ..."
+	@mkdir -p logs
+	curl -L -k -o $(hdf_dir).tar.gz \
+		http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-$(HDF_MJR).$(HDF_MNR)/hdf5-$(HDF_VERSION)/src/hdf5-$(HDF_VERSION).tar.gz
+	tar xzf $@.tar.gz
+
+bin/h5dump:
+	@echo "Time consuming task..."
+	cd $(hdf_dir);\
+		./configure --prefix=$(VIRTUAL_DIR) \
+		--enable-hl --enable-shared \
+		> $(VIRTUAL_DIR)/logs/hdf5.log 2>&1
+	make -C $(hdf_dir) install >> $(VIRTUAL_DIR)/logs/hdf5.log 2>&1
+
+netcdf_dir = $(VIRTUAL_DIR)/netcdf-$(NETCDF_VERSION)
+netcdf4-lib: $(netcdf_dir) bin/ncdump
+
+$(netcdf_dir): 
+	@echo "Downloading $@.tar.gz ..."
+	@mkdir -p logs
+	curl -k -o $(netcdf_dir).tar.gz \
+		ftp://ftp.unidata.ucar.edu/pub/netcdf/old/netcdf-$(NETCDF_VERSION).tar.gz
+	tar xzf $@.tar.gz
+
+bin/ncdump:
+	@echo "Time consuming task..."
+	cd $(netcdf_dir);\
+		./configure --prefix=$(VIRTUAL_DIR) \
+		--enable-netcdf-4 --enable-shared --disable-doxygen \
+		CPPFLAGS="-I$$HDF5_DIR/include" LDFLAGS="-L$$HDF5_DIR/lib" \
+		> $(VIRTUAL_DIR)/logs/netcdf.log 2>&1
+	make -C $(netcdf_dir) install >> $(VIRTUAL_DIR)/logs/netcdf.log 2>&1
+	# make -C $(netcdf_dir) check >> $(VIRTUAL_DIR)/logs/netcdf.log 2>&1
+
+
