@@ -85,6 +85,8 @@ module bond
     real(8) :: energy
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (ntbf,  3)
+    real(8), allocatable :: displacement(:, :)! (ntbf, 3)
+
     ! main variales
     integer :: ibnd, nbond, itbf_ij
     integer :: iatm, jatm
@@ -110,6 +112,7 @@ contains
         energy   = 0.0d0
         forces   = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
 
         do ibnd=1, nbond
             itbf_ij = ibnd_to_itbf(ibnd) ! => ij
@@ -136,11 +139,13 @@ contains
             ! calculate two-body force
             f_ij = f_i
 
-            ! store two-body force
+            ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
+                displacement(itbf_ij,:) = r_ij(:)
             else
                 tbforces(-itbf_ij,:) = tbforces(-itbf_ij,:) - f_ij(:)
+                displacement(-itbf_ij,:) = -r_ij(:)
             end if
 
             ! check
@@ -218,6 +223,7 @@ module angle
     real(8) :: energy
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (ntbf, 3)
+    real(8), allocatable :: displacement(:, :) ! (ntbf, 3)
 
     ! main variales
     integer :: iang, nangle, itbf_ij, itbf_ik, itbf_jk
@@ -249,6 +255,7 @@ contains
         energy   = 0.0d0
         forces   = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
 
         do iang=1, nangle
             itbf_ij = iang_to_itbf(iang, 1) ! => ij
@@ -296,23 +303,29 @@ contains
             f_ik = - coeff/(l_ij*l_kj) * r_ik
             f_jk =   coeff/l_kj * (1.0d0/l_ij - cos_theta/l_kj) * r_kj
 
-            ! store two-body force
+            ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
+                displacement(itbf_ij,:) = r_ij(:)
             else
                 tbforces(-itbf_ij,:) = tbforces(-itbf_ij,:) - f_ij(:)
+                displacement(-itbf_ij,:) = -r_ij(:)
             end if
 
             if (itbf_ik > 0) then
                 tbforces(itbf_ik,:) = tbforces(itbf_ik,:) + f_ik(:)
+                displacement(itbf_ik,:) = r_ik(:)
             else
                 tbforces(-itbf_ik,:) = tbforces(-itbf_ik,:) - f_ik(:)
+                displacement(-itbf_ik,:) = -r_ik(:)
             end if
 
             if (itbf_jk > 0) then
                 tbforces(itbf_jk,:) = tbforces(itbf_jk,:) + f_jk(:)
+                displacement(itbf_jk,:) = r_jk(:)
             else
                 tbforces(-itbf_jk,:) = tbforces(-itbf_jk,:) - f_jk(:)
+                displacement(-itbf_jk,:) = -r_jk(:)
             end if
 
             if (check) then
@@ -416,6 +429,7 @@ module torsion
     real(8) :: energy
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (ntfb, 3)
+    real(8), allocatable :: displacement(:, :) ! (ntbf, 3)
 
     ! main variales
     integer :: itor, ntorsion
@@ -459,6 +473,7 @@ contains
         energy   = 0.0d0
         forces   = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
 
         ! print*, num_torsions
 
@@ -572,41 +587,53 @@ contains
             f_kl = f_a/l_2 * ( dot_product(r_ij, -r_jk)/l_1 &
             &                - dot_product(-r_jk, -r_jl)*cos_phi/l_2) * r_kl
 
-            ! store two-body force
+            ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
+                displacement(itbf_ij,:) = r_ij(:)
             else
                 tbforces(-itbf_ij,:) = tbforces(-itbf_ij,:) - f_ij(:)
+                displacement(-itbf_ij,:) = -r_ij(:)
             end if
 
             if (itbf_ik > 0) then
                 tbforces(itbf_ik,:) = tbforces(itbf_ik,:) + f_ik(:)
+                displacement(itbf_ik,:) = r_ik(:)
             else
                 tbforces(-itbf_ik,:) = tbforces(-itbf_ik,:) - f_ik(:)
+                displacement(-itbf_ik,:) = -r_ik(:)
             end if
 
             if (itbf_il > 0) then
                 tbforces(itbf_il,:) = tbforces(itbf_il,:) + f_il(:)
+                displacement(itbf_il,:) = r_il(:)
             else
                 tbforces(-itbf_il,:) = tbforces(-itbf_il,:) - f_il(:)
+                displacement(-itbf_il,:) = -r_il(:)
             end if
 
             if (itbf_jk > 0) then
                 tbforces(itbf_jk,:) = tbforces(itbf_jk,:) + f_jk(:)
+                displacement(itbf_jk,:) = r_jk(:)
             else
                 tbforces(-itbf_jk,:) = tbforces(-itbf_jk,:) - f_jk(:)
+                displacement(-itbf_jk,:) = -r_jk(:)
             end if
 
             if (itbf_jl > 0) then
                 tbforces(itbf_jl,:) = tbforces(itbf_jl,:) + f_jl(:)
+                displacement(itbf_jl,:) = r_jl(:)
             else
                 tbforces(-itbf_jl,:) = tbforces(-itbf_jl,:) - f_jl(:)
+                displacement(-itbf_jl,:) = -r_jl(:)
             end if
 
             if (itbf_kl > 0) then
                 tbforces(itbf_kl,:) = tbforces(itbf_kl,:) + f_kl(:)
+                displacement(itbf_kl,:) = r_kl(:)
             else
                 tbforces(-itbf_kl,:) = tbforces(-itbf_kl,:) - f_kl(:)
+                displacement(-itbf_kl,:) = -r_kl(:)
             end if
 
             if (check) then
@@ -743,6 +770,7 @@ module improper
     real(8) :: energy
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (ntfb, 3)
+    real(8), allocatable :: displacement(:, :)! (ntbf, 3)
 
     ! main variales
     integer :: itor, ntorsion
@@ -786,6 +814,7 @@ contains
         energy   = 0.0d0
         forces   = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
 
         ! print*, num_torsions
 
@@ -899,41 +928,53 @@ contains
             f_kl = f_a/l_2 * ( dot_product(r_ij, -r_jk)/l_1 &
             &                - dot_product(-r_jk, -r_jl)*cos_phi/l_2) * r_kl
 
-            ! store two-body force
+            ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
+                displacement(itbf_ij,:) = r_ij(:)
             else
                 tbforces(-itbf_ij,:) = tbforces(-itbf_ij,:) - f_ij(:)
+                displacement(-itbf_ij,:) = -r_ij(:)
             end if
 
             if (itbf_ik > 0) then
                 tbforces(itbf_ik,:) = tbforces(itbf_ik,:) + f_ik(:)
+                displacement(itbf_ik,:) = r_ik(:)
             else
                 tbforces(-itbf_ik,:) = tbforces(-itbf_ik,:) - f_ik(:)
+                displacement(-itbf_ik,:) = -r_ik(:)
             end if
 
             if (itbf_il > 0) then
                 tbforces(itbf_il,:) = tbforces(itbf_il,:) + f_il(:)
+                displacement(itbf_il,:) = r_il(:)
             else
                 tbforces(-itbf_il,:) = tbforces(-itbf_il,:) - f_il(:)
+                displacement(-itbf_il,:) = -r_il(:)
             end if
 
             if (itbf_jk > 0) then
                 tbforces(itbf_jk,:) = tbforces(itbf_jk,:) + f_jk(:)
+                displacement(itbf_jk,:) = r_jk(:)
             else
                 tbforces(-itbf_jk,:) = tbforces(-itbf_jk,:) - f_jk(:)
+                displacement(-itbf_jk,:) = -r_jk(:)
             end if
 
             if (itbf_jl > 0) then
                 tbforces(itbf_jl,:) = tbforces(itbf_jl,:) + f_jl(:)
+                displacement(itbf_jl,:) = r_jl(:)
             else
                 tbforces(-itbf_jl,:) = tbforces(-itbf_jl,:) - f_jl(:)
+                displacement(-itbf_jl,:) = -r_jl(:)
             end if
 
             if (itbf_kl > 0) then
                 tbforces(itbf_kl,:) = tbforces(itbf_kl,:) + f_kl(:)
+                displacement(itbf_kl,:) = r_kl(:)
             else
                 tbforces(-itbf_kl,:) = tbforces(-itbf_kl,:) - f_kl(:)
+                displacement(-itbf_kl,:) = -r_kl(:)
             end if
 
             if (check) then
@@ -1068,6 +1109,7 @@ module coulomb
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (max_tbf, 3)
     !(iatm_beg:iatm_end, iatm_beg:natom, 3)
+    real(8), allocatable :: displacement(:, :) ! (ntbf, 3)
 
 contains
     subroutine calculate(interact_table, ninteract)
@@ -1098,6 +1140,7 @@ contains
         energy = 0.0d0
         forces = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
 
         coeff = coeff15
         cutoff_inv = 1.0d0/cutoff_length
@@ -1131,9 +1174,10 @@ contains
                 forces(iatm, :) = forces(iatm, :) + f_i(:)
                 forces(jatm, :) = forces(jatm, :) - f_i(:)
 
-                ! calculate and store two-body force
+                ! calculate and store two-body force and two-body distance vector
                 f_ij = f_i
                 tbforces(itbf, :) = f_ij(:)
+                displacement(itbf, :) = r_ij(:)
 
                 ! check
                 if (check) then
@@ -1163,6 +1207,7 @@ module coulomb14
     real(8) :: energy                      ! enegry
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (ntbf, 3)
+    real(8), allocatable :: displacement(:, :)! (ntbf, 3)
 
     ! parameter
     real(8) :: scale_factor = 1.2d0    ! scaling factor for 1-4 interaction
@@ -1196,6 +1241,7 @@ contains
         energy = 0.0d0
         forces = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
 
         coeff = coeff15/scale_factor
         n14   = size(i14_to_itbf)
@@ -1222,11 +1268,13 @@ contains
             ! calculate two-body force
             f_ij = f_i
 
-            ! store two-body force
+            ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
+                displacement(itbf_ij,:) = r_ij(:)
             else
                 tbforces(-itbf_ij,:) = tbforces(-itbf_ij,:) - f_ij(:)
+                displacement(-itbf_ij,:) = -r_ij(:)
             end if
 
             ! check
@@ -1283,6 +1331,7 @@ module vdw
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (max_tbf, 3)
     !(iatm_beg:iatm_end, iatm_beg:natom, 3)
+    real(8), allocatable :: displacement(:, :)! (ntbf, 3)
 
 contains
     subroutine calculate(interact_table, ninteract)
@@ -1310,6 +1359,7 @@ contains
         energy = 0.0d0
         forces = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
         cutoff_len2 = cutoff_length * cutoff_length
         coeff = coeff15
 
@@ -1342,9 +1392,10 @@ contains
                 forces(iatm, :) = forces(iatm, :) + f_i(:)
                 forces(jatm, :) = forces(jatm, :) - f_i(:)
 
-                ! calculate and store two-body force
+                ! calculate and store two-body force and two-body distance vector
                 f_ij = f_i
                 tbforces(itbf, :) = f_ij(:)
+                displacement(itbf, :) = r_ij(:)
 
                 ! check
                 if (check) then
@@ -1378,6 +1429,8 @@ module vdw14
     real(8) :: energy
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
     real(8), allocatable :: tbforces(:, :) ! (ntbf, 3)
+    real(8), allocatable :: displacement(:, :)! (ntbf, 3)
+
     ! parameter
     real(8) :: scale_factor = 2.0d0 ! scaling factor for 1-4 interaction
 
@@ -1407,6 +1460,7 @@ contains
         energy = 0.0d0
         forces = 0.0d0
         tbforces = 0.0d0
+        displacement = 0.0d0
 
         coeff = coeff15/scale_factor
         n14 = size(i14_to_itbf)
@@ -1436,11 +1490,13 @@ contains
             ! calculate two-body force
             f_ij = f_i
 
-            ! store two-body force
+            ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
+                displacement(itbf_ij,:) = r_ij(:)
             else
                 tbforces(-itbf_ij,:) = tbforces(-itbf_ij,:) - f_ij(:)
+                displacement(-itbf_ij,:) = -r_ij(:)
             end if
 
             ! check
@@ -1493,14 +1549,14 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
 
 
     use common_vars
-    use bond      , bnd_forces => forces, bnd_tbforces => tbforces
-    use angle     , ang_forces => forces, ang_tbforces => tbforces
-    use torsion   , tor_forces => forces, tor_tbforces => tbforces
-    use improper  , imp_forces => forces, imp_tbforces => tbforces
-    use coulomb   , cou_forces => forces, cou_tbforces => tbforces
-    use vdw       , vdw_forces => forces, vdw_tbforces => tbforces
-    use coulomb14 , cou14_forces => forces, cou14_tbforces => tbforces
-    use vdw14     , vdw14_forces => forces, vdw14_tbforces => tbforces
+    use bond      , bnd_forces => forces, bnd_tbforces => tbforces, bnd_disp => displacement
+    use angle     , ang_forces => forces, ang_tbforces => tbforces, ang_disp => displacement
+    use torsion   , tor_forces => forces, tor_tbforces => tbforces, tor_disp => displacement
+    use improper  , imp_forces => forces, imp_tbforces => tbforces, imp_disp => displacement
+    use coulomb   , cou_forces => forces, cou_tbforces => tbforces, cou_disp => displacement
+    use vdw       , vdw_forces => forces, vdw_tbforces => tbforces, vdw_disp => displacement
+    use coulomb14 , cou14_forces => forces, cou14_tbforces => tbforces, cou14_disp => displacement
+    use vdw14     , vdw14_forces => forces, vdw14_tbforces => tbforces, vdw14_disp => displacement
 
     implicit none
     integer, intent(in) :: natom
@@ -1539,6 +1595,16 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     ! allocate each two-body force for nonbonded
     allocate(cou_tbforces(max_tbf, 3))
     allocate(vdw_tbforces(max_tbf, 3))
+
+    ! allocate each two-body distance (crd_i - crd_j) matrix
+    allocate(bnd_disp(t_nbonded, 3))
+    allocate(ang_disp(t_nbonded, 3))
+    allocate(tor_disp(t_nbonded, 3))
+    allocate(imp_disp(t_nbonded, 3))
+    allocate(cou_disp(max_tbf, 3))
+    allocate(vdw_disp(max_tbf, 3))
+    allocate(cou14_disp(t_nbonded, 3))
+    allocate(vdw14_disp(t_nbonded, 3))
 
 end subroutine
 

@@ -21,6 +21,7 @@ class TwoBodyForceBase:
         self.__forces = None
         self.__ptype_to_energy = {}
         self.__ptype_to_forces = {}
+        self.__ptype_to_displacement = {}
 
     def get_pottypes(self):
         return ['bond','angle','torsion','improper',
@@ -175,6 +176,7 @@ class TwoBodyForceBase:
         # store energy and forces
         self.__ptype_to_energy[bond_type] = mod.energy
         self.__ptype_to_forces[bond_type] = mod.forces
+        self.__ptype_to_displacement[bond_type] = mod.displacement
 
         #DEBUG
         # print('** {} forces **'.format(bond_type))
@@ -194,7 +196,10 @@ class TwoBodyForceBase:
 
         #DEBUG
 
-        return dict(energy=mod.energy, forces=mod.forces, tbforces=mod.tbforces)
+        return dict(energy = mod.energy,
+                    forces = mod.forces,
+                    tbforces = mod.tbforces,
+                    displacement = mod.displacement)
 
     def cal_coulomb(self, table):
         return self._cal_nonbond(table, 'coulomb')
@@ -211,8 +216,9 @@ class TwoBodyForceBase:
         mod.calculate(table)
         energy = mod.energy.copy()
         forces = mod.forces.copy()
+        displacement = mod.displacement
 
-        # store energy and forces
+        # store energy, forces and distance
         if pottype not in self.__ptype_to_energy:
             self.__ptype_to_energy[pottype] = energy
         else:
@@ -224,10 +230,15 @@ class TwoBodyForceBase:
         else:
             self.__ptype_to_forces[pottype] += forces
 
+        self.__ptype_to_displacement[pottype] = displacement
+
         # get pairwise forces
         tbforces = mod.tbforces.copy()
 
-        return dict(energy=mod.energy, forces=mod.forces, tbforces=tbforces)
+        return dict(energy = mod.energy,
+                    forces = mod.forces,
+                    tbforces = tbforces,
+                    displacement = displacement)
 
     def get_forces(self, pottype):
         """Return the calculated force with givin potential type."""

@@ -6,5 +6,5 @@ include $(CURP_HOME)/lib/Makefile.in
 
 ##### Target definitions #####
 
-install: lib_current.so lib_flux.so
+install: lib_current.so lib_flux.so lib_hflux.so
 

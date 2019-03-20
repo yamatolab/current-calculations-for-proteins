@@ -207,15 +207,12 @@ class FluxCalculator(CalculatorBase):
         flux_atm, flux_grp = self.cal_coulomb(crd, vel)
         key_to_aflux['coulomb'] = flux_atm
         key_to_gflux['coulomb'] = flux_grp
-
         flux_atm, flux_grp = self.cal_vdw(crd, vel)
         key_to_aflux['vdw'] = flux_atm
         key_to_gflux['vdw'] = flux_grp
-
         # total for atom
         if flux_atm is not None:
-            ntarget = len(self.get_target_atoms())
-            total_atm = numpy.zeros( [ntarget, ntarget] )
+            total_atm = numpy.zeros( key_to_aflux['vdw'].shape )
 
             for flux in key_to_aflux.values():
                 total_atm += flux
@@ -225,8 +222,7 @@ class FluxCalculator(CalculatorBase):
 
         # total for group
         if flux_grp is not None:
-            ngroup = len(self.get_groupnames())
-            total_grp = numpy.zeros( [ngroup, ngroup] )
+            total_grp = numpy.zeros( key_to_gflux['vdw'].shape )
 
             for flux in key_to_gflux.values():
                 total_grp += flux

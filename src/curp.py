@@ -1,3 +1,10 @@
+"""
+Main curp programm.
+Developed by Yamato's lab, Nagoya University.
+Use the argument -h for a list of available arguments.
+Input: .cfg file (see http://www.comp-biophys.com/resources/curp-tutorial/tutorials.html and the tutorial directory for more informations)
+"""
+
 from __future__ import print_function
 
 # standard module
@@ -15,6 +22,11 @@ from setproctitle import setproctitle
 setproctitle('curp')
 
 def parse_options():
+    """
+    Defines how arguments given to curp.py are treated.
+    To see optional arguments, type in the terminal python curp.py -h 
+    Returns parsed_args, containing all arguments.
+    """
     # initialize
     import argparse
     parser = argparse.ArgumentParser(description=
@@ -54,7 +66,7 @@ def parse_options():
                   "with default values."))
 
     parser.add_argument(
-            'input', nargs='?', default='', #action='append',
+            'input', nargs='?', default='run.cfg', #action='append',
             help='specify input filenames.')
 
     # parser.add_argument('--version', action='version', version='%(prog)s 1.0')
@@ -62,8 +74,21 @@ def parse_options():
     parsed_args = parser.parse_args()
     return parsed_args
 
+"""
+Write_ functions below are used to print specific messages and data in the log.
+Based mostly on logger.py functions, designed for treating the output which will
+appear in the log.
+"""
+
 
 def write_array(array, num_per_line=10):
+    """
+    print the array (1D tuple, list or numpy array) so that:
+    - one line contains ten elements (or less at the end),
+    - last character of each element is separated by 5 characters
+      from the former element (filled by spaces if needed).
+      (Ex: write_array([0.001,0.02,0.1] prints "0.001 0.02  0.1"))
+    """
 
     n = len(array)
     if n/num_per_line != 0:
@@ -72,14 +97,16 @@ def write_array(array, num_per_line=10):
             icol_beg, icol_end = 10*iline_1, 10*(iline_1+1)
             line = ' '.join( '{:>5}'.format(col) 
                     for col in array[icol_beg:icol_end] )
-            logger.info( line )
+            logger.info( line ) #Printed as information.
+                                #see clog.py 
 
         # last line
         if n%num_per_line != 0:
             icol_beg = 10*(iline_1+1)
-            line = ' '.join( '{:>5}'.format(col) for col in array[icol_beg:] )
+            line = ' '.join( '{:>5}'.format(col)
+                    for col in array[icol_beg:] )
             logger.info( line )
-    
+
     else:
         # last line
         line = ' '.join( '{:>5}'.format(col) for col in array )
@@ -107,7 +134,6 @@ def write_times(label_time_pairs, nstep):
         else:
             logger.info(msg.format(label+' time', dt))
 
-
 def write_success():
     logger.info_title('CURP finished completely.')
 
@@ -116,7 +142,38 @@ def write_success():
     # with open(citation_fp, 'rb') as citation_file:
         # logger.info(citation_file.read())
 
+
+
+
+
 def init_current(setting, par):
+    """
+    Input:
+      -  setting: Setting class, defined in setting.py
+                  contains the settings from .cfg configuration file.
+      -  par: SequentialProcessor or ParallelProcessor, cf parallel.py.
+
+    Output:
+      -  cal: EnergyFluxCalculator or StressCurrentCalculator class
+              defined in current/flux.py or current/current.py.
+              made using:
+               - interaction table between atoms is made in "if do_table",
+                 taking into account the group_pair table (if do_gpair)x.
+               - group table made in "if do_group"
+               - setting, topology and target_atoms.
+      -  writer: MultiFluxWriter or MultiCurrentWriter class,
+                 defined in current/writer.py.
+                 Used for parallel processes.
+      -  topology: TopologyParser class,
+                   defined in parser/format/topology.py.
+                   Obtained from [input_format] topology_file.
+      -  target_atoms: List of Integers,
+                       obtained from [curp] target_atoms.
+                       Contains the indices of each atom to be considered.
+      -  label_time_pairs: List of Tuples (action, time of action),
+                           records how many time has elapsed since the
+                           beginning of the program and the action.
+    """ 
 
     do_topology   = True
     do_target     = True
@@ -144,6 +201,10 @@ def init_current(setting, par):
         use_atype = True if setting.curp.method == 'momentum-current' else False
         topology = parser.get_tplprm(
                 file_format, fmt_section, potential, use_atype)
+        """
+        topology: TopologyParser class
+                   defined in parser/file_format/topology.py
+        """
         natom = topology.get_natom()
 
         # get the list that decompose all potential
@@ -213,7 +274,7 @@ def init_current(setting, par):
             inttable = target.make_interaction_table_current(
                     nonbonded_table, target_atoms, natom)
 
-        elif setting.curp.method == 'energy-flux':
+        elif setting.curp.method in ('energy-flux', 'heat-flux'):
             inttable = target.make_interaction_table_flux(
                     nonbonded_table, target_atoms, natom)
 
@@ -378,6 +439,11 @@ def init_dynamics(setting, par):
     return cal,writer,target_atoms,topology,label_time_pairs
 
 def get_data_iter(setting, topology, target_atoms):
+    """
+    Input: setting object, topology object, target_atoms object.
+    Output: trajectory as an iterable, using "yield" statement.
+    Each frame of the trajectory is an element of the iterator.
+    """
 
     # get topology informations
     natom = topology.get_natom()
@@ -395,6 +461,9 @@ def get_data_iter(setting, topology, target_atoms):
         use_classic = True
 
     elif method == 'energy-flux':
+        use_classic = True
+
+    elif method == 'heat-flux':
         use_classic = True
 
     elif method == 'electron-transfer':
@@ -425,6 +494,42 @@ def get_data_iter(setting, topology, target_atoms):
 
 
 def main():
+    """
+    If do_xxx statements are here on readability and debugging purpose
+    (steps can be skipped by setting do_xxx as False).
+
+    if do_parallel:
+        The command line options are parsed, the variable par is created.
+        par is a SequentialProcessor() or ParallelProcessor() object (see parallel.py),
+        depending on the command line options and if mpi is run or not.
+        clog module is configured, setting the log options.
+
+    if do_write:
+        Writes informations like date, license or if curp is run in parallel in log.
+
+    if do_setting:
+        setting variable is defined as a setting object (see setting.py),
+        storing the configuration file informations.
+        From there is either do_current or do_dynamics set as True.
+
+    if do_init and do_current:
+        init_current() is launched, defining topology or calculator variables.
+        par_iter() is launched, defining data_iter, an iterator going through the steps
+            of the trajectory.
+        par.run() is launched, defining the results_iter as an iterator.
+
+    if do_init and do_dynamics:
+        xxxxxxxx
+
+    if do_write:
+        results_iter is iterated through, step by step. The calculus starts there.
+        Each X step the result is printed in the log.
+
+    if do_summary:
+        the job is completed. A summary of the time each process took and such informations
+            is printed in the log.
+        
+    """
 
     do_parallel = True
     do_title    = True
@@ -517,10 +622,7 @@ def main():
         t0 = time.time()
 
         # input file
-        if options.input == '':
-            config_filename = 'run.cfg'
-        else:
-            config_filename = options.input
+        config_filename = options.input
 
         # # parse and parse setting
         import setting as st
@@ -533,7 +635,7 @@ def main():
         label_time_pairs = [('Setting', time.time()-t0)]
 
     # decide the calculation method
-    do_current  = setting.curp.method in ('momentum-current', 'energy-flux')
+    do_current  = setting.curp.method in ('momentum-current', 'energy-flux', 'heat-flux')
     do_dynamics = setting.curp.method == 'microcanonical'
 
     if do_init and do_current:

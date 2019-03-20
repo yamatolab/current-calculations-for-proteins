@@ -15,6 +15,8 @@ def get_calculator(setting):
         obj = current.EnergyCurrentCalculator
     elif method == 'energy-flux':
         obj = flux.EnergyFluxCalculator
+    elif method == 'heat-flux':
+        obj = flux.HeatFluxCalculator
     else:
         raise Exception
 

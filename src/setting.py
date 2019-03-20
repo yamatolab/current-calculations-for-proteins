@@ -1,3 +1,7 @@
+"""
+Defines the Setting class, containing all sections
+and variables from .cfg configuration file.
+"""
 
 from setting_base import *
 
@@ -198,7 +202,8 @@ class Setting(SettingBase):
                 '"dynamics is mainly used to verify the validity of '
                 ' the CURP program numerically, '
                 'so its implementation is very simple'),
-            values=['energy-flux', 'momentum-current', 'microcanonical']),
+            values=['energy-flux', 'momentum-current',
+                    'microcanonical', 'heat-flux']),
                     #'energy-current', 'stress-flux']),
 
         group_method = Choice(default='none', require=False,

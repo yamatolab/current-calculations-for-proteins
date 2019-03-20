@@ -1,3 +1,6 @@
+"""
+Gives functions to create topology and trajectory variables from files indicated in .cfg configuration file.
+"""
 
 import os, sys
 import traceback
@@ -141,7 +144,7 @@ def get_topology_converter(format, forcefield):
     dictname = 'converter_dict'
     key = (format, forcefield)
 
-    # get the parsar's directory
+    # get the parser's directory
     parser_path = os.path.dirname(__file__)
 
     # get the plugin names
@@ -232,7 +235,7 @@ def gen_matrix(matrix_files, Parser, natom, logger):
 def get_parser(format, parser_name):
     dictname = parser_name + '_dict'
 
-    # get the parsar's directory
+    # get the parser's directory
     parser_path = os.path.dirname(__file__)
 
     # get the plugin names
