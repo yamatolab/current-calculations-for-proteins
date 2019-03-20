@@ -58,28 +58,29 @@ class Writer:
     """
 
     def __init__(self, filename, frequency, compresslevel=6):
-        self.__base_fn = filename
-        self.__nfreq = frequency
-        self.__ifreq = 0
-        self.__counter = 0
+        self._base_fn = filename
+        self._nfreq = frequency
+        self._ifreq = 0
+        self._counter = 0
 
         if compresslevel != 0:
             import gzip
             def gzopen(filename, mode):
                 import gzip 
                 return gzip.open(filename, mode, compresslevel)
-            self.__open = gzopen
-            self.__use_zip = True
+            self._open = gzopen
+            self._use_zip = True
         else:
-            self.__open = open
-            self.__use_zip = False
+            self._open = open
+            self._use_zip = False
 
-        self.make_filename(self.__ifreq)
+        self.make_filename(self._ifreq)
 
     def open(self):
-        return self.__open(self.__filename, 'ab')
+        return self._open(self._filename, 'ab')
 
     def write_header(self, headers):
+        # headers: list of strings
         file = self.open()
         for h in headers:
             file.write(h)
@@ -87,63 +88,68 @@ class Writer:
         file.close()
 
     def write(self, lines):
-        self.__counter += 1
+        # lines: a generator, each element is a line (string).
+        self._counter += 1
         file = self.open()
         for line in lines:
             file.write(line)
             file.write('\n')
         file.close()
 
-        if self.__counter >= self.__nfreq:
-            self.__ifreq += 1
-            self.__counter = 0
-            self.make_filename(self.__ifreq)
+        if self._counter >= self._nfreq:
+            self._ifreq += 1
+            self._counter = 0
+            self.make_filename(self._ifreq)
 
     def make_filename(self, ifreq, digit=5):
-        ext = '.gz' if self.__use_zip else ''
+        ext = '.gz' if self._use_zip else ''
         num_fmts = '{:0' + str(digit) + '}'
-        self.__filename = self.__base_fn + num_fmts.format(ifreq) + ext
+        self._filename = self._base_fn + num_fmts.format(ifreq) + ext
 
-def AxisWriter(Writer):
-    def __init__(self, filename, frequency, compresslevel=6, axes):
+class AxisWriter(Writer):
+    def __init__(self, filename, frequency, axes, compresslevel=6):
         Writer.__init__(self, filename, frequency, compresslevel=6)
-        self.__axes = axes
+        self._axes = axes
         self.make_afnames()
 
     def open(self):
-        #Overwriting open, this way each file is opened
-        return { axis: self.__open(self.__afnames[axis], 'ab')
-                 for axis in self.__axes }
+        # Overwriting open, this way each file is opened
+        return { axis: self._open(self._afnames[axis], 'ab')
+                 for axis in self._axes }
 
     def close(self, files):
-        files[axis].close() for axis in self.__axes
+        # May be better to find a way not relying on loops
+        for axis in self._axes: files[axis].close()
         
     def write_header(self, headers):
         files = self.open()
         for h in headers:
-            for axis in axes:
+            for axis in self._axes:
                 files[axis].write(h)
                 files[axis].write('\n')
         self.close(files)
 
     def write(self, lines):
-        self.__counter += 1
+        """ lines: a generator of list of strings.
+                   Each element is the line for one axis.
+        """
+        self._counter += 1
         files = self.open()
         for line in lines:
-            for i, axis in enumerate(self.__axes):
+            for i, axis in enumerate(self._axes):
                 files[axis].write(line[i])
                 files[axis].write('\n')
-        self.close()
+        self.close(files)
 
-        if self.__counter >= self.__nfreq:
-            self.__ifreq += 1
-            self.__counter = 0
-            self.make_filename(self.__ifreq)
+        if self._counter >= self._nfreq:
+            self._ifreq += 1
+            self._counter = 0
+            self.make_filename(self._ifreq)
 
-    def make_afnames(self, ifreq, digit=5):
+    def make_afnames(self):
         #Stores the filenames for each axis
-        self.__afnames = {axis: self.filename + axis
-                                 for axis in axes}
+        self._afnames = {axis: self._filename + axis
+                                 for axis in self._axes}
 
 
 class MultiCurrentWriter:
@@ -391,8 +397,9 @@ class FluxWriter:
         self.__time_fmt = '{:>15.3f} [ps]'
         self.__writer = {}
         self.__axes = axes
+        self.__dim = len(axes)
 
-        # setup the object using setting
+        # Setup the object using setting
 
         filename = setting.output.filename[0]
         print(filename)
@@ -407,23 +414,21 @@ class FluxWriter:
         fmt = '{prefix}_' + self.__revision + '{ext}'
         mod_fn = fmt.format(prefix=prefix, ext=ext)
 
-        self.__writer = AxisWriter(mod_fn, frequency, compresslevel, axes)
+        self.__writer = AxisWriter(mod_fn, frequency, axes, compresslevel)
 
-        # define format
-        self.__fmt_fmt = '{:>5} {:>12}'.format('donor', 'acceptor')
+        # Defines format
+        self.__fmt_fmt = '{:>5} {:>12}'.format('donor', 'acceptor') # Header columns
 
-        self.__data_fmt = '{:>12s} {:>12s}'
+        self.__data_fmt = '{:>12s} {:>12s}' # Values lines format
 
+        self.__decomps = ['total']  # Stores the name of the forces if decomposed
         if setting.output.decomp:
-            self.__decomps = ['total'].extend(decomp_list)
-        else:
-            self.__decomps = ['total']
+            self.__decomps.extend(decomp_list)
 
         for ptype in self.__decomps:
-            self.__fmt_fmt += ' {:>16}'.format(ptype)
-            # self.__fmt_fmt += ' {{{}:>12.7f}}'.format(ptype)
+            self.__fmt_fmt += ' {:>16}'.format(ptype)   # Header columns line
 
-        self.__data_fmt += ' {:>16.8e}'*len(self.__decomps)
+        self.__data_fmt += ' {:>16.8e}'*len(self.__decomps) # Lines format
 
         # make {gname : igrp} dictionary
         self.__name_to_idx = None
@@ -438,12 +443,10 @@ class FluxWriter:
     def write_header(self):
         # write header
         for axis in self.__axes:
-            self.__writers[axis].write_header(self.get_header_format(self.__title))
+            self.__writer.write_header(self.get_header_format(self.__title))
 
     def write(self, istep, key_to_fluxes):
     
-        print(key_to_fluxes)
-        try:
         to_fluxes_ar = numpy.array(key_to_fluxes)
         for axis in self.__axes:
             
@@ -453,7 +456,7 @@ class FluxWriter:
                 lines = self.format_by_pairs(
                         istep, key_to_fluxes, self.__names, self.__pair_table)
 
-            self.__writers[axis].write(lines)
+            self.__writer.write(lines)
 
     def ok_write(self, i, j):
         if i < j:
@@ -462,6 +465,9 @@ class FluxWriter:
             return self.__setting.curp.enable_inverse_pair
 
     def format(self, time, key_to_fluxes, names):
+        """
+        format each line, returns a list of float or of list
+        """
         yield self._flag_char + 'time' + self.__time_fmt.format(time)
         yield self._flag_char + 'data'
         # for name, current in zip(names, current):
@@ -492,13 +498,21 @@ class FluxWriter:
                 jtar_1 = self.__name_to_idx[name_j]
                 if not self.ok_write(itar_1, jtar_1): continue
 
-                for pot_type in self.__decomps:
-                    fluxes.append(flux_value)
-
+                fluxes = [None for k in self.__decomps]
+                for i, pot_type in enumerate(self.__decomps):
+                    flux_value = key_to_fluxes[pot_type][itar_1, jtar_1]
+                    fluxes[i] = flux_value
+                """
+                fluxes is either a list of floats or of list.
+                Each float corresponding to the contribution of the forces
+                (total, vdw, coulomb, ...) to the flux (J).
+                Or each list containing floats, coordinates of the flux vector,
+                each list element correspond to the contribution of the forces.
+                """
                 fluxes_ar = numpy.array(fluxes).transpose()
-                line = [self.__data_fmt.format(name_i, name_j, *k)
-                       for k in fluxes_ar]
-                print(line[0])
+                fluxes_ar = fluxes_ar.reshape(self.__dim, -1)
+
+                line = [self.__data_fmt.format(name_i, name_j, *k) for k in fluxes_ar]
                 yield line
 
     def write_all(self, time_itr, results_itr):
