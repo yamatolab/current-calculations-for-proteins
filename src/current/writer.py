@@ -5,9 +5,7 @@ import numpy
 
 def get_writer(setting, decomp_list, target_anames, group_names,
         gpair_table=None):
-    """Return Writer object by the setting.curp.method.
-    If target_atoms is None, this method returns GroupWriter object.
-    """
+    #Return Writer object depending on the setting.curp.method.
 
     method = setting.curp.method
     if method == 'momentum-current':
@@ -57,13 +55,14 @@ class Writer:
     rotate and zip
     """
 
-    def __init__(self, filename, frequency, compresslevel=6):
+    def __init__(self, filename, frequency, compresslevel=6, use_axes=False):
         self._base_fn = filename
         self._nfreq = frequency
         self._ifreq = 0
         self._counter = 0
 
-        if compresslevel != 0:
+        self._use_zip = compresslevel != 0
+        if self._use_zip:
             import gzip
             def gzopen(filename, mode):
                 import gzip 
@@ -74,7 +73,7 @@ class Writer:
             self._open = open
             self._use_zip = False
 
-        self.make_filename(self._ifreq)
+        self.make_filename(self._ifreq, use_axes)
 
     def open(self):
         return self._open(self._filename, 'ab')
@@ -101,14 +100,16 @@ class Writer:
             self._counter = 0
             self.make_filename(self._ifreq)
 
-    def make_filename(self, ifreq, digit=5):
-        ext = '.gz' if self._use_zip else ''
+    def make_filename(self, ifreq, use_axes=False, digit=5):
+        ext = '.gz' if (self._use_zip and not(use_axes)) else ''
         num_fmts = '{:0' + str(digit) + '}'
         self._filename = self._base_fn + num_fmts.format(ifreq) + ext
 
 class AxisWriter(Writer):
     def __init__(self, filename, frequency, axes, compresslevel=6):
-        Writer.__init__(self, filename, frequency, compresslevel)
+        Writer.__init__(self, filename, frequency,
+                        compresslevel, use_axes=True)
+
         self._axes = axes
         self._dim = len(axes)
         self.make_afnames()
@@ -129,7 +130,7 @@ class AxisWriter(Writer):
 
     def write(self, lines):
         """ lines: a generator of list of strings.
-                   Each element is the line for one axis.
+                   Each string is the line for one axis.
         """
         self._counter += 1
         files = self.open()
@@ -142,13 +143,13 @@ class AxisWriter(Writer):
         if self._counter >= self._nfreq:
             self._ifreq += 1
             self._counter = 0
-            self.make_filename(self._ifreq)
+            self.make_filename(self._ifreq, use_axes=True)
             self.make_afnames()
 
     def make_afnames(self):
         #Stores the filenames for each axis
-        self._afnames = [self._filename + axis
-                                 for axis in self._axes]
+        ext = '.gz' if self._use_zip else ''
+        self._afnames = [self._filename + axis + ext for axis in self._axes]
 
 
 class MultiCurrentWriter:
@@ -381,7 +382,7 @@ class CurrentWriter:
                 yield key
 
 
-################################################################################
+###############################################################################
 class FluxWriter:
 
     _flag_char = '%'
