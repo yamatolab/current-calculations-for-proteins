@@ -219,19 +219,19 @@ class MultiFluxWriter:
 
         elif (grain, fmt) == ('atom', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, revision='atm')
+                    target_anames, axes, revision='atm')
             self.__grp_writer = None
 
         elif (grain, fmt) == ('group', 'netcdf'):
             self.__atm_writer = None
             self.__grp_writer = NetCDFFluxWriter( setting, decomp_list,
-                    group_names, gpair_table, revision='grp')
+                    group_names, gpair_table, axes, revision='grp')
 
         elif (grain, fmt) == ('both', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, revision='atm')
+                    target_anames, axes, revision='atm')
             self.__grp_writer = NetCDFFluxWriter( setting, decomp_list,
-                    group_names, gpair_table, revision='grp')
+                    group_names, gpair_table, axes, revision='grp')
 
         else:
             pass
@@ -614,7 +614,7 @@ class NetCDFFluxWriter:
     version = 0.7
 
     def __init__(self, setting, decomp_list, names,
-                 gpair_table=None, title='', revision=''):
+                 gpair_table=None, axes=None, title='', revision=''):
 
         self.__ncfile = None
         self.__setting = setting
@@ -623,7 +623,7 @@ class NetCDFFluxWriter:
         self.__names = names
         self.__pair_table = gpair_table
         self.__fp = setting.output.filename[0]
-
+        self.__axes = axes
         # self.complevel = complevel
         # if setting.output.compress:
             # self.complevel = 1
@@ -673,12 +673,29 @@ class NetCDFFluxWriter:
         nc_acc = ncfile.createVariable('acceptors', 'c', ('npair', 'nchar'))
 
         # components
-        nc_com = ncfile.createVariable('components','c',('ncomponent','nchar'))
+        nc_com = ncfile.createVariable('components','c',
+                                      ('ncomponent','nchar'))
 
-        # flux trajectory
-        nc_flux = ncfile.createVariable('flux', 'f4',
-                ('nframe', 'npair', 'ncomponent' ), )
-                # zlib=self.use_zlib, complevel=self.complevel)
+        """
+        depends if the data format is
+         - a float (energy-flux) or
+         - a vector (heat-flux)
+        """
+
+        if self.__axes == None:
+            # flux trajectory
+            nc_flux = ncfile.createVariable('flux', 'f4',
+                    ('nframe', 'npair', 'ncomponent'), )
+            self.write = self.energy_write
+        else:  
+            # create axes dimension
+            ncfile.createDimension('naxes', len(self.__axes))
+            # flux trajectory
+            nc_flux = ncfile.createVariable('flux', 'f4',
+                    ('nframe', 'naxes', 'npair', 'ncomponent'), ) 
+                    # zlib=self.use_zlib, complevel=self.complevel)
+            self.write = self.heat_write
+
         nc_flux.units = 'kcal/mol/fs'
 
         # write group pairs
@@ -757,7 +774,7 @@ class NetCDFFluxWriter:
         fmt = '{prefix}_' + self.__revision + '{ext}'
         return fmt.format(prefix=prefix, ext=ext)
 
-    def write(self, istp_1, key_to_fluxes):
+    def energy_write(self, istp_1, key_to_fluxes):
 
         ncfile = self.open()
 
@@ -778,6 +795,29 @@ class NetCDFFluxWriter:
         
         self.close()
 
+    def heat_write(self, istp_1, key_to_fluxes):
+
+        ncfile = self.open()
+
+        # write time
+        dt = 0.01
+        ncfile.variables['time'][istp_1] = istp_1*dt
+
+        # write flux
+        nc_flux  = ncfile.variables['flux']
+
+        flux = numpy.array([ key_to_fluxes[pot_type]
+                for pot_type in self.__decomps ]).T.reshape(
+                                                    (len(self.__axes),
+                                                     -1,
+                                                     len(self.__decomps)))
+
+        if self.__mask_indices:
+            nc_flux[istp_1] = flux[:,self.__mask_indices,:]
+        else:
+            nc_flux[istp_1] = flux
+        
+        self.close()
     def open(self):
         if self.__ncfile is None:
             ncfile = netcdf.Dataset(self.get_fp(), mode='r+')
