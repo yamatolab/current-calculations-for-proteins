@@ -1,4 +1,5 @@
 #  -*- encoding: utf-8 -*-
+"""exception - Exception handler"""
 import os, sys
 import traceback
 

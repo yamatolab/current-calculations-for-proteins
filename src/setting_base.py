@@ -1,4 +1,17 @@
+"""setting-base - Methods and class of the setting object
 
+Classes:
+SettingBase
+Section
+TypeBase
+|+ Int
+|+ Float
+|+ String 
+|+ Bool
+|+ Choice
+|+ List
+|+ File
+"""
 import os, glob
 
 from exception import CurpException

@@ -1,6 +1,8 @@
-"""
-Defines the Setting class, containing all sections
-and variables from .cfg configuration file.
+"""setting - Defines the Setting class
+
+Setting class contains all sections and variables from .cfg
+configuration file.
+Defines all the .cfg sections as class variables (Section object)
 """
 
 from setting_base import *

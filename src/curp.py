@@ -1,8 +1,9 @@
-"""
-Main curp programm.
+"""curp - Main curp programm.
+
 Developed by Yamato's lab, Nagoya University.
 Use the argument -h for a list of available arguments.
-Input: .cfg file (see http://www.comp-biophys.com/resources/curp-tutorial/tutorials.html and the tutorial directory for more informations)
+Input: .cfg file (see http://www.comp-biophys.com/resources/curp-tutorial/tutorials.html
+and the tutorial directory for more informations.)
 """
 
 from __future__ import print_function

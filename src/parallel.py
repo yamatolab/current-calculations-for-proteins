@@ -1,3 +1,10 @@
+"""parallel - Classes to handle processor, parallel or serial
+
+Classes:
+ParallelProcessor -- Run the calculations in parallel.
+SequentialProcess -- Run the calculations in serial.
+"""
+
 from __future__ import print_function
 
 import itertools as it
@@ -234,8 +241,7 @@ class ParallelProcessor:
 ################################################################################
 class SequentialProcessor:
 
-    """
-    The class to run in serial from given method and dictionary list,
+    """Class to run in serial from given method and dictionary list,
     when there is not mpi4py library.
 
     >>> para = SequentialProcessor()

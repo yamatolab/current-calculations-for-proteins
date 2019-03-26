@@ -1,5 +1,5 @@
-"""
-Defines functions of what to print in the logs.
+"""clog - Defines functions of what to print in the logs.
+
 If log_level is set to 1 (WARN):
   only warning messages will be printed.
 If log level is set to 2 (default) (INFO):
