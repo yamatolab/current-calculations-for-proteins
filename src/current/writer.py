@@ -1,24 +1,52 @@
+"""Write the results of curp calculator
+
+CURP 1.1: Ishikura, 2016. Most of the Layout  
+CURP 1.2: Laprevote, 2019. Heat Flux gestion (and commenting code).
+
+In main() of curp.py, a writer is initialized along with the calculator.
+The writer varies depending on setting options (in .cfg) contained in
+a setting object.
+The writer will vary because of (in this order):
+ * Decided in get_writer:
+  - The calculation method (momentum-current, energy or heat-flux)
+ * Decided in MultiFluxWriter and MultiCurrentWriter:
+  - The output file format (ascii or netcdf)
+  - The use of groups or not
+ * Decided in CurrentWriter, FluxWriter and NetCDFFluxWriter:
+  - The compression of the output file
+  - In FluxWriter and NetCDFFluxWriter, the presence of axes
+    (as heat flux is a vector and energy flux a single value)
+
+Each of the XxxWriter will format lines using the output of the
+calculator for one frame, and use either Writer or AxisWriter object
+to write them in a file.
+"""
+
 from __future__ import print_function
 
 import os
 import numpy
 
+
 def get_writer(setting, decomp_list, target_anames, group_names,
-        gpair_table=None):
-    #Return Writer object depending on the setting.curp.method.
+               gpair_table=None):
+    """Returns Writer object depending on the setting.curp.method."""
 
     method = setting.curp.method
     if method == 'momentum-current':
-        obj = MultiCurrentWriter(setting=setting, decomp_list=decomp_list,
-                target_anames=target_anames, group_names=group_names )
+        obj = MultiCurrentWriter(
+                setting=setting, decomp_list=decomp_list,
+                target_anames=target_anames, group_names=group_names)
 
     elif method == 'energy-flux':
-        obj = MultiFluxWriter(setting=setting, decomp_list=decomp_list,
+        obj = MultiFluxWriter(
+                setting=setting, decomp_list=decomp_list,
                 target_anames=target_anames, group_names=group_names,
                 gpair_table=gpair_table)
 
     elif method == 'heat-flux':
-        obj = MultiFluxWriter(setting=setting, decomp_list=decomp_list,
+        obj = MultiFluxWriter(
+                setting=setting, decomp_list=decomp_list,
                 target_anames=target_anames, group_names=group_names,
                 gpair_table=gpair_table, axes=('i','j','k'))
 
@@ -50,17 +78,28 @@ def write(setting, results, formats):
             data = res[key]
             writer.write(data)
 
+
 class Writer:
-    """
-    rotate and zip
+    """Called to write files.
+
+    Used in CurrentWriter.
+    Parent of AxisWriter.
+
+    Keyword arguments:
+    filename -- string, will precede the name of written files
+    frequency -- integer 
+    compresslevel -- integer, ==0 when compress=no in .cfg file
+    use_axes -- boolean, True when Writer is used in AxisWriter.
     """
 
-    def __init__(self, filename, frequency, compresslevel=6, use_axes=False):
+    def __init__(self, filename, frequency,
+                 compresslevel=6, use_axes=False):
         self._base_fn = filename
         self._nfreq = frequency
-        self._ifreq = 0
+        self._ifreq = 0     # The number of the frame
         self._counter = 0
 
+        # Choose the open function used
         self._use_zip = compresslevel != 0
         if self._use_zip:
             import gzip
@@ -68,10 +107,8 @@ class Writer:
                 import gzip 
                 return gzip.open(filename, mode, compresslevel)
             self._open = gzopen
-            self._use_zip = True
         else:
             self._open = open
-            self._use_zip = False
 
         self.make_filename(self._ifreq, use_axes)
 
@@ -79,7 +116,7 @@ class Writer:
         return self._open(self._filename, 'ab')
 
     def write_header(self, headers):
-        # headers: list of strings
+        """headers -- string generator"""
         file = self.open()
         for h in headers:
             file.write(h)
@@ -87,7 +124,7 @@ class Writer:
         file.close()
 
     def write(self, lines):
-        # lines: a generator, each element is a line (string).
+        """lines -- string generator"""
         self._counter += 1
         file = self.open()
         for line in lines:
@@ -101,11 +138,25 @@ class Writer:
             self.make_filename(self._ifreq)
 
     def make_filename(self, ifreq, use_axes=False, digit=5):
+        # The .gz is not put if AxisWriter is used or compress=no
         ext = '.gz' if (self._use_zip and not(use_axes)) else ''
         num_fmts = '{:0' + str(digit) + '}'
         self._filename = self._base_fn + num_fmts.format(ifreq) + ext
 
+
 class AxisWriter(Writer):
+    """Called to write files if the calculator gives vectors (heat-flux)
+    
+    Used in FluxWriter.
+    For one frame, writes one file per axis.
+    
+    Keyword arguments:
+    filename -- string, will precede the name of written files
+    frequency -- integer 
+    compresslevel -- integer, ==0 when compress=no in .cfg file
+    axes -- list of strings, each the name of an axis
+    """
+
     def __init__(self, filename, frequency, axes, compresslevel=6):
         Writer.__init__(self, filename, frequency,
                         compresslevel, use_axes=True)
@@ -129,8 +180,9 @@ class AxisWriter(Writer):
         map(self.close, files)
 
     def write(self, lines):
-        """ lines: a generator of list of strings.
-                   Each string is the line for one axis.
+        """
+        lines: a generator of list of strings.
+               Each string is the line for one axis.
         """
         self._counter += 1
         files = self.open()
@@ -147,10 +199,14 @@ class AxisWriter(Writer):
             self.make_afnames()
 
     def make_afnames(self):
-        #Stores the filenames for each axis
+        # Stores the filenames for each axis
         ext = '.gz' if self._use_zip else ''
         self._afnames = [self._filename + axis + ext for axis in self._axes]
 
+
+"""
+MultiXxWriter: choose the options for Current, Flux and NetCDFFluxWriter.
+"""
 
 class MultiCurrentWriter:
 
@@ -249,6 +305,11 @@ class MultiFluxWriter:
         if self.__atm_writer: self.__atm_writer.write(istep, flux_atm)
         if self.__grp_writer: self.__grp_writer.write(istep, flux_grp)
 
+"""
+Writers below parse the lines for files, given output of a calculator.
+Writer or AxisWriter are then used to write the files in case of ascii.
+NetCDFFluxWriter does this part by itself.
+"""
 
 
 class CurrentWriter:
@@ -263,11 +324,11 @@ class CurrentWriter:
 
         self._time_fmt = '{:>15.3f} [ps]'
         self._data_fmt = ('{{name:>14s}}  '
-                '{{xx:{fmt}}} {{xy:{fmt}}} {{xz:{fmt}}} '
-                '{{yx:{fmt}}} {{yy:{fmt}}} {{yz:{fmt}}} '
-                '{{zx:{fmt}}} {{zy:{fmt}}} {{zz:{fmt}}} ').format(fmt='012.7e')
+               '{{xx:{fmt}}} {{xy:{fmt}}} {{xz:{fmt}}} '
+               '{{yx:{fmt}}} {{yy:{fmt}}} {{yz:{fmt}}} '
+               '{{zx:{fmt}}} {{zy:{fmt}}} {{zz:{fmt}}} ').format(fmt='012.7e')
 
-        # setup the object using setting
+        # Setup the object using setting
         filename = setting.output.filename[0]
         frequency = setting.output.frequency
         if setting.output.compress:
@@ -374,7 +435,7 @@ class CurrentWriter:
             self.__key_to_writer['total'].write(lines)
 
     def gen_decomp_keys(self, decomp_list):
-        """Generate flatten decomposition key list."""
+        # Generate flatten decomposition key list.
         for key in decomp_list:
             if isinstance(key, tuple) or isinstance(key, list):
                 yield key[0]
@@ -382,25 +443,23 @@ class CurrentWriter:
                 yield key
 
 
-###############################################################################
 class FluxWriter:
 
     _flag_char = '%'
 
     def __init__(self, setting, decomp_list, names, axes,
                  pair_table=None, title='', revision=''):
-        self.__setting = setting
+        self.__setting = setting    # setting object from .cfg file
         self.__revision = revision
         self.__title = title
         self.__names = names
-        self.__pair_table = pair_table
+        self.__pair_table = pair_table  # Interaction table
         self.__time_fmt = '{:>15.3f} [ps]'
-        self.__writer = {}
 
         if axes is None:
             self.__axes = ['']
         else:
-            self.__axes = axes
+            self.__axes = axes  # List of strings: the name of the axes
 
         self.__dim = len(self.__axes)
 
@@ -417,27 +476,31 @@ class FluxWriter:
         fmt = '{prefix}_' + self.__revision + '{ext}'
         mod_fn = fmt.format(prefix=prefix, ext=ext)
         
-        self.__writer = AxisWriter(mod_fn, frequency, self.__axes, compresslevel)
+        self.__writer = AxisWriter(mod_fn, frequency, self.__axes,
+                                   compresslevel)
             
         # Defines format
-        self.__fmt_fmt = '{:>5} {:>12}'.format('donor', 'acceptor') # Header columns
-
-        self.__data_fmt = '{:>12s} {:>12s}' # Values lines format
-
-        self.__decomps = ['total']  # Stores the name of the forces if decomposed
+        # Header columns:
+        self.__fmt_fmt = '{:>5} {:>12}'.format('donor', 'acceptor')
+        # Values lines format:
+        self.__data_fmt = '{:>12s} {:>12s}' 
+        # Stores the name of the forces if output has to be decomposed
+        self.__decomps = ['total']
         if setting.output.decomp:
             self.__decomps.extend(decomp_list)
 
         for ptype in self.__decomps:
-            self.__fmt_fmt += ' {:>16}'.format(ptype)   # Header columns line
+            self.__fmt_fmt += ' {:>16}'.format(ptype)
         
         self.__num_decomps = len(self.__decomps)
-        self.__data_fmt += ' {:>16.8e}' * self.__num_decomps    # Lines format
+        self.__data_fmt += ' {:>16.8e}' * self.__num_decomps
 
         # make {gname : igrp} dictionary
         self.__name_to_idx = None
         if pair_table:
-            self.__name_to_idx = {name:i for i, name in enumerate(self.__names)}
+            self.__name_to_idx = {
+                        name: i for i, name in enumerate(self.__names)
+                        }
 
     def get_header_format(self, title):
         yield self._flag_char + 'title  ' + title
@@ -445,7 +508,6 @@ class FluxWriter:
         yield self._flag_char + 'label ' + self.__fmt_fmt
 
     def write_header(self):
-        # write header
         self.__writer.write_header(self.get_header_format(self.__title))
 
     def write(self, istep, key_to_fluxes):
@@ -466,9 +528,7 @@ class FluxWriter:
             return self.__setting.curp.enable_inverse_pair
 
     def format(self, time, key_to_fluxes, names):
-        """
-        format each line, returns 2d numpy array
-        """
+        """Format each line, returns 2d numpy array"""
         yield [self._flag_char + 'time' + self.__time_fmt.format(time)] * 3
         yield [self._flag_char + 'data'] * 3
         # for name, current in zip(names, current):
@@ -565,8 +625,8 @@ class FluxWriter:
 
 import netCDF4 as netcdf
 class NetCDFFluxWriter:
-
     """
+
     For example:
 
     netcdf file_name {
@@ -611,7 +671,7 @@ class NetCDFFluxWriter:
     }
     """
 
-    version = 0.7
+    version = 0.8
 
     def __init__(self, setting, decomp_list, names,
                  gpair_table=None, axes=None, title='', revision=''):
@@ -652,7 +712,7 @@ class NetCDFFluxWriter:
         ncfile.title             = title
         ncfile.application       = 'the CURP program'
         ncfile.program           = 'curp'
-        ncfile.programVersion    = '0.7'
+        ncfile.programVersion    = string(self.version)
         ncfile.Convetsions       = 'CURP'
         ncfile.ConvetsionVersion = str(self.version)
 
@@ -677,11 +737,10 @@ class NetCDFFluxWriter:
                                       ('ncomponent','nchar'))
 
         """
-        depends if the data format is
+        Differences whether the data format is
          - a float (energy-flux) or
          - a vector (heat-flux)
         """
-
         if self.__axes == None:
             # flux trajectory
             nc_flux = ncfile.createVariable('flux', 'f4',
@@ -754,7 +813,7 @@ class NetCDFFluxWriter:
 
     def setup_components(self, decomp_list):
 
-        # write components
+        # Write components
         if self.__setting.output.decomp:
             self.__decomps = ['total'] + decomp_list
         else:
@@ -778,11 +837,11 @@ class NetCDFFluxWriter:
 
         ncfile = self.open()
 
-        # write time
+        # Write time
         dt = 0.01
         ncfile.variables['time'][istp_1] = istp_1*dt
 
-        # write flux
+        # Write flux
         nc_flux  = ncfile.variables['flux']
 
         flux = numpy.array([ key_to_fluxes[pot_type].ravel()
@@ -799,18 +858,19 @@ class NetCDFFluxWriter:
 
         ncfile = self.open()
 
-        # write time
+        # Write time
         dt = 0.01
         ncfile.variables['time'][istp_1] = istp_1*dt
 
-        # write flux
+        # Write flux
         nc_flux  = ncfile.variables['flux']
 
         flux = numpy.array([ key_to_fluxes[pot_type]
                 for pot_type in self.__decomps ]).T.reshape(
                                                     (len(self.__axes),
                                                      -1,
-                                                     len(self.__decomps)))
+                                                     len(self.__decomps))
+                                                    )
 
         if self.__mask_indices:
             nc_flux[istp_1] = flux[:,self.__mask_indices,:]
