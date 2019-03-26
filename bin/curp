@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # set curp_home variable
 cmdpath=$(cd $(dirname $0); pwd)
