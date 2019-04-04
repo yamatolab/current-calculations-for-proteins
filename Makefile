@@ -14,13 +14,10 @@ ACTIVATE="$(VIRTUAL_DIR)/bin/activate"
 PY_PACKAGES = numpy nose benchmarker setproctitle netCDF4 pygraphviz
 PIP_DOWNLOAD_CACHE=$(VIRTUAL_DIR)/pylibs
 
-# default: venv nose
-#all: serial mpi success
-
 all: serial success
 
-# serial: venv netcdf $(PY_PACKAGES)  analysis curp
-#serial: venv netcdf $(PY_PACKAGES) f2py analysis curp
+environment: venv packages
+
 serial: analysis curp
 
 intel: venv netcdf-intel $(PY_PACKAGES) analysis-intel curp-intel success-intel
@@ -46,7 +43,6 @@ $(VIRTUAL_DIR)/$(VENV):
 	mkdir -p $(VIRTUAL_DIR)
 	curl  -k -o $(VIRTUAL_DIR)/$(VENV).tar.gz \
 		https://github.com/pypa/virtualenv/archive/1.11.6.tar.gz
-		#https://files.pythonhosted.org/packages/37/db/89d6b043b22052109da35416abc3c397655e4bd3cff031446ba02b9654fa/virtualenv-16.4.3.tar.gz
 	tar xzf $(VIRTUAL_DIR)/$(VENV).tar.gz -C $(VIRTUAL_DIR)
 
 $(VIRTUAL_DIR)/bin/activate:
@@ -62,6 +58,15 @@ netcdf:
 
 netcdf-intel:
 	$(MAKE) intel -C curp-environ
+
+packages:
+	@echo "Installing $@ (time-consuming)"
+	. $(VIRTUAL_DIR)/bin/activate; \
+		$(VIRTUAL_DIR)/bin/pip install -r requirements.txt >> $(VIRTUAL_DIR)/logs/$@.log 2>&1 || \
+		pip install $(PIP_DOWNLOAD_CACHE)/$@* \
+		>> $(VIRTUAL_DIR)/logs/$@.log 2>&1 && \
+		exit
+
 
 numpy:
 	@echo "Installing $@ (may be time-consuming)..."
