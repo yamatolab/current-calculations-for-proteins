@@ -712,7 +712,7 @@ class NetCDFFluxWriter:
         ncfile.title             = title
         ncfile.application       = 'the CURP program'
         ncfile.program           = 'curp'
-        ncfile.programVersion    = string(self.version)
+        ncfile.programVersion    = str(self.version)
         ncfile.Convetsions       = 'CURP'
         ncfile.ConvetsionVersion = str(self.version)
 
