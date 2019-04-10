@@ -1,15 +1,16 @@
-#! /bin/bash
+#! /bin/sh
 
 # set curp_home variable
 cmdpath=$(cd $(dirname $0); pwd)
 curp_home=$(cd $cmdpath/../; pwd)
 
-_OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-source $curp_home/curp-environ/bin/activate
-export LD_LIBRARY_PATH=$curp_home/curp-environ/lib:$LD_LIBRARY_PATH
-python $curp_home/script/conv_trj.py "$@"
+if [ -f $curp_home/Pipfile ]  # verify instalation of pipenv
+then
+    export PIPENV_PIPFILE=$curp_home/Pipfile    # pipenv uses $curp_home env
+    pipenv run python $curp_home/script/conv_trj.py "$@"
+else
+    python $curp_home/script/conv_trj.py "$@"
+fi
 error=$?
-deactivate
-export LD_LIBRARY_PATH=$_OLD_LD_LIBRARY_PATH
 
 exit $error
