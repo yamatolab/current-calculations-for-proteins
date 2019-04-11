@@ -60,6 +60,9 @@ def main():
     if pname == 'dist':
         from distance import do_distance
         process = do_distance
+    if pname == 'disp':
+        from displacement import do_displacement
+        process = do_displacement
 
     # processing
     process(args, tpl)
@@ -200,6 +203,10 @@ def get_arguments():
             dest='dist_format',
             required=False, default='{rid:05}_{rname}',
             help='specify the format for representing residue identify.')
+
+    # displacement
+    disp = sp.add_parser('disp',
+            help='Calculate residue mean coordinates.')
 
     # make arguments
     return parser.parse_args()
