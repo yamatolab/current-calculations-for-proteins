@@ -27,8 +27,8 @@ endif
 
 .f90.so:
 ifneq ($(wildcard $(CURP_HOME)/Pipfile),)
-    pipenv run $(F2PY) -c $*.f90 -m $*  $(F2PYFLAGS) && \
-    echo "\n[compiled $*.f90 successfully.]\n"
+	pipenv run $(F2PY) -c $*.f90 -m $*  $(F2PYFLAGS)
+	echo "\n[compiled $*.f90 successfully.]\n"
 else
 	$(F2PY) -c $*.f90 -m $*  $(F2PYFLAGS) && \
 	echo "\n[compiled $*.f90 successfully.]\n"
