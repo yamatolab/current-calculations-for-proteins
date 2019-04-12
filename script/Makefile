@@ -6,5 +6,4 @@ include $(CURP_HOME)/lib/Makefile.in
 
 ##### Target definitions #####
 
-install: lib_acf.so lib_pickup.so lib_distance.so
-
+install: lib_acf.so lib_hfacf.so lib_pickup.so lib_distance.so

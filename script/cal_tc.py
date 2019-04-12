@@ -1,4 +1,21 @@
 #! /usr/bin/env python
+
+"""Calculate autocorrelation function using flux data
+CURP 1.1: Ishikura, 2016. Most of the Layout
+CURP 1.2: Yamato, 2019. Heat Flux gestion (and commenting code).
+
+This task needs neither main() of curp.py nor .cfg file.
+The type of flux data, i.e., scalar or vector, is specified by
+the newly added argument "-no_axes". With (without) this option,
+scalar (vector) flux is handled, and fortran module lib_acf (lib_hfacf)
+is employed. The lib_hfacf fortran module was newly added.
+
+In this update from 1.1 to 1.2, the following files are 
+modified:
+$CURP_HOME/script/Makefile
+$CURP_HOME/script/cal_tc.py (this file).
+"""
+
 from __future__ import print_function
 import os, sys
 import math
@@ -11,6 +28,7 @@ from curp_module import ParallelProcessor
 
 # fortran module
 import lib_acf
+import lib_hfacf
 
 def parse_options():
     """Parse and get the command line options."""
@@ -72,6 +90,10 @@ def parse_options():
             action='store_true', required=False,
             help='turn on debug mode.')
 
+    parser.add_argument('-no_axes', dest='no_axes',
+            action='store_true', required=False,
+            help='with this option, scalar flux is handled.')
+
     # make arguments
     return parser.parse_args()
 
@@ -88,7 +110,7 @@ def get_dt(flux_fn):
 
     return dt
 
-def gen_fluxdata(flux_fn):
+def gen_fluxdata(flux_fn,no_axes):
 
     t0 = time.time()
 
@@ -113,7 +135,13 @@ def gen_fluxdata(flux_fn):
 
         t1 = time.time()
         ncfile = netcdf.Dataset(flux_fn, mode='r')
-        flux = ncfile.variables['flux'][:, ipair_1, icom]
+
+        if no_axes:
+            flux = ncfile.variables['flux'][:, ipair_1, icom]
+        else:
+            flux = ncfile.variables['flux'][:, :, ipair_1, icom]
+        
+        print(flux.shape)
         ncfile.close()
 
         t2 = time.time()
@@ -138,12 +166,18 @@ class TCCalculator:
         self.__nsample = opts.nsample
         self.__coef    = opts.coef
         self.dt        = dt
+        self.no_axes   = opts.no_axes
 
     def run(self, don, acc, flux):
 
-        acf = lib_acf.cal_acf(flux, self.nframe_acf,
-                self.__fst, self.__lst, self.__intvl, self.__shift,
-                False, self.__nsample)
+        if self.no_axes: 
+          acf = lib_acf.cal_acf(flux, self.nframe_acf,
+                  self.__fst, self.__lst, self.__intvl, self.__shift,
+                  False, self.__nsample)
+        else:
+          acf = lib_hfacf.cal_hfacf(flux, self.nframe_acf,
+                  self.__fst, self.__lst, self.__intvl, self.__shift,
+                  False, self.__nsample, 3)
 
         tc  = self.cal_tc(acf)
         return tc, acf
@@ -152,9 +186,14 @@ class TCCalculator:
         t0 = time.time()
         don, acc, flux = data
 
-        acf = lib_acf.cal_acf(flux, self.nframe_acf,
-                self.__fst, self.__lst, self.__intvl, self.__shift,
-                False, self.__nsample)
+        if self.no_axes:
+          acf = lib_acf.cal_acf(flux, self.nframe_acf,
+                  self.__fst, self.__lst, self.__intvl, self.__shift,
+                  False, self.__nsample)
+        else:
+          acf = lib_hfacf.cal_hfacf(flux, self.nframe_acf,
+                  self.__fst, self.__lst, self.__intvl, self.__shift,
+                  False, self.__nsample, 3)
 
         tc  = self.cal_tc(acf)
 
@@ -168,8 +207,12 @@ class TCCalculator:
         for flux in flux_iter:
             t0 = time.time()
 
-            acf = lib_acf.cal_acf(flux, self.nframe_acf, fst, lst, intvl,
-                    self.__shift, False, self.__nsample)
+            if self.no_axes:
+              acf = lib_acf.cal_acf(flux, self.nframe_acf, fst, lst, intvl,
+                      self.__shift, False, self.__nsample)
+            else:
+              acf = lib_hfacf.cal_hfacf(flux, self.nframe_acf, fst, lst, intvl,
+                      self.__shift, False, self.__nsample, 3)
 
             tc  = cal_tc(acf, self.dt, self.__coef)
 
@@ -376,7 +419,7 @@ def main():
 
     # prepare flux data
     if par.is_root():
-        fluxdata_iter = gen_fluxdata(opts.flux_fn)
+        fluxdata_iter = gen_fluxdata(opts.flux_fn,opts.no_axes)
     else:
         fluxdata_iter = None
 
