@@ -4,16 +4,16 @@
 CURP 1.1: Ishikura, 2016. Most of the Layout
 CURP 1.2: Yamato, 2019. Heat Flux gestion (and commenting code).
 
-This task needs neither main() of curp.py nor .cfg file.
-The type of flux data, i.e., scalar or vector, is specified by
-the newly added argument "-no_axes". With (without) this option,
-scalar (vector) flux is handled, and fortran module lib_acf (lib_hfacf)
-is employed. The lib_hfacf fortran module was newly added.
-
-In this update from 1.1 to 1.2, the following files are 
-modified:
-$CURP_HOME/script/Makefile
-$CURP_HOME/script/cal_tc.py (this file).
+- This task needs neither main() of curp.py nor .cfg file.
+- The type of flux data, i.e., scalar or vector, is specified by
+  the newly added argument "-no_axes". With (without) this option,
+  scalar (vector) flux is handled, and fortran module lib_acf (lib_hfacf)
+  is employed. The lib_hfacf fortran module was newly added.
+- For heat-flow, the unit of acf was should be changed to (A*(kcal/mol)/fs)^2.
+  (to be worked)
+- In this update from 1.1 to 1.2, the following files are modified.
+  $CURP_HOME/script/Makefile
+  $CURP_HOME/script/cal_tc.py (this file).
 """
 
 from __future__ import print_function
@@ -141,7 +141,6 @@ def gen_fluxdata(flux_fn,no_axes):
         else:
             flux = ncfile.variables['flux'][:, :, ipair_1, icom]
         
-        print(flux.shape)
         ncfile.close()
 
         t2 = time.time()
