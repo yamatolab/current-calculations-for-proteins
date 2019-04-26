@@ -2,8 +2,8 @@
 ############################
 
 ### Please change below variable 
-F2PY = $(CURP_HOME)/curp-environ/bin/f2py-curp
-# F2PY = f2py2.7
+#F2PY = $(CURP_HOME)/curp-environ/bin/f2py-curp
+F2PY = f2py
 
 ##### Macro definitions #####
 
@@ -26,10 +26,13 @@ endif
 .SUFFIXES: .so .f90
 
 .f90.so:
-	. $(ACTIVATE); \
+ifneq ($(wildcard $(CURP_HOME)/Pipfile),)
+	pipenv run $(F2PY) -c $*.f90 -m $*  $(F2PYFLAGS)
+	echo "\n[compiled $*.f90 successfully.]\n"
+else
 	$(F2PY) -c $*.f90 -m $*  $(F2PYFLAGS) && \
-	echo "\n[compiled $*.f90 successfully.]\n" && \
-	deactivate
+	echo "\n[compiled $*.f90 successfully.]\n"
+endif
 
 ##### Target definitions #####
 

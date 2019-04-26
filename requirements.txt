@@ -1,0 +1,9 @@
+numpy==1.11.2
+nose
+mpi4py==2.0.0
+benchmarker
+setproctitle
+netCDF4==1.2.4
+epydoc
+sphinx
+pygraphviz
