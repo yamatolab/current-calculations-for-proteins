@@ -1,0 +1,15 @@
+preparing time: 0.001 [s]
+loading for 1/3 00001_ALA 00002_ALA ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00001_ALA 00002_ALA
+    writing acf: 0.0006 [s]
+loading for 2/3 00001_ALA 00003_ALA ... ** load time: 0.001 [s]
+    cal time: 0.000 [s] for 00001_ALA 00003_ALA
+    writing acf: 0.0006 [s]
+loading for 3/3 00002_ALA 00003_ALA ... ** load time: 0.000 [s]
+    cal time: 0.000 [s] for 00002_ALA 00003_ALA
+    writing acf: 0.0006 [s]
+total load time: 0.001 [s]
+total time: 0.013 [s]
+==========================
+    finished completely   
+==========================
