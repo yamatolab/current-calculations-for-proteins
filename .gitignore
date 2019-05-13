@@ -1,11 +1,15 @@
-#Ignores library files
+# Ignores library files
 **.so
 **.pyc
-#Ignores most of the hidden files
+# Ignores most of the hidden files
 .*
 **/.*
 !.gitignore
 
-#Ignores curp-environ and tutorial directory
+# Ignores curp-environ and tutorial directory
 curp-environ/
 tutorial
+
+# folders made by setup.py
+build/
+CURP.egg-info
