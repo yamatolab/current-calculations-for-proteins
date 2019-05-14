@@ -1,9 +1,5 @@
 import os, sys
-curp_path = os.environ["CURP_HOME"]
-src_path = os.path.join(curp_path, 'src')
-sys.path.insert(0, src_path)
-
-import parser
+import curp.parser as parser
 get_topology = parser.get_tplprm_simple
 
 def get_topology_old(tplprm_fn):

@@ -7,11 +7,6 @@ import argparse
 
 import curp_module
 
-curp_srcdir = os.path.join(os.environ['CURP_HOME'], 'src')
-if curp_srcdir not in sys.path:
-    sys.path.insert(0, curp_srcdir)
-
-
 """
 Supported parameter and topology format:
     - pdb
@@ -33,7 +28,7 @@ def main():
 
     # write the citation on log
     print()
-    citation_fp = os.path.join(curp_srcdir,'..', 'LICENSE-short.txt')
+    citation_fp = os.path.join('..','..', 'LICENSE-short.txt')
     with open(citation_fp, 'rb') as citation_file:
         for line in citation_file:
             print('# '+line.strip())
@@ -189,7 +184,8 @@ def get_arguments():
     dist.add_argument('-m', '--method', metavar='DISTANCE_METHOD',
             dest='dist_method', required=True,
             choices=['cog', 'nearest', 'farthest'],
-            help=('The method used in calculating the inter-resdue distances.'))
+            help=('The method used in calculating the inter-residue distances.')
+            )
 
     dist.add_argument('-c', '--cutoff-length', metavar='CUTOFF_LENGTH',
             dest='dist_cutoff', required=True,
