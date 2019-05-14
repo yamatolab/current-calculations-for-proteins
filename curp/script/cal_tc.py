@@ -128,15 +128,15 @@ def gen_fluxdata(flux_fn):
 class TCCalculator:
 
     def __init__(self, opts, dt=0.01):
-        self.__fst_lst_intvl = opts.frame_range
+        self.__fst_lst_intvl = opts['frame_range']
         fst, lst, intvl = self.__fst_lst_intvl
         self.nframe_acf = (lst - fst)/intvl + 1
         self.__fst     = fst
         self.__lst     = lst
         self.__intvl   = intvl
-        self.__shift   = opts.avg_shift
-        self.__nsample = opts.nsample
-        self.__coef    = opts.coef
+        self.__shift   = opts['avg_shift']
+        self.__nsample = opts['nsample']
+        self.__coef    = opts['coef']
         self.dt        = dt
 
     def run(self, don, acc, flux):
@@ -336,27 +336,28 @@ class ACFWriter(WriterBase):
     name = 'acf'
     unit = '(kcal/mol/fs)^2'
 
-
-def main():
+def cal_tc(flux_fn, tc_fn="", acf_fn="",
+           acf_fmt="netcdf", frame_range=[1,-1,1],
+           avg_shift=1, nsample=0, dt=None
+           coef=1.0, use_debug=False
+           ):
 
     import time
     ti = time.time()
-    # parse command line options
-    opts = parse_options()
-
     par = ParallelProcessor()
 
+    opts = locals()
     # log = Log(opts.log_fn)
-    if opts.use_debug:
+    if use_debug:
         log.write(opts)
 
     # determine delta t
-    dt = get_dt(opts.flux_fn)
+    dt = get_dt(flux_fn)
 
-    if opts.dt is None:
-        dt = dt * opts.frame_range[2] # in ps
+    if dt is None:
+        dt = dt * frame_range[2] # in ps
     else:
-        dt = opts.dt * opts.frame_range[2] # in ps
+        dt = dt * frame_range[2] # in ps
 
     # prepare calculator
     cal = TCCalculator(opts, dt)
@@ -364,19 +365,19 @@ def main():
 
     # prepare writer
     if par.is_root():
-        tc_writer = TCWriter(opts.tc_fn)
+        tc_writer = TCWriter(tc_fn)
 
     t3 = time.time()
 
     # create ACF writer if it is necessary.
-    if opts.acf_fn:
-        if par.is_root(): acf_writer = ACFWriter(opts.acf_fn,cal.nframe_acf,dt)
+    if acf_fn:
+        if par.is_root(): acf_writer = ACFWriter(acf_fn,cal.nframe_acf,dt)
     else:
         acf_writer = None
 
     # prepare flux data
     if par.is_root():
-        fluxdata_iter = gen_fluxdata(opts.flux_fn)
+        fluxdata_iter = gen_fluxdata(flux_fn)
     else:
         fluxdata_iter = None
 
@@ -400,6 +401,11 @@ def main():
         print('==========================')
         print('    finished completely   ')
         print('==========================')
+
+def main():
+    # parse command line options
+    opts = parse_options()
+    acf_fn(**vars(opts))
 
 if __name__ == '__main__':
     main()

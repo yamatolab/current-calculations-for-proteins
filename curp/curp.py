@@ -67,7 +67,7 @@ def parse_options():
                   "with default values."))
 
     parser.add_argument(
-            'input', nargs='?', default='run.cfg', #action='append',
+            'input_', nargs='?', default='run.cfg', #action='append',
             help='specify input filenames.')
 
     # parser.add_argument('--version', action='version', version='%(prog)s 1.0')
@@ -494,13 +494,18 @@ def get_data_iter(setting, topology, target_atoms):
     return data_iter
 
 
-def main():
+def curp(input_="run.cfg",
+         use_serial=False,
+         vervose=False,
+         output_conf_def=False,
+         output_conf_fmtd=False
+         ):
     """
     If do_xxx statements are here on readability and debugging purpose
     (steps can be skipped by setting do_xxx as False).
 
     if do_parallel:
-        The command line options are parsed, the variable par is created.
+        variable par is created.
         par is a SequentialProcessor() or ParallelProcessor() object (see parallel.py),
         depending on the command line options and if mpi is run or not.
         clog module is configured, setting the log options.
@@ -532,6 +537,7 @@ def main():
         
     """
 
+
     do_parallel = True
     do_title    = True
     do_setting  = True
@@ -539,14 +545,9 @@ def main():
     do_run      = True
     do_write    = True
     do_summary  = True
-
-    # parse command line options
-    # options = analysis_options(parse_options())
-    options = parse_options()
-
     if do_parallel:
         import parallel
-        if options.use_serial:
+        if use_serial:
             par = parallel.SequentialProcessor()
 
         else:
@@ -556,7 +557,7 @@ def main():
                 par = parallel.SequentialProcessor()
 
     # configuration of clog module
-    if options.vervose:
+    if vervose:
         logger.log_level = logger.DEBUG
     else:
         logger.log_level = logger.INFO
@@ -565,14 +566,14 @@ def main():
 
     logger.print_function = par.write
 
-    if options.output_conf_def:
+    if output_conf_def:
         import setting as st
         config = st.parse_config()
         setting = st.Setting(config)
         logger.info(setting)
         quit()
 
-    if options.output_conf_fmtd:
+    if output_conf_fmtd:
         import setting as st
         config = st.parse_config()
         setting = st.Setting(config)
@@ -611,7 +612,7 @@ def main():
         logger.info_title("Parallel Processing information")
         par_string = 'Use **PARALLEL** caluculation for curp.'
         ser_string = 'Use **SERIAL** caluculation for curp.'
-        if options.use_serial:
+        if use_serial:
             logger.info('{:^80}'.format(ser_string) )
         else:
             if parallel.use_mpi:
@@ -623,7 +624,7 @@ def main():
         t0 = time.time()
 
         # input file
-        config_filename = options.input
+        config_filename = input_
 
         # # parse and parse setting
         import setting as st
@@ -784,6 +785,11 @@ def main():
         # write success
         write_success()
 
+def main():
+    # parse command line options
+    options = parse_options()
+    curp(**vars(options))
+    
 
 ################################################################################
 
