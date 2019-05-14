@@ -12,4 +12,5 @@ tutorial
 
 # folders made by setup.py
 build/
-CURP.egg-info
+curp.egg-info/
+dist/
