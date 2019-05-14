@@ -7,9 +7,6 @@ import fnmatch
 
 def ext_modules(config, _dir):
     """Fetch f90 files in src and create automatically an extension"""
-    curp_dir = sys.path[0]
-    ext_modules = []
-    os.chdir(curp_dir)
     pattern = "*.f90"
     if os.path.isdir(_dir):
         for root, dirs, files in os.walk(_dir):
@@ -24,11 +21,11 @@ def ext_modules(config, _dir):
 
 def run_setup():
     config = Configuration(None, '', '') 
-    ext_modules(config, "src")
-    ext_modules(config, "script")
+    ext_modules(config, "curp")
+    config.add_data_files("LICENSE.txt", "LICENSE-short.txt")
     setup(
-        name="CURP",
-        version="1.2.dev",
+        name="curp",
+        version="1.2dev1",
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",
         description="Current calculations between protein residues from MD trajectory",
@@ -46,8 +43,6 @@ def run_setup():
             "Topic :: Scientific/Engineering :: Physics"
             ],
 
-        python_requires=">=2.7, <3.0",
-
         install_requires=["numpy>=1.11.2",
                           "nose",
                           "mpi4py>=2.0",
@@ -56,12 +51,25 @@ def run_setup():
                           "epydoc",
                           "pygraphviz",
                           "netCDF4>=1.2.4"],
+        #packages=["curp",
+        #          "curp.current",
+        #          "curp.dynamics",
+        #          "curp.forcefield",
+        #          "curp.parser",
+        #          "curp.twobody",
+        #          "curp.table",
+        #          "curp.volume",
+        #          ],
+
+        packages=setuptools.find_packages(),
+
+        python_requires=">=2.7, <3.0",
         entry_points={
             "console_scripts": [
-                "curp = src.curp:main",
-                "cal_tc = script.cal_tc:main",
-                "conv_trj = script.conv_trj:main",
-                "graph_een = script.graph_een:main"
+                "curp = curp.curp:main",
+                "cal_tc = curp.script.cal_tc:main",
+                "conv_trj = curp.script.conv_trj:main",
+                "graph_een = curp.script.graph_een:main"
                 ]
             },
         **config.todict()
