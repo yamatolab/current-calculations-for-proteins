@@ -34,16 +34,16 @@ def main():
             print('# '+line.strip())
 
     # parse arguments
-    args = get_arguments()
+    args = vars(get_arguments())
     # print(args)
 
     # get topology and parameter file
-    tpl = curp_module.get_topology(args.tpl_fmt, args.tpl_fp)
+    tpl = curp_module.get_topology(args['tpl_fmt'], args['tpl_fp'])
 
     # definition of the processing
-    pname = args.proc_name
+    pname = args['proc_name']
     if pname == 'dryrun':
-        process = do_tryrun
+        process = do_dryrun
     if pname == 'convert-only':
         process = do_convert_only
     if pname == 'mask':
@@ -56,21 +56,26 @@ def main():
         from distance import do_distance
         process = do_distance
 
-    # processing
-    process(args, tpl)
+    if is_crd: args['trj_type'] = 'crd'
+    if is_vel: args['trj_type'] = 'vel'
 
-def do_dryrun(args, tpl, trj=None):
+    # get trajectory
+    trj = gen_trj(tpl, **args)
+
+    # processing
+    process(tpl, trj, **args)
+
+def do_dryrun(tpl, trj=None, **kwds):
     pass
 
-def gen_trj(args, tpl):
-    """Generate trajectory iterator."""
+def gen_trj(tpl, input_trj_fns, input_trj_fmts, trj_type,
+            input_fst_lst_int=None, **kwds):
+    """Generate trajectory iterator"""
 
-    if args.is_crd: trj_type = 'crd'
-    if args.is_vel: trj_type = 'vel'
 
-    trj_fns_list  = args.input_trj_fns
-    fmts     = args.input_trj_fmts
-    fst_lst_int_list = args.input_fst_lst_int
+    trj_fns_list  = input_trj_fns
+    fmts     = input_trj_fmts
+    fst_lst_int_list = input_fst_lst_int
 
     # get number of atoms
     natom = tpl.get_natom()
@@ -82,18 +87,17 @@ def gen_trj(args, tpl):
 
     return trj
 
-def do_convert_only(args, tpl, trj=None):
+def do_convert_only(tpl, trj, output_trj_fn, output_trj_fmt,
+                    trj_type, output_fst_lst_int=[0,-1,1], **kwds):
 
-    # get trajectory
-    if trj is None:
-        trj = gen_trj(args, tpl)
 
     # dt = trj.get_dt()
     dt = 0.01
+    is_vel = trj_type == 'vel'
 
     # write trajectory
-    writer = curp_module.TrjWriter(args.output_trj_fn, args.output_trj_fmt, dt,
-            args.is_vel, args.output_fst_lst_int)
+    writer = curp_module.TrjWriter(output_trj_fn, output_trj_fmt, dt,
+                                   is_vel, output_fst_lst_int)
 
     for ifrm, trj, box in trj:
         writer.write(ifrm-1, trj, box)

@@ -10,39 +10,46 @@ FONTNAME = "Arial Bold"
 
 class FormatWrongError(Exception): pass
 
-def main():
 
-    opts = parse_options()
-    if opts.tpl_threshold is None:
-        opts.tpl_threshold = opts.threshold
+def graph_een(data_fns, targets=['1-'], force_nodes=[], close_pairs=[],
+              threshold=None, tpl_threshold=None, use_decrease=False,
+              use_1letter=False, title='',
+              ratio=None, alpha=False, graph_size=None, direction='TB',
+              hide_isonode=False, line_values=[0.015, 0.008,0.003],
+              line_colors=['red', 'blue', 'green'],
+              line_thicks=[4.0, 4.0, 2.5], line_weights=[5.0, 3.0, 1.0],
+              cluster_fn='', node_fn='', fig_fn=None):
+              
+    if tpl_threshold is None:
+        tpl_threshold = threshold
         
     # prepare
-    parsers = [ EnergyConductivityParser(fp) for fp in opts.data_fns ]
+    parsers = [ EnergyConductivityParser(fp) for fp in data_fns ]
 
     # determine threshold value
-    if opts.threshold is None:
-        threshold = opts.line_values[-1]
+    if threshold is None:
+        threshold = line_values[-1]
     else:
-        if opts.threshold >= opts.line_values[-1]:
-            threshold = opts.threshold
+        if threshold >= line_values[-1]:
+            threshold = threshold
         else:
-            threshold = opts.line_values[-1]
+            threshold = line_values[-1]
 
     # communication chart
     cc  = CommunicationChart(
-        title       = opts.title if opts.title else parsers[-1].get_title(),
-        direction   = opts.direction,
+        title       = title if title else parsers[-1].get_title(),
+        direction   = direction,
         threshold   = threshold,
-        use_1letter = opts.use_1letter,
-        ratio       = opts.ratio,
-        alpha       = opts.alpha,
-        size        = opts.graph_size,
+        use_1letter = use_1letter,
+        ratio       = ratio,
+        alpha       = alpha,
+        size        = graph_size,
         # font_scale  = 3.0 if opts.hide_node else 1.0,
-        tpl_threshold = opts.tpl_threshold,
-        use_decrease = opts.use_decrease)
+        tpl_threshold = tpl_threshold,
+        use_decrease = use_decrease)
 
-    cc.set_line_thresholds(opts.line_values,
-            opts.line_colors, opts.line_thicks, opts.line_weights)
+    cc.set_line_thresholds(line_values,
+            line_colors, line_thicks, line_weights)
 
     igrp_max = max([parser.get_max_id() for parser in parsers])
     igrp_min = min([parser.get_min_id() for parser in parsers])
@@ -50,15 +57,15 @@ def main():
 
     # donor and acceptor targets
     from curp_module import parse_target_groups
-    if opts.targets:
-        targets = parse_target_groups(opts.targets, igrp_max)
+    if targets:
+        targets = parse_target_groups(targets, igrp_max)
         cc.set_targets(targets)
 
-    if opts.force_nodes:
-        force_nodes = parse_target_groups(opts.force_nodes, igrp_max)
+    if force_nodes:
+        force_nodes = parse_target_groups(force_nodes, igrp_max)
         cc.set_force_nodes(force_nodes)
 
-    # if opts.don_targets or opts.acc_targets:
+    # if don_targets or opts.acc_targets:
         # don_targets = parse_target_groups(opts.don_targets, igrp_max)
         # acc_targets = parse_target_groups(opts.acc_targets, igrp_max)
         # cc.restrict_groups(don_targets, acc_targets)
@@ -72,7 +79,7 @@ def main():
 
     # create nodes and edges from all the data for defining graph topology
     # but not showing edge shapes.
-    if opts.hide_isonode:
+    if hide_isonode:
         all_nodes = []
         for v in values:
             don, acc, cond = v[0], v[1], v[2]
@@ -83,7 +90,7 @@ def main():
         target_nodes = []
         for v in vs_1:
             don, acc, cond = v[0], v[1], v[2]
-            if cond >= opts.threshold:
+            if cond >= threshold:
                 nid1, nname1, label1 = cc._parse_label(don)
                 nid2, nname2, label2 = cc._parse_label(acc)
                 target_nodes.append(nname1)
@@ -119,25 +126,25 @@ def main():
             cc.show_edge(don, acc, cond)
 
     # apply node style
-    if opts.node_fn:
+    if node_fn:
 
-        node_parser = NodeStyleParser(opts.node_fn, (igrp_min, igrp_max))
+        node_parser = NodeStyleParser(node_fn, (igrp_min, igrp_max))
         for secname in node_parser.get_secnames():
             nodes = node_parser.get_vals(secname)
             attr_dict = node_parser.get_attr_dict(secname)
             cc.apply_node_attributes(rids=nodes, nnames=[], **attr_dict)
 
     # apply node pairs to close in together
-    if opts.close_pairs:
+    if close_pairs:
 
-        for word in opts.close_pairs:
+        for word in close_pairs:
             rid1, rid2 = word.split(':')
             cc.apply_close_nodes(rid1, rid2)
 
     # read clusters file and apply clusters to graph if clusters file exists.
-    if opts.cluster_fn:
+    if cluster_fn:
 
-        cls_parser = ClusterParser(opts.cluster_fn, (igrp_min, igrp_max))
+        cls_parser = ClusterParser(cluster_fn, (igrp_min, igrp_max))
         for secname in cls_parser.get_secnames():
             rids = cls_parser.get_vals(secname)
             cc.create_cluster(label=secname, rids=rids)
@@ -147,7 +154,13 @@ def main():
 
         # g.graph_attr.update(color='pink')
 
-    cc.draw(opts.fig_fn)
+    cc.draw(fig_fn)
+
+
+def main():
+
+    opts = parse_options()
+    graph_een(**vars(opts))
 
 def parse_options():
     """Parse and get the command line options."""

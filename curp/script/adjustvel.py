@@ -4,22 +4,20 @@ from __future__ import print_function
 import os, sys
 import curp_module
 
-def adjust_vel(args, tpl, trj=None):
+def adjust_vel(tpl, trj, trj_type, output_trj_fn,
+               output_trj, fmt, output_fst_lst_int=(0,-1,1)):
 
     # get velocity trajectory
-    if not args.is_vel:
+    is_vel = trj_type=='vel'
+    if not is_vel:
         msg = "Adjust velocity command doesn't support coordinate trajectory."
         raise Exception(msg)
-
-    if trj is None:
-        import conv_trj
-        trj = conv_trj.gen_trj(args, tpl)
 
     # dt = trj.get_dt()
     dt = 0.01
 
     # process velocity trajectory
-    vel_pair_iter = gen_trj_late(trj, args.output_fst_lst_int)
+    vel_pair_iter = gen_trj_late(trj, output_fst_lst_int)
 
     def gen_adjust_vel(vel_pair_iter):
         for trj_prev, trj_now in vel_pair_iter:
@@ -34,8 +32,8 @@ def adjust_vel(args, tpl, trj=None):
     adjusted_vels = gen_adjust_vel(vel_pair_iter)
 
     # write trajectory
-    writer = curp_module.TrjWriter(args.output_trj_fn, args.output_trj_fmt, dt,
-            args.is_vel, (1,-1,1))
+    writer = curp_module.TrjWriter(output_trj_fn, output_trj_fmt, dt,
+                                   is_vel, (1,-1,1))
 
     for ifrm, (vel, box) in adjusted_vels:
         writer.write(ifrm-1, vel)

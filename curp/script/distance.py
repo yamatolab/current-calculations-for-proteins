@@ -7,34 +7,25 @@ import curp_module
 
 import lib_distance
 
-curp_srcdir = os.path.join(os.environ['CURP_HOME'], 'src')
-if curp_srcdir not in sys.path:
-    sys.path.insert(0, curp_srcdir)
+def do_distance(tpl, trj, trj_type,
+                dist_format=None, dist_cutoff=5.0, dist_method='com'
+                ):
 
-
-def do_distance(args, tpl, trj=None):
-
-    if not args.is_crd:
+    if not trj_type == 'crd':
         msg = 'Distance method is valid only for coordinate trajectory.'
         raise Exception(msg)
 
-    from table.group import gen_residue_group
+    from curp.table.group import gen_residue_group
 
-    # generate residue group
+    # Generate residue group
     res_info  = tpl.get_residue_info()
     atom_info = tpl.get_atom_info()
     rname_iatoms_pairs = list( (rname, list(numpy.array(iatoms)))
             for rname, iatoms in gen_residue_group(
-                res_info, atom_info, name_fmt=args.dist_format))
+                res_info, atom_info, name_fmt=dist_format))
 
     resnames = [ resname for resname, iatoms in rname_iatoms_pairs ]
     nres = len(resnames)
-
-    if trj is None:
-        import conv_trj
-        trj = conv_trj.gen_trj(args, tpl)
-    else:
-        trj = trj
 
     res_beg_end_pairs = [ (min(iatoms), max(iatoms)) 
             for rname, iatoms in rname_iatoms_pairs ]
@@ -49,10 +40,10 @@ def do_distance(args, tpl, trj=None):
 
     dist2s_trj = (get_dist2s(crd, nres) for ifrm, crd, box in trj )
 
-    # calculate average and rms of the distances
+    # Calculate average and rms of the distances
     dists_min, dists_avg, dists_max, dists_rms = get_min_avg_max_rms(dist2s_trj)
 
-    # write data
+    # Write data
     write_distance(dists_min, dists_avg, dists_max, dists_rms, resnames)
 
 def parse_args():

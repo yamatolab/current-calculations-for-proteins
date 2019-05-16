@@ -338,9 +338,8 @@ class ACFWriter(WriterBase):
 
 def cal_tc(flux_fn, tc_fn="", acf_fn="",
            acf_fmt="netcdf", frame_range=[1,-1,1],
-           avg_shift=1, nsample=0, dt=None
-           coef=1.0, use_debug=False
-           ):
+           avg_shift=1, nsample=0, dt=None,
+           coef=1.0, use_debug=False):
 
     import time
     ti = time.time()

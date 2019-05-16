@@ -4,22 +4,14 @@ from __future__ import print_function
 import os, sys
 import curp_module
 
-curp_srcdir = os.path.join(os.environ['CURP_HOME'], 'src')
-if curp_srcdir not in sys.path:
-    sys.path.insert(0, curp_srcdir)
 
-
-def do_mask(args, tpl, trj=None):
-
-    if trj is None:
-        import conv_trj
-        trj = conv_trj.gen_trj(args, tpl)
+def do_mask(tpl, trj, trj_type, output_trj_fn,
+            output_trj_fmt, mask_fn, output_fst_lst_int=(0,-1,1)):
 
     # dt = trj.get_dt()
     dt = 0.01
-
-    fn = args.mask_fn 
-    ids = load_mask(fn)
+    is_vel = trj_type=='vel'
+    ids = load_mask(mask_fn)
 
     # print(ids)
 
@@ -30,8 +22,8 @@ def do_mask(args, tpl, trj=None):
     trj_new = ( (istp,snap[ids],box) for (istp,snap,box) in trj )
 
     # write trajectory
-    writer = curp_module.TrjWriter(args.output_trj_fn, args.output_trj_fmt, dt,
-            args.is_vel, args.output_fst_lst_int)
+    writer = curp_module.TrjWriter(output_trj_fn, output_trj_fmt, dt,
+            is_vel, output_fst_lst_int)
 
     for ifrm, trj, box in trj_new:
         writer.write(ifrm-1, trj, box)
