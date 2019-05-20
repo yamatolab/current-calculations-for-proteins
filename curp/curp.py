@@ -601,7 +601,7 @@ def curp(input_="run.cfg",
         # display the license content.
         logger.info()
         logger.info()
-        license_fp = os.path.join(src_dir,'..', 'LICENSE-short.txt')
+        license_fp = os.path.join(src_dir, 'LICENSE-short.txt')
         with open(license_fp, 'rb') as license_file:
             for line in license_file:
                 logger.info(' '*8 + line.strip())

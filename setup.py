@@ -22,13 +22,14 @@ def ext_modules(config, _dir):
 def run_setup():
     config = Configuration(None, '', '') 
     ext_modules(config, "curp")
-    config.add_data_files("LICENSE.txt", "LICENSE-short.txt")
+    config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
     setup(
         name="curp",
         version="1.2dev1",
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",
-        description="Current calculations between protein residues from MD trajectory",
+        description=
+            "Inter-residue Current calculation in Proteins from MD trajectory",
         url=("https://gitlab.com/yamato97/current-calculations-for-proteins"),
         classifiers=[
             "Development Status :: 5 - Production/Stable",
