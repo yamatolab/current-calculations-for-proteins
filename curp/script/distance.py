@@ -3,7 +3,6 @@ from __future__ import print_function
 
 import os, sys
 import numpy
-import curp_module
 
 import lib_distance
 

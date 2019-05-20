@@ -23,7 +23,7 @@ def main():
     cutoff2 = cutoff*cutoff
 
     # get topology
-    tpl = curp.get_topology(args.prmtop_fn)
+    tpl = curp.get_tpl(args.prmtop_fn)
     natom = tpl.get_natom()
 
     # generate residue group
@@ -36,7 +36,7 @@ def main():
     resnames = [ resname for resname, iatoms in rname_iatoms_pairs ]
 
     # get trajectory
-    crd_parser = curp.gen_trajectory(
+    crd_parser = curp.gen_trj(
             args.traj_fns, natom, args.interval, use_pbc=False)
     crds = ( crd for itraj, crd, box in crd_parser )
 

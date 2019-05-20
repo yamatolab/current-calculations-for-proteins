@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 import os, sys
-import curp_module
+from curp import TrjWriter
 
 
 def do_mask(tpl, trj, trj_type, output_trj_fn,
@@ -22,7 +22,7 @@ def do_mask(tpl, trj, trj_type, output_trj_fn,
     trj_new = ( (istp,snap[ids],box) for (istp,snap,box) in trj )
 
     # write trajectory
-    writer = curp_module.TrjWriter(output_trj_fn, output_trj_fmt, dt,
+    writer = TrjWriter(output_trj_fn, output_trj_fmt, dt,
             is_vel, output_fst_lst_int)
 
     for ifrm, trj, box in trj_new:

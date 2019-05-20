@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 import os, sys
-import curp_module
+from curp import TrjWriter
 
 def adjust_vel(tpl, trj, trj_type, output_trj_fn,
                output_trj, fmt, output_fst_lst_int=(0,-1,1)):
@@ -32,7 +32,7 @@ def adjust_vel(tpl, trj, trj_type, output_trj_fn,
     adjusted_vels = gen_adjust_vel(vel_pair_iter)
 
     # write trajectory
-    writer = curp_module.TrjWriter(output_trj_fn, output_trj_fmt, dt,
+    writer = TrjWriter(output_trj_fn, output_trj_fmt, dt,
                                    is_vel, (1,-1,1))
 
     for ifrm, (vel, box) in adjusted_vels:

@@ -7,7 +7,7 @@ import gzip
 import time
 
 # import parallel module
-from curp_module import ParallelProcessor
+from curp import ParallelProcessor
 
 # fortran module
 import lib_acf

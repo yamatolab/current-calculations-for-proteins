@@ -56,18 +56,18 @@ def graph_een(data_fns, targets=['1-'], force_nodes=[], close_pairs=[],
     print('the range of id: {} - {}'.format(igrp_min, igrp_max))
 
     # donor and acceptor targets
-    from curp_module import parse_target_groups
+    from curp.table.target import parse_target_atoms_line as parse_target_group
     if targets:
-        targets = parse_target_groups(targets, igrp_max)
+        targets = parse_target_group(targets, igrp_max)
         cc.set_targets(targets)
 
     if force_nodes:
-        force_nodes = parse_target_groups(force_nodes, igrp_max)
+        force_nodes = parse_target_group(force_nodes, igrp_max)
         cc.set_force_nodes(force_nodes)
 
     # if don_targets or opts.acc_targets:
-        # don_targets = parse_target_groups(opts.don_targets, igrp_max)
-        # acc_targets = parse_target_groups(opts.acc_targets, igrp_max)
+        # don_targets = parse_target_group(opts.don_targets, igrp_max)
+        # acc_targets = parse_target_group(opts.acc_targets, igrp_max)
         # cc.restrict_groups(don_targets, acc_targets)
 
     # traverse all parsers
@@ -910,7 +910,7 @@ class CommunicationChart:
         # return g
 
 
-from curp_module import IniParser
+from curp.table.ini_parser import IniParser
 class ClusterParser(IniParser):
 
     def __init__(self, filename, igrp_range, *args, **kwds):

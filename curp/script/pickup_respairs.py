@@ -5,28 +5,24 @@ import os, sys
 import numpy
 import argparse
 
-import curp_module
-
-curp_srcdir = os.path.join(os.environ['CURP_HOME'], 'src')
-if curp_srcdir not in sys.path:
-    sys.path.insert(0, curp_srcdir)
-from table.group import gen_residue_group
+from curp import get_tpl, gen_trj
+from curp.table.group import gen_residue_group
 
 def main():
     import os, sys
 
-    # parse arguments
+    # Parse arguments
     args = get_arguments()
 
-    # get parameters
+    # Get parameters
     cutoff = float(args.cutoff)
     cutoff2 = cutoff*cutoff
 
-    # get topology
-    tpl = curp_module.get_topology(args.prmtop_fmt, args.prmtop_fn)
+    # Get topology
+    tpl = get_tpl(args.prmtop_fmt, args.prmtop_fn)
     natom = tpl.get_natom()
 
-    # generate residue group
+    # Generate residue group
     res_info  = tpl.get_residue_info()
     atom_info = tpl.get_atom_info()
     rname_iatoms_pairs = list( (rname, list(numpy.array(iatoms)))
@@ -36,12 +32,13 @@ def main():
     resnames = [ resname for resname, iatoms in rname_iatoms_pairs ]
     nres = len(resnames)
 
-    # get trajectory
-    crd_parser = curp_module.gen_crds(args.trj_fns, args.input_trj_fmt,
-            natom=natom, fst_lst_int=(1,-1,args.interval), use_pbc=False)
+    # Get trajectory
+    crd_parser = gen_trj(tpl, args.trj_fns, args.input_trj_fmt,
+            trj_type='crd', fst_lst_int=(1,-1,args.interval),
+            use_pbc=False)
     crds = ( crd for itraj, crd, box in crd_parser )
 
-    # generate residue pair table
+    # Generate residue pair table
     import lib_pickup
     # cutoff_method = dict(
             # com      = lib_pickup.is_com,
