@@ -30,7 +30,8 @@ def main():
 
     # write the citation on log
     print()
-    citation_fp = os.path.join('..', 'LICENSE-short.txt')
+    src_dir = os.path.dirname(__file__)
+    citation_fp = os.path.join(src_dir, '..', 'LICENSE-short.txt')
     with open(citation_fp, 'rb') as citation_file:
         for line in citation_file:
             print('# '+line.strip())
