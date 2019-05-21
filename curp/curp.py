@@ -1,4 +1,4 @@
-"""curp - Main curp programm.
+"""curp - Main curp program.
 
 Developed by Yamato's lab, Nagoya University.
 Use the argument -h for a list of available arguments.
@@ -8,30 +8,32 @@ and the tutorial directory for more informations.)
 
 from __future__ import print_function
 
-# standard module
-import sys, os
-import exception
+# Standard module
+import sys
+import os
 import time
 
-# curp module
-src_dir = os.path.dirname(__file__)
-sys.path.insert(0, src_dir)
+from setproctitle import setproctitle
+
+import exception
 import clog as logger
 
-# make the process name the CURP.
-from setproctitle import setproctitle
+# Make the process named curp.
 setproctitle('curp')
+
+# Curp module
+SRC_DIR = os.path.dirname(__file__)
+sys.path.insert(0, SRC_DIR)
 
 def parse_options():
     """
     Defines how arguments given to curp.py are treated.
-    To see optional arguments, type in the terminal python curp.py -h 
+    To see optional arguments, type in the terminal python curp.py -h
     Returns parsed_args, containing all arguments.
     """
-    # initialize
+    # Initialize
     import argparse
-    parser = argparse.ArgumentParser(description=
-            "Curp program.")
+    parser = argparse.ArgumentParser(description="Curp program.")
 
     # definitions
     # parser.add_argument('-a', '--add',
@@ -45,399 +47,364 @@ def parse_options():
     #         help='The sample argument.')
 
     parser.add_argument('-v', '--vervose',
-            dest='vervose', default=False,
-            action="store_true",
-            help='print out informations.')
+                        dest='vervose', default=False,
+                        action="store_true",
+                        help='print out informations.')
 
     parser.add_argument('-s', '--enable-serial',
-            dest='use_serial', default=False,
-            action="store_true",
-            help="calculate in serial, don't calculate in parallel.")
+                        dest='use_serial', default=False,
+                        action="store_true",
+                        help=("calculate in serial, don't calculate"
+                              "in parallel."))
 
     parser.add_argument('--output-conf-default',
-            dest='output_conf_def', default=False,
-            action="store_true",
-            help=("Output the config parameters in ini format "
-                  "with default values."))
+                        dest='output_conf_def', default=False,
+                        action="store_true",
+                        help=("Output the config parameters in ini format "
+                              "with default values."))
 
     parser.add_argument('--output-conf-formatted',
-            dest='output_conf_fmtd', default=False,
-            action="store_true",
-            help=("Output the config parameters in rest style "
-                  "with default values."))
+                        dest='output_conf_fmtd', default=False,
+                        action="store_true",
+                        help=("Output the config parameters in rest style "
+                              "with default values."))
 
-    parser.add_argument(
-            'input_', nargs='?', default='run.cfg', #action='append',
-            help='specify input filenames.')
+    parser.add_argument('input_', nargs='?',
+                        default='run.cfg', #action='append',
+                        help='specify input filenames.')
 
     # parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-    # parse
+    # Parse
     parsed_args = parser.parse_args()
     return parsed_args
 
-"""
-Write_ functions below are used to print specific messages and data in the log.
-Based mostly on logger.py functions, designed for treating the output which will
-appear in the log.
-"""
-
+# Write_ functions below are used to print specific messages and data in the log.
+# Based mostly on logger.py functions, designed for treating the output which will
+# appear in the log.
 
 def write_array(array, num_per_line=10):
     """
-    print the array (1D tuple, list or numpy array) so that:
+    Print array (1D tuple, list or numpy array) so that:
     - one line contains ten elements (or less at the end),
     - last character of each element is separated by 5 characters
       from the former element (filled by spaces if needed).
       (Ex: write_array([0.001,0.02,0.1] prints "0.001 0.02  0.1"))
     """
 
-    n = len(array)
-    if n/num_per_line != 0:
+    length = len(array)
+    if length//num_per_line != 0:
 
-        for iline_1 in range(n/num_per_line):
+        for iline_1 in range(length/num_per_line):
             icol_beg, icol_end = 10*iline_1, 10*(iline_1+1)
-            line = ' '.join( '{:>5}'.format(col) 
-                    for col in array[icol_beg:icol_end] )
-            logger.info( line ) #Printed as information.
-                                #see clog.py 
+            line = ' '.join('{:>5}'.format(col)
+                            for col in array[icol_beg:icol_end])
+            logger.info(line)   # Printed as information.
+                                # see clog.py
 
-        # last line
-        if n%num_per_line != 0:
-            icol_beg = 10*(iline_1+1)
-            line = ' '.join( '{:>5}'.format(col)
-                    for col in array[icol_beg:] )
-            logger.info( line )
+        # Last line
+        if length%num_per_line != 0:
+            icol_beg = 10 * (length//num_per_line+1)
+            line = ' '.join('{:>5}'.format(col)
+                            for col in array[icol_beg:])
+            logger.info(line)
 
     else:
-        # last line
-        line = ' '.join( '{:>5}'.format(col) for col in array )
-        logger.info( line )
+        # Last line
+        line = ' '.join('{:>5}'.format(col) for col in array)
+        logger.info(line)
 
 
-def write_times(label_time_pairs, nstep):
+def write_times(label_time_pairs):
+    """Print formatted time with label"""
     logger.info_title('The summary of the elasped times')
 
     msg = '{:>30} : {:12.5f} [s]'
 
     for i, (label, dt) in enumerate(label_time_pairs):
         if label == 'End':
-            # total time
-            total_time = sum( time for label, time in label_time_pairs )
+            # Total time
+            total_time = sum(time for label, time in label_time_pairs)
             logger.info(msg.format('Total curp time', total_time))
             break
-
-        # elif label == 'Post processing':
-            # # average time
-            # avg_time = dt / float(nstep)
-            # logger.info('    {:>30} : {:12.5f} [s/step]'.format(
-                # 'Average run time', avg_time))
-
         else:
             logger.info(msg.format(label+' time', dt))
 
 def write_success():
+    """Print success message"""
     logger.info_title('CURP finished completely.')
 
-    # write the citation to logger
+    # Write the citation to logger.
     # citation_fp = os.path.join(src_dir,'..','lib','citation.txt')
     # with open(citation_fp, 'rb') as citation_file:
         # logger.info(citation_file.read())
 
+def do_topology(setting):
+    """Get topology object.
 
+    Parameters
+    ----------
+    setting : curp.setting.Setting
+        Deduced from the configuration file.
 
+    Returns
+    -------
+    topology : curp.parser.file_format.topology.TopologyParser
+    natom : int
+        Number of atom
+    """
 
+    import parser
+    file_format = setting.input.format
+    fmt_section = getattr(setting, 'input_' + file_format)
+    potential = setting.curp.potential
+
+    # Atom type depending on stress tensor or flux calculation.
+    use_atype = setting.curp.method == 'momentum-current'
+    topology = parser.get_tplprm(file_format, fmt_section,
+                                 potential, use_atype)
+    natom = topology.get_natom()
+    return(topology, natom)
+
+def do_target(atom_range, natom):
+    """Get target atoms
+
+    Parameters
+    ----------
+    atom_range : list
+        target_atoms field in .cfg file
+    topology : curp.parser.file_format.topology.TopologyParser
+    natom : int
+        Number of atom
+
+    Returns
+    -------
+    target_atoms : list of int
+        List of targeted atoms indexes.
+    """
+
+    import table.target as target
+    target_atoms = target.parse_target_atoms_line(atom_range,
+                                                  natom)
+
+    logger.info_title('Target atoms information')
+    logger.info('target atoms list: ' + ', '.join(atom_range))
+    logger.info(' ===> ')
+    logger.info('show all atoms explicitly:')
+    write_array(target_atoms)
+
+    return target_atoms
+
+def gen_tables(inttable):
+    """
+    Parameters
+    ----------
+    inttable : table.interact_table.InteractionTable
+
+    Returns
+    -------
+    interact_table : list
+    """
+
+    # Generate interaction table.
+    interact_table = list(inttable.gen_divided_table())
+    memories = inttable.get_table_memories()
+
+    # Output interact_table.
+    logger.info_title('Interaction table informations')
+    logger.info('(iatm, jatm_beg, jatm_end)')
+    for itab_1, (table, mem) in enumerate(zip(interact_table, memories)):
+        msg = '** table {}, memory = {} MB **'
+        logger.info(msg.format(itab_1+1, mem/10.0**6))
+        for tab in table:
+            logger.info(tab)
+
+    return(interact_table)
 
 def init_current(setting, par):
     """
-    Input:
-      -  setting: Setting class, defined in setting.py
-                  contains the settings from .cfg configuration file.
-      -  par: SequentialProcessor or ParallelProcessor, cf parallel.py.
+    Parameters
+    ----------
+    setting : curp.setting.Setting
+        Contain the settings from .cfg configuration file.
+    par : parallel.SequentialProcessor or parallel.ParallelProcessor
 
     Output:
-      -  cal: EnergyFluxCalculator or StressCurrentCalculator class
-              defined in current/flux.py or current/current.py.
-              made using:
-               - interaction table between atoms is made in "if do_table",
-                 taking into account the group_pair table (if do_gpair)x.
-               - group table made in "if do_group"
-               - setting, topology and target_atoms.
-      -  writer: MultiFluxWriter or MultiCurrentWriter class,
-                 defined in current/writer.py.
-                 Used for parallel processes.
-      -  topology: TopologyParser class,
-                   defined in parser/format/topology.py.
-                   Obtained from [input_format] topology_file.
-      -  target_atoms: List of Integers,
-                       obtained from [curp] target_atoms.
-                       Contains the indices of each atom to be considered.
-      -  label_time_pairs: List of Tuples (action, time of action),
-                           records how many time has elapsed since the
-                           beginning of the program and the action.
-    """ 
-
-    do_topology   = True
-    do_target     = True
-    do_group      = True
-    do_gpair      = True
-    do_table      = True
-    do_calculator = True
-    do_writer     = True
-
+    cal : curp.current.flux.EnergyFluxCalculat
+          or curp.current.current.StressCurrentCalculator
+        Made using
+         - interaction table between atoms is made in "if do_table",
+           taking into account the group_pair table (if do_gpair)x.
+         - group table made in "if do_group"
+         - setting, topology and target_atoms.
+    writer : curp.current.writer.MultiFluxWriter or .MultiCurrentWriter
+    topology : parser.format.topology.TopologyParser
+        Obtained from [input_format] topology_file.
+    target_atoms: list of int
+        Obtained from [curp] target_atoms.
+        Contains the indices of each atom to be considered.
+    label_time_pairs: list of tuples (action, time of action),
+        Records time taken by each step.
+    """
     label_time_pairs = []
 
-    # confirm whether the specified potential can use the specified format
-    # in the input section.
+    # Get topology object.
+    t_0 = time.time()
+    topology, natom = do_topology(setting)
+    # Get the list that decomposes all potential.
+    decomp_list = topology.get_decomp_list()
+    label_time_pairs += [('Topology', time.time()-t_0)]
 
-    if do_topology:
-        t0 = time.time()
+    # Determine target atoms.
+    t_0 = time.time()
+    target_atoms = do_target(setting.curp.target_atoms, natom)
+    # Get target atoms names.
+    atom_names = topology.get_atom_info()['names']
+    target_anames = [str(i_atom) + '_' + atom_names[iatm-1]
+                     for i_atom in target_atoms]
+    label_time_pairs += [('Target', time.time()-t_0)]
 
-        # get topology
-        import parser
-        file_format = setting.input.format
-        fmt_section = getattr(setting, 'input_' + file_format)
-        potential   = setting.curp.potential
+    # Get atom groups depending on setting.curp.group_method.
+    t_0 = time.time()
+    from table import group
 
-        # atom type for stress tensor calculation
-        use_atype = True if setting.curp.method == 'momentum-current' else False
-        topology = parser.get_tplprm(
-                file_format, fmt_section, potential, use_atype)
-        """
-        topology: TopologyParser class
-                   defined in parser/file_format/topology.py
-        """
-        natom = topology.get_natom()
+    gname_iatoms_pairs = group.get_group_iatoms_pairs(
+        setting, target_atoms,
+        topology.get_residue_info(),
+        topology.get_atom_info())
+    gnames = [gname for gname, iatoms in gname_iatoms_pairs]
+    label_time_pairs += [('Group', time.time()-t_0)]
 
-        # get the list that decompose all potential
-        decomp_list = topology.get_decomp_list()
+    # Get which group interactions will be considered as group pairs.
+    t_0 = time.time()
+    # table = {'00001_ALA':['00002_GLY','00003_ASP', ...], ...}
+    if setting.curp.group_pair_file[0]:
+        from table import group_pair
+        gpair_parser = group_pair.GroupPairParser(
+            setting.curp.group_pair_file[0], gnames)
+        gpair_table = gpair_parser.get_gpair_table()
+    else:
+        gpair_table = None
+    label_time_pairs += [('Group pair table', time.time()-t_0)]
 
-        label_time_pairs += [('Topology', time.time()-t0)]
+    # Make interaction tables.
+    t_0 = time.time()
+    # Make table for nonbonded.
+    nonbonded_table = topology.get_nonbonded_table()
 
-    if do_target:
-        t0 = time.time()
+    # Make table for target atoms.
+    import table.target as target
+    if setting.curp.method == 'momentum-current':
+        inttable = target.make_interaction_table_current(
+            nonbonded_table, target_atoms, natom)
+    elif setting.curp.method in ('energy-flux', 'heat-flux'):
+        inttable = target.make_interaction_table_flux(
+            nonbonded_table, target_atoms, natom)
+    else:
+        inttable = nonbonded_table
 
-        # parse and get target_atoms
-        import table.target as target
-        target_atoms = target.parse_target_atoms_line(
-                setting.curp.target_atoms, natom)
+    # Make table for group pair.
+    if gpair_table:
+        gp = group_pair.GroupPair(gpair_table, gname_iatoms_pairs, natom)
+        inttable = gp.get_inttable_with_gpair(inttable)
 
-        logger.info_title('Target atoms information')
-        logger.info('target atoms list: ' + ', '
-                .join(setting.curp.target_atoms))
-        logger.info(' ===> ')
-        logger.info('show all atoms explicitly:')
-        write_array(target_atoms)
-            
-        anames = topology.get_atom_info()['names']
+    interact_table = gen_tables(inttable)
 
-        # for atom names
-        target_anames = [ str(iatm) + '_' + anames[iatm-1]
-                          for iatm in target_atoms ]
+    label_time_pairs += [('Interaction table', time.time()-t_0)]
 
-        label_time_pairs += [('Target', time.time()-t0)]
+    # Decide and prepare a calculator.
+    t_0 = time.time()
 
-    if do_group:
-        t0 = time.time()
-
-        # get group atoms by setting.curp.group_method
-        from table import group
-        
-        gname_iatoms_pairs = group.get_group_iatoms_pairs(setting, target_atoms,
-                topology.get_residue_info(), topology.get_atom_info() )
-        gnames = [ gname for gname, iatoms in gname_iatoms_pairs ]
-
-        label_time_pairs += [('Group', time.time()-t0)]
-
-    if do_gpair:
-        t0 = time.time()
-
-        # get group pair table
-        # table = {'00001_ALA':['00002_GLY','00003_ASP', ...], ...}
-        if setting.curp.group_pair_file[0]:
-            from table import group_pair
-            gpair_parser = group_pair.GroupPairParser(
-                    setting.curp.group_pair_file[0], gnames)
-            gpair_table = gpair_parser.get_gpair_table()
-
-        else:
-            gpair_table = None
-
-        label_time_pairs += [('Group pair table', time.time()-t0)]
-
-    if do_table:
-        t0 = time.time()
-
-        # make table for nonbonded
-        nonbonded_table = topology.get_nonbonded_table()
-
-        # make table for target atoms
-        if setting.curp.method == 'momentum-current':
-            inttable = target.make_interaction_table_current(
-                    nonbonded_table, target_atoms, natom)
-
-        elif setting.curp.method in ('energy-flux', 'heat-flux'):
-            inttable = target.make_interaction_table_flux(
-                    nonbonded_table, target_atoms, natom)
-
-        else:
-            inttable = nonbonded_table
-
-        # make table for group pair
-        if gpair_table:
-            gp = group_pair.GroupPair(gpair_table, gname_iatoms_pairs, natom)
-            inttable = gp.get_inttable_with_gpair(inttable)
-
-        # generate interaction table
-        interact_table = list(inttable.gen_divided_table())
-        memories = inttable.get_table_memories()
-
-        # output interact_table
-        logger.info_title('Interaction table informations')
-        logger.info('(iatm, jatm_beg, jatm_end)')
-        for itab_1, (table, mem) in enumerate(zip(interact_table, memories)):
-            msg = '** table {}, memory = {} MB **'
-            logger.info( msg.format(itab_1+1, mem/10.0**6) )
-            for t in table:
-                logger.info(t)
-
-        label_time_pairs += [('Interaction table', time.time()-t0)]
-
-    if do_calculator:
-        t0 = time.time()
-
-        # decide and prepare a calculator
-        import current
-        Calculator = current.get_calculator(setting)
-        cal = Calculator()
-        cal.prepare(topology=topology, setting=setting,
+    import current
+    calculator = current.get_calculator(setting)
+    cal = calculator()
+    cal.prepare(topology=topology, setting=setting,
                 target_atoms=target_atoms,
                 gname_iatoms_pairs=gname_iatoms_pairs,
                 interact_table=interact_table)
+    label_time_pairs += [('calculator setting', time.time()-t_0)]
 
-        label_time_pairs += [('Calculator setting', time.time()-t0)]
+    # Decide Writer.
+    t_0 = time.time()
 
-    if do_writer:
-        t0 = time.time()
+    if par.is_root():
+        from current.writer import get_writer
+        writer = get_writer(setting, decomp_list,
+                            target_anames, cal.get_groupnames(),
+                            gpair_table)
+    else:
+        writer = None
 
-        # decide writer
-        if par.is_root():
-            from current.writer import get_writer
-            writer = get_writer(setting, decomp_list,
-                            target_anames, cal.get_groupnames(), gpair_table)
-        else:
-            writer = None
-
-        label_time_pairs += [('Writer setting', time.time()-t0)]
+    label_time_pairs += [('Writer setting', time.time()-t_0)]
 
     return cal, writer, topology, target_atoms, label_time_pairs
 
 def init_dynamics(setting, par):
+    """
+    Parameters
+    ----------
+    setting : curp.setting.Setting
+        Contain the settings from .cfg configuration file.
+    par : parallel.SequentialProcessor or parallel.ParallelProcessor
 
-    do_topology   = True
-    do_target     = True
-    do_table      = True
-    do_calculator = True
-    do_writer     = True
-
+    Output:
+    cal : curp.current.flux.EnergyFluxCalculat
+          or curp.current.current.StressCurrentCalculator
+        Made using
+         - interaction table between atoms is made in "if do_table",
+           taking into account the group_pair table (if do_gpair)x.
+         - group table made in "if do_group"
+         - setting, topology and target_atoms.
+    writer : curp.current.writer.MultiFluxWriter or .MultiCurrentWriter
+    topology : parser.format.topology.TopologyParser
+        Obtained from [input_format] topology_file.
+    target_atoms: list of int
+        Obtained from [curp] target_atoms.
+        Contains the indices of each atom to be considered.
+    label_time_pairs: list of tuples (action, time of action),
+        Records time taken by each step.
+    """
     label_time_pairs = []
 
-    # confirm whether the specified potential can use the specified format
-    # in the input section.
+    # Get topology object.
+    t_0 = time.time()
+    topology, natom = do_topology(setting)
 
-    if do_topology:
-        t0 = time.time()
+    label_time_pairs += [('Topology', time.time()-t_0)]
 
-        # get topology
-        import parser
-        file_format = setting.input.format
-        fmt_section = getattr(setting, 'input_' + file_format)
-        potential   = setting.curp.potential
+    # Determine target atoms.
+    t_0 = time.time()
+    target_atoms = do_target(setting.curp.target_atoms, natom)
+    label_time_pairs += [('Target', time.time()-t_0)]
 
-        # atom type for stress tensor calculation
-        topology = parser.get_tplprm(
-                file_format, fmt_section, potential, use_atomtype=False)
-        natom = topology.get_natom()
+    # Make table for nonbonded.
+    t_0 = time.time()
 
-        label_time_pairs += [('Topology', time.time()-t0)]
+    inttable = topology.get_nonbonded_table()
 
-    if do_target:
-        t0 = time.time()
+    interact_table = gen_tables(inttable)
+    label_time_pairs += [('Interaction table', time.time()-t_0)]
 
-        # parse and get target_atoms
-        import table.target as target
-        target_atoms = target.parse_target_atoms_line(
-                setting.curp.target_atoms, natom)
+    # Defines calculator.
+    t_0 = time.time()
 
-        logger.info_title('Target atoms information')
-        logger.info('target atoms list: ' + ', '
-                .join(setting.curp.target_atoms))
-        logger.info(' ===> ')
-        logger.info('show all atoms explicitly:')
-        write_array(target_atoms)
-            
-        anames = topology.get_atom_info()['names']
+    import dynamics
+    cal = dynamics.Integrator(topology, setting, interact_table)
+    label_time_pairs += [('calculator setting', time.time()-t_0)]
 
-        # for atom names
-        target_anames = [ str(iatm) + '_' + anames[iatm-1]
-                          for iatm in target_atoms ]
+    # Decide writer.
+    # In current version the format of the file to write trajectory can be
+    # only amber format.
+    # We are going to allow the selection of trajectory format.
+    t_0 = time.time()
 
-        label_time_pairs += [('Target', time.time()-t0)]
-
-    if do_table:
-        t0 = time.time()
-
-        # make table for nonbonded
-        nonbonded_table = topology.get_nonbonded_table()
-        inttable = nonbonded_table
-
-        # make table for group pair
-        # if gpair_table:
-            # gp = group_pair.GroupPair(gpair_table, gname_iatoms_pairs, natom)
-            # inttable = gp.get_inttable_with_gpair(inttable)
-
-        # generate interaction table
-        interact_table = list(inttable.gen_divided_table())
-        memories = inttable.get_table_memories()
-
-        # output interact_table
-        logger.info_title('Interaction table informations')
-        logger.info('(iatm, jatm_beg, jatm_end)')
-        for itab_1, (table, mem) in enumerate(zip(interact_table, memories)):
-            msg = '** table {}, memory = {} MB **'
-            logger.info( msg.format(itab_1+1, mem/10.0**6) )
-            for t in table:
-                logger.info(t)
-
-        label_time_pairs += [('Interaction table', time.time()-t0)]
-
-    if do_calculator:
-        t0 = time.time()
-
-        # get potential function
-
-        # get integrator
+    if par.is_root():
         import dynamics
-        cal = dynamics.Integrator(topology, setting, interact_table)
+        writer = dynamics.Writer(setting.dynamics)
+    else:
+        writer = None
+    label_time_pairs += [('Writer setting', time.time()-t_0)]
 
-        label_time_pairs += [('Calculator setting', time.time()-t0)]
-
-    if do_writer:
-        t0 = time.time()
-
-        # decide writer
-        # In current version the format of the file to write trajectory can be 
-        # only amber format.
-        # We are going to allow us select the trajectory format.
-
-        if par.is_root():
-            import dynamics
-            writer = dynamics.Writer(setting.dynamics)
-        else:
-            writer = None
-
-        label_time_pairs += [('Writer setting', time.time()-t0)]
-
-    return cal,writer,target_atoms,topology,label_time_pairs
+    return cal, writer, target_atoms, topology, label_time_pairs
 
 def get_data_iter(setting, topology, target_atoms):
     """
@@ -446,17 +413,17 @@ def get_data_iter(setting, topology, target_atoms):
     Each frame of the trajectory is an element of the iterator.
     """
 
-    # get topology informations
+    # Get topology informations.
     natom = topology.get_natom()
     masses = topology.get_atom_info()['masses']
-    # get flag for beriodic boundary condition
+    # Get flag for periodic boundary condition.
     use_pbc = True if topology.get_pbc_info() else False
 
     # format
     file_format = setting.input.format
     fmt_section = getattr(setting, 'input_' + file_format)
 
-    # judge wether the potential used in calculation is valid or not.
+    # Judge wether the potential used in calculation is valid or not.
     method = setting.curp.method
     if method == 'momentum-current':
         use_classic = True
@@ -475,31 +442,28 @@ def get_data_iter(setting, topology, target_atoms):
 
     else:
         pass
-    
-    # decide trajectory format and parse trajectory files or restart file
+
+    # Decide trajectory format and parse trajectory files or restart file.
     import parser
     if use_classic:
 
-        data_iter = parser.gen_phase_trajectory(file_format, fmt_section,
-                setting.input.first_last_interval, natom, use_pbc,
-                setting.curp.remove_trans, setting.curp.remove_rotate,
-                target_atoms, masses, logger)
+        data_iter = parser.gen_phase_trajectory(
+            file_format, fmt_section, setting.input.first_last_interval,
+            natom, use_pbc, setting.curp.remove_trans,
+            setting.curp.remove_rotate, target_atoms, masses, logger)
 
         data_iter.next()
     else:
 
-        data_iter = parser.gen_matrix_ensemple(file_format, fmt_section,
-                setting.input.first_last_interval, natom, logger)
+        data_iter = parser.gen_matrix_ensemble(
+            file_format, fmt_section, setting.input.first_last_interval,
+            natom, logger)
 
     return data_iter
 
 
-def curp(input_="run.cfg",
-         use_serial=False,
-         vervose=False,
-         output_conf_def=False,
-         output_conf_fmtd=False
-         ):
+def curp(input_="run.cfg", use_serial=False, vervose=False,
+         output_conf_def=False, output_conf_fmtd=False):
     """
     If do_xxx statements are here on readability and debugging purpose
     (steps can be skipped by setting do_xxx as False).
@@ -534,17 +498,16 @@ def curp(input_="run.cfg",
     if do_summary:
         the job is completed. A summary of the time each process took and such informations
             is printed in the log.
-        
     """
 
 
     do_parallel = True
-    do_title    = True
-    do_setting  = True
-    do_init     = True
-    do_run      = True
-    do_write    = True
-    do_summary  = True
+    do_title = True
+    do_setting = True
+    do_init = True
+    do_run = True
+    do_write = True
+    do_summary = True
     if do_parallel:
         import parallel
         if use_serial:
@@ -556,7 +519,7 @@ def curp(input_="run.cfg",
             else:
                 par = parallel.SequentialProcessor()
 
-    # configuration of clog module
+    # Configuration of clog module.
     if vervose:
         logger.log_level = logger.DEBUG
     else:
@@ -581,87 +544,88 @@ def curp(input_="run.cfg",
         quit()
 
     if do_title:
-    # Show the Curp's title
+    # Show Curp's title.
     # curp_title = (10*' ' + 60*'=' + 10*' ' + '\n'
-            # + 25*' ' + '{:<50}' + 5*' ' + '\n' 
+            # + 25*' ' + '{:<50}' + 5*' ' + '\n'
             # + 10*' ' + 60*'-' + 10*' ' + '\n' )
         curp_title = 3*'{:^80}\n'
         logger.info(curp_title.format(60*'=', 'Curp Program Start !! ', 60*'-'))
 
-        # display today's information.
+        # Display today's information.
         import datetime
         now = datetime.datetime.today()
         time_fmt = ('TIME STAMP: {year}/{month}/{day:02} '
-                + '{hour:02}:{minute:02}:{second:02}' )
+                    + '{hour:02}:{minute:02}:{second:02}')
         time_stamp = time_fmt.format(year=now.year, month=now.month,
-                day=now.day, hour=now.hour, minute=now.minute,
-                second=now.second)
+                                     day=now.day, hour=now.hour,
+                                     minute=now.minute, second=now.second)
         logger.info('{:>80}'.format(time_stamp))
 
-        # display the license content.
+        # Display the license content.
         logger.info()
         logger.info()
-        license_fp = os.path.join(src_dir, 'LICENSE-short.txt')
+        license_fp = os.path.join(SRC_DIR, 'LICENSE-short.txt')
         with open(license_fp, 'rb') as license_file:
             for line in license_file:
                 logger.info(' '*8 + line.strip())
         logger.info()
         logger.info()
 
-        # display whether the CURP used is serial version or parallel version.
+        # Display whether the CURP used is serial version or parallel version.
         logger.info_title("Parallel Processing information")
         par_string = 'Use **PARALLEL** caluculation for curp.'
         ser_string = 'Use **SERIAL** caluculation for curp.'
         if use_serial:
-            logger.info('{:^80}'.format(ser_string) )
+            logger.info('{:^80}'.format(ser_string))
         else:
             if parallel.use_mpi:
-                logger.info('{:^80}'.format(par_string) )
+                logger.info('{:^80}'.format(par_string))
             else:
-                logger.info('{:^80}'.format(ser_string) )
+                logger.info('{:^80}'.format(ser_string))
 
     if do_setting:
-        t0 = time.time()
+        t_0 = time.time()
 
-        # input file
+        # Input file
         config_filename = input_
 
-        # # parse and parse setting
+        # Parse and parse setting
         import setting as st
         config = st.parse_config(config_filename)
         setting = st.Setting(config)
 
-        # set the frequency to output log from the setting parameter.
+        # Set the frequency to output log from the setting parameter.
         logger.set_log_frequency(setting.curp.log_frequency)
 
-        label_time_pairs = [('Setting', time.time()-t0)]
+        label_time_pairs = [('Setting', time.time()-t_0)]
 
-    # decide the calculation method
-    do_current  = setting.curp.method in ('momentum-current', 'energy-flux', 'heat-flux')
+    # Decide the calculation method
+    do_current = setting.curp.method in ('momentum-current',
+                                         'energy-flux',
+                                         'heat-flux')
     do_dynamics = setting.curp.method == 'microcanonical'
 
     if do_init and do_current:
         # log
         logger.info("{:^80}".format("**Current** calculation is performed."))
 
-        # initialize of curp to get the object for calculation
+        # Initialize of curp to get the object for calculation.
         cal, writer, tpl, target_atoms, label_time_pairs_local = \
                 init_current(setting, par)
         label_time_pairs += label_time_pairs_local
 
-        t0 = time.time()
-        # write header of data
-        if par.is_root(): writer.write_header()
-
-        # get data iterator, ex) trajectory, density matrix, ...
+        t_0 = time.time()
+        # Write header of data.
         if par.is_root():
+            writer.write_header()
+            # Get data iterator. Ex) trajectory, density matrix, ...
             data_iter = get_data_iter(setting, tpl, target_atoms)
         else:
             data_iter = None
-        label_time_pairs += [('Data object parse', time.time()-t0)]
+        label_time_pairs += [('Data object parse', time.time()-t_0)]
 
         if do_run:
-            t0 = time.time()
+            t_0 = time.time()
 
             # label_time_pairs += [('Passing to parallel', time.time())]
             ####################################################################
@@ -671,25 +635,23 @@ def curp(input_="run.cfg",
     elif do_init and do_dynamics:
         logger.info("{:^80}".format("**Dynamics** calculation is performed."))
 
-        # initialize of curp to get the object for calculation
+        # Initialize of curp to get the object for calculation.
         cal, writer, target_atoms, tpl, label_time_pairs_local \
                 = init_dynamics(setting, par)
         label_time_pairs += label_time_pairs_local
-        
-        t0 = time.time()
-        # write header of data
-        if par.is_root(): writer.write_header()
 
-        # get data iterator, ex) trajectory
-        t0 = time.time()
+        t_0 = time.time()
         if par.is_root():
+            # Write header of data.
+            writer.write_header()
+            # Get data iterator. Ex: trajectory.
             data_iter = get_data_iter(setting, tpl, target_atoms)
         else:
             data_iter = None
-        label_time_pairs += [('Data object parse', time.time()-t0)]
+        label_time_pairs += [('Data object parse', time.time()-t_0)]
 
         if do_run:
-            t0 = time.time()
+            t_0 = time.time()
 
             # label_time_pairs += [('Passing to parallel', time.time())]
             ####################################################################
@@ -710,33 +672,33 @@ def curp(input_="run.cfg",
         if par.is_root():
             t_cal = time.time()
         for istep, (cur_step, results) in enumerate(results_iter):
-            t1 = time.time()
-            cur_steps.append( cur_step )
+            t_1 = time.time()
+            cur_steps.append(cur_step)
             logger.debug_cycle('    writing the data at step {} ...'
-                    .format(cur_step))
+                               .format(cur_step))
             if par.is_root():
                 t_write = time.time()
                 writer.write(istep, *results)
-                logger.debug_cycle( 'writing at {}: {}'
-                        .format(cur_step, time.time()-t_write))
-            t2 = time.time()
-            dt_writing += t2 - t1
+                logger.debug_cycle('writing at {}: {}'
+                                   .format(cur_step, time.time()-t_write))
+            t_2 = time.time()
+            dt_writing += t_2 - t_1
 
         if par.is_root():
             dt_cal = time.time() - t_cal
 
-            logger.debug_cycle('total/1process : {} / {}'.format(dt_cal,
-                dt_cal/float(istep+1)))
+            logger.debug_cycle('total/1process : {} / {}'
+                               .format(dt_cal, dt_cal/float(istep+1)))
                 # dt_cal/float(istep+1)/float(par.get_nproc())))
 
     if do_summary:
 
-        # write the time of writing the data
-        label_time_pairs += [('Run', time.time() - t0 - dt_writing )]
+        # Write the time of writing the data.
+        label_time_pairs += [('Run', time.time() - t_0 - dt_writing)]
         label_time_pairs += [('Writing', dt_writing)]
         # logger.info(msg.format('Writing', dt_writing/float(nstep) ))
 
-        t0 = time.time()
+        t_0 = time.time()
 
         nstep = istep + 1
 
@@ -755,43 +717,42 @@ def curp(input_="run.cfg",
         total_time = 0.0
         for tag, times in tag_times_pair_iter:
             each_time = sum(times) / float(len(times))
-            logger.info(msg.format(tag, each_time ))
+            logger.info(msg.format(tag, each_time))
             total_time += each_time
         logger.info('    ' + 49*'=')
-        logger.info(msg.format('Total', total_time ))
+        logger.info(msg.format('Total', total_time))
 
-        # write timing information of parallel run
+        # Write timing information of parallel run.
         logger.info_title('Detailed timing for parallel processing')
         msg = '{:>20} time : {:12.5f} [s/snapshot]'
         time_info = par.get_time_info(nstep)
         for label, t in time_info:
-            logger.info(msg.format(label, t ))
+            logger.info(msg.format(label, t))
 
         if par.get_other_time():
             msg = '{:>20} time : {:12.5f} [s/all]'
             logger.info(msg.format('misc', par.get_other_time()))
             logger.info(msg.format('Total MPI', par.get_mpi_time()))
 
-        # write the calculated trajectory
+        # Write the calculated trajectory.
         logger.info_title('Steps calculated in trajectory')
         write_array(cur_steps)
 
-        label_time_pairs += [('Post processing', time.time()-t0)]
+        label_time_pairs += [('Post processing', time.time()-t_0)]
         label_time_pairs += [('End', 0.0)]
 
-        # write summary
-        write_times(label_time_pairs, istep+1)
+        # Write summary.
+        write_times(label_time_pairs)
 
-        # write success
+        # Write success.
         write_success()
 
 def main():
-    # parse command line options
+    # Parse command line options.
     options = parse_options()
     curp(**vars(options))
-    
 
-################################################################################
+########################################################################
 
 if __name__ == '__main__':
     main()
