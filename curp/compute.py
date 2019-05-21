@@ -2,7 +2,8 @@
 
 Developed by Yamato's lab, Nagoya University.
 Use the argument -h for a list of available arguments.
-Input: .cfg file (see http://www.comp-biophys.com/resources/curp-tutorial/tutorials.html
+Input: .cfg file
+(see http://www.comp-biophys.com/resources/curp-tutorial/tutorials.html
 and the tutorial directory for more informations.)
 """
 
@@ -18,12 +19,10 @@ from setproctitle import setproctitle
 import exception
 import clog as logger
 
-# Make the process named curp.
-setproctitle('curp')
-
 # Curp module
 SRC_DIR = os.path.dirname(__file__)
 sys.path.insert(0, SRC_DIR)
+
 
 def parse_options():
     """
@@ -70,17 +69,20 @@ def parse_options():
                               "with default values."))
 
     parser.add_argument('input_', nargs='?',
-                        default='run.cfg', #action='append',
+                        default='run.cfg',
                         help='specify input filenames.')
 
-    # parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-    # Parse
+    # parser.add_argument('--version', action='version',
+    #                     version='%(prog)s 1.0')
+    # parse
     parsed_args = parser.parse_args()
     return parsed_args
 
-# Write_ functions below are used to print specific messages and data in the log.
-# Based mostly on logger.py functions, designed for treating the output which will
-# appear in the log.
+# Write_ functions below are used to print specific messages and data
+# in the log.
+# Based mostly on logger.py functions, designed for treating the output
+# which will appear in the log.
+
 
 def write_array(array, num_per_line=10):
     """
@@ -98,11 +100,10 @@ def write_array(array, num_per_line=10):
             icol_beg, icol_end = 10*iline_1, 10*(iline_1+1)
             line = ' '.join('{:>5}'.format(col)
                             for col in array[icol_beg:icol_end])
-            logger.info(line)   # Printed as information.
-                                # see clog.py
+            logger.info(line)   # Printed as information, see clog.py
 
         # Last line
-        if length%num_per_line != 0:
+        if length % num_per_line != 0:
             icol_beg = 10 * (length//num_per_line+1)
             line = ' '.join('{:>5}'.format(col)
                             for col in array[icol_beg:])
@@ -129,6 +130,7 @@ def write_times(label_time_pairs):
         else:
             logger.info(msg.format(label+' time', dt))
 
+
 def write_success():
     """Print success message"""
     logger.info_title('CURP finished completely.')
@@ -136,7 +138,8 @@ def write_success():
     # Write the citation to logger.
     # citation_fp = os.path.join(src_dir,'..','lib','citation.txt')
     # with open(citation_fp, 'rb') as citation_file:
-        # logger.info(citation_file.read())
+    #    logger.info(citation_file.read())
+
 
 def do_topology(setting):
     """Get topology object.
@@ -164,6 +167,7 @@ def do_topology(setting):
                                  potential, use_atype)
     natom = topology.get_natom()
     return(topology, natom)
+
 
 def do_target(atom_range, natom):
     """Get target atoms
@@ -194,6 +198,7 @@ def do_target(atom_range, natom):
 
     return target_atoms
 
+
 def gen_tables(inttable):
     """
     Parameters
@@ -218,7 +223,8 @@ def gen_tables(inttable):
         for tab in table:
             logger.info(tab)
 
-    return(interact_table)
+    return interact_table
+
 
 def init_current(setting, par):
     """
@@ -259,7 +265,7 @@ def init_current(setting, par):
     target_atoms = do_target(setting.curp.target_atoms, natom)
     # Get target atoms names.
     atom_names = topology.get_atom_info()['names']
-    target_anames = [str(i_atom) + '_' + atom_names[iatm-1]
+    target_anames = [str(i_atom) + '_' + atom_names[i_atom-1]
                      for i_atom in target_atoms]
     label_time_pairs += [('Target', time.time()-t_0)]
 
@@ -338,6 +344,7 @@ def init_current(setting, par):
 
     return cal, writer, topology, target_atoms, label_time_pairs
 
+
 def init_dynamics(setting, par):
     """
     Parameters
@@ -398,13 +405,13 @@ def init_dynamics(setting, par):
     t_0 = time.time()
 
     if par.is_root():
-        import dynamics
         writer = dynamics.Writer(setting.dynamics)
     else:
         writer = None
     label_time_pairs += [('Writer setting', time.time()-t_0)]
 
     return cal, writer, target_atoms, topology, label_time_pairs
+
 
 def get_data_iter(setting, topology, target_atoms):
     """
@@ -470,12 +477,14 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
 
     if do_parallel:
         variable par is created.
-        par is a SequentialProcessor() or ParallelProcessor() object (see parallel.py),
+        par is a SequentialProcessor() or ParallelProcessor() object
+        (see parallel.py),
         depending on the command line options and if mpi is run or not.
         clog module is configured, setting the log options.
 
     if do_write:
-        Writes informations like date, license or if curp is run in parallel in log.
+        Writes informations like date, license or if curp is run in
+        parallel in log.
 
     if do_setting:
         setting variable is defined as a setting object (see setting.py),
@@ -483,23 +492,24 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         From there is either do_current or do_dynamics set as True.
 
     if do_init and do_current:
-        init_current() is launched, defining topology or calculator variables.
-        par_iter() is launched, defining data_iter, an iterator going through the steps
-            of the trajectory.
+        init_current() is launched, defining topology or calculator
+        variables.
+        par_iter() is launched, defining data_iter, an iterator going
+        through the steps of the trajectory.
         par.run() is launched, defining the results_iter as an iterator.
 
     if do_init and do_dynamics:
         xxxxxxxx
 
     if do_write:
-        results_iter is iterated through, step by step. The calculus starts there.
+        results_iter is iterated through, step by step. The calculus
+        starts there.
         Each X step the result is printed in the log.
 
     if do_summary:
-        the job is completed. A summary of the time each process took and such informations
-            is printed in the log.
+        the job is completed. A summary of the time each process took
+        and such informations is printed in the log.
     """
-
 
     do_parallel = True
     do_title = True
@@ -512,12 +522,10 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         import parallel
         if use_serial:
             par = parallel.SequentialProcessor()
-
+        elif parallel.use_mpi:
+            par = parallel.ParallelProcessor()
         else:
-            if parallel.use_mpi:
-                par = parallel.ParallelProcessor()
-            else:
-                par = parallel.SequentialProcessor()
+            par = parallel.SequentialProcessor()
 
     # Configuration of clog module.
     if vervose:
@@ -543,14 +551,12 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         logger.info(format(setting, "rst"))
         quit()
 
-    if do_title:
     # Show Curp's title.
-    # curp_title = (10*' ' + 60*'=' + 10*' ' + '\n'
-            # + 25*' ' + '{:<50}' + 5*' ' + '\n'
-            # + 10*' ' + 60*'-' + 10*' ' + '\n' )
+    if do_title:
         curp_title = 3*'{:^80}\n'
-        logger.info(curp_title.format(60*'=', 'Curp Program Start !! ', 60*'-'))
-
+        logger.info(curp_title.format(60*'=',
+                                      'Curp Program Start !! ',
+                                      60*'-'))
         # Display today's information.
         import datetime
         now = datetime.datetime.today()
@@ -611,7 +617,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
 
         # Initialize of curp to get the object for calculation.
         cal, writer, tpl, target_atoms, label_time_pairs_local = \
-                init_current(setting, par)
+            init_current(setting, par)
         label_time_pairs += label_time_pairs_local
 
         t_0 = time.time()
@@ -628,16 +634,16 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
             t_0 = time.time()
 
             # label_time_pairs += [('Passing to parallel', time.time())]
-            ####################################################################
+            ############################################################
             results_iter = par.run(cal.run, data=data_iter)
-            ####################################################################
+            ############################################################
 
     elif do_init and do_dynamics:
         logger.info("{:^80}".format("**Dynamics** calculation is performed."))
 
         # Initialize of curp to get the object for calculation.
         cal, writer, target_atoms, tpl, label_time_pairs_local \
-                = init_dynamics(setting, par)
+            = init_dynamics(setting, par)
         label_time_pairs += label_time_pairs_local
 
         t_0 = time.time()
@@ -654,9 +660,9 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
             t_0 = time.time()
 
             # label_time_pairs += [('Passing to parallel', time.time())]
-            ####################################################################
+            ############################################################
             results_iter = cal.run(data_iter.next())
-            ####################################################################
+            ############################################################
 
     else:
         logger.info('ERROR: The method given in the CURP is not available.')
@@ -689,7 +695,6 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
 
             logger.debug_cycle('total/1process : {} / {}'
                                .format(dt_cal, dt_cal/float(istep+1)))
-                # dt_cal/float(istep+1)/float(par.get_nproc())))
 
     if do_summary:
 
@@ -702,9 +707,8 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
 
         nstep = istep + 1
 
-        if not par.is_root(): return None
-
-        # if par.is_root():
+        if not par.is_root():
+            return None
 
         if istep == -1:
             msg = "The trajectory data wasn't read"
@@ -747,12 +751,18 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         # Write success.
         write_success()
 
+
 def main():
+    """For command line usage"""
+
+    # Make the process named curp.
+    setproctitle('curp')
     # Parse command line options.
     options = parse_options()
     curp(**vars(options))
 
 ########################################################################
+
 
 if __name__ == '__main__':
     main()
