@@ -1,5 +1,5 @@
 # Getting main curp function.
-from .curp import curp
+from .compute import curp
 
 # Writer
 from .parser.writer import Writer as TrjWriter

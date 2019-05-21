@@ -73,7 +73,7 @@ def run_setup():
         python_requires=">=2.7, <3.0",
         entry_points={
             "console_scripts": [
-                "curp = curp.curp:main",
+                "curp = curp.compute:main",
                 "cal_tc = curp.script.cal_tc:main",
                 "conv_trj = curp.script.conv_trj:main",
                 "graph_een = curp.script.graph_een:main"
