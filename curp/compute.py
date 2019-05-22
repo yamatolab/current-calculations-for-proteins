@@ -16,8 +16,9 @@ import time
 
 from setproctitle import setproctitle
 
-import exception
-import clog as logger
+import curp.exception as exception
+import curp.clog as logger
+import curp.setting as st
 
 # Curp module
 SRC_DIR = os.path.dirname(__file__)
@@ -34,16 +35,7 @@ def parse_options():
     import argparse
     parser = argparse.ArgumentParser(description="Curp program.")
 
-    # definitions
-    # parser.add_argument('-a', '--add',
-    #         dest='a', type=bool, default=False,
-    #         action="store_true",
-    #         help='The sample argument.')
-
-    # parser.add_argument('-v', '--vervose',
-    #         dest='vervose', type=bool, default=False,
-    #         action="store_true",
-    #         help='The sample argument.')
+    # Definitions
 
     parser.add_argument('-v', '--vervose',
                         dest='vervose', default=False,
@@ -72,9 +64,6 @@ def parse_options():
                         default='run.cfg',
                         help='specify input filenames.')
 
-    # parser.add_argument('--version', action='version',
-    #                     version='%(prog)s 1.0')
-    # parse
     parsed_args = parser.parse_args()
     return parsed_args
 
@@ -86,11 +75,22 @@ def parse_options():
 
 def write_array(array, num_per_line=10):
     """
-    Print array (1D tuple, list or numpy array) so that:
-    - one line contains ten elements (or less at the end),
-    - last character of each element is separated by 5 characters
-      from the former element (filled by spaces if needed).
-      (Ex: write_array([0.001,0.02,0.1] prints "0.001 0.02  0.1"))
+    Print array (1D tuple, list or numpy array)
+
+    Each line contains num_per_line elements (or less at the end),
+    Last character of each element is separated by 5 characters
+    from the former element (filled by spaces if needed).
+
+    Parameters
+    ----------
+    array : array_like
+    num_per_line : int, optional
+        Number of elements per line
+
+    Examples
+    --------
+    >>> write_array([0.001, 0.02, 0.1])
+    0.001 0.02  0.1
     """
 
     length = len(array)
@@ -116,7 +116,18 @@ def write_array(array, num_per_line=10):
 
 
 def write_times(label_time_pairs):
-    """Print formatted time with label"""
+    """Print formatted time with label
+
+    Used to print the time each process took.
+    Parameters
+    ----------
+    label_time_pairs: list of list
+        Duration of each process.
+        Each element is [label, time].
+        label is the process name.
+        time is the time the process took.
+    """
+
     logger.info_title('The summary of the elasped times')
 
     msg = '{:>30} : {:12.5f} [s]'
@@ -132,13 +143,9 @@ def write_times(label_time_pairs):
 
 
 def write_success():
-    """Print success message"""
-    logger.info_title('CURP finished completely.')
-
+    """Print success message."""
     # Write the citation to logger.
-    # citation_fp = os.path.join(src_dir,'..','lib','citation.txt')
-    # with open(citation_fp, 'rb') as citation_file:
-    #    logger.info(citation_file.read())
+    logger.info_title('CURP finished completely.')
 
 
 def do_topology(setting):
@@ -147,7 +154,7 @@ def do_topology(setting):
     Parameters
     ----------
     setting : curp.setting.Setting
-        Deduced from the configuration file.
+        Topology file and potential container.
 
     Returns
     -------
@@ -156,12 +163,12 @@ def do_topology(setting):
         Number of atom
     """
 
-    import parser
+    import curp.parser as parser
     file_format = setting.input.format
     fmt_section = getattr(setting, 'input_' + file_format)
     potential = setting.curp.potential
 
-    # Atom type depending on stress tensor or flux calculation.
+    # Atom type depends on stress tensor or flux calculation.
     use_atype = setting.curp.method == 'momentum-current'
     topology = parser.get_tplprm(file_format, fmt_section,
                                  potential, use_atype)
@@ -186,7 +193,7 @@ def do_target(atom_range, natom):
         List of targeted atoms indexes.
     """
 
-    import table.target as target
+    from curp.table import target
     target_atoms = target.parse_target_atoms_line(atom_range,
                                                   natom)
 
@@ -200,7 +207,8 @@ def do_target(atom_range, natom):
 
 
 def gen_tables(inttable):
-    """
+    """Generate interaction table.
+
     Parameters
     ----------
     inttable : table.interact_table.InteractionTable
@@ -210,7 +218,6 @@ def gen_tables(inttable):
     interact_table : list
     """
 
-    # Generate interaction table.
     interact_table = list(inttable.gen_divided_table())
     memories = inttable.get_table_memories()
 
@@ -227,19 +234,23 @@ def gen_tables(inttable):
 
 
 def init_current(setting, par):
-    """
+    """Initialize current calculator and variables.
+
+    Used to initialize current, heat flux and energy flux calculations.
+
     Parameters
     ----------
     setting : curp.setting.Setting
-        Contain the settings from .cfg configuration file.
+        settings from .cfg configuration file container.
     par : parallel.SequentialProcessor or parallel.ParallelProcessor
 
-    Output:
-    cal : curp.current.flux.EnergyFluxCalculat
+    Return
+    ------
+    cal : curp.current.flux.EnergyFluxCalculator \
           or curp.current.current.StressCurrentCalculator
         Made using
          - interaction table between atoms is made in "if do_table",
-           taking into account the group_pair table (if do_gpair)x.
+           taking into account the group_pair table (if do_gpair).
          - group table made in "if do_group"
          - setting, topology and target_atoms.
     writer : curp.current.writer.MultiFluxWriter or .MultiCurrentWriter
@@ -251,6 +262,7 @@ def init_current(setting, par):
     label_time_pairs: list of tuples (action, time of action),
         Records time taken by each step.
     """
+
     label_time_pairs = []
 
     # Get topology object.
@@ -271,7 +283,7 @@ def init_current(setting, par):
 
     # Get atom groups depending on setting.curp.group_method.
     t_0 = time.time()
-    from table import group
+    from curp.table import group
 
     gname_iatoms_pairs = group.get_group_iatoms_pairs(
         setting, target_atoms,
@@ -282,9 +294,8 @@ def init_current(setting, par):
 
     # Get which group interactions will be considered as group pairs.
     t_0 = time.time()
-    # table = {'00001_ALA':['00002_GLY','00003_ASP', ...], ...}
     if setting.curp.group_pair_file[0]:
-        from table import group_pair
+        from curp.table import group_pair
         gpair_parser = group_pair.GroupPairParser(
             setting.curp.group_pair_file[0], gnames)
         gpair_table = gpair_parser.get_gpair_table()
@@ -298,7 +309,7 @@ def init_current(setting, par):
     nonbonded_table = topology.get_nonbonded_table()
 
     # Make table for target atoms.
-    import table.target as target
+    from curp.table import target
     if setting.curp.method == 'momentum-current':
         inttable = target.make_interaction_table_current(
             nonbonded_table, target_atoms, natom)
@@ -320,7 +331,7 @@ def init_current(setting, par):
     # Decide and prepare a calculator.
     t_0 = time.time()
 
-    import current
+    import curp.current as current
     calculator = current.get_calculator(setting)
     cal = calculator()
     cal.prepare(topology=topology, setting=setting,
@@ -333,7 +344,7 @@ def init_current(setting, par):
     t_0 = time.time()
 
     if par.is_root():
-        from current.writer import get_writer
+        from curp.current.writer import get_writer
         writer = get_writer(setting, decomp_list,
                             target_anames, cal.get_groupnames(),
                             gpair_table)
@@ -346,11 +357,12 @@ def init_current(setting, par):
 
 
 def init_dynamics(setting, par):
-    """
+    """Initialize microcanonical calculation objects (DEPRECATED).
+
     Parameters
     ----------
     setting : curp.setting.Setting
-        Contain the settings from .cfg configuration file.
+        Settings from .cfg configuration file container.
     par : parallel.SequentialProcessor or parallel.ParallelProcessor
 
     Output:
@@ -394,7 +406,7 @@ def init_dynamics(setting, par):
     # Defines calculator.
     t_0 = time.time()
 
-    import dynamics
+    import curp.dynamics as dynamics
     cal = dynamics.Integrator(topology, setting, interact_table)
     label_time_pairs += [('calculator setting', time.time()-t_0)]
 
@@ -414,10 +426,30 @@ def init_dynamics(setting, par):
 
 
 def get_data_iter(setting, topology, target_atoms):
-    """
-    Input: setting object, topology object, target_atoms object.
-    Output: trajectory as an iterable, using "yield" statement.
-    Each frame of the trajectory is an element of the iterator.
+    """Import targeted atoms trajectories
+
+    Parameters
+    ----------
+    setting : curp.setting.Setting
+        Settings from .cfg configuration file container.
+    topology : parser.format.topology.TopologyParser
+        Topology object obtained from [input_format] topology_file.
+    target_atoms: list of int
+        Indices of each atom to be considered.
+        Obtained from [curp] target_atoms.
+
+    Returns
+    -------
+    data_iter : generator of tuple
+        tuple (cstep_crd, (new_crd, new_vel, pbc_crd))
+        cstep_crd : int
+            Step of shown coordinates and velocity.
+        new_crd : numpy.ma.MaskedArray
+            Coordinates of each atom at step cstep_crd.
+        new_vel : numpy.ma.MaskedArray
+            Velocity of each atom at step cstep_crd.
+        pbc_crd : None or tuple of float
+            Periodic boundary condition coordinates.
     """
 
     # Get topology informations.
@@ -426,7 +458,7 @@ def get_data_iter(setting, topology, target_atoms):
     # Get flag for periodic boundary condition.
     use_pbc = True if topology.get_pbc_info() else False
 
-    # format
+    # Format
     file_format = setting.input.format
     fmt_section = getattr(setting, 'input_' + file_format)
 
@@ -451,7 +483,7 @@ def get_data_iter(setting, topology, target_atoms):
         pass
 
     # Decide trajectory format and parse trajectory files or restart file.
-    import parser
+    import curp.parser as parser
     if use_classic:
 
         data_iter = parser.gen_phase_trajectory(
@@ -466,49 +498,60 @@ def get_data_iter(setting, topology, target_atoms):
             file_format, fmt_section, setting.input.first_last_interval,
             natom, logger)
 
+    for i, tup in enumerate(data_iter):
+        if i > 1:
+            break
+        print("data_iter : ", type(tup), tup)
+
     return data_iter
 
 
 def curp(input_="run.cfg", use_serial=False, vervose=False,
          output_conf_def=False, output_conf_fmtd=False):
-    """
-    If do_xxx statements are here on readability and debugging purpose
-    (steps can be skipped by setting do_xxx as False).
+    """Compute stress tensor or inter-residue energy or heat flow.
 
+    The computation steps are as follow:
     if do_parallel:
         variable par is created.
         par is a SequentialProcessor() or ParallelProcessor() object
         (see parallel.py),
         depending on the command line options and if mpi is run or not.
         clog module is configured, setting the log options.
-
     if do_write:
         Writes informations like date, license or if curp is run in
         parallel in log.
-
     if do_setting:
         setting variable is defined as a setting object (see setting.py),
         storing the configuration file informations.
         From there is either do_current or do_dynamics set as True.
-
-    if do_init and do_current:
-        init_current() is launched, defining topology or calculator
+    if do_init:
+        init_current() is launched, defining topology and calculator
         variables.
-        par_iter() is launched, defining data_iter, an iterator going
+        par_iter() is launched, defining data_iter, a generator going
         through the steps of the trajectory.
-        par.run() is launched, defining the results_iter as an iterator.
-
-    if do_init and do_dynamics:
-        xxxxxxxx
-
+        par.run() is launched, defining the results_iter as a generator.
     if do_write:
         results_iter is iterated through, step by step. The calculus
         starts there.
         Each X step the result is printed in the log.
-
     if do_summary:
-        the job is completed. A summary of the time each process took
+        The job is completed. A summary of the time each process took
         and such informations is printed in the log.
+
+    Parameters
+    ----------
+    input : list of strings
+        Configuration files names.
+    use_serial : bool, optional
+        Whether computations are run in parallel or not (is serial).
+    vervose : bool, optional
+        If True prints debug level messages in the log.
+    output_conf_def :
+        If True outputs the config parameters in ini format with default
+        values.
+    output_conf_fmtd :
+        If True outputs the config parameters in rest style with default
+        values.
     """
 
     do_parallel = True
@@ -519,7 +562,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
     do_write = True
     do_summary = True
     if do_parallel:
-        import parallel
+        import curp.parallel as parallel
         if use_serial:
             par = parallel.SequentialProcessor()
         elif parallel.use_mpi:
@@ -533,19 +576,15 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
     else:
         logger.log_level = logger.INFO
 
-    # logger.log_level = logger.WARN
-
     logger.print_function = par.write
 
     if output_conf_def:
-        import setting as st
         config = st.parse_config()
         setting = st.Setting(config)
         logger.info(setting)
         quit()
 
     if output_conf_fmtd:
-        import setting as st
         config = st.parse_config()
         setting = st.Setting(config)
         logger.info(format(setting, "rst"))
@@ -596,7 +635,6 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         config_filename = input_
 
         # Parse and parse setting
-        import setting as st
         config = st.parse_config(config_filename)
         setting = st.Setting(config)
 
@@ -633,7 +671,6 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         if do_run:
             t_0 = time.time()
 
-            # label_time_pairs += [('Passing to parallel', time.time())]
             ############################################################
             results_iter = par.run(cal.run, data=data_iter)
             ############################################################
@@ -659,7 +696,6 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         if do_run:
             t_0 = time.time()
 
-            # label_time_pairs += [('Passing to parallel', time.time())]
             ############################################################
             results_iter = cal.run(data_iter.next())
             ############################################################
@@ -701,8 +737,6 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         # Write the time of writing the data.
         label_time_pairs += [('Run', time.time() - t_0 - dt_writing)]
         label_time_pairs += [('Writing', dt_writing)]
-        # logger.info(msg.format('Writing', dt_writing/float(nstep) ))
-
         t_0 = time.time()
 
         nstep = istep + 1
@@ -745,10 +779,8 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         label_time_pairs += [('Post processing', time.time()-t_0)]
         label_time_pairs += [('End', 0.0)]
 
-        # Write summary.
+        # Write the time each process took and success.
         write_times(label_time_pairs)
-
-        # Write success.
         write_success()
 
 
@@ -767,6 +799,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-    # line = ['1-']
-
-    # print(parse_target_atoms_line(line, 33))
