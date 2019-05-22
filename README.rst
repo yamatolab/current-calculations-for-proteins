@@ -1,10 +1,15 @@
+======================================
 CURP: CURrent calculations in Proteins
 ======================================
 
-CURP permits to compute inter-residue energy or heat flow and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD). Energy flow data permit to picture an inter-residue Energy Exchange Network as a graph.
+**CURP** permits to compute inter-residue flow of energy or heat and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD). Energy flow data permit to picture an inter-residue Energy Exchange Network as a graph.
+
+Within thermally fluctuating protein molecules under physiological conditions, tightly packed amino acid residues interact with each other through heat and energy exchanges. Non-uniform pattern of heat flow in proteins are illustrated and characterized with a theoretical model based on “local heat conductivity” between each residue pair. This model demonstrated characteristic features of “hidden dynamic allostery” in PDZ domain [1] and allosteric transition in the oxygen sensor domain of FixL [2].
+
+Offical website and tutorial can be found at `<http://www.comp-biophys.com/yamato-lab/curp.html>`_.
 
 Installation
-------------
+============
 CURP requires Python2.7 to work. Python3 compatibility has yet to be realized.
 You can install python here_, or anaconda there_.
 
@@ -12,15 +17,17 @@ You can install python here_, or anaconda there_.
 .. _there: https://www.anaconda.com/distribution/
 
 You can get curp by running ::
+
     git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git``.
 
 To install it, go in the installed directory and use ::
+
     pip install .
     
 or your favorite python package manager, like ``conda`` or ``pipenv``.
 
 Development
------------
+===========
 **New branches** should be made only from development branch, except for hotfixes. Same rule applies for merges. The development branch is then merged to master, see `a successful branching model`_.
 
 **Commit messages** should follow these rules:
@@ -46,6 +53,13 @@ These rules, example and more explanations can be found on `How to Write a Git C
 
 **Test units** use nose, although tests haven't been properly configured yet.
 
+References
+==========
+
+.. [1] Ishikura, T.; Iwata, Y.; Hatano, T.; Yamato, T. Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study. *J. Comput. Chem.* **2015**, 36:1709-1718
+    [`CrossRef <https://doi.org/10.1002/jcc.23989>`]
+.. [2] Ota, T.; Yamato, T. Energy Exchange Network Model Demonstrates Protein Allosteric Transition: An Application to an Oxygen Sensor Protein. *J. Phys. Chem. B* **2019**, 123:768-775
+    [ `CrossRef <https://doi.org/10.1021/acs.jpcb.8b10489>`_]
 
 .. _a successful branching model: https://nvie.com/posts/a-successful-git-branching-model/
 .. _How to Write a Git Commit Message: https://chris.beams.io/posts/git-commit/ 
