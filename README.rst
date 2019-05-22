@@ -11,13 +11,22 @@ You can install python here_, or anaconda there_.
 .. _here: https://www.python.org/downloads/release/python-2716/
 .. _there: https://www.anaconda.com/distribution/
 
-You can get curp by running ``git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git``.
-To install it, go in the installed directory and use ``pip install .`` or your favorite python package manager, like ``conda install .`` or ``pipenv install .``.
+You can get curp by running 
+
+::
+    git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git``.
+
+To install it, go in the installed directory and use
+
+::
+    pip install .
+    
+or your favorite python package manager, like ``conda`` or ``pipenv``.
 
 Development
 -----------
 **New branches** should be made only from development branch, except for hotfixes. Same rule applies for merges. The development branch is then merged to master, see `a successful branching model`_.
-.. _a successful branching model: https://nvie.com/posts/a-successful-git-branching-model/
+.. _`a successful branching model`: https://nvie.com/posts/a-successful-git-branching-model/
 
 **Commit messages** should follow these rules:
     1. Separate subject from body with a blank line
@@ -37,7 +46,7 @@ For example::
     and turns it back into a chess game.
 
 These rules, example and more explanations can be found on `How to Write a Git Commit Message`_ article from Chris Beams.
-.. _How to Write a Git Commit Message: https://chris.beams.io/posts/git-commit/ 
+.. _`How to Write a Git Commit Message`: https://chris.beams.io/posts/git-commit/ 
 
 **New classes and functions** should **ALWAYS** be written with a docstring. Docstrings follow the rules of numpydoc, as described in `numpydoc docstring guide`_.
 .. _numpydoc docstring guide: https://numpydoc.readthedocs.io/en/latest/format.html
