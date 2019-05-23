@@ -1,0 +1,13 @@
+icolums [1]
+labels ['total']
+npair 10
+target_dons ['11_C', '12_O', '13_N', '14_H']
+target_accs ['12_O', '13_N', '14_H', '15_CA']
+target_pairs [('11_C', '12_O'), ('11_C', '13_N'), ('11_C', '14_H'), ('11_C', '15_CA'), ('12_O', '13_N'), ('12_O', '14_H'), ('12_O', '15_CA'), ('13_N', '14_H'), ('13_N', '15_CA'), ('14_H', '15_CA')]
+target_indexes [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+reading the data from outdata/flux_atm.dat00000
+writing the avg+rms data into outdata/flux.dat_avg+rms.gz
+
+--------------------------------------------------------------------------------
+    Script that divide flux data finished completely.
+--------------------------------------------------------------------------------

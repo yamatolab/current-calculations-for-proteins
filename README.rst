@@ -1,42 +1,67 @@
+======================================
 CURP: CURrent calculations in Proteins
 ======================================
 
-Installation
-------------
+**CURP** permits to compute inter-residue flow of energy or heat and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD). Energy flow data permit to picture an inter-residue Energy Exchange Network as a graph.
 
+Within thermally fluctuating protein molecules under physiological conditions, tightly packed amino acid residues interact with each other through heat and energy exchanges. Non-uniform pattern of heat flow in proteins are illustrated and characterized with a theoretical model based on “local heat conductivity” between each residue pair. This model demonstrated characteristic features of “hidden dynamic allostery” in PDZ domain [1]_ and allosteric transition in the oxygen sensor domain of FixL [2]_.
+
+Offical website and tutorial can be found at `<http://www.comp-biophys.com/yamato-lab/curp.html>`_.
+
+Installation
+============
 CURP requires Python2.7 to work. Python3 compatibility has yet to be realized.
 You can install python here_, or anaconda there_.
-If you already use python or anaconda but not a compatible version, or even if you start using python, it is advised to rather use pyenv_ for the version gestion.
 
 .. _here: https://www.python.org/downloads/release/python-2716/
 .. _there: https://www.anaconda.com/distribution/
-.. _pyenv: https://github.com/pyenv/pyenv
 
-Following Python libraries are needed:
- - numpy 1.11.2
- - mpi2py 2.0.0
- - netCDF4 1.2.4
- - nose
- - benchmarker
- - setproctitle
- - epydoc
- - pygraphviz
+You can get curp by running ::
 
-These requirements are all contained in the requirements.txt. To install them, you can run in the curp directory ``pip install -r requirements.txt`` or if using anaconda ``conda install --yes --file requirements.txt``.
+    git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git``.
 
-If you want the packages to be installed only for the user, you can run ``pip install --user -r requirements.txt`` 
+To install it, go in the installed directory and use ::
 
-Installing the packages in a virtual environment:
-If using pipenv, you can run ``pipenv install`` in your curp directory. For installing pipenv, ``pip install --user pipenv`` should be sufficient if you already have Python. For more pipenv installation tweaks, please refer to the `official documentation`_.
+    pip install .
+    
+or your favorite python package manager, like ``conda`` or ``pipenv``.
 
-.. _official documentation: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
+Development
+===========
+**New branches** should be made only from development branch, except for hotfixes. Same rule applies for merges. The development branch is then merged to master, see `A successful Git branching model`_.
 
-Alternatively, if you use anaconda, you can run::
+**Commit messages** should follow these rules:
 
-conda create -n curp python=2.7 anaconda
-source activate curp
-conda install -n curp --file requirements.txt
+    1. Separate subject from body with a blank line
+    2. Limit the subject line to 50 characters
+    3. Capitalize the subject line
+    4. Do not end the subject line with a period
+    5. Use the imperative mood in the subject line
+    6. Wrap the body at 72 characters
+    7. Use the body to explain what and why vs. how
 
-/!\ TODO: Alternatively, if you simply want a totally independent curp, you can run ``make environment``.
+For example::
 
-Currently there is no setup.py to compile fortran code, you will therefore have to run ``make`` to finally get curp to work.
+    Derezz the master control program
+
+    MCP turned out to be evil and had become intent on world domination.
+    This commit throws Tron's disc into MCP (causing its deresolution)
+    and turns it back into a chess game.
+
+These rules, example and more explanations can be found on `How to Write a Git Commit Message`_ article from Chris Beams.
+
+**New classes and functions** should **ALWAYS** be written with a docstring. Docstrings follow the rules of numpydoc, as described in `numpydoc docstring guide`_.
+
+**Test units** use nose, although tests haven't been properly configured yet.
+
+References
+==========
+
+.. [1] Ishikura, T.; Iwata, Y.; Hatano, T.; Yamato, T. Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study. *J. Comput. Chem.* **2015**, 36:1709-1718
+    [`CrossRef <https://doi.org/10.1002/jcc.23989>`_]
+.. [2] Ota, T.; Yamato, T. Energy Exchange Network Model Demonstrates Protein Allosteric Transition: An Application to an Oxygen Sensor Protein. *J. Phys. Chem. B* **2019**, 123:768-775
+    [`CrossRef <https://doi.org/10.1021/acs.jpcb.8b10489>`_]
+
+.. _A successful Git branching model: https://nvie.com/posts/a-successful-git-branching-model/
+.. _How to Write a Git Commit Message: https://chris.beams.io/posts/git-commit/ 
+.. _numpydoc docstring guide: https://numpydoc.readthedocs.io/en/latest/format.html

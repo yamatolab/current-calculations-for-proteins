@@ -1,0 +1,14 @@
+icolums [1, 2, 3, 4, 5, 6, 7, 8, 9]
+labels ['total', 'bond', 'angle', 'torsion', 'improper', 'coulomb14', 'vdw14', 'coulomb', 'vdw']
+npair 3
+target_dons ['00001_ALA', '00002_ALA']
+target_accs ['00002_ALA', '00003_ALA']
+target_pairs [('00001_ALA', '00002_ALA'), ('00001_ALA', '00003_ALA'), ('00002_ALA', '00003_ALA')]
+target_indexes [0, 1, 2]
+reading the data from outdata/flux_grp.dat00000
+writing the avg data into outdata/flux.dat_avg.gz
+writing the rms data into outdata/flux.dat_rms.gz
+
+--------------------------------------------------------------------------------
+    Script that divide flux data finished completely.
+--------------------------------------------------------------------------------

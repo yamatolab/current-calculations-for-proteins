@@ -1,0 +1,63 @@
+%title  
+%format time {:>15.3f} [ps]
+%label donor     acceptor            total
+%time          0.000 [ps]
+%data
+   00001_ALA    00002_ALA  -2.73281897e-02
+%time          1.000 [ps]
+%data
+   00001_ALA    00002_ALA   1.62276695e-01
+%time          2.000 [ps]
+%data
+   00001_ALA    00002_ALA   5.93847353e-02
+%time          3.000 [ps]
+%data
+   00001_ALA    00002_ALA   1.01545063e+00
+%time          4.000 [ps]
+%data
+   00001_ALA    00002_ALA   8.62610361e-01
+%time          5.000 [ps]
+%data
+   00001_ALA    00002_ALA   2.16072027e-01
+%time          6.000 [ps]
+%data
+   00001_ALA    00002_ALA  -1.43784258e-01
+%time          7.000 [ps]
+%data
+   00001_ALA    00002_ALA  -6.07068060e-01
+%time          8.000 [ps]
+%data
+   00001_ALA    00002_ALA  -3.24131944e-01
+%time          9.000 [ps]
+%data
+   00001_ALA    00002_ALA  -4.90433269e-01
+%time         10.000 [ps]
+%data
+   00001_ALA    00002_ALA  -6.65066717e-01
+%time         11.000 [ps]
+%data
+   00001_ALA    00002_ALA  -3.78644864e-01
+%time         12.000 [ps]
+%data
+   00001_ALA    00002_ALA  -2.51774585e-01
+%time         13.000 [ps]
+%data
+   00001_ALA    00002_ALA  -1.04715710e+00
+%time         14.000 [ps]
+%data
+   00001_ALA    00002_ALA  -2.84464122e-01
+%time         15.000 [ps]
+%data
+   00001_ALA    00002_ALA   4.30137196e-01
+%time         16.000 [ps]
+%data
+   00001_ALA    00002_ALA   5.46234793e-02
+%time         17.000 [ps]
+%data
+   00001_ALA    00002_ALA  -1.34543760e-01
+%time         18.000 [ps]
+%data
+   00001_ALA    00002_ALA  -6.86101298e-01
+%time         19.000 [ps]
+%data
+   00001_ALA    00002_ALA  -6.30736832e-01

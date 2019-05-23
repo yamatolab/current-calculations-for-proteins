@@ -1,0 +1,27 @@
+%title  
+%format time {:>15.3f} [ps]
+%label donor     acceptor            total
+%time          0.000 [ps]
+%data
+      1_ALA1       2_ALA2   3.58942198e-01
+      1_ALA1       3_ALA3   6.26151232e-02
+      1_ALA1     4_WATERS  -6.29987700e-01
+      2_ALA2       3_ALA3   8.23186912e-01
+      2_ALA2     4_WATERS  -1.78959674e-01
+      3_ALA3     4_WATERS   1.38634618e+00
+%time          1.000 [ps]
+%data
+      1_ALA1       2_ALA2   9.06845179e-01
+      1_ALA1       3_ALA3   2.43303230e-02
+      1_ALA1     4_WATERS  -3.76656438e-01
+      2_ALA2       3_ALA3  -6.27787060e-01
+      2_ALA2     4_WATERS  -2.21055512e-01
+      3_ALA3     4_WATERS   8.59221245e-02
+%time          2.000 [ps]
+%data
+      1_ALA1       2_ALA2   3.98366585e-01
+      1_ALA1       3_ALA3  -7.61520150e-02
+      1_ALA1     4_WATERS   1.71358238e-01
+      2_ALA2       3_ALA3  -7.17157535e-01
+      2_ALA2     4_WATERS   3.83716896e-02
+      3_ALA3     4_WATERS   7.03373615e-03

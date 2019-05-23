@@ -1,0 +1,165 @@
+          ============================================================          
+                             Curp Program Start !!                              
+          ------------------------------------------------------------          
+
+                                                  TIME STAMP: 2019/5/13 18:16:37
+
+
+        ***************************************************************
+        CURrent calculation for Proteins (CURP)
+        version 1.1
+        Release date: June 30, 2017.
+        
+        COPYRIGHT Ⓒ 2012, 2013, 2014, 2015-2017.
+        Yamato Laboratory, Nagoya University. All rights reserved.
+        
+        URL: http://www.comp-biophys.com/yamato-lab/curp.html
+        Contact email: yamato@nagoya-u.jp
+        
+        AUTHORS:
+        version 1.1
+        Takahisa YAMATO, Takakazu ISHIKURA, Kunitaka OTA, Tatsuya SAKAI
+        version 1.0
+        Takahisa YAMATO, Takakazu ISHIKURA, Yuki IWATA
+        
+        CITATION:
+        T.ISHIKURA, Y.IWATA, T. HATANO, T. YAMATO,
+        Energy exchange netrork of inter-residue interactions within a
+        thermally fluctuating protein molecule: A computational study
+        36: 1709-1718, (2015).
+        ***************************************************************
+
+
+
+--------------------------------------------------------------------------------
+     1. Parallel Processing information
+--------------------------------------------------------------------------------
+
+                    Use **PARALLEL** caluculation for curp.                     
+                     **Current** calculation is performed.                      
+
+--------------------------------------------------------------------------------
+     2. Target atoms information
+--------------------------------------------------------------------------------
+
+target atoms list: 11-15
+ ===> 
+show all atoms explicitly:
+   11    12    13    14    15
+
+--------------------------------------------------------------------------------
+     3. Group information
+--------------------------------------------------------------------------------
+
+[ 00011_C ]
+11
+[ 00012_O ]
+12
+[ 00013_N ]
+13 14
+[ 00015_CA ]
+15
+
+--------------------------------------------------------------------------------
+     4. Interaction table informations
+--------------------------------------------------------------------------------
+
+(iatm, jatm_beg, jatm_end)
+The number of torsions : 99
+The number of impropers : 5
+The number of 1-4 interactions 74
+
+--------------------------------------------------------------------------------
+     5. The range of trajectories
+--------------------------------------------------------------------------------
+
+first, last, interval of step = 0 -1 1
+
+--------------------------------------------------------------------------------
+     6. The each step's calculated informations
+--------------------------------------------------------------------------------
+
+*** reading trajectory file ***
+    /home/olaprevote/opt/current-calculations-for-proteins/test/amber-ala3-water/sam.mdcrd.gz
+
+*** reading trajectory file ***
+    /home/olaprevote/opt/current-calculations-for-proteins/test/amber-ala3-water/sam.mdvel.gz
+
+*** ISTEP = 1, CURRENT STEP = 1 ***
+         crd of center of mass = ( 0.75867, -0.82877, -0.31897) [A]
+         vel of center of mass = (-0.74427,  1.95719, -3.29213) [A/ps]
+      angular vel for rotation = ( 1.91352, -2.62120,  1.68714) [rad/ps]
+
+*** ISTEP = 10, CURRENT STEP = 10 ***
+         crd of center of mass = ( 0.67371, -1.03920, -0.29556) [A]
+         vel of center of mass = (-0.55981, -0.89760, -2.17579) [A/ps]
+      angular vel for rotation = (-2.74015,  0.33532, -1.00104) [rad/ps]
+
+*** ISTEP = 20, CURRENT STEP = 20 ***
+         crd of center of mass = ( 0.64731, -1.01909, -0.18377) [A]
+         vel of center of mass = (-1.26732,  1.33974,  0.85549) [A/ps]
+      angular vel for rotation = (-1.23330,  1.03663,  1.39318) [rad/ps]
+
+
+--------------------------------------------------------------------------------
+     7. Detailed timing in calculator object
+--------------------------------------------------------------------------------
+
+       bond pairwise time :      0.00029 [s/snapshot]
+           bond flux time :      0.00003 [s/snapshot]
+      angle pairwise time :      0.00009 [s/snapshot]
+          angle flux time :      0.00003 [s/snapshot]
+    torsion pairwise time :      0.00012 [s/snapshot]
+        torsion flux time :      0.00003 [s/snapshot]
+   improper pairwise time :      0.00008 [s/snapshot]
+       improper flux time :      0.00003 [s/snapshot]
+  coulomb14 pairwise time :      0.00008 [s/snapshot]
+      coulomb14 flux time :      0.00003 [s/snapshot]
+      vdw14 pairwise time :      0.00008 [s/snapshot]
+          vdw14 flux time :      0.00003 [s/snapshot]
+    coulomb pairwise time :      0.00001 [s/snapshot]
+        coulomb flux time :      0.00003 [s/snapshot]
+        vdw pairwise time :      0.00000 [s/snapshot]
+            vdw flux time :      0.00003 [s/snapshot]
+    =================================================
+               Total time :      0.00101 [s/snapshot]
+
+--------------------------------------------------------------------------------
+     8. Detailed timing for parallel processing
+--------------------------------------------------------------------------------
+
+             Scatter time :      0.00023 [s/snapshot]
+                Body time :      0.00114 [s/snapshot]
+              Gather time :      0.00000 [s/snapshot]
+                misc time :      0.00299 [s/all]
+           Total MPI time :      0.83363 [s/all]
+
+--------------------------------------------------------------------------------
+     9. Steps calculated in trajectory
+--------------------------------------------------------------------------------
+
+    1     2     3     4     5     6     7     8     9    10
+   11    12    13    14    15    16    17    18    19    20
+
+--------------------------------------------------------------------------------
+    10. The summary of the elasped times
+--------------------------------------------------------------------------------
+
+                  Setting time :      0.01020 [s]
+                 Topology time :      0.14232 [s]
+                   Target time :      0.00017 [s]
+                    Group time :      0.00868 [s]
+         Group pair table time :      0.00000 [s]
+        Interaction table time :      0.14959 [s]
+       Calculator setting time :      0.05919 [s]
+           Writer setting time :      0.00024 [s]
+        Data object parse time :      0.00043 [s]
+                      Run time :      0.83077 [s]
+                  Writing time :      0.00292 [s]
+          Post processing time :      0.00016 [s]
+               Total curp time :      1.20467 [s]
+
+--------------------------------------------------------------------------------
+    11. CURP finished completely.
+--------------------------------------------------------------------------------
+

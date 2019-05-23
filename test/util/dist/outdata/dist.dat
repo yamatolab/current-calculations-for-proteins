@@ -1,0 +1,56 @@
+
+# ***************************************************************
+# CURrent calculation for Proteins (CURP)
+# version 1.1
+# Release date: June 30, 2017.
+# 
+# COPYRIGHT Ⓒ 2012, 2013, 2014, 2015-2017.
+# Yamato Laboratory, Nagoya University. All rights reserved.
+# 
+# URL: http://www.comp-biophys.com/yamato-lab/curp.html
+# Contact email: yamato@nagoya-u.jp
+# 
+# AUTHORS:
+# version 1.1
+# Takahisa YAMATO, Takakazu ISHIKURA, Kunitaka OTA, Tatsuya SAKAI
+# version 1.0
+# Takahisa YAMATO, Takakazu ISHIKURA, Yuki IWATA
+# 
+# CITATION:
+# T.ISHIKURA, Y.IWATA, T. HATANO, T. YAMATO,
+# Energy exchange netrork of inter-residue interactions within a
+# thermally fluctuating protein molecule: A computational study
+# 36: 1709-1718, (2015).
+# ***************************************************************
+# itraj =        1      0.0019
+# itraj =        2      0.0008
+# itraj =        3      0.0006
+# itraj =        4      0.0006
+# itraj =        5      0.0006
+# itraj =        6      0.0006
+# itraj =        7      0.0006
+# itraj =        8      0.0006
+# itraj =        9      0.0006
+# itraj =       10      0.0006
+# itraj =       11      0.0006
+# itraj =       12      0.0006
+# itraj =       13      0.0006
+# itraj =       14      0.0006
+# itraj =       15      0.0006
+# itraj =       16      0.0007
+# itraj =       17      0.0008
+# itraj =       18      0.0006
+# itraj =       19      0.0006
+# itraj =       20      0.0006
+#    residue 1    residue 2     min_dist     avg_dist     max_dist          rms
+     00001_TYR    00002_GLY        1.344        1.350        1.356        0.004
+     00001_TYR    00003_GLY        3.589        3.626        3.693        0.036
+     00001_TYR    00004_PHE        3.684        3.708        3.750        0.019
+     00001_TYR    00005_LEU        1.726        1.756        1.806        0.026
+     00002_GLY    00003_GLY        1.313        1.330        1.371        0.018
+     00002_GLY    00004_PHE        3.569        3.676        3.881        0.103
+     00002_GLY    00005_LEU        1.815        1.848        1.908        0.029
+     00003_GLY    00004_PHE        1.327        1.351        1.366        0.013
+     00003_GLY    00005_LEU        2.277        2.283        2.303        0.008
+     00004_PHE    00005_LEU        1.337        1.368        1.382        0.014
+# Finished completely.
