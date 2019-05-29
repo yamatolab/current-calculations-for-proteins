@@ -17,4 +17,5 @@ tutorial
 
 # Ignore test outputs
 test/**/outdata/*
-**/log
+test/**/log
+test/**/*.log
