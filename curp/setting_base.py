@@ -6,13 +6,14 @@ Section
 TypeBase
 |+ Int
 |+ Float
-|+ String 
+|+ String
 |+ Bool
 |+ Choice
 |+ List
 |+ File
 """
-import os, glob
+import os
+import glob
 
 from exception import CurpException
 
@@ -40,7 +41,7 @@ class SettingBase:
                 section = getattr(self, secname)
             except AttributeError:
                 raise SectionNotDefined(secname)
-                
+
             pairs = config.items(secname)
             section.set_items(dict(pairs), check)
 
@@ -70,14 +71,13 @@ class Section:
         self.__desc = description
         self.__key_to_typeobj = kwds
         self.__name = None
-
         # initialize each of types
         for key, type_obj in self.__key_to_typeobj.items():
             type_obj.set_name(key)
 
     def __str__(self):
-        seclines = "[{sname}]\n# {desc}\n\n".format(
-                sname=self.__name, desc=self.__desc) 
+        seclines = "[{sname}]\n\t{desc}\n\n".format(
+                sname=self.__name, desc=self.__desc)
 
         return seclines + "\n\n".join(str(typeobj)
                 for typeobj in self.__key_to_typeobj.values())
@@ -86,7 +86,7 @@ class Section:
         if fmt_type == "rst":
             seclines = "{sname} section\n{secline}\n{desc}\n\n".format(
                     sname=self.__name, secline=(8+len(self.__name))*'~',
-                    desc=self.__desc) 
+                    desc=self.__desc)
 
             return seclines + "\n\n".join(format(typeobj, fmt_type)
                     for typeobj in self.__key_to_typeobj.values())
@@ -110,7 +110,7 @@ class Section:
         # check whether keyword is valid or not in the config file.
         for key in kwds:
             self.check_invalid(key)
-        
+
         # check whether the keyword required in definition exists or not.
         if check:
             for key in self.__key_to_typeobj:
@@ -479,7 +479,7 @@ class List(TypeBase):
 
 class File(TypeBase):
 
-    def __init__(self, default='', require=True, desc='', 
+    def __init__(self, default='', require=True, desc='',
             allow_glob=True, exists=False, parser=None):
         # self._set_defaults(default)
         self.__use_glob = allow_glob
@@ -574,7 +574,7 @@ def test_main():
     generic = Section(
         int_test = Int(
             desc = '',
-            parser = lambda x: x+10, 
+            parser = lambda x: x+10,
             default = 5 ),
 
         float_test = Float(

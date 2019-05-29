@@ -9,6 +9,46 @@ from setting_base import *
 
 
 class Setting(SettingBase):
+    """Settings for curp computations
+
+    Parameters
+    ----------
+    config : configparser.SafeConfigParser
+    check : Bool
+        Whether entries are checked or not.
+
+    Examples
+    --------
+    To create a default Setting object:
+    >>> import curp.setting as st
+    >>> config = st.parse_config("")
+    >>> setting = st.Setting(config)
+
+    To create a Setting object from a configuration file:
+    >>> import curp.setting as st
+    >>> config = st.parse_config(path_to_cfg)
+    >>> setting = st.Setting(config)
+
+    To see the sections:
+    >>> dir(setting)
+
+    To print a usable .cfg file
+    >>> print(setting)
+
+    To print a usable .rst summary
+    >>> print(format(setting, "rst"))
+
+    setting.session_name to access only a section
+    Ex: input section
+    >>> setting.input
+
+    To show only the values of the input section
+    >>> print(setting.input)
+
+    To modify a variable
+    Ex: To change curp method to energy-flux
+    >>> setting.curp.method = "energy-flux"
+    """
 
     input = Section(
 
@@ -29,7 +69,7 @@ class Setting(SettingBase):
 
         group_file = File(default='group.cfg',require=False, allow_glob=False,
             desc=('The group file path to define group.'
-                'if curp.group_mothod == file then this definition is used.')
+                'if curp.group_method == file then this definition is used.')
         ),
 
         # group_excluded = List(default=[], require=False, value_type=String,
@@ -43,10 +83,10 @@ class Setting(SettingBase):
             desc='The target input file to be used.',
             values=['trajectory', 'restart'], value_type=String),
 
-        topology_file = File(default='', require=True, allow_glob=False, 
+        topology_file = File(default='', require=True, allow_glob=False,
             desc='Topology file path.'),
 
-        coordinate_file = File(default='', require=False, allow_glob=True, 
+        coordinate_file = File(default='', require=False, allow_glob=True,
             desc='Coordinate trajectory file path.'),
 
         velocity_file = File(default='', require=False, allow_glob=True,
@@ -81,10 +121,10 @@ class Setting(SettingBase):
             # desc='The target input file to be used.',
             # values=['trajectory', 'restart'], value_type=String),
 
-        # topology_file = File(default='', require=True, allow_glob=False, 
+        # topology_file = File(default='', require=True, allow_glob=False,
             # desc='Topology file name.'),
 
-        # coordinate_file = File(default='', require=False, allow_glob=True, 
+        # coordinate_file = File(default='', require=False, allow_glob=True,
             # desc='Coordinate trajectory file name.'),
 
         # velocity_file = File(default='', require=False, allow_glob=True,
@@ -214,7 +254,7 @@ class Setting(SettingBase):
                 '"united" means that hydrogen atoms are included in hevy atoms '
                 'covalent to them.'
                 '"residue" means that the groups are calculated by residue '
-                'level. If "file" is specified, the groups definition is given' 
+                'level. If "file" is specified, the groups definition is given'
                 'by the group file in input section.'),
             values=['united', 'residue', 'file', 'none'] ),
 
@@ -423,7 +463,7 @@ def parse_config(config_filename=None):
 
     # config = cp.SafeConfigParser()
     # config.read(config_filename)
-    
+
     return config
 
 if __name__ == '__main__':
