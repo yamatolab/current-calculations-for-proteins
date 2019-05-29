@@ -11,6 +11,10 @@ curp-environ/
 tutorial
 
 # folders made by setup.py
-build/
-curp.egg-info/
-dist/
+/build/
+/curp.egg-info/
+/dist/
+
+# Ignore test outputs
+test/**/outdata/*
+**/log
