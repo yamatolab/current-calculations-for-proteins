@@ -1,6 +1,6 @@
 
 subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
-                   & norm, nsample, nframe, ndim, ncom)
+                   & norm, nsample, ndim, nframe, ncom)
 
    implicit none
    integer, intent(in) :: nacf, first, last, interval
@@ -36,7 +36,7 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
       if (use_norm) then
          temp(:) = 0.0d0
          do i=1,ndim
-            temp(:) = temp(:) + xss(ifrm_beg,i,:)**2
+            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm_beg,i,:)
          end do
          x2_sum_inv(:) = 1.0d0/temp(:)
          !x2_sum_inv(:) = 1.0d0/(xss(ifrm_beg,1,:)**2 &
@@ -52,8 +52,8 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
          ifrm = ifrm_beg + (iacf-1)*interval
          temp(:) = 0.0d0
          do i=1,ndim
-            temp(:) = temp(:) + xss(ifrm_beg,i,:)**2
-         end do
+            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm_beg,i,:)
+         end do 
          acf_tmp(iacf,:) = temp(:)
          !acf_tmp(iacf,:) = xss(ifrm_beg,1,:) * xss(ifrm,1,:) &
          !                + xss(ifrm_beg,2,:) * xss(ifrm,2,:) &
