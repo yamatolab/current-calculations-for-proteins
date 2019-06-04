@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 """Calculate autocorrelation function using flux data
 CURP 1.1: Ishikura, 2016. Most of the Layout
 CURP 1.2: Yamato, 2019. Heat Flux gestion (and commenting code).
@@ -25,75 +23,8 @@ import netCDF4 as netcdf
 from curp import ParallelProcessor
 
 # fortran module
-from curp.script import lib_acf
-from curp.script import lib_hfacf
-
-
-def parse_options():
-    """Parse and get the command line options."""
-
-    # make argument parser
-    import argparse
-    parser = argparse.ArgumentParser(description=(
-        'Calculate transport coefficients from energy flux datas.'))
-
-    # add argument definitions
-    parser.add_argument(dest='flux_fn', metavar='FLUX_FILENAME',
-                        help=('The filepath of flux data.'))
-
-    parser.add_argument('-o', '--tc-file', metavar='FILE',
-                        dest='tc_fn', required=True,
-                        help=('The filename of tc data.'))
-
-    parser.add_argument('-a', '--acf-file', metavar='FILE',
-                        dest='acf_fn', required=False,
-                        default='',
-                        help=('The filename of acf data.'))
-
-    parser.add_argument('-af', '--acf-file-format', metavar='FORMAT',
-                        dest='acf_fmt', required=False,
-                        default="netcdf", choices=['ascii', 'netcdf'],
-                        help=('The file format of acf data.'))
-
-    parser.add_argument('-r', '--frame-range',
-                        metavar=('FIRST', 'LAST', 'INTER'),
-                        dest='frame_range', required=False,
-                        default=[1, -1, 1], type=int, nargs=3,
-                        help='The range of frame; first frame, last frame, '
-                              'interval step.')
-
-    parser.add_argument('-s', '--average-shift', metavar='SHIFT',
-                        dest='avg_shift', required=False,
-                        default=1, type=int,
-                        help='The frame to shift for averaging.')
-
-    parser.add_argument('--sample-number', dest='nsample',
-                        type=int, required=False, default=0,
-                        help=('number of sample for one flux data file. '
-                              'Default value is 0 that present to make samples'
-                              ' as much as possible'))
-
-    parser.add_argument(
-        '-dt', '--dt', metavar='DT', dest='d_t', required=False,
-        default=None, type=float,
-        help=('t of between the neighbour frames. The unit is in ps. '
-              + 'Default value is determined by time variable in flux data.'))
-
-    parser.add_argument('-c', '--coefficient', metavar='COEFFICIENT',
-                        dest='coef', required=False,
-                        default=1.0, type=float,
-                        help='Multiply acf by given coefficient.')
-
-    parser.add_argument('-v', '--vervose', dest='use_debug',
-                        action='store_true', required=False,
-                        help='turn on debug mode.')
-
-    parser.add_argument('-no_axes', dest='no_axes',
-                        action='store_true', required=False,
-                        help='with this option, scalar flux is handled.')
-
-    # make arguments
-    return parser.parse_args()
+from curp.script.lib_acf import cal_acf
+from curp.script.lib_hfacf import cal_hfacf
 
 
 def get_stringnames(string_array):
@@ -170,11 +101,11 @@ class TCCalculator:
     def run(self, don, acc, flux):
 
         if self.no_axes:
-            acf = lib_acf.cal_acf(flux, self.nframe_acf,
+            acf = cal_acf(flux, self.nframe_acf,
                                   self.__fst, self.__lst, self.__intvl,
                                   self.__shift, False, self.__nsample)
         else:
-            acf = lib_hfacf.cal_hfacf(flux, self.nframe_acf,
+            acf = cal_hfacf(flux, self.nframe_acf,
                                       self.__fst, self.__lst, self.__intvl,
                                       self.__shift, False, self.__nsample, 3)
 
@@ -186,11 +117,11 @@ class TCCalculator:
         don, acc, flux = data
 
         if self.no_axes:
-            acf = lib_acf.cal_acf(flux, self.nframe_acf,
+            acf = cal_acf(flux, self.nframe_acf,
                                   self.__fst, self.__lst, self.__intvl,
                                   self.__shift, False, self.__nsample)
         else:
-            acf = lib_hfacf.cal_hfacf(flux, self.nframe_acf,
+            acf = cal_hfacf(flux, self.nframe_acf,
                                       self.__fst, self.__lst, self.__intvl,
                                       self.__shift, False, self.__nsample, 3)
 
@@ -207,10 +138,10 @@ class TCCalculator:
             t_0 = time.time()
 
             if self.no_axes:
-                acf = lib_acf.cal_acf(flux, self.nframe_acf, fst, lst, intvl,
+                acf = cal_acf(flux, self.nframe_acf, fst, lst, intvl,
                                       self.__shift, False, self.__nsample)
             else:
-                acf = lib_hfacf.cal_hfacf(flux, self.nframe_acf, fst, lst,
+                acf = cal_hfacf(flux, self.nframe_acf, fst, lst,
                                           intvl, self.__shift, False,
                                           self.__nsample, 3)
 
@@ -362,10 +293,9 @@ class ACFWriter(WriterBase):
     unit = '(kcal/mol/fs)^2'
 
 
-def cal_tc(flux_fn, tc_fn="", acf_fn="",
-           acf_fmt="netcdf", frame_range=[1, -1, 1],
-           avg_shift=1, nsample=0, d_t=None,
-           coef=1.0, use_debug=False, no_axes=False):
+def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
+           frame_range=[1, -1, 1], avg_shift=1, nsample=0, d_t=None,
+           coef=1.0, use_debug=False, no_axes=False, **kwds):
 
     ti = time.time()
     par = ParallelProcessor()
@@ -421,11 +351,9 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="",
         print('==========================')
 
 
-def main():
-    # parse command line options
-    opts = parse_options()
-    cal_tc(**vars(opts))
-
 
 if __name__ == '__main__':
-    main()
+    from console import arg_cal_tc, exec_command
+
+    parser = arg_cal_tc()
+    exec_command(parser)

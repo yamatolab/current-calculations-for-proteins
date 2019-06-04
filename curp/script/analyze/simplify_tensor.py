@@ -45,7 +45,7 @@ class TensorParser:
                        [v[3], v[4], v[5]],
                        [v[6], v[7], v[8]] ]
             tensors.append(tensor)
-                
+
         # array = numpy.array(v)
         # print(array.reshape(3,3,len(array)))
         return names, numpy.array(tensors)
@@ -103,7 +103,7 @@ def split_data(data, interval=100):
     return splitted_data
 
 def cal_average_with_scalar(values_traj):
-    
+
     # natom times ntraj
     natom = len(values_traj[0])
     ntraj = len(values_traj)
@@ -157,56 +157,22 @@ def get_eigen_after_average(tensors_traj):
     average_tensors = cal_average_with_tensor(tensors_traj)
     return list(gen_eigens(average_tensors))
 
+def simplify_tensor(filename, fns, labels='', snapshot=False, **kwds):
+    """Show and make figure for stress ratio."""
 
-if __name__ == '__main__':
-
-    # make argument parser
-    import argparse
-    parser = argparse.ArgumentParser(
-        description= 'Show and make figure for stress ratio.')
-
-    # print('simplify_tensor total_file "label1,label2,label3,label4,..."',
-    #         'label1_data,label2_data,...')
-
-    # add argument definitions
-    parser.add_argument(
-            '-i', '--input-data', dest='data_filename', required=True,
-            help='specify input filename for the stress data.')
-    parser.add_argument(
-            '-l', '--labels', dest='labels',
-            required=False, default='',
-            help=('specify labels of components to analyze.'
-                + 'ex.) -l "total,bond,angle,..."'))
-    parser.add_argument(
-            'fns', nargs='*', #action='append',
-            help='specify additive filenames. ex.) label_data1, label_data2, ...')
-    parser.add_argument(
-            '-s', '--every-snapshot', dest='flag_snapshot',
-            required=False, action='store_true', default=False,
-            help='specify flag to average the magnitude for every snapshot.')
-
-    # make arguments
-    args = parser.parse_args()
-
-    if len(args.fns) == 0:
+    if len(fns) == 0:
         pass
 
-    elif len(args.labels.split(',')) != len(args.fns):
-        print(args.labels.split(','))
-        print(args.fns)
+    elif len(labels.split(',')) != len(fns):
+        print(labels.split(','))
+        print(fns)
         print("The number of labels and filenames must be same.")
         quit()
-    else:
-        pass
-
-    filename = args.data_filename
-    labels = args.labels
-    fns = args.fns
 
     # for total stress tensor
     tot_parser = TensorParser(filename)
     names, tot_data = tot_parser.parse()
-    if args.flag_snapshot:
+    if snapshot:
         avetot_evalues = get_average_after_eigen(tot_data)
     else:
         avetot_evalues = get_eigen_after_average(tot_data)
@@ -217,7 +183,7 @@ if __name__ == '__main__':
     for label, fn in zip(labels, fns):
         parser = TensorParser(fn)
         names, data = parser.parse()
-        if args.flag_snapshot:
+        if snapshot:
             evalues_list.append( get_average_after_eigen(data) )
         else:
             evalues_list.append( get_eigen_after_average(data) )
@@ -261,3 +227,9 @@ if __name__ == '__main__':
             print(fmt.format(id=atom_id, name=aname,
                 total=tot, **label_to_evalues))
 
+
+if __name__ == '__main__':
+    from curp.console import arg_simplify, exec_command
+
+    parser = arg_simplify()
+    exec_command(parser)

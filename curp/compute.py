@@ -14,8 +14,6 @@ import sys
 import os
 import time
 
-from setproctitle import setproctitle
-
 import curp.exception as exception
 import curp.clog as logger
 import curp.setting as st
@@ -25,47 +23,6 @@ SRC_DIR = os.path.dirname(__file__)
 sys.path.insert(0, SRC_DIR)
 
 
-def parse_options():
-    """
-    Defines how arguments given to curp.py are treated.
-    To see optional arguments, type in the terminal python curp.py -h
-    Returns parsed_args, containing all arguments.
-    """
-    # Initialize
-    import argparse
-    parser = argparse.ArgumentParser(description="Curp program.")
-
-    # Definitions
-
-    parser.add_argument('-v', '--vervose',
-                        dest='vervose', default=False,
-                        action="store_true",
-                        help='print out informations.')
-
-    parser.add_argument('-s', '--enable-serial',
-                        dest='use_serial', default=False,
-                        action="store_true",
-                        help=("calculate in serial, don't calculate"
-                              "in parallel."))
-
-    parser.add_argument('--output-conf-default',
-                        dest='output_conf_def', default=False,
-                        action="store_true",
-                        help=("Output the config parameters in ini format "
-                              "with default values."))
-
-    parser.add_argument('--output-conf-formatted',
-                        dest='output_conf_fmtd', default=False,
-                        action="store_true",
-                        help=("Output the config parameters in rest style "
-                              "with default values."))
-
-    parser.add_argument('input_', nargs='?',
-                        default='run.cfg',
-                        help='specify input filenames.')
-
-    parsed_args = parser.parse_args()
-    return parsed_args
 
 # Write_ functions below are used to print specific messages and data
 # in the log.
@@ -507,7 +464,7 @@ def get_data_iter(setting, topology, target_atoms):
 
 
 def curp(input_="run.cfg", use_serial=False, vervose=False,
-         output_conf_def=False, output_conf_fmtd=False):
+         output_conf_def=False, output_conf_fmtd=False, **kwds):
     """Compute stress tensor or inter-residue energy or heat flow.
 
     The computation steps are as follow:
@@ -784,18 +741,12 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         write_success()
 
 
-def main():
-    """For command line usage"""
-
-    # Make the process named curp.
-    setproctitle('curp')
-    # Parse command line options.
-    options = parse_options()
-    curp(**vars(options))
-
 ########################################################################
 
 
 if __name__ == '__main__':
-    main()
+    from console import arg_compute, exec_command
+
+    parser = arg_compute()
+    exec_command(parser)
 

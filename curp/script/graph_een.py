@@ -18,11 +18,11 @@ def graph_een(data_fns, targets=['1-'], force_nodes=[], close_pairs=[],
               hide_isonode=False, line_values=[0.015, 0.008,0.003],
               line_colors=['red', 'blue', 'green'],
               line_thicks=[4.0, 4.0, 2.5], line_weights=[5.0, 3.0, 1.0],
-              cluster_fn='', node_fn='', fig_fn=None):
-              
+              cluster_fn='', node_fn='', fig_fn=None, **kwds):
+
     if tpl_threshold is None:
         tpl_threshold = threshold
-        
+
     # prepare
     parsers = [ EnergyConductivityParser(fp) for fp in data_fns ]
 
@@ -157,150 +157,6 @@ def graph_een(data_fns, targets=['1-'], force_nodes=[], close_pairs=[],
     cc.draw(fig_fn)
 
 
-def main():
-
-    opts = parse_options()
-    graph_een(**vars(opts))
-
-def parse_options():
-    """Parse and get the command line options."""
-
-    # make argument parser
-    import argparse
-    parser = argparse.ArgumentParser(
-        description= ('Show network chart of the energy conductivities.'))
-
-    # add argument definitions
-    parser.add_argument(
-            'data_fns', nargs='+', #action='append',
-            help='specify filenames. ')
-
-    parser.add_argument(
-            '-t', '--targets', dest='targets', required=False,
-            nargs='*', default=['1-'],
-            help=('This option allow you to show only target '
-                'and thier neighbhor nodes. '
-                  'ex), [-t 1-5], [-t 2-9 15 17], [-t 25-].'))
-
-    parser.add_argument(
-            '--forced-output-nodes', dest='force_nodes', required=False,
-            nargs='*', default=[],
-            help=('nodes to forcibly show.'
-                  'ex), [-t 1-5], [-t 2-9 15 17], [-t 25-].'))
-
-    parser.add_argument(
-            '-p', '--bring-node-pair-close-together', dest='close_pairs',
-            required=False, nargs='*', default=[],
-            help=('bring the node pair close together on the EEN graph.'
-                  'ex), 1:2, 3:5, 3:15.'))
-
-    parser.add_argument(
-            '-c', '--cluster-filename', dest='cluster_fn',
-            required=False, default='',
-            help=('specify a cluster file name. '))
-
-    parser.add_argument(
-            '-n', '--node-style-filename', dest='node_fn',
-            required=False, default='',
-            help='specify a file name which node style difinitions are written.'
-            )
-
-    parser.add_argument(
-            '--with-one-letter', dest='use_1letter', default=False,
-            required=False, action='store_true',
-            help='use 1 letter representation for amino acid name.')
-
-    parser.add_argument(
-            '-f', '--output-een-filename',
-            dest='fig_fn', required=False,
-            help='specify a filename to graph EEN.')
-
-    # parser.add_argument(
-            # '-i', '--input-layout-file', dest='input_layout_fp', required=False,
-            # default="",
-            # help="Specify the position-fixed dot file.")
-
-    # parser.add_argument(
-            # '-o', '--output-layout-file', dest='output_layout_fp',
-            # required=False, default="",
-            # help='specify a filepath to draw.')
-
-    parser.add_argument(
-            '-r', '--threshold', dest='threshold',
-            type=float, required=False, default=None,
-            help='threshold value to show nodes on chart figure.')
-
-    parser.add_argument(
-            '-R', '--topology-threshold', dest='tpl_threshold',
-            type=float, required=False, default=None,
-            help=('threshold value to define graph topology. ' +
-                "If you don't give this parameter, " +
-                "the value of threshold to show nodes will be used."))
-
-    parser.add_argument(
-            '--ratio', dest='ratio',
-            type=float, required=False, default=None,
-            help=("ratio of height/width to chart a figure. "
-                + "If '--graph-size is set, this option will be overwritten"
-                + "by it." ))
-
-    parser.add_argument(
-            "-s", "--graph-size", dest="graph_size",
-            required=False, default=None,
-            help=("The graph size in inch unit. ex) -s '3.4,2.5'"))
-
-    parser.add_argument(
-            '--title', dest='title', required=False, default='',
-            help='specify the title of the figure.')
-
-    parser.add_argument(
-            '--direction', dest='direction',
-            required=False, choices=['LR', 'TB'], default='TB',
-            help='specify the kind of the direction.')
-
-    parser.add_argument(
-            '-I', '--hide-isolated-nodes', dest='hide_isonode',
-            required=False, action='store_true',
-            help='Hide isolated nodes when appling multiple irEC files.')
-
-    parser.add_argument(
-            '--show-negative-values', dest='use_decrease',
-            action='store_true',
-            help="show the nodes pair which have negative values.")
-
-    parser.add_argument(
-            '--alpha', dest='alpha',
-            type=int, required=False, default=None,
-            help='The transparency value of the background color.')
-
-    parser.add_argument(
-            '-lv', '--line-values', dest='line_values', required=False,
-            nargs='*', type=float, default=[0.015, 0.008, 0.003],
-            help=('The threshold values for line attributes. '
-                'Number of elements in the list must be equal with all line attribute.'))
-
-    parser.add_argument(
-            '-lc', '--line-colors', dest='line_colors', required=False,
-            nargs='*', type=str, default=['red', 'blue', 'green'],
-            help=('The colors of line. '
-                'Number of elements in the list must be equal with all line attribute.'))
-
-    parser.add_argument(
-            '-lt', '--line-thicks', dest='line_thicks', required=False,
-            nargs='*', type=float, default=[4.0, 4.0, 2.5],
-            help=('The thickness of line. '
-                'Number of elements in the list must be equal with all line attribute.'))
-
-    parser.add_argument(
-            '-lw', '--line-weights', dest='line_weights', required=False,
-            nargs='*', type=float, default=[5.0, 3.0, 1.0],
-            help=('The weight of line. '
-                'Number of elements in the list must be equal with all line attribute.'))
-
-    # make arguments
-    options = parser.parse_args()
-    return options
-
 
 class EnergyConductivityParser:
 
@@ -310,7 +166,7 @@ class EnergyConductivityParser:
 
     def __iter__(self):
         return iter(self._data_iter)
-    
+
     def parse(self, filename):
         self._title, self._labels = self.parse_header_lines(filename)
         self._data_iter = list(self.gen_parse_data(filename))
@@ -339,7 +195,7 @@ class EnergyConductivityParser:
                 title = line.replace('#title', '')
 
             elif line.startswith('#label'):
-                labels = line.split()[1:] 
+                labels = line.split()[1:]
 
             else:
                 pass
@@ -442,23 +298,23 @@ class CommunicationChart:
 
         # set default attributes for graph
         self.__graph.graph_attr.update(
-                fontsize = '14'     , 
+                fontsize = '14'     ,
                 fontname = FONTNAME,
-                splines  = 'polyline' , 
+                splines  = 'polyline' ,
                 ratio    = ratio,
-                # splines  = 'ortho'    , 
+                # splines  = 'ortho'    ,
                 # size = "100x500",
         )
 
         # set default attributes for nodes
         self.__graph.node_attr.update(
-                shape     = 'box'   , 
-                style     = 'rounded,filled' , 
-                fontsize  = '14'  , 
+                shape     = 'box'   ,
+                style     = 'rounded,filled' ,
+                fontsize  = '14'  ,
                 fontname  = FONTNAME,
-                fixedsize = True   , 
-                # height    = 0.02,   
-                # width     = 0.02,   
+                fixedsize = True   ,
+                # height    = 0.02,
+                # width     = 0.02,
                 fillcolor = 'grey'  ,
                 fontcolor = 'black' ,
                 color     = 'black'  ,
@@ -673,7 +529,7 @@ class CommunicationChart:
         if is_forced1:
             self.__graph.add_node( nname1, label=label1 )
             self._rid_to_nname[rid1] = nname1
-        
+
         if is_forced2:
             self.__graph.add_node( nname2, label=label2 )
             self._rid_to_nname[rid2] = nname2
@@ -715,7 +571,7 @@ class CommunicationChart:
         node2.attr['label'] = label2
 
         # fscale = self.__opts['font_scale']
-        # node1.attr['fontsize'] = fscale * 
+        # node1.attr['fontsize'] = fscale *
 
         if cond > 0.0:
             color, width, weight, edge_label = self._get_edge_attrs(cond)
@@ -857,7 +713,7 @@ class CommunicationChart:
         <tr><td align="right" port="i1">item 1</td></tr>
         <tr><td align="right" port="i2">item 2</td></tr>
         <tr><td align="right" port="i3">item 3</td></tr>
-        <tr><td align="right" port="i4">item 4</td></tr> 
+        <tr><td align="right" port="i4">item 4</td></tr>
         </table>>'''
 
         label_key2 = '''<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
@@ -890,7 +746,7 @@ class CommunicationChart:
 
         self.__graph.add_edge('key1:2', 'key2:2', penwidth=10,
                 **default_attributes)
-        
+
 
         # if node exists in graph
         # label = 'hoge'
@@ -957,8 +813,10 @@ class ClusterParser(IniParser):
 
 # define NodeStyleParser from ClusterParser
 NodeStyleParser = ClusterParser
-    
+
 
 if __name__ == '__main__':
-    main()
+    from console import arg_graph_een, exec_command
 
+    parser = arg_graph_een()
+    exec_command(parser)

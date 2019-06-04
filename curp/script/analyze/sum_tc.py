@@ -14,7 +14,7 @@ def write_tc(tcs, pairs, tcs_rms):
 def load_tc(fp):
     fd = open(fp, 'rb')
     lines = (line for line in fd
-            if not line.startswith('#') 
+            if not line.startswith('#')
             if not line.isspace())
 
     pairs = []
@@ -29,7 +29,8 @@ def load_tc(fp):
 
     return pairs, ipair_to_tc
 
-def summarize_tc(tc_fps):
+def summarize_tc(tc_fps, **kwds):
+    """Summarize transport coefficient"""
 
     ipair_to_tc_ary = []
     npair = None
@@ -52,7 +53,7 @@ def summarize_tc(tc_fps):
     write_tc(tc_avg, pairs, tc_rms)
 
 if __name__ == '__main__':
-    fps = sys.argv[1:]
-    summarize_tc(fps)
+    from curp.console import arg_sum_tc, exec_command
 
-
+    parser = arg_sum_tc()
+    exec_command(parser)

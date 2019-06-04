@@ -17,4 +17,4 @@ from .parser import get_tplprm_simple as get_tpl
 from .script.conv_trj import gen_trj
 
 # Get all the nice scripts
-import script
+from . import script

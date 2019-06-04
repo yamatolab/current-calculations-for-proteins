@@ -1,25 +1,28 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import os, sys
+import os
+import sys
 import numpy
 import argparse
 
-from curp import get_tpl, gen_trj
+from curp import get_tpl
+from curp.script.conv_trj import gen_trj
+from curp.script.analyze.lib_pickup import pickup
 from curp.table.group import gen_residue_group
 
-def main():
-    import os, sys
-
-    # Parse arguments
-    args = get_arguments()
+def pickup_respairs(trj_fns, input_rj_fmt, prmtop_fn, prmtop_fmt, interval=1,
+         cutoff_method='nearest', cutoff=5., trim_resnames=[],
+         format='{rid:05}_{rname}', is_union=True, ext_resids='',
+         is_both=False, **kwds):
+    """Pick up the residue pair table to given file as a ndx format."""
 
     # Get parameters
-    cutoff = float(args.cutoff)
+    cutoff = float(cutoff)
     cutoff2 = cutoff*cutoff
 
     # Get topology
-    tpl = get_tpl(args.prmtop_fmt, args.prmtop_fn)
+    tpl = get_tpl(prmtop_fmt, prmtop_fn)
     natom = tpl.get_natom()
 
     # Generate residue group
@@ -27,36 +30,35 @@ def main():
     atom_info = tpl.get_atom_info()
     rname_iatoms_pairs = list( (rname, list(numpy.array(iatoms)))
             for rname, iatoms in gen_residue_group(
-                res_info, atom_info, name_fmt=args.format))
+                res_info, atom_info, name_fmt=format))
 
     resnames = [ resname for resname, iatoms in rname_iatoms_pairs ]
     nres = len(resnames)
 
     # Get trajectory
-    crd_parser = gen_trj(tpl, args.trj_fns, args.input_trj_fmt,
-            trj_type='crd', fst_lst_int=(1,-1,args.interval),
+    crd_parser = gen_trj(tpl, trj_fns, input_trj_fmt,
+            trj_type='crd', fst_lst_int=(1,-1,interval),
             use_pbc=False)
     crds = ( crd for itraj, crd, box in crd_parser )
 
     # Generate residue pair table
-    import lib_pickup
     # cutoff_method = dict(
             # com      = lib_pickup.is_com,
             # nearest  = lib_pickup.is_nearest,
-            # farthest = lib_pickup.is_farthest)[args.cutoff_method]
+            # farthest = lib_pickup.is_farthest)[cutoff_method]
 
 
-    res_beg_end_pairs = [ (min(iatoms), max(iatoms)) 
+    res_beg_end_pairs = [ (min(iatoms), max(iatoms))
             for rname, iatoms in rname_iatoms_pairs ]
 
-    lib_pickup.pickup.res_beg_end_pairs = numpy.array(res_beg_end_pairs)
-    lib_pickup.pickup.cutoff2 = cutoff2
-    if args.cutoff_method == 'com':
-        lib_pickup.pickup.cutoff_method = 1
-    elif args.cutoff_method == 'nearest':
-        lib_pickup.pickup.cutoff_method = 2
-    elif args.cutoff_method == 'farthest':
-        lib_pickup.pickup.cutoff_method = 3
+    pickup.res_beg_end_pairs = numpy.array(res_beg_end_pairs)
+    pickup.cutoff2 = cutoff2
+    if cutoff_method == 'com':
+        pickup.cutoff_method = 1
+    elif cutoff_method == 'nearest':
+        pickup.cutoff_method = 2
+    elif cutoff_method == 'farthest':
+        pickup.cutoff_method = 3
     else:
         pass
 
@@ -64,7 +66,7 @@ def main():
             for crd in crds )
 
     respair_iter = gen_respair_table_over_traj(
-            respair_table_traj, args.is_union)
+            respair_table_traj, is_union)
 
     # setup excluded resids
     def gen_excluded_respair(respairs, excluded_resids):
@@ -122,20 +124,20 @@ def main():
     # write residue pair data
     print('# residue pair within {:4.2f}'.format(cutoff))
     npair = 0
-    if args.ext_resids and not args.is_both:
+    if ext_resids and not is_both:
 
         for rname_i, rnames_j in gen_excluded_respair(
-                respair_iter, args.ext_resids):
+                respair_iter, ext_resids):
 
             if rnames_j:
                 npair += len(rnames_j)
                 print('[{}]'.format(rname_i))
                 print('  '.join(rnames_j))
 
-    elif args.ext_resids and args.is_both:
+    elif ext_resids and is_both:
 
         for rname_i, rnames_j in gen_excluded_respair_both(
-                respair_iter, args.ext_resids):
+                respair_iter, ext_resids):
 
             if rnames_j:
                 npair += len(rnames_j)
@@ -153,73 +155,6 @@ def main():
 
     print('# number of pairs = ', npair)
 
-def get_arguments():
-
-    parser = argparse.ArgumentParser(description=
-            'Pick up the residue pair table to given file as a ndx format.')
-
-    # add argument definitions
-    parser.add_argument(
-            dest='trj_fns', nargs='+',
-            help='specify the trajectory files.')
-
-    parser.add_argument('-if', '--input-format', metavar='FORMAT',
-            dest='input_trj_fmt', required=True,
-            help='specify the format of the trajectory.')
-
-    parser.add_argument(
-            '-p', '--input-prmtop-file', dest='prmtop_fn', required=True,
-            help='specify the prmtop file to be amber format.')
-
-    parser.add_argument(
-            '-pf', '--input-prmtop-format', dest='prmtop_fmt', required=True,
-            help='specify the format of the prmtop file.')
-    
-    parser.add_argument(
-            '-i', '--interval', dest='interval', default=1, type=int,
-            help=('specify interval step to perform the calculation for '
-                  'trajectory.'))
-
-    parser.add_argument(
-            '-m', '--cutoff-method', dest='cutoff_method', default='nearest',
-            required=False, choices=['com', 'nearest', 'farthest'],
-            help='cutoff method; com, nearest and farthest for residue.')
-
-    parser.add_argument(
-            '-c', '--cutoff', dest='cutoff',
-            required=False, default=5.0,
-            help='specify the cutoff to pick up.')
-
-    parser.add_argument(
-            '-t', '--trim-resnames', dest='trim_resnames', nargs='*', 
-            required=False, default=[],
-            help='residue names for trimming from the target residues.')
-
-    parser.add_argument(
-            '-f', '--format', dest='format',
-            required=False, default='{rid:05}_{rname}',
-            help='specify the format for representing residue identify.')
-
-    parser.add_argument(
-            '-U', '--disble-union', dest='is_union',
-            required=False, action='store_false',
-            help=('whether residue pair table is calculated by union '
-                'or intersection when collecting over trajectoryspecify'))
-
-    parser.add_argument('-e', '--exclude-resids', metavar='FIRST:LAST',
-            dest='ext_resids', required=False,
-            default='', nargs='*',
-            help=('residues that you want to exclude.'+
-                'ex) 5:10 80:150' ))
-
-    parser.add_argument(
-            '-b', '--enable-residues-both-cxcluded', dest='is_both',
-            required=False, action='store_true',
-            help=('whether include residue pairs that exclude residues'))
-
-
-    # make arguments
-    return parser.parse_args()
 
 def cal_dist2(p1, p2):
     # return sum( (p1 - p2)**2 )
@@ -234,8 +169,7 @@ def zip_double(data_iter):
 
 def gen_respair_table_fortran(crd, nres, resnames):
 
-    import lib_pickup
-    cands = lib_pickup.pickup.get_candidate_pairs(crd, nres)
+    cands = pickup.get_candidate_pairs(crd, nres)
 
     for ires_1 in range(nres-1):
         jreslist = []
@@ -275,7 +209,7 @@ def is_nearest(cutoff2):
             for r_j in crd_j:
                 if cal_dist2(r_i, r_j) <= cutoff2:
                     return True
-            
+
         else:
             return False
 
@@ -288,7 +222,7 @@ def is_farthest(cutoff2):
             for r_j in crd_j:
                 if cal_dist2(r_i, r_j) >= cutoff2:
                     return False
-                
+
         else:
             return True
 
@@ -320,4 +254,7 @@ def gen_respair_table_over_traj(respair_table_traj, is_union=True):
 
 
 if __name__ == '__main__':
-    main()
+    from curp.console import arg_respairs, exec_command
+
+    parser = arg_respairs()
+    exec_command(parser)

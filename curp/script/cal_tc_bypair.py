@@ -6,7 +6,7 @@ import numpy
 import gzip
 
 # fortran module
-import lib_acf
+from curp.script.lib_acf import cal_acf
 
 # Exception
 class NumFrameError(Exception): pass
@@ -262,7 +262,7 @@ def main():
                     "   but given frame range is {}.")
                     .format(len(fluxes), nacf))
 
-            acf = lib_acf.cal_acf(fluxes,nacf,frm_first,frm_last,frm_interval,
+            acf = cal_acf(fluxes,nacf,frm_first,frm_last,frm_interval,
                     opts.frm_shift, norm=opts.enable_norm, nsample=opts.nsample)
             log.write('[{tag}] finished {number}'.
                     format(tag=tag, number=ifn_1+1))
@@ -358,7 +358,7 @@ def main():
             .format(tc, tcs_avg[-1][0]))
         if opts.use_debug: log.write('disp = {:22.14e} {:22.14e}'
             .format(tc_disp, tcs_disp[-1][0]))
-        
+
         write_tcs(times, tcs_avg, tcs_disp, opts.tcs_fn, opts.flux_fns[0])
 
     ############################################################

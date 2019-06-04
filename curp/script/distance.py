@@ -1,10 +1,9 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import os, sys
 import numpy
 
-import lib_distance
+from curp.script.lib_distance import distance
 
 def do_distance(tpl, trj, trj_type,
                 dist_format=None, dist_cutoff=5.0, dist_method='com'
@@ -26,10 +25,10 @@ def do_distance(tpl, trj, trj_type,
     resnames = [ resname for resname, iatoms in rname_iatoms_pairs ]
     nres = len(resnames)
 
-    res_beg_end_pairs = [ (min(iatoms), max(iatoms)) 
+    res_beg_end_pairs = [ (min(iatoms), max(iatoms))
             for rname, iatoms in rname_iatoms_pairs ]
 
-    mod = lib_distance.distance
+    mod = distance
     mod.res_beg_end_pairs = numpy.array(res_beg_end_pairs)
     mod.cutoff2 = args.dist_cutoff ** 2
     if args.dist_method == 'com':        mod.method = 1
@@ -52,7 +51,7 @@ def parse_args():
     pass
 
 def get_dist2s(crd, nres):
-    dist2s = lib_distance.distance.cal_dist2s(crd, nres)
+    dist2s = distance.cal_dist2s(crd, nres)
     return dist2s
 
 def get_min_avg_max_rms(dist2s_trj):

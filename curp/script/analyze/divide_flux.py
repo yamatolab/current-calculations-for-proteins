@@ -1,52 +1,8 @@
+
 from __future__ import print_function
-import os, sys
+import os
 import math
 import numpy
-
-def parse_options():
-    """Parse and get the command line options."""
-
-    # make argument parser
-    import argparse
-    parser = argparse.ArgumentParser(
-        description= ('Divide the flux data of all into the flux data for '
-                    'each donor and acceptor.') )
-
-    # add argument definitions
-    parser.add_argument(
-            'flux_fns', nargs='+', #action='append',
-            help=('specify filenames in order. '
-                'ex.) flux.dat0001, flux.dat0002, ...') )
-
-    parser.add_argument(
-            '-o', '--output-filename', dest='output_fn', required=True,
-            help='specify a filename to output.')
-
-    parser.add_argument(
-            '-d', '--donor', dest='donor_line', required=False, default='',
-            help='donor names to output to files.')
-
-    parser.add_argument(
-            '-a', '--acceptor', dest='acceptor_line', required=False,
-            default='',
-            help='acceptor names to output to files.')
-
-    parser.add_argument(
-            '-t', '--dt', dest='dt', required=True, default=1.0,
-            help='time width[ps] per 1 step.')
-
-    parser.add_argument(
-            '-c', '--column', dest='column_line', required=False, default='',
-            help='column numbers to output.')
-
-    parser.add_argument(
-            '-s', '--step-range', dest='step_range', required=False,
-            help='step range to output.')
-
-    # make arguments
-    options = parser.parse_args()
-
-    return options
 
 
 import gzip
@@ -80,7 +36,7 @@ class FluxParser:
 
     def __iter__(self):
         return self
-    
+
     def parse_header(self):
         lines = []
         for line in self.__file:
@@ -120,7 +76,7 @@ class FluxParser:
 
             values = [float(c) for c in cols[2:]]
             fluxes.append(values)
-                
+
         return don_acc_pairs, numpy.array(fluxes)
 
     def gen_optimized_lines(self, file):
@@ -180,7 +136,7 @@ class FluxWriter:
         file.write('#REMARK  Flux Data for Acceptor <== Donor\n')
         file.write('#REMARK  Acceptor = {}'.format(acc_name) + '\n')
         file.write('#REMARK  Donor    = {}'.format(don_name) + '\n')
-        # file.write('#REMARK  The number of atoms = {}'.format(natom) + 
+        # file.write('#REMARK  The number of atoms = {}'.format(natom) +
         info_line = '#REMARK time'
         for l in labels:
             info_line += ' {label:>16}'.format(label=l)
@@ -191,7 +147,7 @@ class FluxWriter:
     def write(self, istep, flux):
         time = istep * self.__dt
         file = self.open(self.__filepath)
-        file.write( self.__fmt.format(time, *flux) + '\n') 
+        file.write( self.__fmt.format(time, *flux) + '\n')
         file.close()
 
     def open(self, filepath):
@@ -208,7 +164,7 @@ def gen_flux_from_parsers(filenames):
         for pairs, fluxes in parser:
             yield pairs, fluxes
 
-def gen_target_pairs(opts, don_acc_pairs):
+def gen_target_pairs(donor_line, acceptor_line, don_acc_pairs):
 
     if opts.donor_line != '':
         target_dons = [ don for don in opts.donor_line if don != '' ]
@@ -268,9 +224,14 @@ def write_avg_rms(filename, don_acc_pairs, avg_fluxes, rms_fluxes):
         for (don, acc), avg, rms in zip(don_acc_pairs, avg_fluxes, rms_fluxes):
             file.write( fmt.format(don, acc, avg[0], rms[0]))
 
-if __name__ == '__main__':
 
-    opts = parse_options()
+def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
+         column_line='', **kwds):
+    """Divide flux file.
+
+    Divide the flux data of all into the flux data for each donor and
+    acceptor.
+    """
 
     # prepare
     one_parser = FluxParser(opts.flux_fns[0])
@@ -294,17 +255,18 @@ if __name__ == '__main__':
 
     print('labels', labels)
 
-    # create average fluxes and fluxes**2 array 
+    # create average fluxes and fluxes**2 array
     npair = len(don_acc_pairs)
     print('npair', npair)
-    fluxes_sum  = numpy.zeros( [npair, nvalue], numpy.float)
-    fluxes2_sum = numpy.zeros( [npair, nvalue], numpy.float)
+    fluxes_sum  = numpy.zeros([npair, nvalue], numpy.float)
+    fluxes2_sum = numpy.zeros([npair, nvalue], numpy.float)
 
     # get target pairs
-    target_pairs = list( gen_target_pairs(opts, don_acc_pairs) )
+    target_pairs = list(gen_target_pairs(donor_line, acceptor_line,
+                                          don_acc_pairs))
     target_indexes = []
     for index, pair in enumerate(target_pairs):
-        target_indexes.append( index )
+        target_indexes.append(index)
 
     print('target_pairs', target_pairs)
     print('target_indexes', target_indexes)
@@ -344,3 +306,10 @@ if __name__ == '__main__':
     print(80*'-')
     print('    Script that divide flux data finished completely.')
     print(80*'-')
+
+
+if __name__ == '__main__':
+    from curp.console import arg_divide_flux, exec_command
+
+    parser = arg_divide_flux()
+    exec_command(parser)
