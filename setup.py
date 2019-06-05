@@ -70,6 +70,8 @@ def run_setup():
 
         packages=setuptools.find_packages(),
 
+        package_data={'curp':['volume/random20.pdb.gz']},
+
         python_requires=">=2.7, <3.0",
         entry_points={
             "console_scripts": [
