@@ -6,7 +6,7 @@ import numpy
 from curp.script.lib_distance import distance
 
 def do_distance(tpl, trj, trj_type,
-                dist_format=None, dist_cutoff=5.0, dist_method='com'
+                dist_format=None, dist_cutoff=5.0, dist_method='com', **kwds
                 ):
 
     if not trj_type == 'crd':
@@ -30,10 +30,10 @@ def do_distance(tpl, trj, trj_type,
 
     mod = distance
     mod.res_beg_end_pairs = numpy.array(res_beg_end_pairs)
-    mod.cutoff2 = args.dist_cutoff ** 2
-    if args.dist_method == 'com':        mod.method = 1
-    elif args.dist_method == 'nearest':  mod.method = 2
-    elif args.dist_method == 'farthest': mod.method = 3
+    mod.cutoff2 = dist_cutoff ** 2
+    if dist_method == 'com':        mod.method = 1
+    elif dist_method == 'nearest':  mod.method = 2
+    elif dist_method == 'farthest': mod.method = 3
     else: pass
 
     dist2s_trj = (get_dist2s(crd, nres) for ifrm, crd, box in trj )
@@ -43,12 +43,6 @@ def do_distance(tpl, trj, trj_type,
 
     # Write data
     write_distance(dists_min, dists_avg, dists_max, dists_rms, resnames)
-
-def parse_args():
-    # '-o', '--out-distance-data' output_distance_data
-    # '-m', '--method': 'nearest', 'com', 'cog', 'farthest'
-    # '-d', '--with-dispersion',
-    pass
 
 def get_dist2s(crd, nres):
     dist2s = distance.cal_dist2s(crd, nres)
