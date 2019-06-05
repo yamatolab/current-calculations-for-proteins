@@ -6,7 +6,7 @@ from curp import TrjWriter
 
 
 def do_mask(tpl, trj, trj_type, output_trj_fn,
-            output_trj_fmt, mask_fn, output_fst_lst_int=(0,-1,1)):
+            output_trj_fmt, mask_fn, output_fst_lst_int=[(0,-1,1)], **kwds):
 
     # dt = trj.get_dt()
     dt = 0.01
