@@ -166,14 +166,14 @@ def gen_flux_from_parsers(filenames):
 
 def gen_target_pairs(donor_line, acceptor_line, don_acc_pairs):
 
-    if opts.donor_line != '':
-        target_dons = [ don for don in opts.donor_line if don != '' ]
+    if donor_line != '':
+        target_dons = [ don for don in donor_line if don != '' ]
     else:
         donors = [ don for don, acc in don_acc_pairs ]
         target_dons = sorted( set(donors), key=donors.index )
 
-    if opts.acceptor_line != '':
-        target_accs = [ acc for acc in opts.acceptor_line if acc != '' ]
+    if acceptor_line != '':
+        target_accs = [ acc for acc in acceptor_line if acc != '' ]
     else:
         acceptors = [ acc for don, acc in don_acc_pairs ]
         target_accs = sorted( set(acceptors), key=acceptors.index )
@@ -234,17 +234,17 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
     """
 
     # prepare
-    one_parser = FluxParser(opts.flux_fns[0])
+    one_parser = FluxParser(flux_fns[0])
     all_labels = one_parser.parse_header()
     don_acc_pairs, fluxes = one_parser.next()
     one_parser.close()
     nvalue = len(all_labels)
 
     # parse colums list. For example, '1,4,6,9'
-    if opts.column_line == '':
+    if column_line == '':
         icolums = range(1, nvalue+1)
     else:
-        icolums = [ int(col) for col in opts.column_line.split(',') ]
+        icolums = [ int(col) for col in column_line.split(',') ]
 
     print('icolums', icolums)
 
@@ -275,11 +275,11 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
     ipair_to_writer = []
     for don_name, acc_name in target_pairs:
         writer = FluxWriter(don_name, acc_name,
-                            opts.output_fn, float(opts.dt), labels)
+                            output_fn, float(dt), labels)
         ipair_to_writer.append( writer )
 
     # parse and write the energy flux
-    parsers = gen_flux_from_parsers(opts.flux_fns)
+    parsers = gen_flux_from_parsers(flux_fns)
     for istep, (pairs, fluxes) in enumerate(parsers):
         fluxes_sum  += fluxes
         fluxes2_sum += fluxes*fluxes
@@ -296,11 +296,11 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
     rms_fluxes = numpy.sqrt( avg_fluxes2 - avg_fluxes**2 )
 
     if len(labels) == 1:
-        write_avg_rms(opts.output_fn, target_pairs, avg_fluxes, rms_fluxes)
+        write_avg_rms(output_fn, target_pairs, avg_fluxes, rms_fluxes)
     else:
         # calculate average fluxes
-        write_summary(opts.output_fn, target_pairs, labels, avg_fluxes, 'avg')
-        write_summary(opts.output_fn, target_pairs, labels, rms_fluxes, 'rms')
+        write_summary(output_fn, target_pairs, labels, avg_fluxes, 'avg')
+        write_summary(output_fn, target_pairs, labels, rms_fluxes, 'rms')
 
     print()
     print(80*'-')

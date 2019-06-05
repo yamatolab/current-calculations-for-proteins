@@ -30,6 +30,9 @@ manual = {
 
           'analyze': 'Various scripts to analyze CURP results.',
 
+          'sum-acf': ('Average auto-correlation function over the given '
+                      'trajectories'),
+
           # Descriptions used in analyze
           'divide-flux': ('Divide the flux data of all into the flux data for '
                           'each donor and acceptor.'),
@@ -60,6 +63,8 @@ def arg_curp():
                               help=manual['cal-tc'])
     sp_graph_een = sp.add_parser('graph-een',
                                  help=manual['graph-een'])
+    sp_sum_acf = sp.add_parser('sum-acf',
+                               help=manual['sum-acf'])
     sp_conv_trj = sp.add_parser('conv-trj',
                                 help=manual['conv-trj'])
     sp_analyze = sp.add_parser('analyze',
@@ -67,9 +72,10 @@ def arg_curp():
 
     # Add arguments and subparsers to each command.
     arg_compute(sp_compute)
-    arg_conv_trj(sp_conv_trj)
     arg_cal_tc(sp_cal_tc)
     arg_graph_een(sp_graph_een)
+    arg_sum_acf(sp_sum_acf)
+    arg_conv_trj(sp_conv_trj)
     arg_analyze(sp_analyze)
 
     return(parser)
@@ -347,7 +353,7 @@ def arg_cal_tc(parser=None):
                         action='store_true', required=False,
                         help='turn on debug mode.')
 
-    parser.add_argument('-no_axes', dest='no_axes',
+    parser.add_argument('--no-axes', dest='no_axes',
                         action='store_true', required=False,
                         help='with this option, scalar flux is handled.')
 
@@ -414,7 +420,7 @@ def arg_graph_een(parser=None):
                   "If you don't give this parameter, "
                   "the value of threshold to show nodes will be used."))
 
-    # Esthetic paramereters
+    # Esthetic parameters
     parser.add_argument(
             '--ratio', dest='ratio',
             type=float, required=False, default=None,
@@ -465,6 +471,41 @@ def arg_graph_een(parser=None):
             nargs='*', type=float, default=[5.0, 3.0, 1.0],
             help=('The weight of line. Number of elements in the list must'
                   'be equal with all line attribute.'))
+
+    if return_parser:
+        return parser
+
+
+def arg_sum_acf(parser=None):
+    """Parse command line arguments of curp sum-acf"""
+
+    # Initialize
+    return_parser = parser is None
+    if return_parser:
+        parser = argparse.ArgumentParser()
+
+    parser.description = manual['sum-acf']
+    parser.prog = 'sum-acf'
+
+    # Set the default function used by the parser.
+    parser.set_defaults(func=curp.script.sum_acf)
+
+    # Definitions
+    parser.add_argument(
+            dest='acf_fps', metavar='ACF_FILE', nargs='+',
+            help=('The filepath of auto-correlation function data.'))
+    parser.add_argument('-a', '--acf-file', metavar='FILE',
+                        dest='output_acf_fp', required=True,
+                        default='',
+                        help=('The filepath of acf data.'))
+    parser.add_argument('-t', '--tcs-file', metavar='FILE',
+                        dest='tcs_fp', required=False,
+                        default='',
+                        help=('The filepath of tc time series data.'))
+    parser.add_argument('-c', '--coefficient', metavar='COEFFICIENT',
+                        dest='coef', required=False,
+                        default=1.0, type=float,
+                        help='Multiply acf by given coefficient.')
 
     if return_parser:
         return parser
@@ -554,51 +595,51 @@ def arg_respairs(parser=None):
     parser.set_defaults(func=curp.script.analyze.pickup_respairs)
 
     parser.add_argument(
-            dest='trj_fns', nargs='+',
-            help='specify the trajectory files.')
+            dest='trj_fns', nargs='+', action='append',
+            help=('The trajectory file names.'))
     parser.add_argument('-if', '--input-format', metavar='FORMAT',
-                        dest='input_trj_fmt', required=True,
-                        help='specify the format of the trajectory.')
+                        dest='input_trj_fmt', required=True, action='append',
+                        help='Specify formats of trajectories.')
     parser.add_argument(
             '-p', '--input-prmtop-file', dest='prmtop_fn', required=True,
-            help='specify the prmtop file to be amber format.')
+            help='Specify the prmtop file to be amber format.')
     parser.add_argument(
             '-pf', '--input-prmtop-format', dest='prmtop_fmt', required=True,
-            help='specify the format of the prmtop file.')
+            help='Specify the format of the prmtop file.')
     parser.add_argument(
             '-i', '--interval', dest='interval', default=1, type=int,
-            help=('specify interval step to perform the calculation for '
+            help=('Specify interval step to perform the calculation for '
                   'trajectory.'))
     parser.add_argument(
             '-m', '--cutoff-method', dest='cutoff_method', default='nearest',
             required=False, choices=['com', 'nearest', 'farthest'],
-            help='cutoff method; com, nearest and farthest for residue.')
+            help='Cutoff method; com, nearest and farthest for residue.')
     parser.add_argument(
             '-c', '--cutoff', dest='cutoff',
             required=False, default=5.0,
-            help='specify the cutoff to pick up.')
+            help='Specify the cutoff to pick up.')
     parser.add_argument(
             '-t', '--trim-resnames', dest='trim_resnames', nargs='*',
             required=False, default=[],
-            help='residue names for trimming from the target residues.')
+            help='Residue names for trimming from the target residues.')
     parser.add_argument(
             '-f', '--format', dest='format',
             required=False, default='{rid:05}_{rname}',
-            help='specify the format for representing residue identify.')
+            help='Specify the format for representing residue identify.')
     parser.add_argument(
             '-U', '--disble-union', dest='is_union',
             required=False, action='store_false',
-            help=('whether residue pair table is calculated by union '
+            help=('Whether residue pair table is calculated by union '
                   'or intersection when collecting over trajectoryspecify'))
     parser.add_argument('-e', '--exclude-resids', metavar='FIRST:LAST',
                         dest='ext_resids', required=False,
                         default='', nargs='*',
-                        help=('residues that you want to exclude.'
+                        help=('Residues that you want to exclude.'
                               'ex) 5:10 80:150'))
     parser.add_argument(
             '-b', '--enable-residues-both-cxcluded', dest='is_both',
             required=False, action='store_true',
-            help=('whether include residue pairs that exclude residues'))
+            help=('Whether include residue pairs that exclude residues'))
 
     if return_parser:
         return parser
@@ -618,20 +659,20 @@ def arg_simplify(parser=None):
     # add argument definitions
     parser.add_argument(
             '-i', '--input-data', dest='filename', required=True,
-            help='specify input filename for the stress data.')
+            help='Specify input filename for the stress data.')
     parser.add_argument(
             '-l', '--labels', dest='labels',
             required=False, default='',
-            help=('specify labels of components to analyze.'
+            help=('Specify labels of components to analyze.'
                   'ex.) -l "total,bond,angle,..."'))
     parser.add_argument(
             'fns', nargs='*',    # action='append',
-            help=('specify additive filenames. '
+            help=('Specify additive filenames. '
                   'ex.) label_data1, label_data2, ...'))
     parser.add_argument(
             '-s', '--every-snapshot', dest='snapshot',
             required=False, action='store_true', default=False,
-            help='specify flag to average the magnitude for every snapshot.')
+            help='Specify flag to average the magnitude for every snapshot.')
 
     if return_parser:
         return parser
@@ -649,7 +690,7 @@ def arg_sum_tc(parser=None):
     parser.set_defaults(func=curp.script.analyze.summarize_tc)
 
     # add argument definitions
-    parser.add_argument('fps', nargs='*',
+    parser.add_argument('tc_fps', nargs='+',
                         help='Data files')
 
     if return_parser:

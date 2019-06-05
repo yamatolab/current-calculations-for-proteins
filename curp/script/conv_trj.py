@@ -27,7 +27,7 @@ def do_dryrun(tpl, trj=None, **kwds):
     pass
 
 def gen_trj(tpl, input_trj_fns, input_trj_fmts, trj_type,
-            input_fst_lst_int=None, use_pbc=True, **kwds):
+            input_fst_lst_int=[(1, -1, 1)], use_pbc=True, **kwds):
     """Generate trajectory iterator"""
 
     trj_fns_list  = input_trj_fns
@@ -49,6 +49,9 @@ def gen_trajectory_multi(trj_fns_list, trj_fmts, natom, fst_lst_int_list,
 
     from itertools import izip_longest
 
+    # print(" trj_fns: ", trj_fns_list,
+    #       "\n trj_fmts: ", trj_fmts,
+    #       "\n fst_lst_int_list: ", fst_lst_int_list)
     for trj_fns, fmt, fst_lst_int in izip_longest(
             trj_fns_list, trj_fmts, fst_lst_int_list):
 

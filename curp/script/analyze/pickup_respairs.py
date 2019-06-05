@@ -1,17 +1,14 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import os
-import sys
 import numpy
-import argparse
 
 from curp import get_tpl
 from curp.script.conv_trj import gen_trj
 from curp.script.analyze.lib_pickup import pickup
 from curp.table.group import gen_residue_group
 
-def pickup_respairs(trj_fns, input_rj_fmt, prmtop_fn, prmtop_fmt, interval=1,
+def pickup_respairs(trj_fns, input_trj_fmt, prmtop_fn, prmtop_fmt, interval=1,
          cutoff_method='nearest', cutoff=5., trim_resnames=[],
          format='{rid:05}_{rname}', is_union=True, ext_resids='',
          is_both=False, **kwds):
@@ -37,16 +34,9 @@ def pickup_respairs(trj_fns, input_rj_fmt, prmtop_fn, prmtop_fmt, interval=1,
 
     # Get trajectory
     crd_parser = gen_trj(tpl, trj_fns, input_trj_fmt,
-            trj_type='crd', fst_lst_int=(1,-1,interval),
+            trj_type='crd', input_fst_lst_int=[(1, -1, interval)],
             use_pbc=False)
     crds = ( crd for itraj, crd, box in crd_parser )
-
-    # Generate residue pair table
-    # cutoff_method = dict(
-            # com      = lib_pickup.is_com,
-            # nearest  = lib_pickup.is_nearest,
-            # farthest = lib_pickup.is_farthest)[cutoff_method]
-
 
     res_beg_end_pairs = [ (min(iatoms), max(iatoms))
             for rname, iatoms in rname_iatoms_pairs ]
