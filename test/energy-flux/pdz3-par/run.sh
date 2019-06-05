@@ -6,6 +6,6 @@ mkdir -p outdata
 rm -f outdata/*.dat*
 
 # calculate energy flux
-# time $CURP_HOME/bin/curp run.cfg > ser.log
-time mpiexec -n $nproc $CURP_HOME/bin/curp run.cfg > log
+# time curp compute run.cfg > ser.log
+time mpiexec -n $nproc curp compute run.cfg > log
 
