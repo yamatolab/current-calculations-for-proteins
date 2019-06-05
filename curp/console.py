@@ -109,7 +109,7 @@ def top_n_trj(func):
 
         if kwds['is_crd']:
             kwds['trj_type'] = 'crd'
-        if kwds['is_vel']:
+        elif kwds['is_vel']:
             kwds['trj_type'] = 'vel'
 
         # Get topology and parameter file.
