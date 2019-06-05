@@ -4,7 +4,7 @@ mkdir -p outdata
 rm -f outdata/*.dat*
 
 # calculate energy flux
-time  $CURP_HOME/bin/curp  run.cfg > log
+time  curp compute  run.cfg > log
 
 # postprocess
 for filename in $(ls outdata/*.dat00000)
@@ -19,7 +19,7 @@ do
         continue
     fi
 
-    $CURP_HOME/bin/ana-curp simplify_tensor.py \
+    curp analyze simplify-tensor \
         -i outdata/${grain}.dat > outdata/${grain}-sim.dat
 
 done
