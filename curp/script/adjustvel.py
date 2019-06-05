@@ -5,7 +5,7 @@ import os, sys
 from curp import TrjWriter
 
 def adjust_vel(tpl, trj, trj_type, output_trj_fn,
-               output_trj, fmt, output_fst_lst_int=(0,-1,1)):
+               output_trj_fmt, output_fst_lst_int=[(0,-1,1)], **kwds):
 
     # get velocity trajectory
     is_vel = trj_type=='vel'
