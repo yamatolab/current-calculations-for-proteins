@@ -4,5 +4,5 @@ rm -rf outdata
 mkdir -p outdata
 
 # calculate energy flux
-time  curp compute run.cfg > log
+time  $CURP_HOME/bin/curp  run.cfg > log
 
