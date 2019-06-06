@@ -22,13 +22,10 @@ import curp.setting as st
 SRC_DIR = os.path.dirname(__file__)
 sys.path.insert(0, SRC_DIR)
 
-
-
 # Write_ functions below are used to print specific messages and data
 # in the log.
 # Based mostly on logger.py functions, designed for treating the output
 # which will appear in the log.
-
 
 def write_array(array, num_per_line=10):
     """
@@ -193,7 +190,7 @@ def gen_tables(inttable):
 def init_current(setting, par):
     """Initialize current calculator and variables.
 
-    Used to initialize current, heat flux and energy flux calculations.
+    Initialize current, heat flux and energy flux calculations.
 
     Parameters
     ----------
@@ -686,8 +683,9 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         if par.is_root():
             dt_cal = time.time() - t_cal
 
-            logger.debug_cycle('total/1process : {} / {}'
-                               .format(dt_cal, dt_cal/float(istep+1)))
+            if istep > -1:
+                logger.debug_cycle('total/1process : {} / {}'
+                                   .format(dt_cal, dt_cal/float(istep+1)))
 
     if do_summary:
 
