@@ -27,6 +27,7 @@ sys.path.insert(0, SRC_DIR)
 # Based mostly on logger.py functions, designed for treating the output
 # which will appear in the log.
 
+
 def write_array(array, num_per_line=10):
     """
     Print array (1D tuple, list or numpy array)
@@ -438,8 +439,8 @@ def get_data_iter(setting, topology, target_atoms):
 
     # Decide trajectory format and parse trajectory files or restart file.
     import curp.parser as parser
-    if use_classic:
 
+    if use_classic:
         data_iter = parser.gen_phase_trajectory(
             file_format, fmt_section, setting.input.first_last_interval,
             natom, use_pbc, setting.curp.remove_trans,
@@ -447,15 +448,9 @@ def get_data_iter(setting, topology, target_atoms):
 
         data_iter.next()
     else:
-
         data_iter = parser.gen_matrix_ensemble(
             file_format, fmt_section, setting.input.first_last_interval,
             natom, logger)
-
-    for i, tup in enumerate(data_iter):
-        if i > 1:
-            break
-        print("data_iter : ", type(tup), tup)
 
     return data_iter
 
@@ -747,4 +742,3 @@ if __name__ == '__main__':
 
     parser = arg_compute()
     exec_command(parser)
-
