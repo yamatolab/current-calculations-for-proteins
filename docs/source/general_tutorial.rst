@@ -51,5 +51,5 @@ The list of possible parameters is shown on the screen by entering `curp` with
 
 .. code-block:: bash
 
-   $ $CURP_HOME/bin/curp --help
+   $ curp compute --help
 

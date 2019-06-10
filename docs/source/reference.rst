@@ -145,18 +145,6 @@ How to use the CURP tools
 
 .. include:: helps.txt
 
-
-
-ana-curp
---------
-
-The commands in the $CURP_HOME/bin directory are performed in the CURP environment. But, the scripts in the $CURP_HOME/script directory are performed in the system environment.  This script realizes that you use the script in the CURP enviromnet, which is not in the bin directory. For example, please use as follows:
-
-.. code-block:: bash
-
-   $ $CURP_HOME/bin/ana-curp simplify_tensor.py arg1 arg2 ...
-
-
 Contact
 ========
 

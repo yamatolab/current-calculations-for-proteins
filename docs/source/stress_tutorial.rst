@@ -69,13 +69,13 @@ First, change the directory to the working directory for the stress tensor analy
 
 .. code-block:: bash
 
-   $ cd $CURP_HOME/tutorial/ala3invac-stress/united
+   $ cd tutorial/ala3invac-stress/united
 
 To start the calculations, type the following command:
 
 .. code-block:: bash
 
-   $ $CURP_HOME/bin/curp < run.cfg > log
+   $ curp compute run.cfg > log
 
 where ``run.cfg`` (see below for details) is the configuration file 
 for the analysis. An alternative way is to run the following script:
@@ -401,13 +401,7 @@ These calculations are performed by the `ana.sh` script.
 
    $ ./ana.sh
 
-`ana.sh` uses  `$CURP_HOME/script/simplify_tensor.py`,
-which is executed as an argument to `$CURP_HOME/bin/ana-curp`:
-
-.. code-block:: bash
-
-   $ $CURP_HOME/bin/ana-curp simplify_tensor.py
-
+`ana.sh` uses  `curp script simplify-tensor`,
 
 Result
 -------

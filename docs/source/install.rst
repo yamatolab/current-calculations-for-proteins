@@ -21,26 +21,26 @@ Mac
 Installation
 =====================
 
-1. Please download the CURP package from the following URL:
+Pip
+---
 
-   http://www.comp-biophys.com/yamato-html/curp.html
+Run ``pip install curp`` or any flavor of pip (``conda install curp``, ``pip install --user curp``, ``pipenv install curp``, ...) 
 
-Or, if you have access to the repository, run: ::
+Git
+---
+
+If you want to develop curp or simply access to its source you can install it through its GitLab repository: ::
 
 git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git
 
-2. Compile and install using pip
-
-In the created directory, simply run ``pip install --user .``. If you are admin and want every user of the machine to be able to use curp, use ``pip install .`` instead.
+In the created directory, simply run ``pip install --user .`` or ``python setup.py install --user``. If you are admin and want every user of the machine to be able to use curp, use ``pip install .`` instead.
 
 Running CURP
 ============
 
-To run CURP, simply enter ``curp <input_file>``.
-A few commands are also available from the terminal to analyze CURP results: ``cal_tc`` ``conv_trj`` and ``graph_een``.
+To run CURP, simply enter ``curp compute <input_file>``.
+A few commands are also available from the terminal to analyze CURP results: ``curp cal-tc``, ``curp sum-tc``, ``curp conv-trj`` and ``curp graph-een``.
 
-The users set the CURP parameters in <input_file> (default: run.cfg) and the messages will be written to ``log``.
+The users set the CURP parameters in <input_file> (default: run.cfg).
 
-For test calculations of CURP, some examples are provided in the ``test`` directory with more examples found in ``tutorial``.
-
-By running ``test/runall.sh``, all of the test examples will be tested.
+Test calculations of curp can be run by cloning the GitLab repository, then running ``runall.sh`` in ``test`` folder.

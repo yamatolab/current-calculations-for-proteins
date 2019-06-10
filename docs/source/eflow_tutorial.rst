@@ -64,14 +64,14 @@ When we are focusing on residue-residue interactions in a polypeptide chain, sol
 .. code-block:: bash
 
    # Solvent spripping from the coordinates trajetory
-   $CURP_HOME/bin/conv-trj -crd \
+   curp conv-trj -crd \
        -p system.prmtop   -pf amber \
        -i nev.crd.nc      -if netcdf --irange 1 -1 1 \
        -o stripped.crd.nc -of netcdf --orange 1 -1 1 \
        mask -m mask.pdb
 
    # Solvent stripping from the velocities trajectory
-   $CURP_HOME/bin/conv-trj -vel \
+   curp conv-trj -vel \
        -p system.prmtop   -pf amber \
        -i nev.vel.nc      -if netcdf  --irange 1 -1 1 \
        -o stripped.vel.nc -of netcdf  --orange 1 -1 1 \
@@ -147,7 +147,7 @@ script is available:
 .. code-block:: bash
 
    # adjust the velocity time
-   $CURP_HOME/bin/conv-trj -vel \
+   curp conv-trj -vel \
        -p stripped.prmtop -pf amber \
        -i stripped.vel.nc -if netcdf --irange 1 -1 1 \
        -o adjusted.vel.nc -of netcdf --orange 5 -1 5 \
@@ -175,13 +175,13 @@ A special care is needed when you use the leap frog integrator, which is usually
 .. code-block:: bash
 
    # Example 1: adjust velocities for the 1st half of the velocity trajectory 
-   $CURP_HOME/bin/conv-trj -vel \
+   curp conv-trj -vel \
        -p system.prmtop -pf amber \
        -i nve1.vel.nc -if netcdf --irange 1 -1 1 \
        -o stripped1.vel.nc -of netcdf --orange 1 -1 1 \
        mask -m mask.pdb
 
-    $CURP_HOME/bin/convtrj -vel \
+    curp convtrj -vel \
         -p strip.prmtop -pf amber \
         -i stripped1.vel.nc -if netcdf --irange 1 -1 1 \
         -o adjusted1.vel.nc -of netcdf --orange 5 -1 5 \
@@ -192,14 +192,14 @@ Example 1 shows how to adjust the time points of the velocities to those of the 
 .. code-block:: bash
 
    # Example 2: adjust velocities for the 2nd half of the velocity trajectory 
-   $CURP_HOME/bin/conv-trj -vel \
+   curp conv-trj -vel \
        -p system.prmtop -pf amber \
        -i nve1.rst -if restart --irange 1 -1 1 \
        -i nve2.vel.nc -if netcdf --irange 1 -1 1 \
        -o stripped2.vel.nc -of netcdf --orange 1 -1 1 \
        mask -m mask.pdb
 
-    $CURP_HOME/bin/convtrj -vel \
+   curp convtrj -vel \
         -p strip.prmtop -pf amber \
         -i stripped2.vel.nc -if netcdf --irange 1 -1 1 \
         -o adjusted2.vel.nc -of netcdf --orange 1 -1 5 \
@@ -224,26 +224,24 @@ To start the calculations, please type in the following command:
 
 .. code-block:: bash
 
-   $ $CURP_HOME/bin/curp < eflow.cfg > eflow.log
+   $ curp compute eflow.cfg > eflow.log
 
 or 
 
 .. code-block:: bash
 
-   $ mpiexec -n 2 $CURP_HOME/bin/curp < eflow.cfg > eflow.log
+   $ mpiexec -n 2 curp compute eflow.cfg > eflow.log
 
-for parallel calculations with OpenMPI. In this case the number of cores is
-2, ``eflow.cfg`` (see below)  is a configuration file for the irEF calculations and 
-``eflow.log`` is the log file.
+for parallel calculations with OpenMPI. In this case the number of cores is 2, ``eflow.cfg`` (see below)  is a configuration file for the irEF calculations and ``eflow.log`` is the log file.
 
 Alternatively, ``run_eflow.sh`` performs the equivalent tasks.
 
 .. code-block:: bash
 
-   $ cd $CURP_HOME/tutorial/pdz3-eflow/eflow+ec
+   $ cd tutorial/pdz3-eflow/eflow+ec
    $ ./run_eflow.sh
 
-After a while, the prompt will be back and you will get the following two files:
+These commands should produce the following two files:
 
 *  eflow.log
 *  flux_grp.nc
@@ -410,7 +408,7 @@ You will need the time series of irEF stored in `flux_grp.nc`. Type in the follo
 
 .. code-block:: bash
 
-   $ $CURP_HOME/bin/cal-tc \
+   $ curp cal-tc \
        --frame-range 1 10 1 --average-shift 1 \
        -a outdata/acf.nc \
        -o outdata/ec.dat outdata/flux_grp.nc > ec.log
@@ -439,7 +437,7 @@ A useful script file, ``run_ec.sh`` is available for these calculations:
 
 .. code-block:: bash
 
-   $ cd $CURP_HOME/tutorial/pdz3-eflow/eflow+ec
+   $ cd tutorial/pdz3-eflow/eflow+ec
    $ ./run_ec.sh
 
 You will then obtain energy conductivity data ``output/ec.dat`` and the
@@ -453,7 +451,7 @@ Format of irEC data file
 Drawing the EEN(Energy Exchange Network)
 =========================================
 
-Example scripts to draw the EEN are found in ``$CURP_HOME/tutorial/pdz3-eflow/een`` directory, that contains:
+Example scripts to draw the EEN are found in ``tutorial/pdz3-eflow/een`` directory, that contains:
 
 graph-een
    This directory includes some useful scripts that: (1) remove the residue pairs adjacent in the sequence, (2) renumber the residue numbers.
@@ -640,7 +638,7 @@ Usage of `graph-een`
 
 .. HERE
 
-Here we describe parameters for the ``$CURP_HOME/bin/graph-een`` command.
+Here we describe parameters for the ``curp graph-een`` command.
 
 `-h, --help`
    Display help menu.
