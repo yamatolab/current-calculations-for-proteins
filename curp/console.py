@@ -10,7 +10,8 @@ import argparse
 import curp
 from curp.script.console import arg_conv_trj, arg_analyze
 import curp.script.console.manual as script_manual
-
+from curp.tool.console import arg_tool
+import curp.script.console.manual as tool_manual
 
 manual = {
           'analyze': script_manual['analyze'],
@@ -35,6 +36,8 @@ manual = {
 
           'sum-acf': ('Average auto-correlation function over the given '
                       'trajectories'),
+
+          'tool': tool_manual['tool']
         }
 
 
@@ -58,6 +61,8 @@ def arg_curp():
                                 help=manual['conv-trj'])
     sp_analyze = sp.add_parser('analyze',
                                help=manual['analyze'])
+    sp_tool = sp.add_parser('tool',
+                            help=manual['tool'])
 
     # Add arguments and subparsers to each command.
     arg_compute(sp_compute)
@@ -66,6 +71,7 @@ def arg_curp():
     arg_sum_acf(sp_sum_acf)
     arg_conv_trj(sp_conv_trj)
     arg_analyze(sp_analyze)
+    arg_tool(sp_tool)
 
     return(parser)
 
