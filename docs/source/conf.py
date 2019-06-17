@@ -32,7 +32,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
-    'sphinx.ext.pngmath',
+    'sphinx.ext.imgmath',
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
@@ -200,10 +200,10 @@ latex_elements = {
 'papersize': 'a4paper',
 'pointsize': '10pt,openany,oneside',
 'classoptions': ',dvipdfmx',
-# for English version, activate the following line 
+# for English version, activate the following line
 # for Japnese version, comment out the following line
 'babel': '\\usepackage[english]{babel}',
-# 
+#
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
