@@ -5,6 +5,8 @@ from __future__ import print_function
 #Standard module
 import argparse
 
+import curp
+
 
 manual = {
           'conv-trj': 'Various scripts to process and analyze trajectories.',
