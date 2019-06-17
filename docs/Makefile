@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-PAPER         =
+PAPER         = a4
 BUILDDIR      = _build
 
 # User-friendly check for sphinx-build
@@ -24,16 +24,16 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 ################################################################################
 ## CURP Targets
 
-default: html latexpdfja
-#default: html latexpdf
+#default: html latexpdfja
+default: html latexpdf
 
 include_curp_config:
-	$(CURP_HOME)/bin/curp --output-conf-formatted > source/setting.txt
+	curp compute --output-conf-formatted > source/setting.txt
 	@echo "Build finished. The setting pages of the CURP are in source."
 
-help_commands = ../bin/curp ../bin/conv-trj ../bin/cal-tc ../bin/sum-acf \
-				../script/simplify_tensor.py ../bin/graph-een \
-				../script/get_ncdata.py
+help_commands = 'curp compute' 'curp conv-trj' 'curp cal-tc' 'curp sum-acf' \
+				'curp analyze simplify-tensor' 'curp graph-een' \
+				'curp analyze get-ncdata'
 
 include_command_help:
 	./make_helps.sh $(help_commands)
