@@ -19,3 +19,6 @@ tutorial
 test/**/outdata/*
 test/**/log
 test/**/*.log
+
+# Ignore doc outputs
+/docs/_build/
