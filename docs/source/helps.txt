@@ -4,77 +4,252 @@ curp
 
 ::
 
-
-
-conv-trj
----------------
-
-
-::
-
-
-
-cal-tc
----------------
-
-
-::
-
-
-
-sum-acf
----------------
-
-
-::
-
-
-
-simplify_tensor
----------------
-
-
-::
-
-   usage: simplify_tensor.py [-h] -i DATA_FILENAME [-l LABEL_LINE] [-s]
-                             [fns [fns ...]]
+   usage: compute [-h] [-v] [-s] [--output-conf-default]
+                  [--output-conf-formatted]
+                  [input_]
    
-   Show and make figure for stress ratio.
+   Launch flux or stress tensor computations given a configuration file.
    
    positional arguments:
-     fns                   specify additive filenames. ex.) label_data1,
+     input_                Specify input filenames.
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     -v, --vervose         Print out informations.
+     -s, --enable-serial   Calculate in serial, don't calculatein parallel.
+     --output-conf-default
+                           Output the config parameters in ini format with
+                           default values.
+     --output-conf-formatted
+                           Output the config parameters in rest style with
+                           default values.
+
+
+curp
+---------------
+
+
+::
+
+   usage: conv-trj [-h] [-crd | -vel] -i TRJ_FILENAME [TRJ_FILENAME ...] -if
+                   FORMAT [--irange FIRST LAST INTER] [-o TRJ_FILENAME]
+                   [-of FORMAT] [--orange FIRST LAST INTER] -pf FORMAT -p
+                   TPL_FILENAME [-nf DIST_FORMAT]
+                   {convert-only,dry-run,adjust-vel,mask,dist} ...
+   
+   Various scripts to process and analyze trajectories.
+   
+   positional arguments:
+     {convert-only,dry-run,adjust-vel,mask,dist}
+                           Processing command help
+       convert-only        Convert the trajectory intoother format.
+       dry-run             Do dry-run mode.
+       adjust-vel          Adjust time of the velocity trajectory to t from
+                           t-dt/2.
+       mask                Remove solvent from trajectory.
+       dist                Calculate inter-residue distances.
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     -crd                  Specify the format of the trajectory.This argument
+                           allows you specify multiple formats.
+     -vel                  Specify the format of the trajectory.This argument
+                           allows you specify multiple formats.
+     -i TRJ_FILENAME [TRJ_FILENAME ...], --input-filenames TRJ_FILENAME [TRJ_FILENAME ...]
+                           The trajectory file names.
+     -if FORMAT, --input-formats FORMAT
+                           Specify the format of the trajectory.This argument
+                           allows you specify multiple formats.
+     --irange FIRST LAST INTER
+                           The trajectory range to process over all trajectory
+                           file.
+     -o TRJ_FILENAME, --output-filename TRJ_FILENAME
+                           The trajectory file name.
+     -of FORMAT, --output-format FORMAT
+                           The trajectory file format for output.
+     --orange FIRST LAST INTER
+                           The trajectory range for output
+     -pf FORMAT, --topology-format FORMAT
+                           Specify the format of the topology file.
+     -p TPL_FILENAME, --topology-file TPL_FILENAME
+                           Specify the topology file.
+     -nf DIST_FORMAT, --name-format DIST_FORMAT
+                           Specify the format for representing residue identify.
+
+
+curp
+---------------
+
+
+::
+
+   usage: cal-tc [-h] -o FILE [-a FILE] [-af FORMAT] [-r FIRST LAST INTER]
+                 [-s SHIFT] [--sample-number NSAMPLE] [-dt DT] [-c COEFFICIENT]
+                 [-v] [--no-axes]
+                 FLUX_FILENAME
+   
+   Calculate transport coefficients from energy flux data.
+   
+   positional arguments:
+     FLUX_FILENAME         The filepath of flux data.
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     -o FILE, --tc-file FILE
+                           The filename of tc data.
+     -a FILE, --acf-file FILE
+                           The filename of acf data.
+     -af FORMAT, --acf-file-format FORMAT
+                           The file format of acf data.
+     -r FIRST LAST INTER, --frame-range FIRST LAST INTER
+                           The range of frame; first frame, last frame, interval
+                           step.
+     -s SHIFT, --average-shift SHIFT
+                           The frame to shift for averaging.
+     --sample-number NSAMPLE
+                           number of sample for one flux data file. Default value
+                           is 0 that present to make samples as much as possible
+     -dt DT, --dt DT       t of between the neighbour frames. The unit is in ps.
+                           Default value is determined by time variable in flux
+                           data.
+     -c COEFFICIENT, --coefficient COEFFICIENT
+                           Multiply acf by given coefficient.
+     -v, --vervose         turn on debug mode.
+     --no-axes             with this option, scalar flux is handled.
+
+
+curp
+---------------
+
+
+::
+
+   usage: sum-acf [-h] -a FILE [-t FILE] [-c COEFFICIENT] ACF_FILE [ACF_FILE ...]
+   
+   Average auto-correlation function over the given trajectories
+   
+   positional arguments:
+     ACF_FILE              The filepath of auto-correlation function data.
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     -a FILE, --acf-file FILE
+                           The filepath of acf data.
+     -t FILE, --tcs-file FILE
+                           The filepath of tc time series data.
+     -c COEFFICIENT, --coefficient COEFFICIENT
+                           Multiply acf by given coefficient.
+
+
+
+---------------
+
+
+::
+
+   usage: analyze simplify-tensor [-h] -i FILENAME [-l LABELS] [-s]
+                                  [fns [fns ...]]
+   
+   positional arguments:
+     fns                   Specify additive filenames. ex.) label_data1,
                            label_data2, ...
    
    optional arguments:
      -h, --help            show this help message and exit
-     -i DATA_FILENAME, --input-data DATA_FILENAME
-                           specify input filename for the stress data.
-     -l LABEL_LINE, --label-line LABEL_LINE
-                           specify additive label string. ex.)
-                           "label1,label2,..."
-     -s, --every-snapshot  specify flog to average the magnitude for every
+     -i FILENAME, --input-data FILENAME
+                           Specify input filename for the stress data.
+     -l LABELS, --labels LABELS
+                           Specify labels of components to analyze.ex.) -l
+                           "total,bond,angle,..."
+     -s, --every-snapshot  Specify flag to average the magnitude for every
                            snapshot.
 
 
-graph-een
+curp
 ---------------
 
 
 ::
 
-
-
-get_ncdata
----------------
-
-
-::
-
-   usage: get_ncdata.py [-h] -r [FRIST:LAST [FRIST:LAST ...]] [-n DATANAME]
-                        [-o PREFIX]
-                        ACF_FILE
+   usage: curp graph-een [-h] [-t [TARGETS [TARGETS ...]]]
+                         [--forced-output-nodes [FORCE_NODES [FORCE_NODES ...]]]
+                         [-p [CLOSE_PAIRS [CLOSE_PAIRS ...]]] [-c CLUSTER_FN]
+                         [-n NODE_FN] [--with-one-letter] [-f FIG_FN]
+                         [-r THRESHOLD] [-R TPL_THRESHOLD] [--ratio RATIO]
+                         [-s GRAPH_SIZE] [--title TITLE] [--direction {LR,TB}]
+                         [-I] [--show-negative-values] [--alpha ALPHA]
+                         [-lv [LINE_VALUES [LINE_VALUES ...]]]
+                         [-lc [LINE_COLORS [LINE_COLORS ...]]]
+                         [-lt [LINE_THICKS [LINE_THICKS ...]]]
+                         [-lw [LINE_WEIGHTS [LINE_WEIGHTS ...]]]
+                         data_fns [data_fns ...]
    
-   Get simple text data from file in netcdf format by given arguments.
+   Show network chart of the energy conductivities.
+   
+   positional arguments:
+     data_fns              Specify filenames.
+   
+   optional arguments:
+     -h, --help            show this help message and exit
+     -t [TARGETS [TARGETS ...]], --targets [TARGETS [TARGETS ...]]
+                           This option allow you to show only target and thier
+                           neighbhor nodes. ex), [-t 1-5], [-t 2-9 15 17], [-t
+                           25-].
+     --forced-output-nodes [FORCE_NODES [FORCE_NODES ...]]
+                           nodes to forcibly show.ex), [-t 1-5], [-t 2-9 15 17],
+                           [-t 25-].
+     -p [CLOSE_PAIRS [CLOSE_PAIRS ...]], --bring-node-pair-close-together [CLOSE_PAIRS [CLOSE_PAIRS ...]]
+                           bring the node pair close together on the EEN
+                           graph.ex), 1:2, 3:5, 3:15.
+     -c CLUSTER_FN, --cluster-filename CLUSTER_FN
+                           Specify a cluster file name.
+     -n NODE_FN, --node-style-filename NODE_FN
+                           Specify a file name which node style difinitions are
+                           written.
+     --with-one-letter     use 1 letter representation for amino acid name.
+     -f FIG_FN, --output-een-filename FIG_FN
+                           Specify a filename to graph EEN.
+     -r THRESHOLD, --threshold THRESHOLD
+                           threshold value to show nodes on chart figure.
+     -R TPL_THRESHOLD, --topology-threshold TPL_THRESHOLD
+                           threshold value to define graph topology. If you don't
+                           give this parameter, the value of threshold to show
+                           nodes will be used.
+     --ratio RATIO         ratio of height/width to chart a figure. If '--graph-
+                           size is set, this option will be overwrittenby it.
+     -s GRAPH_SIZE, --graph-size GRAPH_SIZE
+                           The graph size in inch unit. ex) -s '3.4,2.5'
+     --title TITLE         Specify the title of the figure.
+     --direction {LR,TB}   Specify the kind of the direction.
+     -I, --hide-isolated-nodes
+                           Hide isolated nodes when appling multiple irEC files.
+     --show-negative-values
+                           show the nodes pair which have negative values.
+     --alpha ALPHA         The transparency value of the background color.
+     -lv [LINE_VALUES [LINE_VALUES ...]], --line-values [LINE_VALUES [LINE_VALUES ...]]
+                           The threshold values for line attributes. Number of
+                           elements in the list must be equal with all line
+                           attribute.
+     -lc [LINE_COLORS [LINE_COLORS ...]], --line-colors [LINE_COLORS [LINE_COLORS ...]]
+                           The colors of line. Number of elements in the list
+                           must be equal with all line attribute.
+     -lt [LINE_THICKS [LINE_THICKS ...]], --line-thicks [LINE_THICKS [LINE_THICKS ...]]
+                           The thickness of line. Number of elements in the list
+                           must be equal with all line attribute.
+     -lw [LINE_WEIGHTS [LINE_WEIGHTS ...]], --line-weights [LINE_WEIGHTS [LINE_WEIGHTS ...]]
+                           The weight of line. Number of elements in the list
+                           mustbe equal with all line attribute.
+
+
+
+---------------
+
+
+::
+
+   usage: analyze get-ncdata [-h] -r [FRIST:LAST [FRIST:LAST ...]] [-n DATANAME]
+                             [-o PREFIX]
+                             ACF_FILE
    
    positional arguments:
      ACF_FILE              The filepath of auto-correlation function data.
