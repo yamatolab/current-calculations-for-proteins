@@ -29,12 +29,11 @@ manual = {
           'compute': ('Launch flux or stress tensor computations given a '
                       'configuration file.'),
 
-          'conv-trj': script_manual['conv-trj'],
-
           'graph-een': 'Show network chart of the energy conductivities.',
 
           'sum-acf': ('Average auto-correlation function over the given '
                       'trajectories'),
+          'conv-trj': script_manual['conv-trj'],
         }
 
 
