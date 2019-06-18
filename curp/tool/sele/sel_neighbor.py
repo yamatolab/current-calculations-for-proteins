@@ -1,21 +1,19 @@
 #! /usr/bin/env python2
-import sys, os
+import sys
+import os
 
-if __name__ == '__main__':
 
-    ec_file = sys.stdin
+def main(ec_fn=None, excluded_list=['WAT'], **kwds):
 
-    if len(sys.argv) >= 2:
-        excluded_list = sys.argv[1:]
+    if ec_fn is None:
+        ec_file = sys.stdin
     else:
-        excluded_list = ['WAT']
-
+        ec_file = open(ec_fn, 'r')
     lines = (line for line in ec_file
-            if not line.startswith("#")
-            if not line.isspace() )
+             if not line.startswith("#")
+             if not line.isspace())
 
-    for line in ec_file:
-
+    for line in lines:
         cols = line.split()
         don_line, acc_line, rest = cols[0], cols[1], cols[2:]
 
@@ -28,3 +26,9 @@ if __name__ == '__main__':
         if rname1 in excluded_list or rname2 in excluded_list: continue
 
         print(line.strip())
+
+
+if __name__ == '__main__':
+    from curp.tool.sele.console import exec_command, arg_sel_neighbor
+    parser = arg_sel_neighbor()
+    exec_command(parser)

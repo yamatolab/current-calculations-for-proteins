@@ -24,17 +24,16 @@ def parse_asa(filename):
 
     file.close()
 
-        
-if __name__ == '__main__':
 
-    asa_fn = sys.argv[1]
-    ec_file = sys.stdin
-
-    asa_resids = list(parse_asa(asa_fn))
-
-    lines = (line for line in ec_file
-            if not line.startswith('#')
-            if not line.isspace() )
+def main(ec_fn, asa_fn, **kwds):
+    if ec_fn is None:
+        ec_file = sys.stdin
+    else:
+        ec_file = open(ec_fn, 'r')
+        lines = (line for line in ec_file
+                if not line.startswith('#')
+                if not line.isspace() )
+    ec_file.close()
 
     for line in lines:
         # if line.startswith('#'):
@@ -55,3 +54,8 @@ if __name__ == '__main__':
 
         else:
             print(line.strip())
+
+if __name__ == '__main__':
+    from curp.tool.sele.console import exec_command, arg_sel_noasa
+    parser = arg_sel_noasa()
+    exec_command(parser)
