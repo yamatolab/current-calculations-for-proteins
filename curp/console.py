@@ -8,13 +8,8 @@ from __future__ import print_function
 import argparse
 
 import curp
-from curp.script.console import arg_conv_trj, arg_analyze
-import curp.script.console.manual as script_manual
-
 
 manual = {
-          'analyze': script_manual['analyze'],
-
           'cal-tc': 'Calculate transport coefficients from energy flux data.',
 
           'curp': ("CURP - CURrent calculation for Proteins.\n"
@@ -33,7 +28,6 @@ manual = {
 
           'sum-acf': ('Average auto-correlation function over the given '
                       'trajectories'),
-          'conv-trj': script_manual['conv-trj'],
         }
 
 
@@ -53,18 +47,29 @@ def arg_curp():
                                  help=manual['graph-een'])
     sp_sum_acf = sp.add_parser('sum-acf',
                                help=manual['sum-acf'])
+
+    from curp.script.console import manual as script_manual
     sp_conv_trj = sp.add_parser('conv-trj',
-                                help=manual['conv-trj'])
+                                help=script_manual['conv-trj'])
     sp_analyze = sp.add_parser('analyze',
-                               help=manual['analyze'])
+                               help=script_manual['analyze'])
+
+    from curp.tool.console import manual as tool_manual
+    sp_tool = sp.add_parser('tool',
+                            help=tool_manual['tool'])
 
     # Add arguments and subparsers to each command.
     arg_compute(sp_compute)
     arg_cal_tc(sp_cal_tc)
     arg_graph_een(sp_graph_een)
     arg_sum_acf(sp_sum_acf)
+
+    from curp.script.console import arg_conv_trj, arg_analyze
     arg_conv_trj(sp_conv_trj)
     arg_analyze(sp_analyze)
+
+    from curp.tool.console import arg_tool
+    arg_tool(sp_tool)
 
     return(parser)
 
