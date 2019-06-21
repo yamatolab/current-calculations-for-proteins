@@ -10,7 +10,7 @@ Offical website and tutorial can be found at `<http://www.comp-biophys.com/yamat
 
 Installation
 ============
-CURP requires Python2.7 to work. Python3 compatibility has yet to be realized.
+CURP requires Python2.7 with numpy to work. Python3 compatibility has yet to be realized.
 You can install python here_, or anaconda there_.
 
 .. _here: https://www.python.org/downloads/release/python-2716/
@@ -18,7 +18,7 @@ You can install python here_, or anaconda there_.
 
 To install curp, run ::
 
-    python2 -m pip install curp
+    pip install Curp
 
 or your favorite python package manager, like ``conda`` or ``pipenv``.
 You can get curp source code by running ::
