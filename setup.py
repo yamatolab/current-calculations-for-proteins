@@ -47,7 +47,7 @@ def run_setup():
             "Programming Language :: Fortran",
             "Topic :: Scientific/Engineering",
             "Topic :: Scientific/Engineering :: Bio-Informatics",
-            "Topic :: Scientific/Engineering :: Physics"
+            "Topic :: Scientific/Engineering :: Physics",
             "Topic :: Scientific/Engineering :: Chemistry"
             ],
 
