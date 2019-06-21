@@ -16,9 +16,8 @@ tutorial
 /dist/
 
 # Ignore test outputs
-test/**/outdata/*
-test/**/log
-test/**/*.log
+/test/**/outdata/*
+/test/**/*log
 
 # Ignore doc outputs
 /docs/_build/
