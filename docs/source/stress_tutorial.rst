@@ -191,9 +191,10 @@ In this section, we set the parameters for the calculations of pairwise interato
 potential = amberbase | amber94 | amber96 | amber99 | amber99SB | amber03 | amber12SB
    Type of force-field functions.
 
-method = momentum-current | energy-flux
+method = momentum-current | energy-flux | heat-flux
    `momentum-current`: Atomic stress tensors analysis.
    `energy-flux`: Interatomic energy flow analysis.
+   `heat-flux`: Interatomic heat flow analysis.
 
 group_method = none | united | residue | file
    Unit of atom groups.
