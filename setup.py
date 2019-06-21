@@ -31,7 +31,7 @@ def run_setup():
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
     setup(
         name="curp",
-        version="1.2dev1",
+        version="1.2",
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",
         description="Inter-residue Current calculation in Proteins from MD \
