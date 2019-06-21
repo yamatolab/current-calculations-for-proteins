@@ -48,13 +48,13 @@ def run_setup():
             "Topic :: Scientific/Engineering",
             "Topic :: Scientific/Engineering :: Bio-Informatics",
             "Topic :: Scientific/Engineering :: Physics"
+            "Topic :: Scientific/Engineering :: Chemistry"
             ],
 
         install_requires=["numpy>=1.11.2",
                           "nose",
                           "mpi4py>=2.0",
                           "benchmarker",
-                          "epydoc",
                           "pygraphviz",
                           "netCDF4>=1.2.4"],
 
