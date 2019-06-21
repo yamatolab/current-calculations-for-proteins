@@ -16,15 +16,18 @@ You can install python here_, or anaconda there_.
 .. _here: https://www.python.org/downloads/release/python-2716/
 .. _there: https://www.anaconda.com/distribution/
 
-You can get curp by running ::
+To install curp, run ::
+
+    python2 -m pip install curp
+
+or your favorite python package manager, like ``conda`` or ``pipenv``.
+You can get curp source code by running ::
 
     git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git
 
-To install it, go in the installed directory and use ::
+Then, go in the installed directory and use ::
 
     pip install .
-    
-or your favorite python package manager, like ``conda`` or ``pipenv``.
 
 Development
 ===========
