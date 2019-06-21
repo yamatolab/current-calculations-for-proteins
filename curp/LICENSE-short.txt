@@ -1,0 +1,25 @@
+***************************************************************
+        CURrent calculation for Proteins (CURP)
+                   version 1.2
+              Release date: June 21, 2019.
+
+COPYRIGHT Ⓒ 2012, 2013, 2014, 2015-2017, 2018-2019.
+Yamato Laboratory, Nagoya University. All rights reserved.
+
+URL: http://www.comp-biophys.com/yamato-lab/curp.html
+Contact email: yamato@nagoya-u.jp
+
+AUTHORS:
+  version 1.2
+    Takahisa YAMATO, Genki KUBOTA, Olivier LAPRÉVOTE
+  version 1.1
+    Takahisa YAMATO, Takakazu ISHIKURA, Kunitaka OTA, Tatsuya SAKAI
+  version 1.0
+    Takahisa YAMATO, Takakazu ISHIKURA, Yuki IWATA
+
+CITATION:
+T.ISHIKURA, Y.IWATA, T. HATANO, T. YAMATO,
+Energy exchange network of inter-residue interactions within a
+thermally fluctuating protein molecule: A computational study
+36: 1709-1718, (2015).
+***************************************************************

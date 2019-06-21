@@ -8,7 +8,7 @@ if [ -z "$CURP_HOME" ]; then
     exit 1
 fi
 
-for category in momentum-current  energy-flux  dynamics  util
+for category in momentum-current  flux  dynamics  util
 do
     cd $category
     echo "** entering $category **"

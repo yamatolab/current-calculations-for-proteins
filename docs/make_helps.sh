@@ -1,12 +1,11 @@
 #! /bin/bash
 
-help_commands=$*
-
 help_text=source/helps.txt
 
 rm -f $help_text
-for cmd in ${help_commands}
+for cmd in "$@"
 do
+    echo $cmd
     cmd_line=$(basename $cmd)
     cmd_line=${cmd_line/.py/}
     echo $cmd_line         >> $help_text

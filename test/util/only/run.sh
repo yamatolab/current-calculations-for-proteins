@@ -1,6 +1,6 @@
 #! /bin/bash -e
 
-example_path=$CURP_HOME/test/amber-enk-vacuum
+example_path=../../examples/amber-enk-vacuum
 prmtop_fp=$example_path/system.prmtop.gz
 
 rm -rf outdata
@@ -9,7 +9,7 @@ mkdir -p outdata
 # netcdf => netcdf
 for trjtype in crd vel
 do
-    $CURP_HOME/bin/conv-trj -${trjtype} \
+    curp conv-trj -${trjtype} \
         -p $prmtop_fp  -pf amber \
         -i $example_path/sam.nc${trjtype} -if netcdf  --irange 0 -1 5 \
         -o outdata/reduce.${trjtype}.nc    -of netcdf  --orange 1 -1 1  \
@@ -20,7 +20,7 @@ done
 # netcdf => amber ascii
 for trjtype in crd vel
 do
-    $CURP_HOME/bin/conv-trj -${trjtype} \
+    curp conv-trj -${trjtype} \
         -p $prmtop_fp  -pf amber \
         -i $example_path/sam.nc${trjtype} -if netcdf  --irange 0 -1 5 \
         -o outdata/reduce.md${trjtype}    -of ascii   --orange 1 -1 1  \

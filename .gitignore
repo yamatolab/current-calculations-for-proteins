@@ -1,24 +1,23 @@
-syntax: glob
-*log
-*.pyc
-*.pyo
-*.xcfg
-*.o
-*.orig
-*.mod
-*.un~
-_build
-_api
-hg-checklink-*
-build
-curp-environ
-eggs
-.DS_Store
-Thumbs.db
-[quickrun Output]
-*.so
-buildout
-_data
-outdata
-helps.txt
-setting.txt
+# Ignores library files
+**.so
+**.pyc
+# Ignores most of the hidden files
+.*
+**/.*
+!.gitignore
+
+# Ignores curp-environ and tutorial directory
+curp-environ/
+tutorial
+
+# folders made by setup.py
+/build/
+/curp.egg-info/
+/dist/
+
+# Ignore test outputs
+/test/**/outdata/*
+/test/**/*log
+
+# Ignore doc outputs
+/docs/_build/

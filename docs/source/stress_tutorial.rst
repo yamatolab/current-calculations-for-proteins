@@ -69,13 +69,13 @@ First, change the directory to the working directory for the stress tensor analy
 
 .. code-block:: bash
 
-   $ cd $CURP_HOME/tutorial/ala3invac-stress/united
+   $ cd tutorial/ala3invac-stress/united
 
 To start the calculations, type the following command:
 
 .. code-block:: bash
 
-   $ $CURP_HOME/bin/curp < run.cfg > log
+   $ curp compute run.cfg > log
 
 where ``run.cfg`` (see below for details) is the configuration file 
 for the analysis. An alternative way is to run the following script:
@@ -191,9 +191,10 @@ In this section, we set the parameters for the calculations of pairwise interato
 potential = amberbase | amber94 | amber96 | amber99 | amber99SB | amber03 | amber12SB
    Type of force-field functions.
 
-method = momentum-current | energy-flux
+method = momentum-current | energy-flux | heat-flux
    `momentum-current`: Atomic stress tensors analysis.
    `energy-flux`: Interatomic energy flow analysis.
+   `heat-flux`: Interatomic heat flow analysis.
 
 group_method = none | united | residue | file
    Unit of atom groups.
@@ -401,13 +402,7 @@ These calculations are performed by the `ana.sh` script.
 
    $ ./ana.sh
 
-`ana.sh` uses  `$CURP_HOME/script/simplify_tensor.py`,
-which is executed as an argument to `$CURP_HOME/bin/ana-curp`:
-
-.. code-block:: bash
-
-   $ $CURP_HOME/bin/ana-curp simplify_tensor.py
-
+`ana.sh` uses  `curp script simplify-tensor`,
 
 Result
 -------
