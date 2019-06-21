@@ -557,7 +557,7 @@ Selecting the important residue pairs
 
 .. HERE
 
-  The CURP program calculates irEC of a target protein. The `all.ec.dat` files stores the data, which is then processed by other scripts, such as `renum_residue.py`, `sel_noasa.py`, ... in `$CURP_HOME/tool` directory, selecting the irEC on which the user wants to focus.
+  The CURP program calculates irEC of a target protein. The `all.ec.dat` files stores the data, which is then processed by other scripts, such as `renum-residue`, `sele noasa`, ... from `curp tool` command, selecting the irEC on which the user wants to focus.
 
 .. code-block:: bash
 
@@ -589,13 +589,13 @@ Brief usages of scripts that process irEC data
    The second argument means that the third column is applied
    as thereshold value.
 
-``$(toolpath)/renum_residue.py $(fix_resnums) < ec-org.dat > ec-new.dat``
+``curp tool renum-residue $(fix_resnums) < ec-org.dat > ec-new.dat``
    Renumbering the residue numbers according to the `fix_resnums` variable.
 
-``$(toolpath)/sel_noneighbor.py WAT $(ligand) < ec-org.dat > ec-new.dat``
+``curp tool noneighbor WAT $(ligand) < ec-org.dat > ec-new.dat``
    Remove neighboring residue pairs that indicate covalent peptide bonds.
 
-``$(toolpath)/sel_nocap.py WAT $(ligand) < ec-org.dat > ec-new.dat``
+``curp tool nocap WAT $(ligand) < ec-org.dat > ec-new.dat``
    Remove residue pairs that contain the capped residues.
 
 .. - convert_labels.py
