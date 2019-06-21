@@ -18,7 +18,7 @@ You can install python here_, or anaconda there_.
 
 You can get curp by running ::
 
-    git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git``.
+    git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git
 
 To install it, go in the installed directory and use ::
 
