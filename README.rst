@@ -61,14 +61,10 @@ References
 ==========
 
 .. [1] Ishikura, T.; Iwata, Y.; Hatano, T.; Yamato, T. Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study. *J. Comput. Chem.* **2015**, 36:1709-1718
-    [`|CrossRef1| <https://doi.org/10.1002/jcc.23989>`_]
-
-.. |CrossRef1| replace:: CrossRef
+    [`CrossRef1 <https://doi.org/10.1002/jcc.23989>`_]
 
 .. [2] Ota, T.; Yamato, T. Energy Exchange Network Model Demonstrates Protein Allosteric Transition: An Application to an Oxygen Sensor Protein. *J. Phys. Chem. B* **2019**, 123:768-775
-    [`|CrossRef2| <https://doi.org/10.1021/acs.jpcb.8b10489>`_]
-
-.. |CrossRef2| replace:: CrossRef
+    [`CrossRef2 <https://doi.org/10.1021/acs.jpcb.8b10489>`_]
 
 
 .. _A successful Git branching model: https://nvie.com/posts/a-successful-git-branching-model/
