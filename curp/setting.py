@@ -445,20 +445,29 @@ def parse_config(config_filename=None):
     except:
         raise
 
-    import cStringIO as sio
-    outfile = sio.StringIO()
+    try:
+        from cStrinIO import StringIo
+    except ImportError:
+        from io import StringIO
+    except:
+        raise
+
+    outfile = StringIO()
 
     if config_filename:
-        with open(config_filename, 'rb') as config_file:
+        with open(config_filename, 'r') as config_file:
             for line in config_file:
                 body_ = line.split('#')[0]
                 body  = body_.split(';')[0]
                 outfile.write(body)
 
         outfile.seek(0)
-
+    print("Type outfile: ", type(outfile))
+    print(outfile)
     config = cp.SafeConfigParser()
+
     config.readfp(outfile)
+
     outfile.close()
 
     # config = cp.SafeConfigParser()
