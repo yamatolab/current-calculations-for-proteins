@@ -214,7 +214,7 @@ Here we explain how to calculate irEF using PDZ3 as an example, with
 
 #. velocities and coordinates trajectory file (see above)
 
-   *  You will find test data in `tutorial/pdz3-eflow/amber-mddata`.
+   *  You will find test data in `curp-tutorial/pdz3-flow/amber-mddata`.
    *  Atomic coordinates and velocities saved every 10 fs and the total number frames is 100.
 
 #. parameter and topology file of target system
@@ -238,7 +238,7 @@ Alternatively, ``run_eflow.sh`` performs the equivalent tasks.
 
 .. code-block:: bash
 
-   $ cd tutorial/pdz3-eflow/eflow+ec
+   $ cd curp-tutorial/pdz3-flow/eflow+ec
    $ ./run_eflow.sh
 
 These commands should produce the following two files:
@@ -408,10 +408,13 @@ You will need the time series of irEF stored in `flux_grp.nc`. Type in the follo
 
 .. code-block:: bash
 
-   $ curp cal-tc \
+   $ curp cal-tc --no-axes \
        --frame-range 1 10 1 --average-shift 1 \
        -a outdata/acf.nc \
        -o outdata/ec.dat outdata/flux_grp.nc > ec.log
+
+`--no-axes`
+    To specify if the netcdf file contains flux of only one dimension, which is the case for energy-flux calculations but not heat-flux.
 
 `--frame-range <first_frame> <last_frame> <frame_interval>`
    This specifies the range of the time integration of the auto-correlation function of irEF, :math:`(J(0)J(t))`.
@@ -437,10 +440,10 @@ A useful script file, ``run_ec.sh`` is available for these calculations:
 
 .. code-block:: bash
 
-   $ cd tutorial/pdz3-eflow/eflow+ec
+   $ cd curp-tutorial/pdz3-flow/eflow+ec
    $ ./run_ec.sh
 
-You will then obtain energy conductivity data ``output/ec.dat`` and the
+You will then obtain energy conductivity data ``outdata/ec.dat`` and the
 time-correlatioin data file, ``outdata/acf.nc``.
 
 Format of irEC data file
@@ -449,9 +452,9 @@ Format of irEC data file
  In each line of the data file, `ec.dat`, a pair of residues and the corresponding value of irEC is written as <residue_A> <residue_B> <L_AB * RT>, where <A> = donor residue, <B> = acceptor residue, L_AB = irEC between the residues A and B, R is the gas constant, and T is the absolute temperature (= 300 K for most cases). The unit of <L_AB * RT> is measured in :math:`(kcal/mol)^2/fs`. Note that the order of <A> and <B> makes no difference bacause the value of L_AB is evaluated for the pair (A,B) without any directionality. However, the difference between the donor and acceptor could be important in some cases. For example, the interatomic electron tunneling current has directionality and in that case the order of the donor and the acceptor is important.
 
 Drawing the EEN(Energy Exchange Network)
-=========================================
+========================================
 
-Example scripts to draw the EEN are found in ``tutorial/pdz3-eflow/een`` directory, that contains:
+Example scripts to draw the EEN are found in ``curp-tutorial/pdz3-flow/een`` directory, that contains:
 
 graph-een
    This directory includes some useful scripts that: (1) remove the residue pairs adjacent in the sequence, (2) renumber the residue numbers.
@@ -469,7 +472,7 @@ view-een-3D
    Mapping EEN connectivity on the 3D structure using PyMOL.
 
 Drawing the EEN
-----------------
+---------------
 
 
 Preparation
@@ -488,7 +491,7 @@ Basic Usage
 ~~~~~~~~~~~
 
 After editing the `config.mk` file and specifying some parameters for the
-`graph-een` command, run `make` to obtain an `strong.ec.pdf` file, which 
+`graph-een` command, run `make` to obtain a `strong.ec.pdf` file, which 
 graphically illustrates the EEN.
 
 Other Usage
@@ -515,7 +518,7 @@ EEN in different representations as follows:
    are shown on the graph together with the strong interactions.
 
 Setting config.mk
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 To customize the graph drawing conditions, the `config.mk` fle should be edited.
 An example of the `config.mk` file
@@ -553,7 +556,7 @@ other_opts = --ratio 0.3 --direction TB -I
    Setting other options passed to the `graph-een` command. (see below)
 
 Selecting the important residue pairs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. HERE
 
@@ -561,7 +564,7 @@ Selecting the important residue pairs
 
 .. code-block:: bash
 
-   $ cat ../all.ec.dat | ./renum_residue.py 1:10
+   $ cat ../all.ec.dat | curp tool renum_residue 1:10
 
 In this directory, a useful make target, `make sel.ec.dat`, is provided to run multiple python scripts at a time.
 
@@ -592,10 +595,10 @@ Brief usages of scripts that process irEC data
 ``curp tool renum-residue $(fix_resnums) < ec-org.dat > ec-new.dat``
    Renumbering the residue numbers according to the `fix_resnums` variable.
 
-``curp tool noneighbor WAT $(ligand) < ec-org.dat > ec-new.dat``
+``curp tool sele noneighbor WAT $(ligand) < ec-org.dat > ec-new.dat``
    Remove neighboring residue pairs that indicate covalent peptide bonds.
 
-``curp tool nocap WAT $(ligand) < ec-org.dat > ec-new.dat``
+``curp tool sele nocap WAT $(ligand) < ec-org.dat > ec-new.dat``
    Remove residue pairs that contain the capped residues.
 
 .. - convert_labels.py
@@ -673,7 +676,7 @@ Here we describe parameters for the ``curp graph-een`` command.
 
 The selected residues will appear in the image irrespective of whether the residues are donors or acceptors.
 
-`--with-one-lettr`
+`--with-one-letter`
    Specfication of this option leads to the showing of one letter symbols  
    for the amino acid residues.
 
