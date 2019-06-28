@@ -14,15 +14,15 @@ def main():
     pair_to_tc2 = { (don,acc):tc for don,acc,tc,rest in load_tcdata(tc_fp2) }
 
     ipair_to_pair1 = { (get_id(don),get_id(acc)):(don, acc)
-            for (don,acc) in pair_to_tc1.keys() }
+            for (don,acc) in list(pair_to_tc1.keys()) }
 
     ipair_to_pair2 = { (get_id(don),get_id(acc)):(don, acc)
-            for (don,acc) in pair_to_tc2.keys() }
+            for (don,acc) in list(pair_to_tc2.keys()) }
 
     ipair_to_tc1 = { (get_id(don),get_id(acc)):tc
-            for (don,acc), tc in pair_to_tc1.items() }
+            for (don,acc), tc in list(pair_to_tc1.items()) }
     ipair_to_tc2 = { (get_id(don),get_id(acc)):tc
-            for (don,acc), tc in pair_to_tc2.items() }
+            for (don,acc), tc in list(pair_to_tc2.items()) }
 
     ipair1 = set(ipair_to_pair1)
     ipair2 = set(ipair_to_pair2)

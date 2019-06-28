@@ -259,7 +259,7 @@ def gen_pdbline(atoms):
 def gen_residues(atoms):
 
     try:
-        atom = atoms.next()
+        atom = next(atoms)
     except AttributeError:
         atom  = atoms[0]
         atoms = atoms[1:]

@@ -16,8 +16,8 @@ class ConverterPrintable(object):
     def print_atom(self):
         logger.info('*** atom ***')
         info = self.get_atom_info()
-        atom = zip(info['names'], info['elems'],
-                info['masses'], info['vdw_radii'])
+        atom = list(zip(info['names'], info['elems'],
+                info['masses'], info['vdw_radii']))
         for iatm_1, (name, elem, mass, radius) in enumerate(atom):
             logger.info('{:>7d}  {:<4s} {:<4s} {:12.7f} {:12.7f}'.format(
                 iatm_1+1, name, elem, mass, radius))
@@ -26,7 +26,7 @@ class ConverterPrintable(object):
     def print_residue(self):
         logger.info('*** residue ***')
         info = self.get_residue_info()
-        res = zip(info['ids'], info['names'])
+        res = list(zip(info['ids'], info['names']))
         for iatm_1, (rid, rname) in enumerate(res):
             logger.info('{:>7d} {:>5d} {:5s}'.format(iatm_1+1, rid, rname))
         logger.info()
@@ -34,7 +34,7 @@ class ConverterPrintable(object):
     def print_bond(self):
         logger.info('*** bond ***')
         info = self.get_bond_info()
-        bond = zip(info['two_atoms'], info['force_consts'], info['length_eqs'])
+        bond = list(zip(info['two_atoms'], info['force_consts'], info['length_eqs']))
         for ibnd_1, (iatoms, force, eq) in enumerate(bond):
             logger.info('{:>5d} {:>15}  {:12.7f}  {:12.7f}'.format(
                 ibnd_1+1, iatoms, force, eq))
@@ -43,7 +43,7 @@ class ConverterPrintable(object):
     def print_angle(self):
         logger.info('*** angle ***')
         info = self.get_angle_info()
-        angle = zip(info['three_atoms'], info['force_consts'],info['theta_eqs'])
+        angle = list(zip(info['three_atoms'], info['force_consts'],info['theta_eqs']))
         for iang_1, (iatoms, force, eq) in enumerate(angle):
             logger.info('{:>5d} {:>20}  {:12.7f}  {:12.7f}'.format(
                 iang_1+1, iatoms, force, eq))
@@ -60,8 +60,8 @@ class ConverterPrintable(object):
         self._print_torsion(info)
 
     def _print_torsion(self, info):
-        torsion = zip(info['four_atoms'], info['num_torsions'],
-                info['num_freqs'], info['force_consts'], info['initial_phases'])
+        torsion = list(zip(info['four_atoms'], info['num_torsions'],
+                info['num_freqs'], info['force_consts'], info['initial_phases']))
         for itor_1, (iatoms, ntor, freq, force, phase) in enumerate(torsion):
             logger.info('{:>5d} {:>30}  {} {} {:12.7f}  {:12.7f}'.format(
                 itor_1+1, iatoms, ntor, freq, force, phase ))
@@ -317,9 +317,9 @@ class TableMaker:
                 # loop for the number of molecules
                 for imol in range( minfo['nmol'] ):
 
-                    atoms_flags = zip(
+                    atoms_flags = list(zip(
                             tor_info['nonbonded_flags'],
-                            tor_info['four_atoms'] )
+                            tor_info['four_atoms'] ))
 
                     two_atoms.extend(
                         [ (iatoms[0]+cur_natom, iatoms[3]+cur_natom)
@@ -344,14 +344,14 @@ class TableMaker:
 
         target_atoms = self.__target_atoms
 
-        new_infos = {key:[] for key in info.keys()}
+        new_infos = {key:[] for key in list(info.keys())}
         for i_1, iatoms in enumerate(iatoms_list):
             if not self._contains(target_atoms, iatoms): continue
 
-            for key, new_info in new_infos.items():
+            for key, new_info in list(new_infos.items()):
                 new_infos[key].append( info[key][i_1] )
 
-        for key, new_info in new_infos.items():
+        for key, new_info in list(new_infos.items()):
             info[key] = new_info
 
     def _contains(self, target_atoms, iatoms):
@@ -423,9 +423,7 @@ class TableMaker:
         return i14_to_ipair
 
 
-class ConverterBase(ConverterPrintable, TableMaker):
-    __metaclass__ = ABCMeta
-
+class ConverterBase(ConverterPrintable, TableMaker, metaclass=ABCMeta):
     def __init__(self, topology):
         self.__topology = topology
         TableMaker.__init__(self)

@@ -74,7 +74,7 @@ def write(setting, results, formats):
                 twobody_force.frequency,twobody_forceforce.compress)
 
     for res in results:
-        for key, writer in key_to_writer.items():
+        for key, writer in list(key_to_writer.items()):
             data = res[key]
             writer.write(data)
 
@@ -167,7 +167,7 @@ class AxisWriter(Writer):
 
     def open(self):
         # Overwriting open, this way each file is opened
-        return map(self._open, self._afnames, ['ab']*self._dim)
+        return list(map(self._open, self._afnames, ['ab']*self._dim))
 
     def close(self, file_):
         file_.close()
@@ -177,7 +177,7 @@ class AxisWriter(Writer):
         for h in headers:
             for file_ in files:
                 file_.write(h + '\n')
-        map(self.close, files)
+        list(map(self.close, files))
 
     def write(self, lines):
         """
@@ -190,7 +190,7 @@ class AxisWriter(Writer):
             for i, file_ in enumerate(files):
                 file_.write(line[i] + '\n')
                 #files[axis].write('\n')
-        map(self.close, files)
+        list(map(self.close, files))
 
         if self._counter >= self._nfreq:
             self._ifreq += 1
@@ -370,7 +370,7 @@ class CurrentWriter:
 
     def write_header(self):
         # headers
-        for key, writer in self.__key_to_writer.items():
+        for key, writer in list(self.__key_to_writer.items()):
             writer.write_header(self.get_header_format(self.__title))
 
     def write(self, istep, results):

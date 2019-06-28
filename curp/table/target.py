@@ -41,7 +41,7 @@ def parse_mask_with_range(mask, atoms, natom):
     else:
         pass
 
-    return range(iatm_beg, iatm_end+1)
+    return list(range(iatm_beg, iatm_end+1))
 
 def make_iatm_to_itar(target_atoms, natom):
     """Make iatm => itarget dictionary."""

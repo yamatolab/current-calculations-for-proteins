@@ -69,14 +69,14 @@ class TopologyParser:
             'AMBER_ATOM_TYPE'            : self._parse_name(20, 4)    , 
             'BOX_DIMENSIONS'             : self._parse_generic(float) , 
         }
-        for fname, parser in fname_to_parsers.items():
+        for fname, parser in list(fname_to_parsers.items()):
             if fname in fname_to_lines:
                 lines = fname_to_lines[fname]
                 self.__fname_to_info[fname] = list(parser(lines))
             else:
                 self.__fname_to_info[fname] = None
 
-        for fname, info in self.__fname_to_info.items():
+        for fname, info in list(self.__fname_to_info.items()):
             self.print_info(fname, info)
 
     def split_content(self, tpl_file):
@@ -436,7 +436,7 @@ class Format2AmberBaseConverter(ConverterBase):
                     iatm_end = res_ptrs[ires_1+1] - 1
                 yield iatm_beg, iatm_end
 
-        name_dptrs = zip(amb_resnames, gen_detailed_pointer(amb_res_ptrs,natom))
+        name_dptrs = list(zip(amb_resnames, gen_detailed_pointer(amb_res_ptrs,natom)))
         for ires_1, (rname, res_dptr) in enumerate(name_dptrs):
             iatm_beg, iatm_end = res_dptr
             for iatm in range(iatm_beg, iatm_end+1):
@@ -492,7 +492,7 @@ class Format2AmberBaseConverter(ConverterBase):
         else:
             vdw_radii = []
 
-        ids = range(1, self.get_natom()+1)
+        ids = list(range(1, self.get_natom()+1))
         self.__atom_info = dict(ids=ids, names=names, masses=masses, 
                 elems=elems, vdw_radii=vdw_radii)
 

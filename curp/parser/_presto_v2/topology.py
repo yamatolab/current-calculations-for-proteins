@@ -228,7 +228,7 @@ class TopologyParser:
             logger.debug('*** MOLCULE NAME: ' + info['molname'] + ' ***')
             logger.debug('')
 
-        for key, values in info.items():
+        for key, values in list(info.items()):
             logger.debug(key)
             logger.debug(values)
 
@@ -628,10 +628,10 @@ class Format2Amber99Converter(ConverterBase):
         """Get dictionary of atom_types, vdw_radii and vdw_depths."""
         nonbond_info = self.get_topology().get_nonbond_info()
 
-        types_radii_depths = zip(
+        types_radii_depths = list(zip(
                 nonbond_info['atom_types'],
                 nonbond_info['vdw_radii'],
-                nonbond_info['vdw_depths'] )
+                nonbond_info['vdw_depths'] ))
 
         ntype = len(nonbond_info['atom_types'])
         c6s =  numpy.zeros((ntype,ntype))
@@ -661,9 +661,9 @@ class Format2Amber99Converter(ConverterBase):
                 # loop for the number of molecules
                 for imol in range( minfo['nmol'] ):
 
-                    atoms_flags = zip(
+                    atoms_flags = list(zip(
                             tor_info['nonbonded_flags'],
-                            tor_info['four_atoms'] )
+                            tor_info['four_atoms'] ))
 
                     ####################### flag ###############################
                     two_atoms.extend(
@@ -713,10 +713,10 @@ class Format2OPLSConverter(Format2Amber99Converter):
         """Get dictionary of atom_types, vdw_radii and vdw_depths."""
         nonbond_info = self.get_topology().get_nonbond_info()
 
-        types_radii_depths = zip(
+        types_radii_depths = list(zip(
                 nonbond_info['atom_types'],
                 nonbond_info['vdw_radii'],
-                nonbond_info['vdw_depths'] )
+                nonbond_info['vdw_depths'] ))
 
         ntype = len(nonbond_info['atom_types'])
         c6s =  numpy.zeros((ntype,ntype))
@@ -733,7 +733,7 @@ class Format2OPLSConverter(Format2Amber99Converter):
         all_vdw_info = dict( atom_types=atom_types, c6s=c6s, c12s=c12s )
 
         logger.debug('*** vdw ***')
-        for key, values in all_vdw_info.items():
+        for key, values in list(all_vdw_info.items()):
             logger.debug('[{}]'.format(key))
             logger.debug(values)
 

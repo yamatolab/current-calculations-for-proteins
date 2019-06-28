@@ -221,7 +221,7 @@ def simplify_tensor(filename, fns, labels='', snapshot=False, **kwds):
             # each evalue
             if not isinstance(others, tuple):
                 others = [others]
-            label_to_evalues = dict(zip(labels, others))
+            label_to_evalues = dict(list(zip(labels, others)))
 
             # output one line data
             print(fmt.format(id=atom_id, name=aname,

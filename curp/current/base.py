@@ -154,7 +154,7 @@ class CurrentCalculator(CalculatorBase):
 
         # group current = inside current + outside current
         key_to_gcurs = {}
-        for key in key_to_acurs.keys():
+        for key in list(key_to_acurs.keys()):
             key_to_gcurs[key] = key_to_icurs[key] + key_to_ocurs[key]
 
         return cstep, (key_to_acurs, key_to_gcurs, key_to_icurs, key_to_ocurs)
@@ -214,7 +214,7 @@ class FluxCalculator(CalculatorBase):
         if flux_atm is not None:
             total_atm = numpy.zeros( key_to_aflux['vdw'].shape )
 
-            for flux in key_to_aflux.values():
+            for flux in list(key_to_aflux.values()):
                 total_atm += flux
 
         else:
@@ -224,7 +224,7 @@ class FluxCalculator(CalculatorBase):
         if flux_grp is not None:
             total_grp = numpy.zeros( key_to_gflux['vdw'].shape )
 
-            for flux in key_to_gflux.values():
+            for flux in list(key_to_gflux.values()):
                 total_grp += flux
 
         else:

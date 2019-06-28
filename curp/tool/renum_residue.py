@@ -56,8 +56,8 @@ def main(renums, ec_fn=None, **kwds):
         rid1, rid2, rname1, rname2, rest = parse_line(line)
         rid_max = max(rid_max, rid1, rid2)
 
-    new_rids = range(rid_max+1)
-    old_rids = range(rid_max+1)
+    new_rids = list(range(rid_max+1))
+    old_rids = list(range(rid_max+1))
 
     # Make dictionary to alter the given residue identifiers
     for renum in renums:

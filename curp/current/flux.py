@@ -345,7 +345,7 @@ class StressFluxCalculator(base.FluxCalculator):
                 flux_pot[gname_i, gname_j] = ts
 
         # bonded two-body force
-        for iatm, jatm, f_ij in bonded_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded_tbfs.items()):
             gname_i = self.__iatm_to_groups[iatm]
             gname_j = self.__iatm_to_groups[jatm]
 
@@ -355,7 +355,7 @@ class StressFluxCalculator(base.FluxCalculator):
             flux_pot[gname_j, gname_i] += f_ij_r_ij / volume_ji
 
         # bonded14 two-body force
-        for iatm, jatm, f_ij in bonded14_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded14_tbfs.items()):
             gname_i = self.__iatm_to_groups[iatm]
             gname_j = self.__iatm_to_groups[jatm]
 

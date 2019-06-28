@@ -57,8 +57,8 @@ class InteractionTableGenerator:
     def __iter__(self):
         return self
 
-    def next(self):
-        return self.__apply().next()
+    def __next__(self):
+        return next(self.__apply())
     __next__ = next # version 3.x
 
     def copy(self):
@@ -246,7 +246,7 @@ class InteractionTableList:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         self.__cnt += 1
 
         if self.__num_interacts == 0:

@@ -47,12 +47,12 @@ def gen_trj(tpl, input_trj_fns, input_trj_fmts, trj_type,
 def gen_trajectory_multi(trj_fns_list, trj_fmts, natom, fst_lst_int_list,
         trj_type='crd',logger=None, use_pbc=False):
 
-    from itertools import izip_longest
+    from itertools import zip_longest
 
     # print(" trj_fns: ", trj_fns_list,
     #       "\n trj_fmts: ", trj_fmts,
     #       "\n fst_lst_int_list: ", fst_lst_int_list)
-    for trj_fns, fmt, fst_lst_int in izip_longest(
+    for trj_fns, fmt, fst_lst_int in zip_longest(
             trj_fns_list, trj_fmts, fst_lst_int_list):
 
         # determine parser

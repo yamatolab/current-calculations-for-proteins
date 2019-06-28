@@ -37,7 +37,7 @@ def average_rdf(parser, rmax=5.0, dr=0.1
     i = 0
     for istep, (crd, box) in parser:
         i += 1
-        istep, (crd, box) = parser.next()
+        istep, (crd, box) = next(parser)
 
         if i == interval:
             ntraj += 1

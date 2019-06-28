@@ -143,7 +143,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             'Show and make figure for stress ratio.')
         print('simplify_tensor total_file "label1,label2,label3,label4,..."',
-                'label1_data,label2_data,...')
+              'label1_data,label2_data,...')
 
     # add argument definitions
     parser.add_argument(

@@ -46,7 +46,7 @@ class IniParser:
 
     def get_secnames(self):
         """Get the section names in order."""
-        return self.__secname_to_vals.keys()
+        return list(self.__secname_to_vals.keys())
 
     def get_vals(self, secname):
         """Get values for section name."""

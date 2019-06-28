@@ -446,7 +446,7 @@ def get_data_iter(setting, topology, target_atoms):
             natom, use_pbc, setting.curp.remove_trans,
             setting.curp.remove_rotate, target_atoms, masses, logger)
 
-        data_iter.next()
+        next(data_iter)
     else:
         data_iter = parser.gen_matrix_ensemble(
             file_format, fmt_section, setting.input.first_last_interval,
@@ -646,7 +646,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
             t_0 = time.time()
 
             ############################################################
-            results_iter = cal.run(data_iter.next())
+            results_iter = cal.run(next(data_iter))
             ############################################################
 
     else:

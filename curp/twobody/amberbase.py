@@ -92,7 +92,7 @@ class TwoBodyForceBase:
         """
         info = getattr(self.__tpl, 'get_'+btype_name+'_info')()
         mod_type = getattr(self.__mod, btype_name)
-        for key in info.keys():
+        for key in list(info.keys()):
             value = info[key]
             setattr(mod_type, key, value)
 
@@ -334,7 +334,7 @@ class TwoBodyForce(TwoBodyForceBase):
 
     def __init__(self, topology, setting=None):
         TwoBodyForceBase.__init__(self, topology, setting)
-        import lib_amberbase
+        from . import lib_amberbase
         self.set_module(lib_amberbase)
 
 

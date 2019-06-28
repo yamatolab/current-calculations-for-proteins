@@ -68,7 +68,7 @@ if __name__ == '__main__':
     if topdir not in sys.path:
         sys.path.insert(0, topdir)
     import trajectory
-    from calrdf import average_rdf
+    from .calrdf import average_rdf
 
     def print_wells(info):
         rmax, rdf_max, rmin, rdf_min = info

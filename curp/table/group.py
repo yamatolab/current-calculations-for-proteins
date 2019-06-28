@@ -92,15 +92,15 @@ class GroupParser(ini.IniParser):
         else:
             pass
 
-        return range(iatm_beg, iatm_end+1)
+        return list(range(iatm_beg, iatm_end+1))
 
 # for topology and bonded
 def squeeze_calculating_bonded(groups, table_name, atoms_table, **other_table):
     """Squeeze the bonded calculation items in crude and fast."""
 
     # get minimum and maximum
-    gmin = min( min(iatoms) for iatoms in groups.values() )
-    gmax = max( max(iatoms) for iatoms in groups.values() )
+    gmin = min( min(iatoms) for iatoms in list(groups.values()) )
+    gmax = max( max(iatoms) for iatoms in list(groups.values()) )
 
     # make index list
     squeezed_indexes = []
@@ -115,7 +115,7 @@ def squeeze_calculating_bonded(groups, table_name, atoms_table, **other_table):
     # reconstruct data
     results = {}
     results[table_name] = [ atoms_table[index] for index in squeezed_indexes ]
-    for key, values in other_table.items():
+    for key, values in list(other_table.items()):
         results[key] = [ values[index] for index in squeezed_indexes ]
 
     return results
@@ -126,7 +126,7 @@ def squeeze_calculating_bonded2(groups, table_name, atoms_table, **other_table):
 
     # get flatten group list
     group_atoms = []
-    for atoms in groups.values():
+    for atoms in list(groups.values()):
         group_atoms.extend(atoms)
 
     # make index list
@@ -142,7 +142,7 @@ def squeeze_calculating_bonded2(groups, table_name, atoms_table, **other_table):
     # reconstruct data
     results = {}
     results[table_name] = [ atoms_table[index] for index in squeezed_indexes ]
-    for key, values in other_table.items():
+    for key, values in list(other_table.items()):
         results[key] = [ values[index] for index in squeezed_indexes ]
 
     return results
@@ -158,7 +158,7 @@ def gen_residue_group(res_info, atom_info, name_fmt='', rid_first=1):
     rid_last = rid_first
 
     iatoms = []
-    for iatm_1, rid in zip(range(natom), res_ids):
+    for iatm_1, rid in zip(list(range(natom)), res_ids):
 
         iatm = iatm_1 + 1
 
@@ -204,7 +204,7 @@ def gen_united_group(atom_info, name_fmt=''):
         iatoms.append( iatm )
 
     for iatm_1, elem, name in zip(
-            range(i_beg, natom+1), atom_elems[i_beg:], atom_names[i_beg:] ):
+            list(range(i_beg, natom+1)), atom_elems[i_beg:], atom_names[i_beg:] ):
         iatm = iatm_1 + 1
 
         if elem != 'H':

@@ -113,7 +113,7 @@ class StressCurrentCalculator(base.CurrentCalculator):
         return current, current_grp, current_grp_inner
 
 
-import lib_current
+from . import lib_current
 class StressTensor:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs):
@@ -215,14 +215,14 @@ class EnergyCurrentCalculator(base.CurrentCalculator):
         current_pot = numpy.zeros([self.__natom+1, 3])
 
         # bonded two-body force
-        for iatm, jatm, f_ij in bonded_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded_tbfs.items()):
             v_ij = 0.5 * (vel[iatm] + vel[jatm])
             f_ij_v_ij = f_ij * v_ij
             current_pot[iatm] += f_ij_v_ij / volume_ij
             current_pot[jatm] += f_ij_v_ij / volume_ji
 
         # bonded14 two-body force
-        for iatm, jatm, f_ij in bonded14_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded14_tbfs.items()):
             v_ij = 0.5 * (vel[iatm] + vel[jatm])
             f_ij_v_ij = f_ij * v_ij
             current_pot[iatm] += f_ij_v_ij / volume_ij

@@ -24,7 +24,7 @@ class FluxParser:
 
     def __next__(self):
         try:
-            lines = self.__gen_snapshot_lines.next()
+            lines = next(self.__gen_snapshot_lines)
             don_acc_pairs, fluxes = self.parse_onesnap(lines)
         except StopIteration:
             self.__file.close()
@@ -236,13 +236,13 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
     # prepare
     one_parser = FluxParser(flux_fns[0])
     all_labels = one_parser.parse_header()
-    don_acc_pairs, fluxes = one_parser.next()
+    don_acc_pairs, fluxes = next(one_parser)
     one_parser.close()
     nvalue = len(all_labels)
 
     # parse colums list. For example, '1,4,6,9'
     if column_line == '':
-        icolums = range(1, nvalue+1)
+        icolums = list(range(1, nvalue+1))
     else:
         icolums = [ int(col) for col in column_line.split(',') ]
 

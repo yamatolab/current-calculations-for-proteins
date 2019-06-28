@@ -63,7 +63,7 @@ def nproperty(function):
             locals = frame.f_locals
 
             prop_dict = {}
-            for name, method in locals.items():
+            for name, method in list(locals.items()):
                 if name.startswith('get'):
                     prop_dict['fget'] = method
                     get_method = method
@@ -422,9 +422,7 @@ class VolumeSetting:
             if self.__setting is None:
                 self.__props['group_method'] = value
 
-class VolumeCalculatorBase:
-
-    __metaclass__ = ABCMeta
+class VolumeCalculatorBase(metaclass=ABCMeta):
 
     def __init__(self, volume_setting):
         self._setting = volume_setting
@@ -1166,7 +1164,7 @@ class OuterVolumeFetcher(VolumeCalculatorBase):
 
     def cal_volume(self, crd):
         try:
-            ids, names, vols = self.parse_atomic().next()
+            ids, names, vols = next(self.parse_atomic())
 
             if len(vols) != self.__ntar:
                 msg = 'The number of target atoms: {}, but in volume trajectory: {}'
@@ -1182,7 +1180,7 @@ class OuterVolumeFetcher(VolumeCalculatorBase):
             return VolumeCalculatorBase.get_gvolume(self, crd)
         else:
             try:
-                ids, names, vols = self.parse_group().next()
+                ids, names, vols = next(self.parse_group())
 
                 if len(vols) != self.__ngrp:
                     msg = 'The number of groups: {}, but in volume trajectory: {}'

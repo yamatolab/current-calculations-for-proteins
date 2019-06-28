@@ -87,7 +87,7 @@ def gen_trj_late(trj, fst_lst_int=(1,-1,1)):
                 # one more step
                 nstep += 1
                 cnt_inter += 1
-                istp_cur, snap, box = trj.next()
+                istp_cur, snap, box = next(trj)
                 yield (istp_prev, snap_prev, box_prev), (istp_cur, snap, box)
 
 if __name__ == '__main__':
