@@ -1,17 +1,14 @@
 from __future__ import print_function
 
 # standard module
-import os, sys
+import os
+import sys
 import numpy
-import time
 
 # curp module
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import clog as logger
+import curp.clog as logger
 
-################################################################################
+########################################################################
 class TwoBodyForceBase:
 
     def __init__(self, topology, setting=None):
@@ -26,7 +23,7 @@ class TwoBodyForceBase:
     def get_pottypes(self):
         return ['bond','angle','torsion','improper',
                 'coulomb14','vdw14','coulomb','vdw']
-    
+
     def set_module(self, module):
         self.__mod = module
 

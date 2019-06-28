@@ -1,13 +1,12 @@
 from __future__ import print_function
 
-import os, sys
+import os
+import sys
 
 import numpy
-topdir = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-from exception import CurpException
+
+from curp.exception import CurpException
+
 
 class MaximumDepthError(CurpException): pass
 
@@ -70,7 +69,7 @@ if __name__ == '__main__':
         sys.path.insert(0, topdir)
     import trajectory
     from calrdf import average_rdf
-    
+
     def print_wells(info):
         rmax, rdf_max, rmin, rdf_min = info
         msg = '{rmax:4.2f} {rdf_max:10.5f}   {rmin:4.2f} {rdf_min:10.5f}'
@@ -87,7 +86,7 @@ if __name__ == '__main__':
 
         with bm('calculate average rdf'):
             rdfs = average_rdf(parser, rmax=rmax, dr=dr, interval=1,
-                    average=True, per_area=True) 
+                    average=True, per_area=True)
         # with bm('printing average rdf'):
         #     for iatm_1, rdf in enumerate(rdfs):
         #         print()

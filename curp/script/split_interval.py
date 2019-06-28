@@ -44,7 +44,7 @@ class TensorParser:
                        [v[3], v[4], v[5]],
                        [v[6], v[7], v[8]] ]
             tensors.append(tensor)
-                
+
         # array = numpy.array(v)
         # print(array.reshape(3,3,len(array)))
         return names, numpy.array(tensors)
@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
     # for each component of stress tensor
     labels = [ label.strip() for label in label_line.split(',') ]
-    
+
     evalues = []
     for lebel, fn in zip(labels, fns):
         parser = TensorParser(fn)

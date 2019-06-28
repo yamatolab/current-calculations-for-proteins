@@ -1,6 +1,6 @@
 #! /usr/bin/env python2
 
-import sys, os
+import sys
 
 def parse_line(line):
     cols = line.split()

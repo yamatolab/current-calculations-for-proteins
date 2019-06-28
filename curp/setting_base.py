@@ -15,7 +15,7 @@ TypeBase
 import os
 import glob
 
-from exception import CurpException
+from curp.exception import CurpException
 
 class SectionNotDefined(CurpException): pass
 class InvalidKeyword(CurpException): pass

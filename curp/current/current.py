@@ -2,16 +2,12 @@ from __future__ import print_function
 
 import os, sys
 import time
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import utility
 import numpy
 
 # curp modules
-import clog as logger
-
-import base
+import curp.clog as logger
+from curp import utility
+from curp.current import base
 
 ################################################################################
 class StressCurrentCalculator(base.CurrentCalculator):
@@ -26,7 +22,7 @@ class StressCurrentCalculator(base.CurrentCalculator):
     def prepare(self, *args, **kwds):
         """Prepare the calculations of all snapshots."""
         base.CurrentCalculator.prepare(self, *args, **kwds)
-        
+
         self.scal = StressTensor( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs())
 
@@ -207,7 +203,7 @@ class EnergyCurrentCalculator(base.CurrentCalculator):
 
     def cal_bonded(self):
         """Calculate the energy current for the bonded potential terms."""
-        
+
         # calculate two-body force of bonded interactions
         self.__tbf.cal_bonded()
 
@@ -249,7 +245,7 @@ class EnergyCurrentCalculator(base.CurrentCalculator):
                 current_pot[jatm] += f_ij_v_ij / volume_ji
 
         return current_pot
-                
+
 
 if __name__ == '__main__':
     cal = StressCurrentCalculator()

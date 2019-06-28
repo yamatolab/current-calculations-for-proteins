@@ -2,14 +2,11 @@ from __future__ import print_function
 import os, sys
 import numpy
 
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import clog as logger
+import curp.clog as logger
 
 def cal_com_crd_vel(crd_or_vel, masses):
     """Calculate the coordinate and velocity of the center of mass."""
-    
+
     # com : center of mass
     mass_com = numpy.sum(masses)
     com_crd_vel = numpy.sum(masses[:, None] * crd_or_vel, 0) / mass_com
@@ -70,13 +67,13 @@ def get_crd_vel_trans_rot_removed(masses, crd, vel, target_atoms,
         # get the center of mass for the coordinate
         target_r_com = cal_com_crd_vel(target_crd, target_masses)
         x_com, y_com, z_com = [float(x) for x in target_r_com] # ndarray => float
-        logger.info_cycle(msg.format('crd of center of mass', 
+        logger.info_cycle(msg.format('crd of center of mass',
                 x_com, y_com, z_com, 'A'))
 
         # get the center of mass for the velocity
         target_v_com = cal_com_crd_vel(target_vel, target_masses)
         vx_com, vy_com, vz_com = [float(v) for v in 1000.0*target_v_com] # ndarray => float
-        logger.info_cycle(msg.format('vel of center of mass', 
+        logger.info_cycle(msg.format('vel of center of mass',
                 vx_com, vy_com, vz_com, 'A/ps'))
 
         new_crd = crd - target_r_com
@@ -98,7 +95,7 @@ def get_crd_vel_trans_rot_removed(masses, crd, vel, target_atoms,
 
         # log the omega values.
         x_omega, y_omega, z_omega = [float(v) for v in 1000.0*target_omegas]
-        logger.info_cycle(msg.format('angular vel for rotation', 
+        logger.info_cycle(msg.format('angular vel for rotation',
                 x_omega, y_omega, z_omega, 'rad/ps'))
 
         # calculate rotational motion for all of the system using target_omegas.

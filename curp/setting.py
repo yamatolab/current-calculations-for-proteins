@@ -5,7 +5,7 @@ configuration file.
 Defines all the .cfg sections as class variables (Section object)
 """
 
-from setting_base import *
+from curp.setting_base import *
 
 
 class Setting(SettingBase):

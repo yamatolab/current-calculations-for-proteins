@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import numpy
 
-import interact_table as it
+import curp.table.interact_table as it
 
 def parse_target_atoms_line(target_atoms_line, natom):
 

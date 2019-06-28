@@ -1,6 +1,7 @@
 #! /usr/bin/env python2
 from __future__ import print_function
-import sys, os
+import sys
+
 
 class BWDataParser:
 
@@ -13,7 +14,7 @@ class BWDataParser:
 
         lines = ( line.strip() for line in file
                  if line.strip()
-                 if not line.strip().startswith('%') 
+                 if not line.strip().startswith('%')
                  if not line.strip().startswith('#') )
 
 

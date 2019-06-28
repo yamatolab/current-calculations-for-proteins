@@ -353,7 +353,7 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
 
 
 if __name__ == '__main__':
-    from console import arg_cal_tc, exec_command
+    from curp.script.console import arg_cal_tc, exec_command
 
     parser = arg_cal_tc()
     exec_command(parser)

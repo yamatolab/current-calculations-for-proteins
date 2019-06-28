@@ -1,15 +1,14 @@
 from __future__ import print_function
 
-import os, sys
+import os
+import sys
 from abc import abstractmethod, abstractproperty, ABCMeta
 import numpy
 
 # curp package
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import table.interact_table as it
-import clog as logger
+import curp.table.interact_table as it
+import curp.clog as logger
+from curp.forcefield import lib_bonded_pair
 
 
 class ConverterPrintable(object):
@@ -17,7 +16,7 @@ class ConverterPrintable(object):
     def print_atom(self):
         logger.info('*** atom ***')
         info = self.get_atom_info()
-        atom = zip(info['names'], info['elems'], 
+        atom = zip(info['names'], info['elems'],
                 info['masses'], info['vdw_radii'])
         for iatm_1, (name, elem, mass, radius) in enumerate(atom):
             logger.info('{:>7d}  {:<4s} {:<4s} {:12.7f} {:12.7f}'.format(
@@ -127,7 +126,7 @@ class ConverterPrintable(object):
         logger.info()
 
     def _print_idx_to_ipair(self, bondtype):
-        
+
         logger.info('*** i{} => ipair ***'.format(bondtype))
         get = getattr(self, 'get_i'+bondtype+'_to_ipair')
         idx_to_ipair = get()
@@ -147,7 +146,6 @@ class ConverterPrintable(object):
         logger.info()
 
 
-import lib_bonded_pair
 class TableMaker:
 
     def __init__(self):
@@ -246,7 +244,7 @@ class TableMaker:
         natom = self.get_natom()
         int_table = it.InteractionTable(self.get_natom())
 
-        import lib_nonbond
+        from curp.forcefield import lib_nonbond
         mod_tab = lib_nonbond.without_bonded
         mod_tab.setup(bonded_pairs, natom)
 
@@ -273,7 +271,7 @@ class TableMaker:
             for pair in it.combinations(three, 2):
                 iatm, jatm = min(pair), max(pair)
                 pairs += [(iatm, jatm)]
-                
+
         for four in four_atoms:
             for pair in it.combinations(four, 2):
                 iatm, jatm = min(pair), max(pair)
@@ -324,7 +322,7 @@ class TableMaker:
                             tor_info['four_atoms'] )
 
                     two_atoms.extend(
-                        [ (iatoms[0]+cur_natom, iatoms[3]+cur_natom) 
+                        [ (iatoms[0]+cur_natom, iatoms[3]+cur_natom)
                             for flag, iatoms in atoms_flags if flag==1 ] )
 
                     cur_natom += minfo['natom']

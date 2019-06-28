@@ -2,10 +2,10 @@
 from __future__ import print_function
 import sys
 import numpy
-
-from cal_tc import WriterBase, ACFWriter, get_stringnames
-
 import netCDF4 as netcdf
+
+from curp.script.cal_tc import WriterBase, ACFWriter, get_stringnames
+
 
 class TCSWriter(WriterBase):
     name = 'tcs'

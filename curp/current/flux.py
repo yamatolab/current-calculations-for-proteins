@@ -5,13 +5,10 @@ import time
 import numpy
 
 # curp modules
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import utility
-import clog as logger
+from curp import utility
+import curp.clog as logger
 
-import base
+from curp.current import base, lib_flux, lib_hflux
 ################################################################################
 class EnergyFluxCalculator(base.FluxCalculator):
 
@@ -105,7 +102,6 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
 
 ################################################################################
-import lib_flux
 class EnergyFlux:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
@@ -265,7 +261,6 @@ class HeatFluxCalculator(base.FluxCalculator):
 
 
 ################################################################################
-import lib_hflux
 class HeatFlux:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,

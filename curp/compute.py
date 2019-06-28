@@ -738,7 +738,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
 
 
 if __name__ == '__main__':
-    from console import arg_compute, exec_command
+    from curp.console import arg_compute, exec_command
 
     parser = arg_compute()
     exec_command(parser)

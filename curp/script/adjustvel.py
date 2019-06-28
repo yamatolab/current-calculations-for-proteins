@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import os, sys
+import os
+import sys
 from curp import TrjWriter
 
 def adjust_vel(tpl, trj, trj_type, output_trj_fn,

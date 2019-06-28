@@ -1,14 +1,11 @@
 from __future__ import print_function
 
-import os, sys
-from collections import OrderedDict as odict
+import os
+import sys
 import numpy
 
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import exception
-import clog as logger
+from curp import exception
+import curp.clog as logger
 
 class SectionNotFoundError(exception.CurpException): pass
 class ParserError(exception.CurpException): pass
@@ -49,7 +46,7 @@ def get_group_iatoms_pairs(setting, target_atoms, res_info, atom_info):
     return gname_iatoms_pairs
 
 
-import ini_parser as ini
+import curp.table.ini_parser as ini
 class GroupParser(ini.IniParser):
 
     def __init__(self, natom, *args, **kwds):
@@ -180,7 +177,7 @@ def gen_residue_group(res_info, atom_info, name_fmt='', rid_first=1):
         rid = res_ids[-1]
         gname = name_fmt.format(rname=rname, rid=rid)
         yield (gname, iatoms)
-    
+
 
 def gen_united_group(atom_info, name_fmt=''):
 

@@ -1,4 +1,5 @@
-import os, sys
+import os
+
 
 class Atom:
     terminal = False
@@ -25,7 +26,7 @@ class System:
         else:
             raise StopIteration
     next = __next__
-    
+
     def __iter__(self):
         return self
 
@@ -102,7 +103,7 @@ class System:
                 rid_shift += 10000
 
             atom.rid += rid_shift
-            
+
             atom_prev = atom
 
         else:
@@ -114,7 +115,7 @@ class System:
 
         if pdb_file.name != '<stdin>':
             pdb_file.close()
-        
+
     def _make_rid_to_atoms(self):
 
         rid_to_atoms = {}
@@ -199,7 +200,7 @@ def gen_pdbatom(pdb_fn, vervose=False):
         natm += 1
 
         yield atom_prev
-        
+
         atom_prev = atom
 
     else:
@@ -290,7 +291,7 @@ if __name__ == '__main__':
     pdb_fn = './testdata/system.pdb'
     system = System(pdb_fn)
     # print(system.to_string())
-    
+
     # iatm = 5
     # print(system.atom(iatm))
     for atom in system.residue(5):

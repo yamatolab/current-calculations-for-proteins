@@ -1,8 +1,6 @@
 #! /usr/bin/env python
 from __future__ import print_function
-import os, sys
 import itertools as it
-import numpy
 import pygraphviz as pgv
 
 # FONTNAME = 'Helvetica Neue Bold'

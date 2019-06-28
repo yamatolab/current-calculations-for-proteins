@@ -1,4 +1,4 @@
-import calvolume as cv
+import .calvolume as cv
 
 def get_volume_calculator(topology, setting, target_atoms, gname_iatoms_pairs):
     """Return VolumeCalculator object by setting."""

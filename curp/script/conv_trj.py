@@ -97,7 +97,7 @@ def do_convert_only(tpl, trj, output_trj_fn, output_trj_fmt,
 
 
 if __name__ == '__main__':
-    from console import arg_conv_trj, exec_command
+    from curp.script.console import arg_conv_trj, exec_command
 
     parser = arg_conv_trj
     exec_command(parser)
