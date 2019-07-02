@@ -78,7 +78,7 @@ class GroupPair:
         table_with_gpair = numpy.array(list(self.gen_inttable()))
         base_table = numpy.array(list(base_table))
 
-        import curp.table.lib_group_pair
+        from curp.table import lib_group_pair
         lib_gpair = lib_group_pair.within_gpair
         lib_gpair.setup(table_with_gpair, self.__natom)
 

@@ -46,7 +46,7 @@ class ParserPyBase:
         return next(file)
 
     def parse_data(self, file, natom):
-        nline = natom*3 / 10
+        nline = natom*3 // 10
         rem   = natom*3 % 10
         try:
             for iline in range(nline):
@@ -62,6 +62,9 @@ class ParserPyBase:
                         beg, end = 8*icol, 8*(icol+1)
                         yield float(line[beg:end])
 
+        except StopIteration:
+            return
+
         except ValueError:
             msg = "Given the number of atoms is {}.".format(natom)
             raise NumAtomInvalidError(msg)
@@ -69,11 +72,15 @@ class ParserPyBase:
     def parse_crdvel_iter(self, file, natom):
         gen_data = self.parse_data(file, natom)
 
-        for iatm in range(natom):
-            x = next(gen_data)
-            y = next(gen_data)
-            z = next(gen_data)
-            yield x, y, z
+        try:
+            for iatm in range(natom):
+                x = next(gen_data)
+                y = next(gen_data)
+                z = next(gen_data)
+                yield x, y, z
+
+        except StopIteration:
+            return
 
     def parse_pbc(self, file):
 
@@ -377,7 +384,7 @@ class RestartParser:
         elif self.__use_vel:
             self.__parsed = True
             return vel, pbc
-        else: 
+        else:
             self.__parsed = True
             return (crd, vel), pbc
 
@@ -418,7 +425,7 @@ class RestartParser:
         return title, natom, simtime
 
     def parse_data(self, file, natom):
-        for iline in range(natom/2):
+        for iline in range(natom//2):
             line = next(file)
             for icol in range(6):
                 beg, end = 12*icol, 12*(icol+1)
@@ -605,7 +612,7 @@ class NetCDFWriterBase(TrajectoryWriterBase):
         cell_lengths = ncfile.createVariable('cell_lengths',
                 'f8', ('frame', 'cell_spatial'))
         cell_lengths.units = 'angstrom'
-        
+
         cell_angles = ncfile.createVariable('cell_angles',
                 'f8', ('frame', 'cell_angular'))
         cell_angles.units = 'degree'
@@ -662,7 +669,7 @@ class NetCDFWriterBase(TrajectoryWriterBase):
             self.__ncfile.sync()
             self.__ncfile.close()
             self.__ncfile = None
-        
+
 
 class NetCDFCoordinateWriter(NetCDFWriterBase):
 
@@ -733,7 +740,7 @@ if __name__ == "__main__":
         #             print('{:>5} x 10^2: size = {:>5}'.format(
         #                 i/100, len(crd)))
         #     print(i)
-                    
+
         # with bm('crd+pbc'):
             # print()
             # parser = CoordinateParser('test/ala3-woct.mdcrd.gz',

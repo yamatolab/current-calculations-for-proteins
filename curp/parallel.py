@@ -68,7 +68,12 @@ class ParallelProcessor:
 
         if self.is_root():
             vs = list(kwds.values())  # val1_iter, val2_iter, ...
-            pair_vs_iter = it.izip(*vs)
+            try:
+                pair_vs_iter = it.izip(*vs)
+            except AttributeError:
+                pair_vs_iter= zip(*vs)
+            except:
+                raise
 
         else:
             def gen_none():
@@ -90,7 +95,7 @@ class ParallelProcessor:
                 pair_vs = next(pair_vs_iter)
 
             is_end = self.__comm.bcast(is_end, root=0)
-            
+
             if is_end:
                 break
 
@@ -278,7 +283,12 @@ class SequentialProcessor:
         ks = list(kwds.keys())    # kwd1, kwd2, ...
         npair = len(ks)     # the number of kwds
         vs = list(kwds.values())  # val1_iter, val2_iter, ...
-        pair_vs_iter = it.izip(*vs)
+        try:
+            pair_vs_iter = it.izip(*vs)
+        except AttributeError:
+            pair_vs_iter =zip(*vs)
+        except:
+            raise
 
         for pair_vs in pair_vs_iter:
             # (val1, val2, ...)_1, (val1, val2, ...)_2, ...
@@ -429,7 +439,7 @@ def main_arraygen(natom, ntraj):
 
     # if par.is_root():
     for r in gen_result:
-        # par.write(r) 
+        # par.write(r)
         # if par.is_root():
             print(r)
 
@@ -489,7 +499,7 @@ def main_arraygen(natom, ntraj):
 
     # if par.is_root():
     for r in gen_result:
-        # par.write(r) 
+        # par.write(r)
         # if par.is_root():
             print(r)
 

@@ -51,7 +51,7 @@ def write_array(array, num_per_line=10):
     length = len(array)
     if length//num_per_line != 0:
 
-        for iline_1 in range(length/num_per_line):
+        for iline_1 in range(length//num_per_line):
             icol_beg, icol_end = 10*iline_1, 10*(iline_1+1)
             line = " ".join("{:>5}".format(col)
                             for col in array[icol_beg:icol_end])
@@ -59,7 +59,7 @@ def write_array(array, num_per_line=10):
 
         # Last line
         if length % num_per_line != 0:
-            icol_beg = 10 * (length//num_per_line+1)
+            icol_beg = 10 * (length//num_per_line + 1)
             line = " ".join("{:>5}".format(col)
                             for col in array[icol_beg:])
             logger.info(line)

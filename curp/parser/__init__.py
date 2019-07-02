@@ -98,7 +98,15 @@ def gen_phase_trajectory(file_format, fmt_section,
     yield
 
     istep = 0
-    for (crd_data, vel_data) in it.izip(crd_pbcs, vel_pbcs):
+
+    try:
+        crd_vel_gen = it.izip(crd_pbcs, vel_pbcs)
+    except AttributeError:
+        crd_vel_gen = zip(crd_pbcs, vel_pbcs)
+    except:
+        raise
+
+    for (crd_data, vel_data) in crd_vel_gen:
         cstep_crd, crd, pbc_crd = crd_data
         cstep_vel, vel, pbc_vel = vel_data
         istep += 1

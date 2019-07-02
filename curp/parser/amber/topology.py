@@ -19,7 +19,7 @@ class TopologyParser:
     """
     >>> tpl = TopologyParser('./test/ala3.prmtop')
     >>> tpl.parse()
-    >>> tpl.get_molcule_info()
+    >>> tpl.get_molecule_info()
 
     """
 
@@ -37,7 +37,7 @@ class TopologyParser:
         if self._filename.endswith('.gz'):
             tpl_file = gzip.open(self._filename, 'rb')
         else:
-            tpl_file = open(self._filename, 'r')
+            tpl_file = open(self._filename, 'rb')
         fname_to_lines = self.split_content(tpl_file)
         tpl_file.close()
 
@@ -99,14 +99,14 @@ class TopologyParser:
 
         # search first section marker
         for line in lines:
-            line = line.split(self.comment)[0].strip()
+            line = line.decode().split(self.comment)[0].strip()
             if self.is_section(line):
                 yield line
                 break
 
         # rest
         for line in lines:
-            line = line.split(self.comment)[0].strip()
+            line = line.decode().split(self.comment)[0].strip()
             if self.is_section(line):
                 yield self.section_end
                 yield line
@@ -465,12 +465,10 @@ class Format2AmberBaseConverter(ConverterBase):
             for i_1, tname in enumerate(atom_types):
                 radius = type_to_vdws.get(tname)
                 if radius is not None:
-                    # print('ok', tname)
                     vdw_radii.append( radius )
                 else:
 
                     if tname in c_replace_list:
-                        # print('C* ok')
                         vdw_radii.append( type_to_vdws['C*'] )
 
                     elif tname in n_replace_list:
@@ -486,7 +484,6 @@ class Format2AmberBaseConverter(ConverterBase):
                         vdw_radii.append( type_to_vdws['C*'] )
 
                     else:
-                        # print('ng', tname)
                         type_to_vdws[tname]
 
         else:
@@ -652,7 +649,6 @@ class Format2AmberBaseConverter(ConverterBase):
 
                 ij = ntype*(itype-1) + jtype
                 index = amb_indexes[ij-1]
-                # if index < 0: print('negative', index, amb_c6s[index-1])
                 if index < 0: continue
                 c6s[itype_1, jtype_1]  = amb_c6s[index-1]
                 c12s[itype_1, jtype_1] = amb_c12s[index-1]
