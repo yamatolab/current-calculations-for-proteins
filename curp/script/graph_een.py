@@ -187,14 +187,18 @@ class EnergyConductivityParser:
 
         lines = ( line for line in fd if line.startswith('#') )
 
-        for line, iline in it.izip(lines, list(range(100))):
+        try:
+            enum_line = it.izip(lines, range(100))
+        except AttributeError:
+            enum_line = zip(lines, range(100))
+        except:
+            raise
 
+        for line, iline in enum_line:
             if line.startswith('#title'):
                 title = line.replace('#title', '')
-
             elif line.startswith('#label'):
                 labels = line.split()[1:]
-
             else:
                 pass
 

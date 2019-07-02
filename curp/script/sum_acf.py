@@ -25,6 +25,7 @@ def load_acf_first(acf_fp, dataname='acf'):
 
     donors    = get_stringnames( ncfile.variables['donors'][:] )
     acceptors = get_stringnames( ncfile.variables['acceptors'][:] )
+    print(donors)
 
     times     = ncfile.variables['time'][:]
     acfs       = ncfile.variables[dataname][:]
