@@ -951,8 +951,9 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
         nohyd  = self._setting.voronoi_no_hydrogen
         stype  = self._setting.voronoi_solvation
 
-        # load the water molucules data from pdb file
+        # load the water molecules data from pdb file
         mod_dir = os.path.dirname(__file__)
+        print(mod_dir)
         type_to_fns = {
                 'RANDOM20' : os.path.join(mod_dir, './random20.pdb.gz'),
                 'NPT20'    : os.path.join(mod_dir, './npt20.pdb.gz'   ),

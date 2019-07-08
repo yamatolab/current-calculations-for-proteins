@@ -63,7 +63,16 @@ class System:
 
         rid_shift = 0
 
-        if type(pdb_fpfd) == file:
+        print(type(pdb_fpfd))
+        try:
+            # Python 2
+            pdb_is_file = isinstance(pdb_fpfd, file)
+        except NameError:
+            # Python 3
+            from io import IOBase
+            pdb_is_file = isinstance(pdb_fpfd, IOBase)
+
+        if pdb_is_file:
             pdb_file = pdb_fpfd
 
         else:
@@ -78,6 +87,7 @@ class System:
 
         # get first atom
         for line in pdb_file:
+            line = line.decode()
             if line[0:6].strip() in ['ATOM', 'HETATM']:
                 atom_prev = parse_pdbline(line)
                 natm = 1
