@@ -119,8 +119,8 @@ class Writer:
         """headers -- string generator"""
         file = self.open()
         for h in headers:
-            file.write(h)
-            file.write('\n')
+            file.write(bytes(h, 'utf-8'))
+            file.write(b'\n')
         file.close()
 
     def write(self, lines):
@@ -128,8 +128,8 @@ class Writer:
         self._counter += 1
         file = self.open()
         for line in lines:
-            file.write(line)
-            file.write('\n')
+            file.write(bytes(line, 'utf-8'))
+            file.write(b'\n')
         file.close()
 
         if self._counter >= self._nfreq:
