@@ -53,7 +53,7 @@ def get_min_avg_max_rms(dist2s_trj):
     import time
     t0 = time.time()
     print('# itraj = {:>8}'.format(1), end='')
-    dist2s_fst = dist2s_trj.next()
+    dist2s_fst = next(dist2s_trj)
     dist2s_sum = dist2s_fst
     dists_sum  = numpy.sqrt(dist2s_fst)
 

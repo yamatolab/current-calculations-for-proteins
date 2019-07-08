@@ -1,5 +1,4 @@
-import current
-import flux
+from . import current, flux
 
 def get_calculator(setting):
     """Return the calculator object by setting."""

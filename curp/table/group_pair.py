@@ -1,20 +1,15 @@
 from __future__ import print_function
 
-import os, sys
-from collections import OrderedDict as odict
+import os
 import numpy
 
 # curp mudules
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import exception
-import clog as logger
-import interact_table as it
+from curp import exception
+import curp.table.interact_table as it
 
 class InvalidGroupName(exception.CurpException): pass
 
-import ini_parser as ini
+import curp.table.ini_parser as ini
 class GroupPairParser(ini.IniParser):
 
     def __init__(self, gpair_fn, gnames):
@@ -31,7 +26,7 @@ class GroupPairParser(ini.IniParser):
             invalid_names = list(set(gnames) - set(self.__gnames_base))
             msg = "{} in {} is invalid group names !".format(
                     invalid_names, self.get_filename())
-            
+
             raise InvalidGroupName(msg)
 
         for gname_i in gnames:
@@ -83,7 +78,7 @@ class GroupPair:
         table_with_gpair = numpy.array(list(self.gen_inttable()))
         base_table = numpy.array(list(base_table))
 
-        import lib_group_pair
+        from curp.table import lib_group_pair
         lib_gpair = lib_group_pair.within_gpair
         lib_gpair.setup(table_with_gpair, self.__natom)
 
@@ -112,13 +107,12 @@ def gen_compressed_iatms( iatoms ):
 
 
 if __name__ == '__main__':
-    import os
     gpair_fn = os.path.join(os.environ['CURP_HOME'],
             'test', 'energy-flux', 'pickup', 'gpair.dat')
     tplprm_fn = os.path.join(os.environ['CURP_HOME'],
             'test', 'amber-b2AR', 'stripped.prmtop.gz')
 
-    from parser.amber.topology import TopologyParser, Format2AmberBaseConverter
+    from curp.parser.amber.topology import TopologyParser, Format2AmberBaseConverter
     raw_tpl = TopologyParser(tplprm_fn)
     raw_tpl.parse()
     tpl = Format2AmberBaseConverter(raw_tpl, use_atomtype=False)
@@ -127,7 +121,7 @@ if __name__ == '__main__':
     atom_info = tpl.get_atom_info()
     res_info = tpl.get_residue_info()
 
-    import group
+    from curp.table import group
     gnames = [ gname for gname, iatoms
             in group.gen_residue_group(res_info, atom_info) ]
 

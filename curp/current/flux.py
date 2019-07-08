@@ -5,13 +5,10 @@ import time
 import numpy
 
 # curp modules
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import utility
-import clog as logger
+from curp import utility
+import curp.clog as logger
 
-import base
+from curp.current import base, lib_flux, lib_hflux
 ################################################################################
 class EnergyFluxCalculator(base.FluxCalculator):
 
@@ -105,7 +102,6 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
 
 ################################################################################
-import lib_flux
 class EnergyFlux:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
@@ -265,7 +261,6 @@ class HeatFluxCalculator(base.FluxCalculator):
 
 
 ################################################################################
-import lib_hflux
 class HeatFlux:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
@@ -350,7 +345,7 @@ class StressFluxCalculator(base.FluxCalculator):
                 flux_pot[gname_i, gname_j] = ts
 
         # bonded two-body force
-        for iatm, jatm, f_ij in bonded_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded_tbfs.items()):
             gname_i = self.__iatm_to_groups[iatm]
             gname_j = self.__iatm_to_groups[jatm]
 
@@ -360,7 +355,7 @@ class StressFluxCalculator(base.FluxCalculator):
             flux_pot[gname_j, gname_i] += f_ij_r_ij / volume_ji
 
         # bonded14 two-body force
-        for iatm, jatm, f_ij in bonded14_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded14_tbfs.items()):
             gname_i = self.__iatm_to_groups[iatm]
             gname_j = self.__iatm_to_groups[jatm]
 

@@ -199,7 +199,7 @@ class TBFMatrix_Old:
 
     def __repr__(self):
         mes = ( '[{i},{j}] = {value}'.format(i=i,j=j,value=str(ary))
-                for i, j, ary in self.items() )
+                for i, j, ary in list(self.items()) )
 
         return '\n'.join(mes)
 
@@ -220,7 +220,7 @@ class TBFMatrix(dict):
         if self.__shape != other.get_shape():
             raise InvalidShapeError
         new = self.copy()
-        for key, value in other.items():
+        for key, value in list(other.items()):
             new[key] += value
         return new
 
