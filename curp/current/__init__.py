@@ -12,7 +12,7 @@ def get_calculator(setting):
         obj = flux.StressFluxCalculator
     elif method == 'energy-current':
         obj = current.EnergyCurrentCalculator
-    elif method == 'energy-flux':
+    elif method == 'energy-flux' or 'kinetic-flux':
         obj = flux.EnergyFluxCalculator
     elif method == 'heat-flux':
         obj = flux.HeatFluxCalculator

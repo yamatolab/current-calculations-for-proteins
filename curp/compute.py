@@ -268,7 +268,7 @@ def init_current(setting, par):
     if setting.curp.method == "momentum-current":
         inttable = target.make_interaction_table_current(
             nonbonded_table, target_atoms, natom)
-    elif setting.curp.method in ("energy-flux", "heat-flux"):
+    elif setting.curp.method in ("energy-flux", "heat-flux", "kinetic-flux"):
         inttable = target.make_interaction_table_flux(
             nonbonded_table, target_atoms, natom)
     else:
@@ -426,6 +426,9 @@ def get_data_iter(setting, topology, target_atoms):
         use_classic = True
 
     elif method == "heat-flux":
+        use_classic = True
+
+    elif method == "kinetic-flux":
         use_classic = True
 
     elif method == "electron-transfer":
@@ -595,7 +598,8 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
     # Decide the calculation method
     do_current = setting.curp.method in ("momentum-current",
                                          "energy-flux",
-                                         "heat-flux")
+                                         "heat-flux",
+                                         "kinetic-flux")
     do_dynamics = setting.curp.method == "microcanonical"
 
     if do_init and do_current:
