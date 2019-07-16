@@ -241,11 +241,12 @@ class Setting(SettingBase):
             desc=('The method of calculation.'
                 '"momentum-current" calculates the stress tensor for systems. '
                 '"energy-flux" calculates the energy flow for systems. '
+                '"kinetic-flux" calculates the kinetic energy flow for systems. '
                 '"dynamics is mainly used to verify the validity of '
                 ' the CURP program numerically, '
                 'so its implementation is very simple'),
             values=['energy-flux', 'momentum-current',
-                    'microcanonical', 'heat-flux']),
+                    'microcanonical', 'heat-flux', 'kinetic-flux']),
                     #'energy-current', 'stress-flux']),
 
         group_method = Choice(default='none', require=False,
