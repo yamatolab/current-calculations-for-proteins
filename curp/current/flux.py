@@ -36,7 +36,7 @@ class EnergyFluxCalculator(base.FluxCalculator):
         else:
             pass
 
-        method = get_setting().curp.method
+        method = self.get_setting().curp.method
         if method == 'energy-flux':
             lib = lib_flux
         elif method == 'kinetic-flux':
@@ -46,7 +46,7 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
         self.fcal = EnergyFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
-                flag_atom, flag_group, lib)
+                lib, flag_atom, flag_group)
 
     def cal_bonded(self, crd, vel, bond_type):
         """Calculate the energy flux for the bonded term."""
@@ -112,8 +112,8 @@ class EnergyFluxCalculator(base.FluxCalculator):
 ################################################################################
 class EnergyFlux:
 
-    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
-                       flag_atm=True, flag_grp=True, lib):
+    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs, lib,
+                       flag_atm=True, flag_grp=True):
         self.__flag_atm = flag_atm
         self.__flag_grp = flag_grp
 

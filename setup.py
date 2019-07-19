@@ -24,7 +24,7 @@ def ext_modules(config, _dir):
                                      f2py_options=['--quiet']
                                     )
 
-with open('README.rst', 'r') as summary:
+with open('README.rst', 'r', encoding='utf-8') as summary:
     LONG_DESCRIPTION = summary.read()
 
 def run_setup():
@@ -58,7 +58,7 @@ def run_setup():
 
         install_requires=["numpy>=1.11.2",
                           "nose",
-                          "mpi4py>=2.0",
+                          "mpi4py>=1.2",
                           "benchmarker",
                           "pygraphviz",
                           "netCDF4>=1.2.4"],
