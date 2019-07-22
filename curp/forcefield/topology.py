@@ -31,10 +31,16 @@ class Interactions(object):
         TrackedList containing parmed.topologyobjects.Bond, .Angle,
         .Dihedral, .Improper, .UreyBradley or .Cmap
     ids: list of list of int
-        Lists of ids of the atoms per interactions.
+        Lists of ids of the atoms per interactions for fortran.
+        (atom ids starting by 1, not 0).
 
     Attributes
     ----------
+    parmed : parmed.topologyobjects.TrackedList
+             See Parameters description.
+    ids: list of list of int
+         See Parameters description.
+         If parmed used, all atoms ids are shifted by 1
     num_atm : int
         Number of atoms in one interaction
         Ex: 3 for angles or urey-bradleys
@@ -43,6 +49,7 @@ class Interactions(object):
     to_ipair : list of list of int or None
         For each interaction index, returns the associated pairs index.
         Created and edited only when pairs are edited.
+        For fortran (pairs indexes starting by 1).
 
     Examples
     --------
@@ -129,7 +136,8 @@ class Interactions(object):
         for i, interaction in enumerate(self.parmed):
             for j in range(self.num_atm):
                 atom = getattr(interaction, 'atom{}'.format(j+1))
-                ids[i,j] = atom.idx
+                ids[i, j] = atom.idx
+        ids = ids + 1
         return(ids)
 
     def _make_pairs(self):
@@ -199,23 +207,34 @@ class TableMaker(object):
         return self._natom
 
     def _make_nonbonded_table(self):
-        """Create InteractionTable
+        """Create non-bonded InteractionTable
 
         Returns
         -------
         new_table : curp.table.interact_table.InteractionTable
+            form: [[iatm, jatm_beg, jatm_end]]
+            with [jatm_beg, jatm_end] a range of atoms with which
+            iatm is not interacting.
+
+        Examples
+        --------
+        Considering a topology file containing two water molecules:
+        H-O-H H-O-H
+        1 2 3 4 5 6
+
+        list(new_table) would be:
+        [[1, 4, 6],
+         [2, 4, 6],
+         [3, 4, 6]]
         """
         bonded_pairs = numpy.array(self.bonded_pairs)
         int_table = InteractionTable(self.natom)
 
-        print('DEBUG: it can print!')
         from curp.forcefield import lib_nonbond
         mod_tab = lib_nonbond.without_bonded
-        print('DEBUG: mod_tab created')
         mod_tab.setup(bonded_pairs, self.natom)
 
         int_table = numpy.array(list(int_table))
-        print('DEBUG: ', bonded_pairs, int_table)
         nonbonded_table, ntable = mod_tab.get_nonbonded_table(int_table)
         new_table = InteractionTable(
                 base_table=nonbonded_table[:ntable].tolist())
@@ -246,7 +265,7 @@ class Topology(TableMaker, metaclass=ABCMeta):
         TableMaker.__init__(self)
 
         self.parmed = parmed
-        self._natoms = len(self.parmed.atoms)
+        self._natom = len(self.parmed.atoms)
         self.bonds = Interactions(self.parmed.bonds)
         self.angles = Interactions(self.parmed.angles)
         self.dihedrals = Interactions(self.parmed.dihedrals)
