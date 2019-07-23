@@ -41,7 +41,7 @@ class EnergyFluxCalculator(base.FluxCalculator):
             lib = lib_flux
         elif method == 'kinetic-flux':
             lib = lib_keflux
-        else:
+        else: 
             pass
 
         self.fcal = EnergyFlux( self.get_target_atoms(),
@@ -116,15 +116,16 @@ class EnergyFlux:
                        flag_atm=True, flag_grp=True):
         self.__flag_atm = flag_atm
         self.__flag_grp = flag_grp
+        self.__lib = lib
 
-        lib.bonded.initialize( target_atoms, iatm_to_igrp,
+        self.__lib.bonded.initialize( target_atoms, iatm_to_igrp,
                 bonded_pairs, flag_atm, flag_grp)
-        lib.nonbonded.initialize( target_atoms, iatm_to_igrp,
+        self.__lib.nonbonded.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
 
     def cal_bonded(self, vel, tbfs):
         """Calculate the flux due to bonded potentials."""
-        m_bond = lib.bonded
+        m_bond = self.__lib.bonded
 
         # calculate
         m_bond.cal_bonded(vel, tbfs)
@@ -139,7 +140,7 @@ class EnergyFlux:
     def cal_nonbonded(self, vel, gen_tbfs, table):
         """Calculate the flux due to nonbonded potentials."""
         t0 = time.time()
-        m_non = lib.nonbonded
+        m_non = self.__lib.nonbonded
 
         # initialize
         m_non.init_cal(vel)
