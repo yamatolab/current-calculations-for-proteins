@@ -10,7 +10,6 @@ from __future__ import print_function
 import os
 import sys
 import itertools
-from abc import abstractmethod, abstractproperty, ABCMeta
 
 import numpy
 from parmed.topologyobjects import (Bond, Angle, Dihedral, Improper,
@@ -44,15 +43,27 @@ class Interactions(object):
     num_atm : int
         Number of atoms in one interaction
         Ex: 3 for angles or urey-bradleys
-    pairs : list of list of int
+    pairs : list of tuples of int
         List of pair of atoms interacting.
     to_ipair : list of list of int or None
         For each interaction index, returns the associated pairs index.
         Created and edited only when pairs are edited.
         For fortran (pairs indexes starting by 1).
+    ff_cst : dict
+        Each key is an attribute relevant for forcefield calculations
+        automatically extracted from parmed[0].type.
+        Each key is also a class attribute.
+
+    Methods
+    -------
+    make_to_ipair(pairs)
+        Set the to_ipair attribute depending on ids attribute and pairs.
+    flog()
+        Called by clog.info().
 
     Examples
     --------
+    >>> from curp.forcefield.topology import Interactions
     >>> angles = Interactions()
     >>> angles.ids = [[1, 2, 3],
     ...               [4, 1, 3]]
@@ -63,12 +74,57 @@ class Interactions(object):
     array([[0, 1, 3],
            [-2, -4, 1]])
     """
-    def __init__(self, parmed=[], ids=[]):
+    def __init__(self, parmed=[], ids=[], ff_cst={}):
+        self._ids = []
+        self.ff_cst = {}
+
+        # If a parmed interactions TrackedList is given, ids and ff_cst
+        # are automatically made.
         self.parmed = parmed
-        if not self.parmed:
+
+        # If a parmed TrackedList was entered, setting ids or ff_cst
+        # will return an error.
+        if ids:
             self.ids = ids
+        if ff_cst:
+            self.ff_cst = ff_cst
+
         self._to_ipair = None
 
+    def __str__(self):
+        """
+        Representation of the class using print()
+        """
+        ff_cst_names = list(self.ff_cst.keys())
+        ff_list = [self.ff_cst[key] for key in ff_cst_names]
+
+        # Create the format
+        fmt = '{:>5} {:>20}'
+        for key in ff_cst_names: fmt += ' {:>12}'
+        fmt += '\n'
+
+        # Create the header
+        rpr = fmt.format('id', 'iatoms', *ff_cst_names)
+
+        # Create the body
+        fmt = fmt.replace(':>12', ':>12.7f')
+        for inter_id, infos in enumerate(zip(self.ids.tolist(),
+                                             *ff_list), 1):
+            rpr += fmt.format(inter_id, str(infos[0]), *infos[1:])
+        return rpr
+
+    def __repr__(self):
+        """
+        Representation of the class using repr()
+        """
+        rpr = ('{!s}(\n'
+               '    ids={!r},\n'
+               '    ff_cst={!r})').format(self.__class__,
+                                          self.ids,
+                                          self.ff_cst)
+        return rpr
+
+    # To understand @property see property decorator.
     @property
     def parmed(self):
         return self._parmed
@@ -111,12 +167,14 @@ class Interactions(object):
         """Make forcefield constant lists and set them as attributes"""
         if len(self.parmed) > 0:
             for key in self.parmed[0].type.__dict__:
-                if key not in ('used', 'penalty', 'idx', 'list'):
+                if key not in ('used', 'penalty', 'idx', 'list', '_idx'):
                     ff_cst_list = [getattr(inter.type, key)
                                    for inter in self.parmed]
                     setattr(self, key, ff_cst_list)
+                    self.ff_cst[key] = getattr(self, key)
 
     def _make_num_atm(self):
+        """Return the number of atoms in one interaction"""
         num_atm = 1
         try:
             while 'atom{}'.format(num_atm+1) in dir(self.parmed[0]):
@@ -152,7 +210,7 @@ class Interactions(object):
     def make_to_ipair(self, pairs):
         """Link interaction table with bonded_pairs table.
 
-        Setup self.to_ipair given a list of atom id pairs and self.ids.
+        Set self.to_ipair given a list of atom id pairs and self.ids.
 
         Parameters
         ----------
@@ -260,7 +318,7 @@ class TableMaker(object):
         return sorted(set(lists_pairs))
 
 
-class Topology(TableMaker, metaclass=ABCMeta):
+class Topology(TableMaker):
     def __init__(self, parmed):
         TableMaker.__init__(self)
 

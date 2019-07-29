@@ -28,7 +28,13 @@ class TestIds:
 
 class TestParmedTopology:
     def setup(self):
+        """
+        Create a parmed Structure such as:
+        H-C-N-H CL
+        1 0 2 3 4
+        """
         s = self.s = parmed.structure.Structure()
+
 
         # H-C-N-H CL
         # 1 0 2 3
@@ -61,6 +67,8 @@ class TestParmedTopology:
         self.tpl = topology.Topology(s)
 
     def test_create_topology(self):
+        print(repr(self.tpl.bonds))
+        print(self.tpl.bonds)
         eq_(self.tpl.bonds.ids.tolist(), [[1, 2], [1, 3], [3,4]])
         eq_(self.tpl.angles.ids.tolist(), [[2, 1, 3], [1, 3, 4]])
         eq_(self.tpl.dihedrals.ids.tolist(), [[1, 2, 3, 4]])
