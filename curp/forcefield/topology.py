@@ -1,9 +1,9 @@
 """
 Topology and Interactions objects.
 
-
 To understand @property and @x.setter:
 https://docs.python.org/3/library/functions.html?highlight=property#property
+
 """
 from __future__ import print_function
 
@@ -73,6 +73,7 @@ class Interactions(object):
     >>> print(angles.to_ipair)
     array([[0, 1, 3],
            [-2, -4, 1]])
+
     """
     def __init__(self, parmed=[], ids=[], ff_cst={}):
         self._ids = []
@@ -92,9 +93,7 @@ class Interactions(object):
         self._to_ipair = None
 
     def __str__(self):
-        """
-        Representation of the class using print()
-        """
+        """Representation of the class using print()"""
         ff_cst_names = list(self.ff_cst.keys())
         ff_list = [self.ff_cst[key] for key in ff_cst_names]
 
@@ -114,9 +113,7 @@ class Interactions(object):
         return rpr
 
     def __repr__(self):
-        """
-        Representation of the class using repr()
-        """
+        """Representation of the class using repr()"""
         rpr = ('{!s}(\n'
                '    ids={!r},\n'
                '    ff_cst={!r})').format(self.__class__,
@@ -215,6 +212,7 @@ class Interactions(object):
         Parameters
         ----------
         pairs: list of list of integers
+
         """
 
         # Compute the number of combinations between atoms in one interaction
@@ -284,6 +282,7 @@ class TableMaker(object):
         [[1, 4, 6],
          [2, 4, 6],
          [3, 4, 6]]
+
         """
         bonded_pairs = numpy.array(self.bonded_pairs)
         int_table = InteractionTable(self.natom)
@@ -310,6 +309,7 @@ class TableMaker(object):
         -------
         list_pairs : list of list of ints
             Sorted, unique pairs of atom ids.
+
         """
 
         lists_pairs = []
@@ -324,6 +324,8 @@ class Topology(TableMaker):
 
         self.parmed = parmed
         self._natom = len(self.parmed.atoms)
+        self.atoms = None
+        self.residues = None
         self.bonds = Interactions(self.parmed.bonds)
         self.angles = Interactions(self.parmed.angles)
         self.dihedrals = Interactions(self.parmed.dihedrals)
@@ -340,6 +342,7 @@ class Topology(TableMaker):
         """Get the list that decomposes all potential.
         dtype = 'all', 'bonded', 'bonded14', 'bonded+' (bonded and 14),
         'nonbonded' or 'nonbonded+' (nonbonded and 14)
+
         """
         bonded_list = ['bond', 'angle', 'torsion', 'improper']
         bonded14_list = ['coulomb14', 'vdw14']
@@ -352,8 +355,35 @@ class Topology(TableMaker):
         elif dtype == 'nonbonded+': return nonbonded_list + bonded14_list
         else: return bonded_list + bonded14_list + nonbonded_list
 
-    # For amber only:
+    def _make_atoms(self):
+        """Get the dictionary of atom ids, names, masses, elems, vdw_radii."""
+        names, elems, ids, masses, vdw_radii, charges = [] * 6
 
+        for i, atom in enumerate(self.parmed, 1):
+            aname = atom.name
+            names.append(aname)
+            if aname[0].isdigit():
+                elems.append(aname[1])
+            else:
+                elems.append(aname[0])
+            masses.append(atom.mass)
+            vdw_radii.append(atom.rmin)
+            charges.append(atom.charges)
+            ids.append(i)
+
+        return dict(ids=ids, names=names, elems=elems, masses=masses
+                    vdw_radii=vdw_radii)
+
+    def _make_residues(self):
+        ids = [resid.number for resid in self.parmed.residues]
+        names = [resid.name for resid in self.parmed.residues]
+        return(dict(ids=ids, names=names))
+
+    def _make_vdw(self):
+
+
+    # TODO
+    # For amber only:
     def _make_bonded14_pairs(self):
         for four in four_atoms:
             pair = four[0], four[3]
