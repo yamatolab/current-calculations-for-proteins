@@ -9,7 +9,10 @@ from curp.setting_base import *
 
 
 class Setting(SettingBase):
-    """Settings for curp computations
+    """Settings for curp computations.
+
+    Object created from the configuration file (.cfg). Contains settings
+    of the calculation (type of calculation, trajectory files address, ...)
 
     Parameters
     ----------
@@ -25,7 +28,6 @@ class Setting(SettingBase):
     >>> setting = st.Setting(config)
 
     To create a Setting object from a configuration file:
-    >>> import curp.setting as st
     >>> config = st.parse_config(path_to_cfg)
     >>> setting = st.Setting(config)
 

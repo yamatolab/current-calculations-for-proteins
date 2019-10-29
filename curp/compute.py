@@ -170,7 +170,7 @@ def gen_tables(inttable):
 
     Returns
     -------
-    interact_table : list
+    interact_table : list of list
     """
 
     interact_table = list(inttable.gen_divided_table())
