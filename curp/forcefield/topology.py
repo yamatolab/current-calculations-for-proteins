@@ -18,7 +18,6 @@ from parmed.topologyobjects import (Bond, Angle, Dihedral, Improper,
 # curp package
 from curp.table.interact_table import InteractionTable
 import curp.clog as logger
-from curp.forcefield import lib_bonded_pair
 
 
 class Interactions(object):
@@ -35,8 +34,6 @@ class Interactions(object):
 
     Attributes
     ----------
-    parmed : parmed.topologyobjects.TrackedList
-             See Parameters description.
     ids: list of list of int
          See Parameters description.
          If parmed used, all atoms ids are shifted by 1
@@ -52,14 +49,15 @@ class Interactions(object):
     ff_cst : dict
         Each key is an attribute relevant for forcefield calculations
         automatically extracted from parmed[0].type.
-        Each key is also a class attribute.
+        Each key can also be called as an attribute of the class.
+        Ex :
+        >>> self.ff_cst['k'] == self.k
+        True
 
     Methods
     -------
     make_to_ipair(pairs)
         Set the to_ipair attribute depending on ids attribute and pairs.
-    flog()
-        Called by clog.info().
 
     Examples
     --------
@@ -73,8 +71,8 @@ class Interactions(object):
     >>> print(angles.to_ipair)
     array([[0, 1, 3],
            [-2, -4, 1]])
-
     """
+
     def __init__(self, parmed=[], ids=[], ff_cst={}):
         self._ids = []
         self.ff_cst = {}
@@ -93,7 +91,7 @@ class Interactions(object):
         self._to_ipair = None
 
     def __str__(self):
-        """Representation of the class using print()"""
+        """Representation of the class using print()."""
         ff_cst_names = list(self.ff_cst.keys())
         ff_list = [self.ff_cst[key] for key in ff_cst_names]
 
@@ -113,15 +111,13 @@ class Interactions(object):
         return rpr
 
     def __repr__(self):
-        """Representation of the class using repr()"""
+        """Representation of the class using repr()."""
         rpr = ('{!s}(\n'
                '    ids={!r},\n'
-               '    ff_cst={!r})').format(self.__class__,
-                                          self.ids,
-                                          self.ff_cst)
+               '    ff_cst={!r})').format(self.__class__, self.ids, self.ff_cst)
         return rpr
 
-    # To understand @property see property decorator.
+    # To understand @property see property decorator in python doc.
     @property
     def parmed(self):
         return self._parmed
@@ -161,17 +157,19 @@ class Interactions(object):
         return self._to_ipair
 
     def _make_ff_cst_lists(self):
-        """Make forcefield constant lists and set them as attributes"""
-        if len(self.parmed) > 0:
-            for key in self.parmed[0].type.__dict__:
-                if key not in ('used', 'penalty', 'idx', 'list', '_idx'):
-                    ff_cst_list = [getattr(inter.type, key)
-                                   for inter in self.parmed]
-                    setattr(self, key, ff_cst_list)
-                    self.ff_cst[key] = getattr(self, key)
+        """Make forcefield constant lists and set them as attributes."""
+        other_attrib = {'locked', 'used', 'penalty', 'idx', 'list', '_idx'}
+        type_attrib = self.parmed[0].type.__dict__.keys()
+        constant_names = type_attrib - other_attrib
+
+        for cst_name in constant_names:
+            # Get a list for each atom of the forcefield constant
+            ff_cst_list = [getattr(inter.type, cst_name) for inter in self.parmed]
+            setattr(self, cst_name, ff_cst_list)
+            self.ff_cst[cst_name] = getattr(self, cst_name)
 
     def _make_num_atm(self):
-        """Return the number of atoms in one interaction"""
+        """Return the number of atoms in one interaction."""
         num_atm = 1
         try:
             while 'atom{}'.format(num_atm+1) in dir(self.parmed[0]):
@@ -186,7 +184,7 @@ class Interactions(object):
         return(num_atm)
 
     def _make_ids(self):
-        """Return lists of atom ids for each interaction"""
+        """Return lists of atom ids for each interaction."""
         ids = numpy.zeros((len(self.parmed), self.num_atm), int)
         for i, interaction in enumerate(self.parmed):
             for j in range(self.num_atm):
@@ -196,7 +194,7 @@ class Interactions(object):
         return(ids)
 
     def _make_pairs(self):
-        """Return list of all sorted unique interacting atom pairs"""
+        """Return list of all sorted unique interacting atom pairs."""
         pairs = []   # ipair => (iatm, jatm)
         for atom_ids in self.ids:
             for pair in itertools.combinations(atom_ids, 2):
@@ -233,14 +231,142 @@ class Interactions(object):
         self._to_ipair = to_ipair
 
 
-class TableMaker(object):
-    """Define required methods for making interaction table"""
-    def __init__(self):
-        self._bonded_inter = {}   # Bonded Interactions objects
-        self._nonbonded_inter = {}    # Non-bonded Interactions objects
+class Topology:
+    """Topology
+    Used to start TwoBody object.
+
+    Parameters
+    ----------
+    parmed: parmed.Structure
+    Parameter object from parmed.
+
+    Attributes
+    ----------
+    natom : int
+        Number of atoms
+    atoms : dict
+        Lists of atoms properties: atom ids, names, masses, van-der-waals radii
+        (vdw_radii) and Lennard-Jones well-depth (epsilons).
+        In LJ formula, van-der-waals radius (LJ potential at minimum) is
+        rmin(i,j) = vdw_radii[i] + vdw_radii[j]
+        and epsilon (LJ well-depth) is
+        epsilon(i,j) = sqrt(epsilons[i] * epsilons[j])
+    residues : dict
+        Ids and names of residues.
+    bonded_inter : dict of Interactions
+        Dictionary regrouping all Interactions instances.
+    decomp_list : dict
+        List that decomposes all potential.
+        keys = 'all', 'bonded', 'bonded+' (bonded and 1-4 for amber),
+        'nonbonded' or 'nonbonded+' (nonbonded and 1-4 for amber).
+    bonded_pairs : list of list of int
+        Sorted, unique pairs of atom ids from bonded_inter.
+    nonbonded_table : curp.table.interact_table.InteractionTable
+        Iterable of [iatm, jatm_beg, jatm_end]
+        with [jatm_beg, jatm_end] a range of atoms with which iatm is not
+        interacting.
+    bonds : Interactions
+        Force constants keys are k (force constant in kcal/mol/Angstrom^2)
+        and req (equilibrium bond distance in angstrom).
+    angles : Interactions
+        Force constants keys (ff_cst.keys()) are k (force constant in
+        kcal/mol/radians^2) and theteq (equilibrium angle in degrees).
+    dihedrals : Interactions
+        In case of amber, regroups torsions and impropers.
+        Force constants keys are phi_k (force constant in kcal/mol), per (dihedral
+        periodicity), phase (dihedral phase in degrees), and in amber case
+        scee (1-4 electrostatic scaling factor) and scnb (1-4 Lennard-Jones
+        scaling factor).
+    impropers : Interactions
+        CHARMM impropers. Force constants keys are psi_k (force constant in
+        kcal/mol/radians^2) and psi_eq (equilibrium torsion angle in degrees).
+    """
+    def __init__(self, parmed):
+        self.parmed = parmed
+        self._natom = len(self.parmed.atoms)
+        self.atoms = self._make_atoms()
+        self.residues = self._make_residues()
+
+        # Basic Interactions
+        self.bonds = Interactions(self.parmed.bonds)
+        self.angles = Interactions(self.parmed.angles)
+        self.dihedrals = Interactions(self.parmed.dihedrals)
+        self.impropers = Interactions(self.parmed.impropers)
+
+        # Conversion of degrees to radians
+        self.dihedrals.ff_cst['phase'] = self.dihedrals.phase = [
+                angle/180.*np.pi for angle in self.dihedrals.phase]
+        self.impropers.ff_cst['psi_eq'] = self.impropers.psi_eq = [
+                angle/180.*np.pi for angle in self.impropers.psi_eq]
+
+        self._bonded_inter = {
+                'bond': self.bonds,
+                'angle': self.angles,
+                'dihedral': self.dihedrals,
+                'improper': self.impropers
+                }
+
+        self.decomp_list = {
+            'bonded': list(self.bonded_inter.keys()),
+            'bonded+': list(self.bonded_inter.keys()),
+            'nonbonded': ['coulomb', 'vdw'],
+            'nonbonded+': ['coulomb', 'vdw']
+            }
+        self.decomp_list['all'] = (self.decomp_list['bonded+']
+                                   + self.decomp_list['nonbonded'])
+
+        # Table private variables
         self._bonded_pairs = None
         self._nonbonded_table = None
-        self._natom = 0
+
+    @property
+    def natom(self):
+        return self._natom
+
+    @property
+    def bonded_inter(self):
+        return self._bonded_inter
+
+    def _make_decomp_list(self, bonded14_list=[]):
+        bonded_list = list(self.bonded_inter.keys)
+        nonbonded_list = ['coulomb', 'vdw']
+        decomp_list = {
+            'bonded': bonded_list,
+            'bonded14': bonded14_list,
+            'bonded+': bonded_list + bonded14_list,
+            'nonbonded': nonbonded_list,
+            'nonbonded+': nonbonded_list + bonded14_list,
+            'all': bonded_list + bonded14_list + nonbonded_list
+            }
+        return decomp_list
+
+    def _make_atoms(self):
+        """Return atom properties dictionary.
+
+        Get the dictionary of atom ids, names, masses, van-der-waals radii
+        and Lennard-Jones well-depth.
+
+        Atom ids as used by fortran (list counter starting at 1, not 0).
+        """
+        names = ['' for k in range(self.natom)]
+        ids = numpy.arange(start=1, stop=self.natom+1, dtype=int)
+        masses, charges, vdw_radii, epsilons = (numpy.empty(self.natom, dtype=float),) * 4
+
+        for i, atom in enumerate(self.parmed.atoms):
+            names[i] = atom.name
+            masses[i] = atom.mass
+            charges[i] = atom.charge
+            vdw_radii[i] = atom.rmin
+            epsilons[i] = atom.epsilon
+
+        atoms = dict(ids=ids, names=names, masses=masses, charges=charges,
+                     vdw_radii=vdw_radii, epsilons=epsilons)
+        return atoms
+
+    def _make_residues(self):
+        ids = [resid.number for resid in self.parmed.residues]
+        names = [resid.name for resid in self.parmed.residues]
+        return(dict(ids=ids, names=names))
 
     @property
     def bonded_inter(self):
@@ -249,40 +375,44 @@ class TableMaker(object):
     @property
     def bonded_pairs(self):
         if self._bonded_pairs is None:
-            self._bonded_pairs = self._concat_pairs(self.bonded_inter)
+            lists_pairs = []
+            for key, inter in self.bonded_inter.items():
+                lists_pairs += inter.pairs
+            self._bonded_pairs = sorted(set(lists_pairs))
         return self._bonded_pairs
 
     @property
     def nonbonded_table(self):
+        """Non-bonded InteractionTable
+
+        curp.table.interact_table.InteractionTable, an iterable of
+        [iatm, jatm_beg, jatm_end].
+        [jatm_beg, jatm_end] a range of atom ids with which iatm has no
+        bonded interactions.
+
+        Examples
+        --------
+        Considering a topology file containing two dihydrogen molecules
+        and a water molecule:
+        H-H H-O-H H-H
+        1 2 3 4 5 6 7
+        list(new_table) would be:
+        [[1, 3, 7],
+         [2, 3, 7],
+         [3, 6, 7],
+         [4, 6, 7],
+         [5, 6, 7]]
+        """
         if self._nonbonded_table is None:
             self._nonbonded_table = self._make_nonbonded_table()
         return self._nonbonded_table
 
-    @property
-    def natom(self):
-        return self._natom
-
     def _make_nonbonded_table(self):
-        """Create non-bonded InteractionTable
+        """Create non-bonded interaction table
 
-        Returns
-        -------
-        new_table : curp.table.interact_table.InteractionTable
-            form: [[iatm, jatm_beg, jatm_end]]
-            with [jatm_beg, jatm_end] a range of atoms with which
-            iatm is not interacting.
-
-        Examples
-        --------
-        Considering a topology file containing two water molecules:
-        H-O-H H-O-H
-        1 2 3 4 5 6
-
-        list(new_table) would be:
-        [[1, 4, 6],
-         [2, 4, 6],
-         [3, 4, 6]]
-
+        Return
+        ------
+        new_table: curp.table.interact_table.InteractionTable
         """
         bonded_pairs = numpy.array(self.bonded_pairs)
         int_table = InteractionTable(self.natom)
@@ -297,90 +427,6 @@ class TableMaker(object):
                 base_table=nonbonded_table[:ntable].tolist())
 
         return new_table
-
-    def _concat_pairs(self, inter_lists):
-        """Concatenate pairs from a dictionary of Interactions instances.
-
-        Parameters
-        ----------
-        inter_lists : dict of Interactions
-
-        Returns
-        -------
-        list_pairs : list of list of ints
-            Sorted, unique pairs of atom ids.
-
-        """
-
-        lists_pairs = []
-        for key, inter in inter_lists.items():
-            lists_pairs += inter.pairs
-        return sorted(set(lists_pairs))
-
-
-class Topology(TableMaker):
-    def __init__(self, parmed):
-        TableMaker.__init__(self)
-
-        self.parmed = parmed
-        self._natom = len(self.parmed.atoms)
-        self.atoms = None
-        self.residues = None
-        self.bonds = Interactions(self.parmed.bonds)
-        self.angles = Interactions(self.parmed.angles)
-        self.dihedrals = Interactions(self.parmed.dihedrals)
-        self.impropers = Interactions(self.parmed.impropers)
-
-        self._bonded_inter = {
-                'bonds': self.bonds,
-                'angles': self.angles,
-                'dihedrals': self.dihedrals,
-                'impropers': self.impropers
-                }
-
-    def get_decomp_list(self, dtype='all'):
-        """Get the list that decomposes all potential.
-        dtype = 'all', 'bonded', 'bonded14', 'bonded+' (bonded and 14),
-        'nonbonded' or 'nonbonded+' (nonbonded and 14)
-
-        """
-        bonded_list = ['bond', 'angle', 'torsion', 'improper']
-        bonded14_list = ['coulomb14', 'vdw14']
-        nonbonded_list = ['coulomb', 'vdw']
-
-        if dtype == 'bonded': return bonded_list
-        elif dtype == 'bonded14': return bonded14_list
-        elif dtype == 'bonded+': return bonded_list + bonded14_list
-        elif dtype == 'nonbonded': return nonbonded_list
-        elif dtype == 'nonbonded+': return nonbonded_list + bonded14_list
-        else: return bonded_list + bonded14_list + nonbonded_list
-
-    def _make_atoms(self):
-        """Get the dictionary of atom ids, names, masses, elems, vdw_radii."""
-        names, elems, ids, masses, vdw_radii, charges = [] * 6
-
-        for i, atom in enumerate(self.parmed, 1):
-            aname = atom.name
-            names.append(aname)
-            if aname[0].isdigit():
-                elems.append(aname[1])
-            else:
-                elems.append(aname[0])
-            masses.append(atom.mass)
-            vdw_radii.append(atom.rmin)
-            charges.append(atom.charges)
-            ids.append(i)
-
-        return dict(ids=ids, names=names, elems=elems, masses=masses
-                    vdw_radii=vdw_radii)
-
-    def _make_residues(self):
-        ids = [resid.number for resid in self.parmed.residues]
-        names = [resid.name for resid in self.parmed.residues]
-        return(dict(ids=ids, names=names))
-
-    def _make_vdw(self):
-
 
     # TODO
     # For amber only:

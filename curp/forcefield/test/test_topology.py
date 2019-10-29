@@ -35,24 +35,22 @@ class TestParmedTopology:
         """
         s = self.s = parmed.structure.Structure()
 
+        # Create atoms
+        s.add_atom(parmed.Atom(name='C', atomic_number=6), 'ALA', 1, 'A')
+        s.add_atom(parmed.Atom(name='HC', atomic_number=1), 'ALA', 1, 'A')
+        s.add_atom(parmed.Atom(name='N', atomic_number=7), 'ALA', 1, 'A')
+        s.add_atom(parmed.Atom(name='HN', atomic_number=1), 'ALA', 1, 'A')
+        s.add_atom(parmed.Atom(name='CL', atomic_number=17), 'CLA', 1, 'B')
 
-        # H-C-N-H CL
-        # 1 0 2 3
-
-        s.add_atom(parmed.Atom(atomic_number=6), 'ALA', 1, 'A')
-        s.add_atom(parmed.Atom(atomic_number=1), 'ALA', 1, 'A')
-        s.add_atom(parmed.Atom(atomic_number=7), 'ALA', 1, 'A')
-        s.add_atom(parmed.Atom(atomic_number=1), 'ALA', 1, 'A')
-        s.add_atom(parmed.Atom(atomic_number=17), 'CLA', 1, 'B')
-
+        # Create interactions
         bond = list(range(3))
         angle = list(range(2))
-        bond[0] = parmed.Bond(s.atoms[0], s.atoms[1], parmed.BondType(10., 1.))
+        bond[0] = parmed.Bond(s.atoms[0], s.atoms[1], parmed.BondType(k=10., req=1.))
         bond[1] = parmed.Bond(s.atoms[0], s.atoms[2], parmed.BondType(10., 1.))
         bond[2] = parmed.Bond(s.atoms[2], s.atoms[3], parmed.BondType(10., 1.))
 
         angle[0] = parmed.Angle(s.atoms[1], s.atoms[0], s.atoms[2],
-                              parmed.AngleType(10., 166.))
+                              parmed.AngleType(k=10., theteq=166.))
         angle[1] = parmed.Angle(s.atoms[0], s.atoms[2], s.atoms[3],
                               parmed.AngleType(5., 66.))
 
@@ -66,9 +64,9 @@ class TestParmedTopology:
         s.dihedrals.append(dihedral1)
         self.tpl = topology.Topology(s)
 
-    def test_create_topology(self):
-        print(repr(self.tpl.bonds))
-        print(self.tpl.bonds)
+    def test_interactions_ids(self):
+        print(repr(self.tpl.dihedrals))
+        print(self.tpl.dihedrals)
         eq_(self.tpl.bonds.ids.tolist(), [[1, 2], [1, 3], [3,4]])
         eq_(self.tpl.angles.ids.tolist(), [[2, 1, 3], [1, 3, 4]])
         eq_(self.tpl.dihedrals.ids.tolist(), [[1, 2, 3, 4]])
