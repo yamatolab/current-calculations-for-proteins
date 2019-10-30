@@ -11,17 +11,53 @@ from . import lib_base
 
 ########################################################################
 class TwoBodyForce:
+    """Calculator of forces between each atoms
+
+    Parameters
+    ----------
+    tpl: curp.forcefield.topology.Topology
+    setting: curp.setting.setting
+
+    Attributes
+    ----------
+    module : fortran module
+        The fortran module used for the computation.
+    pottypes : list of string
+        Forces terms (bond, dihedral, coulomb, ...).
+    natom : int
+        Number of atoms.
+    forces : dict of numpy.array
+        Calculated forces of atom groups for each force terms.
+    energies : dict of numpy.array
+        Calculated system energy for each energy terms.
+
+    Methods
+    -------
+    setup(interact_table, check=False)
+        Initialize fortran module.
+    get_maxpair(self, interact_table)
+        Get maximum pair in an interaction table.
+    cal_force(self, crd)
+        Calculate twobody forces.
+    output_energy()
+        Standard output computed energy.
+    output_force()
+        Standard output forces.
+    output_bonded()
+        Standard output twobody forces of bonded interactions.
+    output_nonbonded()
+        Standard output twobody forces of non-bonded interactions.
+    """
     module = lib_base
-    def __init__(self, topology, setting=None):
-        self.tpl = topology
+    def __init__(self, tpl, setting=None):
+        self.tpl = tpl
         self._setting = setting
         self._forces = None
         self._ptype_to_energy = {}
         self._ptype_to_forces = {}
-        self._ptype_to_displacement = {}
 
         self._natom = self.tpl.natom
-        self._pottypes = self.tpl.decomp_list
+        self._pottypes = self.tpl.decomp_list()
 
     @property
     def pottypes(self):
@@ -66,12 +102,12 @@ class TwoBodyForce:
 
         # Calculate the bonded components.
         for ptype in self.tpl.decomp_list('bonded+'):
-            self.cal_bonded(ptype)
+            self._cal_bonded(ptype)
 
         # Calculate the nonbonded components.
         for table in self._interact_table:
-            self.cal_nonbond(table, 'coulomb')
-            self.cal_nonbond(table, 'vdw')
+            for ptype in self.tpl.decomp_list('nonbonded')
+            self._cal_nonbond(table, ptype)
 
         return self._forces
 
@@ -99,7 +135,7 @@ class TwoBodyForce:
         vdw.epsilons = self.tpl.atoms['epsilons']
         vdw.cutoff_length = self._setting.curp.vdw_cutoff_length
 
-    def cal_bonded(self, bond_type):
+    def _cal_bonded(self, bond_type):
         """Calculate the pairwise forces using the bonded type modules.
         Types are bond, angle, dihedral and improper.
         """
@@ -110,7 +146,6 @@ class TwoBodyForce:
         # Store energy and forces
         self._ptype_to_energy[bond_type] = mod.energy
         self._ptype_to_forces[bond_type] = mod.forces
-        self._ptype_to_displacement[bond_type] = mod.displacement
 
         return dict(energy = mod.energy,
                     forces = mod.forces,
@@ -127,7 +162,6 @@ class TwoBodyForce:
         mod.calculate(table)
         energy = mod.energy.copy()
         forces = mod.forces.copy()
-        displacement = mod.displacement
 
         # store energy, forces and distance
         if pottype not in self._ptype_to_energy:
@@ -141,10 +175,9 @@ class TwoBodyForce:
         else:
             self._ptype_to_forces[pottype] += forces
 
-        self._ptype_to_displacement[pottype] = displacement
-
         # get pairwise forces
         tbforces = mod.tbforces.copy()
+        displacement = mod.displacement.copy()
 
         return dict(energy = mod.energy,
                     forces = mod.forces,
@@ -153,12 +186,12 @@ class TwoBodyForce:
 
     @property
     def forces(self):
-        """Return the calculated force for each potential type."""
+        """Calculated forces of each force terms."""
         return self._ptype_to_forces
 
     @property
     def energies(self):
-        """Return the calculated energy."""
+        """Calculated energy of each force terms."""
         return self._ptype_to_energy
 
     def output_energy(self):

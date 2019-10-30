@@ -283,9 +283,9 @@ class Topology:
 
     Methods
     -------
-    decomp_list(btype='all')
+    decomp_list(ftype='all')
         Returns a list that decomposes all potential.
-        btype = 'all', 'bonded', 'bonded+' (bonded and 1-4 for amber),
+        ftype = 'all', 'bonded', 'bonded+' (bonded and 1-4 for amber),
         'nonbonded' or 'nonbonded+' (nonbonded and 1-4 for amber), 'bonded14'.
     """
     def __init__(self, parmed):
@@ -319,7 +319,18 @@ class Topology:
 
         self._bonded14_list = []    # 1-4 interactions for amber
 
-    def decomp_list(self, btype='all'):
+    def decomp_list(self, ftype='all'):
+        """Give forces terms.
+
+        Parameters
+        ----------
+        ftype : {'all', 'bonded', 'bonded14', 'bonded+', 'nonbonded', 'nonbonded+'}
+            Type of force terms
+
+        Returns
+        -------
+        decomp_list : list of str
+        """
         bonded_list = list(self.bonded_inter.keys)
         nonbonded_list = ['coulomb', 'vdw']
         bonded14_list = self._bonded14_list
@@ -331,7 +342,7 @@ class Topology:
             'nonbonded+': nonbonded_list + bonded14_list,
             'all': bonded_list + bonded14_list + nonbonded_list
             }
-        return decomp_list[btype]
+        return decomp_list[ftype]
 
     def _make_atoms(self):
         """Return atom properties dictionary.
