@@ -243,8 +243,10 @@ class Topology:
     Attributes
     ----------
     natom : int
+        Do not modify.
         Number of atoms
     atoms : dict
+        Do not modify.
         Lists of atoms properties: atom ids, names, masses, van-der-waals radii
         (vdw_radii) and Lennard-Jones well-depth (epsilons).
         In LJ formula, van-der-waals radius (LJ potential at minimum) is
@@ -252,13 +254,11 @@ class Topology:
         and epsilon (LJ well-depth) is
         epsilon(i,j) = sqrt(epsilons[i] * epsilons[j])
     residues : dict
+        Do not modify.
         Ids and names of residues.
     bonded_inter : dict of Interactions
+        Do not modify
         Dictionary regrouping all Interactions instances.
-    decomp_list : dict
-        List that decomposes all potential.
-        keys = 'all', 'bonded', 'bonded+' (bonded and 1-4 for amber),
-        'nonbonded' or 'nonbonded+' (nonbonded and 1-4 for amber).
     bonded_pairs : list of list of int
         Sorted, unique pairs of atom ids from bonded_inter.
     nonbonded_table : curp.table.interact_table.InteractionTable
@@ -280,12 +280,19 @@ class Topology:
     impropers : Interactions
         CHARMM impropers. Force constants keys are psi_k (force constant in
         kcal/mol/radians^2) and psi_eq (equilibrium torsion angle in degrees).
+
+    Methods
+    -------
+    decomp_list(btype='all')
+        Returns a list that decomposes all potential.
+        btype = 'all', 'bonded', 'bonded+' (bonded and 1-4 for amber),
+        'nonbonded' or 'nonbonded+' (nonbonded and 1-4 for amber), 'bonded14'.
     """
     def __init__(self, parmed):
-        self.parmed = parmed
+        self._parmed = parmed
         self._natom = len(self.parmed.atoms)
-        self.atoms = self._make_atoms()
-        self.residues = self._make_residues()
+        self._atoms = self._make_atoms()
+        self._residues = self._make_residues()
 
         # Basic Interactions
         self.bonds = Interactions(self.parmed.bonds)
@@ -306,30 +313,16 @@ class Topology:
                 'improper': self.impropers
                 }
 
-        self.decomp_list = {
-            'bonded': list(self.bonded_inter.keys()),
-            'bonded+': list(self.bonded_inter.keys()),
-            'nonbonded': ['coulomb', 'vdw'],
-            'nonbonded+': ['coulomb', 'vdw']
-            }
-        self.decomp_list['all'] = (self.decomp_list['bonded+']
-                                   + self.decomp_list['nonbonded'])
-
-        # Table private variables
+        # Table private variables. Set when first called.
         self._bonded_pairs = None
         self._nonbonded_table = None
 
-    @property
-    def natom(self):
-        return self._natom
+        self._bonded14_list = []    # 1-4 interactions for amber
 
-    @property
-    def bonded_inter(self):
-        return self._bonded_inter
-
-    def _make_decomp_list(self, bonded14_list=[]):
+    def decomp_list(self, btype='all'):
         bonded_list = list(self.bonded_inter.keys)
         nonbonded_list = ['coulomb', 'vdw']
+        bonded14_list = self._bonded14_list
         decomp_list = {
             'bonded': bonded_list,
             'bonded14': bonded14_list,
@@ -338,7 +331,7 @@ class Topology:
             'nonbonded+': nonbonded_list + bonded14_list,
             'all': bonded_list + bonded14_list + nonbonded_list
             }
-        return decomp_list
+        return decomp_list[btype]
 
     def _make_atoms(self):
         """Return atom properties dictionary.
@@ -367,10 +360,6 @@ class Topology:
         ids = [resid.number for resid in self.parmed.residues]
         names = [resid.name for resid in self.parmed.residues]
         return(dict(ids=ids, names=names))
-
-    @property
-    def bonded_inter(self):
-        return self._bonded_inter
 
     @property
     def bonded_pairs(self):
@@ -427,6 +416,31 @@ class Topology:
                 base_table=nonbonded_table[:ntable].tolist())
 
         return new_table
+
+    # Render most of the variables read-only.
+    @property
+    def parmed(self):
+        return self._parmed
+
+    @parmed.setter
+    def parmed(self, x):
+        self.__init__(x)
+
+    @property
+    def natom(self):
+        return self._natom
+
+    @property
+    def atoms(self):
+        return self.atoms
+
+    @property
+    def residues(self):
+        return self.residues
+
+    @property
+    def bonded_inter(self):
+        return self._bonded_inter
 
     # TODO
     # For amber only:

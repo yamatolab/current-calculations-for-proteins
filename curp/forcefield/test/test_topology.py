@@ -1,6 +1,9 @@
-"""Test of curp forcefield topology.
+"""Test of curp basic topology object.
 
-To run: $ nosetests topology.py
+To run:
+$ nosetests test_topology.py
+To print standard outputs (print) anyways:
+$ nosetests --nocapture test_topology.py
 """
 import parmed
 from nose.tools import eq_
@@ -65,8 +68,6 @@ class TestParmedTopology:
         self.tpl = topology.Topology(s)
 
     def test_interactions_ids(self):
-        print(repr(self.tpl.dihedrals))
-        print(self.tpl.dihedrals)
         eq_(self.tpl.bonds.ids.tolist(), [[1, 2], [1, 3], [3,4]])
         eq_(self.tpl.angles.ids.tolist(), [[2, 1, 3], [1, 3, 4]])
         eq_(self.tpl.dihedrals.ids.tolist(), [[1, 2, 3, 4]])
