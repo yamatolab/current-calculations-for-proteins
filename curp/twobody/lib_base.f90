@@ -80,7 +80,7 @@ module bond
     integer, allocatable :: ids(:,:)  ! (nbond, 2) pairs of atom ids
     real(8), allocatable :: k(:) ! (nbond) force constant in kcal/mol/Angstrom^2
     real(8), allocatable :: req(:)   ! (nbond) equilibrium distance
-    integer, allocatable :: to_ipair(:) ! (nbond) id of the pair in global pairs
+    integer, allocatable :: to_ipair(:,:) ! (nbond) id of the pair in global pairs
     ! output
     real(8) :: energy
     real(8), allocatable :: forces(:, :)   ! (natom, 3)
@@ -114,7 +114,8 @@ contains
         displacement = 0.0d0
 
         do ibnd=1, nbond
-            itbf_ij = to_ipair(ibnd) ! => ij
+            
+            itbf_ij = to_ipair(ibnd, 1) ! => ij
             iatm    = ids(ibnd, 1)
             jatm    = ids(ibnd, 2)
 
@@ -137,7 +138,6 @@ contains
 
             ! calculate two-body force
             f_ij = f_i
-
             ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
@@ -191,7 +191,7 @@ contains
             iatm = ids(ibnd,1)
             jatm = ids(ibnd,2)
 
-            itbf_ij = to_ipair(ibnd)
+            itbf_ij = to_ipair(ibnd, 1)
             if (itbf_ij > 0) then
                 iatm_ = bonded_pairs(itbf_ij, 1)
                 jatm_ = bonded_pairs(itbf_ij, 2)
@@ -300,7 +300,7 @@ contains
             ! calculate two-body-force
             f_ij =   coeff/l_ij * (1.0d0/l_kj - cos_theta/l_ij) * r_ij
             f_ik = - coeff/(l_ij*l_kj) * r_ik
-            f_jk =   coeff/l_kj * (1.0d0/l_ij - cos_theta/l_kj) * r_kj
+            f_jk = - coeff/l_kj * (1.0d0/l_ij - cos_theta/l_kj) * r_kj
 
             ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
@@ -1367,7 +1367,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     use common_vars
     use bond      , bnd_forces => forces, bnd_tbforces => tbforces, bnd_disp => displacement
     use angle     , ang_forces => forces, ang_tbforces => tbforces, ang_disp => displacement
-    use torsion   , tor_forces => forces, tor_tbforces => tbforces, tor_disp => displacement
+    use dihedral, tor_forces => forces, tor_tbforces => tbforces, tor_disp => displacement
     use improper  , imp_forces => forces, imp_tbforces => tbforces, imp_disp => displacement
     use coulomb   , cou_forces => forces, cou_tbforces => tbforces, cou_disp => displacement
     use vdw       , vdw_forces => forces, vdw_tbforces => tbforces, vdw_disp => displacement

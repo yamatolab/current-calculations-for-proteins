@@ -5,9 +5,10 @@ import os
 import sys
 import numpy
 
+from . import lib_base
+
 # curp module
 from .. import clog as logger
-from . import lib_base
 
 ########################################################################
 class TwoBodyForce:
@@ -52,12 +53,13 @@ class TwoBodyForce:
     def __init__(self, tpl, setting=None):
         self.tpl = tpl
         self._setting = setting
-        self._forces = None
-        self._ptype_to_energy = {}
-        self._ptype_to_forces = {}
 
         self._natom = self.tpl.natom
         self._pottypes = self.tpl.decomp_list()
+
+        self._forces = numpy.zeros([self._natom, 3])
+        self._ptype_to_energy = {}
+        self._ptype_to_forces = {}
 
     @property
     def pottypes(self):
@@ -106,8 +108,8 @@ class TwoBodyForce:
 
         # Calculate the nonbonded components.
         for table in self._interact_table:
-            for ptype in self.tpl.decomp_list('nonbonded')
-            self._cal_nonbond(table, ptype)
+            for ptype in self.tpl.decomp_list('nonbonded'):
+                self._cal_nonbond(table, ptype)
 
         return self._forces
 

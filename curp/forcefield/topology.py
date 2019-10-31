@@ -235,16 +235,17 @@ class Interactions(object):
         for inter, iatoms in enumerate(self.ids):
             for icomb, pair in enumerate(itertools.combinations(iatoms, 2)):
                 sorted_pair = (min(pair), max(pair))
-                ipair = pairs.index(sorted_pair)
+                ipair = pairs.index(sorted_pair) + 1
                 if sorted_pair != pair:
                     ipair = - ipair
                 to_ipair[inter, icomb] = ipair
 
+        # Shifting the indexes by 1 for fortran
         self._to_ipair = to_ipair
 
 
 class Topology:
-    """Topology
+    """Topology(parmed)
     Used to start TwoBody object.
 
     Parameters
@@ -314,6 +315,8 @@ class Topology:
                                       ['psi_k', 'psi_eq'])
 
         # Conversion of degrees to radians
+        self.angles.ff_cst['theteq'] = self.angles.theteq = [
+                angle/180.*numpy.pi for angle in self.angles.theteq]
         self.dihedrals.ff_cst['phase'] = self.dihedrals.phase = [
                 angle/180.*numpy.pi for angle in self.dihedrals.phase]
         self.impropers.ff_cst['psi_eq'] = self.impropers.psi_eq = [
