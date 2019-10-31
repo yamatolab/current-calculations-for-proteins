@@ -5,8 +5,11 @@ $ nosetests test_topology.py
 To print standard outputs (print) anyways:
 $ nosetests --nocapture test_topology.py
 """
-import parmed
+from numpy.testing import assert_array_almost_equal, assert_array_equal
 from nose.tools import eq_
+
+import parmed
+
 from curp.forcefield import topology
 
 
@@ -26,7 +29,7 @@ class TestIds:
     def test_make_ids_to_pairs(self):
         self.inter.make_to_ipair(self.inter.pairs)
         eq_(self.inter.to_ipair.tolist(),
-            [[0, 1, 3], [-2, -4, 1]])
+            [[1, 2, 4], [-3, -5, 2]])
 
 
 class TestParmedTopology:
@@ -68,15 +71,19 @@ class TestParmedTopology:
         self.tpl = topology.Topology(s)
 
     def test_interactions_ids(self):
-        eq_(self.tpl.bonds.ids.tolist(), [[1, 2], [1, 3], [3,4]])
-        eq_(self.tpl.angles.ids.tolist(), [[2, 1, 3], [1, 3, 4]])
-        eq_(self.tpl.dihedrals.ids.tolist(), [[1, 2, 3, 4]])
+        assert_array_equal(self.tpl.bonds.ids.tolist(),
+                           [[1, 2], [1, 3], [3,4]])
+        assert_array_equal(self.tpl.angles.ids.tolist(),
+                           [[2, 1, 3], [1, 3, 4]])
+        assert_array_equal(self.tpl.dihedrals.ids.tolist(),
+                           [[1, 2, 3, 4]])
 
     def test_forcefield_constants(self):
         eq_(self.tpl.bonds.k, [10., 10., 10.])
         eq_(self.tpl.bonds.req, [1., 1., 1.])
         eq_(self.tpl.angles.k, [10., 5.])
-        eq_(self.tpl.angles.theteq, [166., 66.])
+        assert_array_almost_equal(self.tpl.angles.theteq,
+                                  [2.89724655, 1.1519173])
 
     def test_nonbonded_table(self):
         eq_(list(self.tpl.nonbonded_table), [[1, 5, 5],
