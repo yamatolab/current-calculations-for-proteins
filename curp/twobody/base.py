@@ -38,8 +38,14 @@ class TwoBodyForce:
         Initialize fortran module.
     get_maxpair(self, interact_table)
         Get maximum pair in an interaction table.
-    cal_force(self, crd)
-        Calculate twobody forces.
+    initialize(crd)
+        Reinitialize the calculator with new coordinates.
+    cal_force(crd)
+        Calculate atomic forces.
+    cal_bonded(bond_type)
+        Calculate the bonded pairwise forces.
+    cal_nonbond(table, nonbond_type)
+        Calculate the nonbonded pairwise forces.
     output_energy()
         Standard output computed energy.
     output_force()
@@ -49,8 +55,8 @@ class TwoBodyForce:
     output_nonbonded()
         Standard output twobody forces of non-bonded interactions.
     """
-    module = lib_base
     def __init__(self, tpl, setting=None):
+        self.module = lib_base
         self.tpl = tpl
         self._setting = setting
 
@@ -63,11 +69,12 @@ class TwoBodyForce:
 
     @property
     def pottypes(self):
-        # Potential energy types
+        """Potential energy terms"""
         return self._pottypes
 
     @property
     def natom(self):
+        """Number of atoms"""
         return self._natom
 
     def setup(self, interact_table, check=False):
@@ -84,6 +91,12 @@ class TwoBodyForce:
         self._setup_vdw()
 
     def get_maxpair(self, interact_table):
+        """
+
+        Parameters
+        ----------
+        interact_table: list of list or empty list
+        """
         maxpair = 0
         for table in interact_table:
             npair = 0
@@ -95,26 +108,34 @@ class TwoBodyForce:
         return maxpair
 
     def cal_force(self, crd):
-        """Calculate forces"""
-        # Initialize
-        self.module.initialize(crd)
-        self._forces = numpy.zeros([self._natom, 3])
-        self._ptype_to_energy = {}
-        self._ptype_to_forces = {}
+        """Calculate atomic forces for given coordinates.
 
+        Edit self._forces, self.energies and self.forces
+        Parameters
+        ----------
+        crd: 2D numpy array
+            Atomic coordinates at each time frame.
+            crd.shape == [self.natom, 3]
+
+        Returns
+        -------
+        self._forces: 2D numpy array
+
+        """
+        self.initialize(crd)
         # Calculate the bonded components.
         for ptype in self.tpl.decomp_list('bonded+'):
-            self._cal_bonded(ptype)
+            self.cal_bonded(ptype)
 
         # Calculate the nonbonded components.
         for table in self._interact_table:
             for ptype in self.tpl.decomp_list('nonbonded'):
-                self._cal_nonbond(table, ptype)
+                self.cal_nonbond(table, ptype)
 
         return self._forces
 
     def _setup_bonded(self):
-        """Prepare the parameter for the calculations without coulomb and vdw."""
+        """Prepare the module for the calculations without coulomb and vdw."""
         bonded_inter = self.tpl.bonded_inter
         for btype, interactions in bonded_inter.items():
             int_mod = getattr(self.module, btype)
@@ -125,21 +146,60 @@ class TwoBodyForce:
             int_mod.ids = interactions.ids
 
     def _setup_coulomb(self):
-        """Prepare the parameter for the coulomb calculation."""
+        """Prepare the fortran module for the coulomb calculation."""
         coulomb = self.module.coulomb
         coulomb.charges = self.tpl.atoms['charges']
         coulomb.cutoff_length = self._setting.curp.coulomb_cutoff_length
 
     def _setup_vdw(self):
-        """Prepare the parameter for the vdw calculation."""
+        """Prepare the fortran module for the vdw calculation."""
         vdw = self.module.vdw
         vdw.vdw_radii = self.tpl.atoms['vdw_radii']
         vdw.epsilons = self.tpl.atoms['epsilons']
         vdw.cutoff_length = self._setting.curp.vdw_cutoff_length
 
-    def _cal_bonded(self, bond_type):
+    def initialize(self, crd):
+        """Reinitialize the calculator with new coordinates.
+
+        Parameters
+        ----------
+        crd : 2D numpy array
+            Atomic coordinates.
+            crd.shape == [self.natom, 3]
+        """
+        # Initialize
+        self.module.initialize(crd)
+        self._forces = numpy.zeros([self._natom, 3])
+        self._ptype_to_energy = {}
+        self._ptype_to_forces = {}
+
+    def cal_bonded(self, bond_type):
         """Calculate the pairwise forces using the bonded type modules.
-        Types are bond, angle, dihedral and improper.
+
+        Parameters
+        ----------
+        bond_type : str {'bond', 'angle', 'dihedral', 'improper'}
+            Bonded forces term.
+
+        Returns
+        -------
+        dict
+            Dictionnary contains the latter keys:
+        energy : float
+            Total energy of the system in kcal/mol.
+        forces : 2D numpy array
+            Forces applied on each atoms.
+        tbforces : 2D numpy array
+            Pairwise forces or twobody forces. Forces applied by one
+            atom on another for each considered pair of atoms.
+        displacement : 2D numpy array
+            Vector of the positions of one atom to another for each
+            considered pair of atoms.
+
+        Notes
+        -----
+        TwoBodyForce object need to have been initialized prior to
+        using this method.
         """
         mod = getattr(self.module, bond_type)
         mod.calculate()
@@ -154,28 +214,52 @@ class TwoBodyForce:
                     tbforces = mod.tbforces,
                     displacement = mod.displacement)
 
-    def _cal_nonbond(self, table, pottype):
+    def cal_nonbond(self, table, nonbond_type):
         """Calculate the pairwise forces using the fortran module.
 
-        pottype either coulomb or vdw.
+        Parameters
+        ----------
+        table : list of int
+        nonbond_type : str ['coulomb', 'vdw']
+            Non-bonded forces term.
+
+        Returns
+        -------
+        cal_bonded : dict
+            Return a dictionnary containing next arguments.
+        energy : float
+            Total energy of the system in kcal/mol.
+        forces : 2D numpy array
+            Forces applied on each atoms.
+        tbforces : 2D numpy array
+            Pairwise forces or twobody forces. Forces applied by one
+            atom on another for each considered pair of atoms.
+        displacement : 2D numpy array
+            Vector of the positions of one atom to another for each
+            considered pair of atoms.
+
+        Notes
+        -----
+        TwoBodyForce object need to have been initialized prior to
+        using this method.
         """
 
-        mod = getattr(self.module, pottype)
+        mod = getattr(self.module, nonbond_type)
         mod.calculate(table)
         energy = mod.energy.copy()
         forces = mod.forces.copy()
 
         # store energy, forces and distance
-        if pottype not in self._ptype_to_energy:
-            self._ptype_to_energy[pottype] = energy
+        if nonbond_type not in self._ptype_to_energy:
+            self._ptype_to_energy[nonbond_type] = energy
         else:
-            self._ptype_to_energy[pottype] += energy
+            self._ptype_to_energy[nonbond_type] += energy
 
         self._forces += forces
-        if pottype not in self._ptype_to_forces:
-            self._ptype_to_forces[pottype] = forces
+        if nonbond_type not in self._ptype_to_forces:
+            self._ptype_to_forces[nonbond_type] = forces
         else:
-            self._ptype_to_forces[pottype] += forces
+            self._ptype_to_forces[nonbond_type] += forces
 
         # get pairwise forces
         tbforces = mod.tbforces.copy()
