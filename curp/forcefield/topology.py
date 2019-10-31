@@ -221,11 +221,15 @@ class Interactions(object):
 
         # Compute the number of combinations between atoms in one interaction
         from math import factorial
-        print(list(self.ff_cst.keys()), self.num_atm)
-        num_comb = (factorial(self.num_atm)
-                    // (factorial(2)*factorial(self.num_atm - 2))
-                    )
-        to_ipair = numpy.zeros([len(self.ids), num_comb], int)
+        try:
+            num_comb = (factorial(self.num_atm)
+                        // (factorial(2)*factorial(self.num_atm - 2))
+                        )
+            to_ipair = numpy.zeros([len(self.ids), num_comb], int)
+        except ValueError:
+            if len(self.ids) == 0:
+                to_ipair = numpy.empty(0)
+            else: raise
 
         # Find pair id for each pair combinations of an interaction
         for inter, iatoms in enumerate(self.ids):
