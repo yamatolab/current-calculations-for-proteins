@@ -28,15 +28,16 @@ class Interactions(object):
     parmed : parmed.topologyobjects.TrackedList
         TrackedList containing parmed.topologyobjects.Bond, .Angle,
         .Dihedral, .Improper, .UreyBradley or .Cmap
-    ids: list of list of int
-        Lists of ids of the atoms per interactions for fortran.
-        (atom ids starting by 1, not 0).
+    constant_names : list of str
+        Name of the attributes to fetch in the type attribute of each
+        parmed interaction.
 
     Attributes
     ----------
     ids: list of list of int
-         See Parameters description.
-         If parmed used, all atoms ids are shifted by 1
+        Lists of ids of the atoms per interactions for fortran.
+        If parmed used, all atoms ids are shifted by 1. (Atom ids
+        starting by 1, not 0. Specificity of fortran.)
     num_atm : int
         Number of atoms in one interaction
         Ex: 3 for angles or urey-bradleys
@@ -73,20 +74,16 @@ class Interactions(object):
            [-2, -4, 1]])
     """
 
-    def __init__(self, parmed=[], ids=[], ff_cst={}):
+    def __init__(self, parmed=[], constant_names=[]):
         self._ids = []
         self.ff_cst = {}
 
         # If a parmed interactions TrackedList is given, ids and ff_cst
         # are automatically made.
-        self.parmed = parmed
-
         # If a parmed TrackedList was entered, setting ids or ff_cst
         # will return an error.
-        if ids:
-            self.ids = ids
-        if ff_cst:
-            self.ff_cst = ff_cst
+        self.constant_names = constant_names
+        self.parmed = parmed
 
         self._to_ipair = None
 
@@ -116,6 +113,9 @@ class Interactions(object):
                '    ids={!r},\n'
                '    ff_cst={!r})').format(self.__class__, self.ids, self.ff_cst)
         return rpr
+
+    def __len__(self):
+        return len(self.ids)
 
     # To understand @property see property decorator in python doc.
     @property
@@ -159,14 +159,20 @@ class Interactions(object):
     def _make_ff_cst_lists(self):
         """Make forcefield constant lists and set them as attributes."""
         other_attrib = {'locked', 'used', 'penalty', 'idx', 'list', '_idx'}
-        type_attrib = self.parmed[0].type.__dict__.keys()
-        constant_names = type_attrib - other_attrib
+        try:
+            if not self.constant_names:
+                type_attrib = self.parmed[0].type.__dict__.keys()
+                self.constant_names = type_attrib - other_attrib
 
-        for cst_name in constant_names:
-            # Get a list for each atom of the forcefield constant
-            ff_cst_list = [getattr(inter.type, cst_name) for inter in self.parmed]
-            setattr(self, cst_name, ff_cst_list)
-            self.ff_cst[cst_name] = getattr(self, cst_name)
+            for cst_name in self.constant_names:
+                # Get a list for each atom of the forcefield constant
+                ff_cst_list = [getattr(inter.type, cst_name) for inter in self.parmed]
+                setattr(self, cst_name, ff_cst_list)
+                self.ff_cst[cst_name] = getattr(self, cst_name)
+
+        except IndexError:
+            self.ff_cst = {cst_name: [] for cst_name in self.constant_names}
+
 
     def _make_num_atm(self):
         """Return the number of atoms in one interaction."""
@@ -215,8 +221,10 @@ class Interactions(object):
 
         # Compute the number of combinations between atoms in one interaction
         from math import factorial
+        print(list(self.ff_cst.keys()), self.num_atm)
         num_comb = (factorial(self.num_atm)
-                    // (factorial(2)*factorial(self.num_atm - 2)))
+                    // (factorial(2)*factorial(self.num_atm - 2))
+                    )
         to_ipair = numpy.zeros([len(self.ids), num_comb], int)
 
         # Find pair id for each pair combinations of an interaction
@@ -298,13 +306,14 @@ class Topology:
         self.bonds = Interactions(self.parmed.bonds)
         self.angles = Interactions(self.parmed.angles)
         self.dihedrals = Interactions(self.parmed.dihedrals)
-        self.impropers = Interactions(self.parmed.impropers)
+        self.impropers = Interactions(self.parmed.impropers,
+                                      ['psi_k', 'psi_eq'])
 
         # Conversion of degrees to radians
         self.dihedrals.ff_cst['phase'] = self.dihedrals.phase = [
-                angle/180.*np.pi for angle in self.dihedrals.phase]
+                angle/180.*numpy.pi for angle in self.dihedrals.phase]
         self.impropers.ff_cst['psi_eq'] = self.impropers.psi_eq = [
-                angle/180.*np.pi for angle in self.impropers.psi_eq]
+                angle/180.*numpy.pi for angle in self.impropers.psi_eq]
 
         self._bonded_inter = {
                 'bond': self.bonds,
@@ -331,7 +340,7 @@ class Topology:
         -------
         decomp_list : list of str
         """
-        bonded_list = list(self.bonded_inter.keys)
+        bonded_list = list(self.bonded_inter.keys())
         nonbonded_list = ['coulomb', 'vdw']
         bonded14_list = self._bonded14_list
         decomp_list = {
@@ -379,6 +388,8 @@ class Topology:
             for key, inter in self.bonded_inter.items():
                 lists_pairs += inter.pairs
             self._bonded_pairs = sorted(set(lists_pairs))
+            for key, inter in self.bonded_inter.items():
+                inter.make_to_ipair(self._bonded_pairs)
         return self._bonded_pairs
 
     @property
@@ -443,11 +454,11 @@ class Topology:
 
     @property
     def atoms(self):
-        return self.atoms
+        return self._atoms
 
     @property
     def residues(self):
-        return self.residues
+        return self._residues
 
     @property
     def bonded_inter(self):
