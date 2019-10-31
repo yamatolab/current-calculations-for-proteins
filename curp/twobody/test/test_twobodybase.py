@@ -2,10 +2,15 @@
 
 Requires Topology object to pass tests.
 
+Don't forget to reinstall curp ($ pip install . in main directory,
+where setup.py can be found) if any code modifications have been
+made.
 To run:
 $ nosetests test_twobodybase.py
 To print standard outputs anyways:
 $ nosetests --nocapture test_twobodybase.py
+or
+$ nosetests -s test_twobodybase.py
 """
 import os, sys
 import numpy as np
@@ -107,6 +112,31 @@ class TestTwoBodyForce:
         return(tpl)
 
     def tbforces_to_forces(self, tbforces, shape):
+        """Sum twobody forces to obtain forces applied on each atom.
+
+        Parameters
+        ----------
+        tbforces : 2D numpy.array
+            Twobody Forces array as outputed by TwoBodyForces.cal_forces().
+        shape : list of int
+            Shape of the returned array.
+
+        Returns
+        -------
+        forces : 2D numpy.array
+            Forces deduced from summed twobody forces.
+
+        Examples
+        --------
+        Only two atoms -> only one pair of atoms (1, 2).
+        >>> tbforces = np.array([[1, 2, 3]])
+        >>> tbforces_to_forces(self, tbforces, [2, 3])
+        np.array([[1, 2, 3],
+            [-1, -2, -3]])
+
+        Indeed forces applied by 2 on 1 are the opposite of the ones
+        applied by 1 on 2 (Newton's third law of motion).
+        """
         forces = np.zeros(shape)
         pair_ids=[]
         for i, pair in enumerate(self.tpl.bonded_pairs):
@@ -116,6 +146,12 @@ class TestTwoBodyForce:
         return(forces)
 
     def assert_bonded(self, btype):
+        """Assert if twobody forces of bonded terms are correct.
+
+        Assert both if the sum of twobody forces is equal to the
+        computed forces, and if the twobody forces haven't changed
+        (as defined in class setup).
+        """
         res = self.tbcal._cal_bonded(btype)
 
         forces = res['forces']
@@ -123,7 +159,9 @@ class TestTwoBodyForce:
         interactions = self.tpl.bonded_inter[btype]
         test_forces = self.tbforces_to_forces(tbforces, forces.shape)
 
-        print(tbforces, '\n', forces, '\n', test_forces)
+        print(btype, '\nTwobody Forces:\n', tbforces,
+                '\nForces applied on atoms:\n', forces,
+              '\nForces as sum of tb forces:\n', test_forces)
         assert_array_almost_equal(tbforces, self.test_tbforces[btype],
                                  err_msg=('twobody forces of {} term were '
                                          'changed.').format(btype))
