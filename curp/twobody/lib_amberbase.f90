@@ -270,7 +270,7 @@ contains
             theta_eq = theta_eqs(iang)
 
             r_ij = crd(iatm, :) - crd(jatm, :)
-            r_jk = crd(jatm, :) - crd(katm, :)
+            r_kj = crd(katm, :) - crd(jatm, :)
             r_ik = crd(iatm, :) - crd(katm, :)
             l_ij = sqrt( dot_product(r_ij, r_ij) )
             l_kj = sqrt( dot_product(r_kj, r_kj) )
@@ -301,7 +301,7 @@ contains
             ! calculate two-body-force
             f_ij =   coeff/l_ij * (1.0d0/l_kj - cos_theta/l_ij) * r_ij
             f_ik = - coeff/(l_ij*l_kj) * r_ik
-            f_jk =   coeff/l_kj * (1.0d0/l_ij - cos_theta/l_kj) * r_jk
+            f_jk =   coeff/l_kj * (1.0d0/l_ij - cos_theta/l_kj) * r_kj
 
             ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
