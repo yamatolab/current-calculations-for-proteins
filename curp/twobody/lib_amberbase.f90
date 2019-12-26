@@ -303,7 +303,6 @@ contains
             f_ik = - coeff/(l_ij*l_kj) * r_ik
             f_jk =   coeff/l_kj * (1.0d0/l_ij - cos_theta/l_kj) * (-r_kj)
 
-
             ! store two-body force and two-body distance vector
             if (itbf_ij > 0) then
                 tbforces(itbf_ij,:) = tbforces(itbf_ij,:) + f_ij(:)
@@ -328,8 +327,6 @@ contains
                 tbforces(-itbf_jk,:) = tbforces(-itbf_jk,:) - f_jk(:)
                 displacement(-itbf_jk,:) = r_kj(:)
             end if
-
-            write(*,*) check
 
             if (check) then
                 print*, 'TB_CHECK:','i, j, k =', iatm, jatm, katm
