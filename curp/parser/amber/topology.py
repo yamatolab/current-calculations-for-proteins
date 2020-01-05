@@ -403,7 +403,7 @@ class Format2AmberBaseConverter(ConverterBase):
         return box_info
 
     def _store_mol_info(self):
-        mol_info = self.get_topology().get_molcule_info()
+        mol_info = self.get_topology().get_molceule_info()
         for name, nmol in zip(mol_info['mol_names'], mol_info['num_molecules']):
             natom = len(self.get_topology().get_atom_info(name)['names'])
             new_info = dict(name=name, nmol=nmol, natom=natom)
@@ -670,7 +670,7 @@ if __name__ == '__main__':
     # target_atoms = range(1, natom_target+1)
     # converter.apply_target_atoms(target_atoms)
 
-    converter.print_atom()
+    # converter.print_atom()
     # converter.print_residue()
     # converter.print_bond()
     # converter.print_angle()
