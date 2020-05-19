@@ -36,7 +36,7 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
       if (use_norm) then
          temp(:) = 0.0d0
          do i=1,ndim
-            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm_beg,i,:)
+            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm,i,:)
          end do
          x2_sum_inv(:) = 1.0d0/temp(:)
          !x2_sum_inv(:) = 1.0d0/(xss(ifrm_beg,1,:)**2 &
