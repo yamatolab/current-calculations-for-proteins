@@ -52,7 +52,7 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
          ifrm = ifrm_beg + (iacf-1)*interval
          temp(:) = 0.0d0
          do i=1,ndim
-            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm_beg,i,:)
+            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm,i,:)
          end do 
          acf_tmp(iacf,:) = temp(:)
          !acf_tmp(iacf,:) = xss(ifrm_beg,1,:) * xss(ifrm,1,:) &
