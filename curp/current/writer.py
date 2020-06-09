@@ -38,7 +38,7 @@ def get_writer(setting, decomp_list, target_anames, group_names,
                 setting=setting, decomp_list=decomp_list,
                 target_anames=target_anames, group_names=group_names)
 
-    elif method == 'energy-flux' or 'kinetic-flux':
+    elif method == 'energy-flux' or method == 'kinetic-flux':
         obj = MultiFluxWriter(
                 setting=setting, decomp_list=decomp_list,
                 target_anames=target_anames, group_names=group_names,
