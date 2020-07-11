@@ -107,7 +107,7 @@ contains
             v_ij(:) = 0.5 * ( vel(iatm,:) + vel(jatm,:) )
             d_ij(:) = displacement(itbf, :)
 
-            hflux_ij(:) = 0.5 * d_ij(:) * (f_ij(1)*v_ij(1) + f_ij(2)*v_ij(2) + f_ij(3)*v_ij(3))
+            hflux_ij(:) = d_ij(:) * (f_ij(1)*v_ij(1) + f_ij(2)*v_ij(2) + f_ij(3)*v_ij(3))
 
             ! sum up for ith target and jth target
             if ( flag_atom ) then
@@ -256,7 +256,7 @@ contains
                 v_ij(:) = 0.5 * ( vel(iatm,:) + vel(jatm,:) )
                 d_ij(:) = displacement(itbf, :)
 
-                hflux_ij = 0.5 * d_ij * (f_ij(1)*v_ij(1) + f_ij(2)*v_ij(2) + f_ij(3)*v_ij(3))
+                hflux_ij = d_ij * (f_ij(1)*v_ij(1) + f_ij(2)*v_ij(2) + f_ij(3)*v_ij(3))
 
                 ! sum up for ith target and jth target
                 if ( flag_atom ) then
@@ -284,5 +284,4 @@ contains
     end subroutine
 
 end module
-
 
