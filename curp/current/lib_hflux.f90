@@ -112,7 +112,7 @@ contains
             ! sum up for ith target and jth target
             if ( flag_atom ) then
                 hflux_atm(itar, jtar, :) = hflux_atm(itar, jtar, :) + hflux_ij(:)
-                hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) - hflux_ij(:)
+                hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) + hflux_ij(:)
             end if
 
             ! if group calculation is not applied
@@ -125,7 +125,7 @@ contains
 
                 if ( (igrp == 0) .or. (jgrp==0) ) cycle
                 hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) - hflux_ij(:)
+                hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
             end if
 
         end do
