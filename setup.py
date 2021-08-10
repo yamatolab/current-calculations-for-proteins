@@ -56,12 +56,12 @@ def run_setup():
             "Topic :: Scientific/Engineering :: Chemistry"
             ],
 
-        install_requires=["numpy>=1.11.2",
+        install_requires=["numpy>=1.11.2,<1.17",
                           "nose",
                           "mpi4py>=2.0",
                           "benchmarker",
-                          "pygraphviz",
-                          "netCDF4>=1.2.4"],
+                          "pygraphviz<1.6",
+                          "netCDF4==1.2.4"],
 
         packages=setuptools.find_packages(),
 
