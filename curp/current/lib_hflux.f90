@@ -1,3 +1,7 @@
+!
+! CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
+!
+
 module utils
     implicit none
 
@@ -112,7 +116,7 @@ contains
             ! sum up for ith target and jth target
             if ( flag_atom ) then
                 hflux_atm(itar, jtar, :) = hflux_atm(itar, jtar, :) + hflux_ij(:)
-                hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) - hflux_ij(:)
+                hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) + hflux_ij(:)
             end if
 
             ! if group calculation is not applied
@@ -124,15 +128,21 @@ contains
                 jgrp = iatm_to_igrp(jatm)
 
                 if ( (igrp == 0) .or. (jgrp==0) ) cycle
-                hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) - hflux_ij(:)
+
+                if ( igrp /= jgrp ) then
+                  hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                  hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
+                else 
+                  hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                end if
+
             end if
 
         end do
 
     end subroutine
 
-end module 
+end module
 
 
 module nonbonded
@@ -261,7 +271,7 @@ contains
                 ! sum up for ith target and jth target
                 if ( flag_atom ) then
                     hflux_atm(itar, jtar, :) = hflux_atm(itar, jtar, :) + hflux_ij(:)
-                    hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) - hflux_ij(:)
+                    hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) + hflux_ij(:)
                 end if
 
                 ! if group calculation is not applied
@@ -273,8 +283,14 @@ contains
                     jgrp = iatm_to_igrp(jatm)
 
                     if ( (igrp == 0) .or. (jgrp==0) ) cycle
-                    hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                    hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) - hflux_ij(:)
+
+                    if ( igrp /= jgrp ) then
+                      hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                      hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
+                    else
+                      hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                    end if
+           
                 end if
 
             end do

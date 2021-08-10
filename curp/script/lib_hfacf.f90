@@ -12,13 +12,18 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
    real(8) :: x2_sum_inv(ncom), acf_tmp(nacf, ncom), temp(ncom)
    integer :: iacf, ifrm, ifrm_beg, nfrm_beg, icom, nsam, i
    logical :: use_norm
+   real(8) :: a, norm_flg, b(ncom)
 
    ! determine the default value of use_norm
    if ( present(norm) ) then
       use_norm = norm
+      norm_flg = 1.0d0
    else
       use_norm = .false.
+      norm_flg = 0.0d0
    end if
+
+   norm_flg = 1.0d0
 
    ! determine the number of samples
    if ( nsample <= 0 ) then
@@ -29,50 +34,38 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
       nfrm_beg = first + shift*(nsample-1)
    end if
 
-   ! << Calculate auto-correlation function >>
-   do ifrm_beg=first, nfrm_beg, shift
+   do icom=1, ncom
 
-      ! x**2 for norm
-      if (use_norm) then
-         temp(:) = 0.0d0
-         do i=1,ndim
-            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm,i,:)
-         end do
-         x2_sum_inv(:) = 1.0d0/temp(:)
-         !x2_sum_inv(:) = 1.0d0/(xss(ifrm_beg,1,:)**2 &
-         !                     + xss(ifrm_beg,2,:)**2 &
-         !                     + xss(ifrm_beg,3,:)**2)
-      else
-         x2_sum_inv(:) = 1.0d0
-      end if
-
-      ! calculate acf
-      acf_tmp(:,:) = 0.0d0
       do iacf=1, nacf
-         ifrm = ifrm_beg + (iacf-1)*interval
-         temp(:) = 0.0d0
-         do i=1,ndim
-            temp(:) = temp(:) + xss(ifrm_beg,i,:) * xss(ifrm,i,:)
-         end do 
-         acf_tmp(iacf,:) = temp(:)
-         !acf_tmp(iacf,:) = xss(ifrm_beg,1,:) * xss(ifrm,1,:) &
-         !                + xss(ifrm_beg,2,:) * xss(ifrm,2,:) &
-         !                + xss(ifrm_beg,3,:) * xss(ifrm,3,:)
-      end do
+         a = 0.0d0 
+         b(icom)=0.0d0
+         do ifrm_beg=first, nfrm_beg, shift
 
-      ! sum up acf by the number of samples
-      do icom=1, ncom
-         acf(:,icom) = acf(:,icom) + acf_tmp(:,icom)*x2_sum_inv(icom)
-      end do
+            ! if use_norm then x2_sum_inv = 1/h(0)h(0) else x2_sum_inv = 1.0d0            
+            
+            x2_sum_inv(icom) = 1.0d0/(xss(ifrm_beg,1,icom)**2 &
+                                    + xss(ifrm_beg,2,icom)**2 &
+                                    + xss(ifrm_beg,3,icom)**2)
+            x2_sum_inv(icom) = x2_sum_inv(icom) - 1.0d0
+            x2_sum_inv(icom) = (x2_sum_inv(icom) * norm_flg) + 1.0d0
 
-      ! integral acf
-      ! print*, '#lib ', sum(acf_tmp(:,1))
+            ifrm = ifrm_beg+(iacf-1)*interval
+            a = a + ( xss(ifrm_beg,1,icom)*xss(ifrm,1,icom) &
+                    + xss(ifrm_beg,2,icom)*xss(ifrm,2,icom) &
+                    + xss(ifrm_beg,3,icom)*xss(ifrm,3,icom) ) * x2_sum_inv(icom)
+            b(icom) = b(icom) + (1.0d0/x2_sum_inv(icom))
+
+         end do
+  
+         acf(iacf,icom) = a
+
+      end do
 
    end do ! samples of one file data
 
    nsam = (nfrm_beg-first)/shift + 1
    ! print*, first, nfrm_beg, nsam
    acf(:,:) = acf(:,:) / real(nsam)
-
+   b(:) = b(:) / real(nsam)
+   print*, '<h(0)h(0)> = ',b(1)
 end subroutine
-
