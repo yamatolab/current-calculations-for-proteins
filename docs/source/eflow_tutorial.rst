@@ -181,7 +181,7 @@ A special care is needed when you use the leap frog integrator, which is usually
        -o stripped1.vel.nc -of netcdf --orange 1 -1 1 \
        mask -m mask.pdb
 
-    curp convtrj -vel \
+    curp conv-trj -vel \
         -p strip.prmtop -pf amber \
         -i stripped1.vel.nc -if netcdf --irange 1 -1 1 \
         -o adjusted1.vel.nc -of netcdf --orange 5 -1 5 \
@@ -199,7 +199,7 @@ Example 1 shows how to adjust the time points of the velocities to those of the 
        -o stripped2.vel.nc -of netcdf --orange 1 -1 1 \
        mask -m mask.pdb
 
-   curp convtrj -vel \
+   curp conv-trj -vel \
         -p strip.prmtop -pf amber \
         -i stripped2.vel.nc -if netcdf --irange 1 -1 1 \
         -o adjusted2.vel.nc -of netcdf --orange 1 -1 5 \
