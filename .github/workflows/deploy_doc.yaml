@@ -1,9 +1,9 @@
-name: Deploy pages
+name: Deploy document pages
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
