@@ -19,8 +19,6 @@ jobs:
     
     - name: Install sphinx
       run: pip install -U sphinx
-
-    - name: Install 
     
     - name: Build pages
       run: sphinx-build -b html -c docs/source docs/source docs/_build
