@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>2. Installation &#8212; CURP 1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Tutorials" href="tutorials.html" />
+    <link rel="prev" title="1. About CURP" href="intro.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorials.html" title="3. Tutorials"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="1. About CURP"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>Installation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1><span class="section-number">2. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>The current version of the CURP program supports Mac and Linux systems.</p>
+<section id="system-requirements">
+<h2><span class="section-number">2.1. </span>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
+<p>The CURP program has been tested on the following systems:</p>
+<section id="linux">
+<h3><span class="section-number">2.1.1. </span>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>OS Version: CentOS 6.x, Ubuntu 18.x</p></li>
+</ul>
+</section>
+<section id="mac">
+<h3><span class="section-number">2.1.2. </span>Mac<a class="headerlink" href="#mac" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>OS Version: Marvericks or Yosemite with XCode 6.1</p></li>
+</ul>
+<p>CURP runs on python2.7 and requires numpy to be installed.
+The system should be working under openMPI.</p>
+</section>
+</section>
+<section id="id1">
+<h2><span class="section-number">2.2. </span>Installation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<section id="pip">
+<h3><span class="section-number">2.2.1. </span>Pip<a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h3>
+<p>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">Curp</span></code> or any flavor of pip (<code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">curp</span></code>, <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--user</span> <span class="pre">curp</span></code>, <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">install</span> <span class="pre">curp</span></code>, …)</p>
+</section>
+<section id="git">
+<h3><span class="section-number">2.2.2. </span>Git<a class="headerlink" href="#git" title="Permalink to this headline">¶</a></h3>
+<p>If you want to develop curp or simply access to its source you can install it through its GitLab repository:</p>
+<p>git clone <a class="reference external" href="https://gitlab.com/yamato97/current-calculations-for-proteins.git">https://gitlab.com/yamato97/current-calculations-for-proteins.git</a></p>
+<p>In the created directory, simply run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--user</span> <span class="pre">.</span></code> or <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span> <span class="pre">--user</span></code>. If you are admin and want every user of the machine to be able to use curp, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code> instead.</p>
+</section>
+</section>
+<section id="running-curp">
+<h2><span class="section-number">2.3. </span>Running CURP<a class="headerlink" href="#running-curp" title="Permalink to this headline">¶</a></h2>
+<p>To run CURP, simply enter <code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">compute</span> <span class="pre">&lt;input_file&gt;</span></code>.
+A few commands are also available from the terminal to analyze CURP results: <code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">cal-tc</span></code>, <code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">sum-tc</span></code>, <code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">conv-trj</span></code> and <code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">graph-een</span></code>.</p>
+<p>The users set the CURP parameters in &lt;input_file&gt; (default: run.cfg).</p>
+<p>Test calculations of curp can be run by cloning the GitLab repository, then running <code class="docutils literal notranslate"><span class="pre">runall.sh</span></code> in <code class="docutils literal notranslate"><span class="pre">test</span></code> folder.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2. Installation</a><ul>
+<li><a class="reference internal" href="#system-requirements">2.1. System Requirements</a><ul>
+<li><a class="reference internal" href="#linux">2.1.1. Linux</a></li>
+<li><a class="reference internal" href="#mac">2.1.2. Mac</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">2.2. Installation</a><ul>
+<li><a class="reference internal" href="#pip">2.2.1. Pip</a></li>
+<li><a class="reference internal" href="#git">2.2.2. Git</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#running-curp">2.3. Running CURP</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter"><span class="section-number">1. </span>About CURP</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorials.html"
+                        title="next chapter"><span class="section-number">3. </span>Tutorials</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/install.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorials.html" title="3. Tutorials"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="1. About CURP"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>Installation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2017, Yamato Labaratory.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

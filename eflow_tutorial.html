@@ -1,0 +1,793 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.3. Energy flow analysis &#8212; CURP 1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. Reference" href="reference.html" />
+    <link rel="prev" title="3.2. Atomic stress tensor analysis" href="stress_tutorial.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="reference.html" title="4. Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="stress_tutorial.html" title="3.2. Atomic stress tensor analysis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="tutorials.html" accesskey="U"><span class="section-number">3. </span>Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.3. </span>Energy flow analysis</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="energy-flow-analysis">
+<h1><span class="section-number">3.3. </span>Energy flow analysis<a class="headerlink" href="#energy-flow-analysis" title="Permalink to this headline">¶</a></h1>
+<p><strong>Inter-residue energy flow (irEF) and energy conductivity(irEC)</strong></p>
+<p>In 2006, we proposed the concept of inter-residue energy conductivity (irEC) to measure the strength of the residue-residue interactions (Ishikura &amp; Yamato, <em>Chem. Phys. Lett.</em> 432: 533-537, (2006)). irEC represents the amount of the energy transferred from one residue to another per unit time and proved to be particularly useful for the detailed analysis of the intramolecular signaling mechanism of proteins. For instance, we reported the application of irEC to illustrate the photosignal transduction mechanism of a small water-soluble photosensory protein–photoactive yellow protein, as mentioned in the reference above. The value of the energy flow from <span class="math notranslate nohighlight">\(j\)</span> to <span class="math notranslate nohighlight">\(i\)</span> can be calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[J_{i \leftarrow j} =
+ \frac{1}{2}\left( {{{\boldsymbol{v}}_i} \cdot {{\boldsymbol{F}}_{ij}}
+ - {{\boldsymbol{v}}_j} \cdot {{\boldsymbol{F}}_{ji}}} \right).\]</div>
+<p>The energy flow between atom groups, A and B, can be calculated by the summation of the inter-atomic energy flow between the pair:</p>
+<div class="math notranslate nohighlight">
+\[J_{A \leftarrow B} =
+   \sum\limits_{i \in A}^{{N_A}} {\mathop \sum \limits_{j \in B}^{{N_B}}
+   {J_{i \leftarrow j}}}.\]</div>
+<p>If the atom groups A and B represent residues A and B, respectively, the corresponding energy flow between A and B represents the inter-residue energy flow (irEF). Next, the energy conductivity is defined based on the Green-Kubo
+linear response theory as:</p>
+<div class="math notranslate nohighlight">
+\[L_{AB} = \frac{1}{{RT}}\int_0^\infty  {\left\langle
+   {J_{A \leftarrow B}}(t){J_{A \leftarrow B}}(0)
+   \right\rangle dt}.\]</div>
+<p>In practice, the time integral is replaced by the sum of the auto-correlation function of <span class="math notranslate nohighlight">\(J\)</span> at discrete time points. We came to know, from our experience, that the time resolution of <span class="math notranslate nohighlight">\(J\)</span> should be no larger than 10 fs for the accurate estimation of the irEC.
+The CURP program performs these calculations for the proteins
+and visualizes the energy conductivities using an energy exchange network (EEN).This allows the user to grasp the pattern of the inter-residue interactions at a glance. In principle, it is possible to calculate irECs based on a single NVE trajectory. However, it is highly recommended to calulate thermal averages of irECs based on multiple NVE trajectories that start from different points on the energy landscape of the target protein. If the number of the NVE trajectories are sufficiently large, the thermally averaged irECs are fair representations of the irECs of the thermally fluctuating protein system.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the previous paper(<em>CPL</em> ,2006), we calculated the irEC based on the atomic decomposition of the potential energy using classical force-field functions, where the way of the decomposition involves arbitrariness. In the CURP program, the irEC calculation is performed in a different manner based on the pairwise decomposition of forces (<em>CPL</em> 539(2012)144). Accordingly, the numerical results of the irEC may not be coincide with those obtained earlier.</p>
+</div>
+<p>We will illustrate how to perform energy flow analysis using the PDZ3 domain as an example. To calculate the irEC described above, coordinates and velocities trajectory of the system of interest are required. The sample trajectory data of the PDZ3 domain can be downloaded from the following link:</p>
+<p><a class="reference external" href="http://www.comp-biophys.com/resources/md-trj/pdz3.tar.gz">PDZ3 domain trajectories</a></p>
+<p>Note that each trajectory file can be larege (a few GB).
+Below is a summary of the MD simulation:</p>
+<ul class="simple">
+<li><p>We used the Amber12 program.</p></li>
+<li><p>Multiple snapshots were extracted from the NPT trajectory and atomic cooridinates and velocities were saved for restart conditions, each of which was used to conduct the subsequent NVE simulation for 1 ns.</p></li>
+<li><p>During the NVE simulation, atomic velocities and coordinates were saved every 10fs, thus the total # of frames was (1ns/10fs =) 100,000.</p></li>
+<li><p>Since we are interested in the inter-residue energy flow, we removed the solvent degrees of freedom from the trajectory files.</p></li>
+</ul>
+<p>CURP analyzes the inter-residue interactions through the following steps:</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#preparing-trajectories" id="id1">Preparing trajectories</a></p></li>
+<li><p><a class="reference internal" href="#calculating-iref" id="id2">Calculating irEF</a></p></li>
+<li><p><a class="reference internal" href="#calculating-irec" id="id3">Calculating irEC</a></p></li>
+<li><p><a class="reference internal" href="#drawing-the-een-energy-exchange-network" id="id4">Drawing the EEN(Energy Exchange Network)</a></p></li>
+</ul>
+</div>
+<section id="preparing-trajectories">
+<h2><a class="toc-backref" href="#id1"><span class="section-number">3.3.1. </span>Preparing trajectories</a><a class="headerlink" href="#preparing-trajectories" title="Permalink to this headline">¶</a></h2>
+<section id="solvent-stripping">
+<h3>Solvent stripping<a class="headerlink" href="#solvent-stripping" title="Permalink to this headline">¶</a></h3>
+<p>When we are focusing on residue-residue interactions in a polypeptide chain, solvent coordinates and velocities are not needed. It is possible to save disc space by running the follwoing scripts and disregarding the solvent degrees of freedom:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solvent spripping from the coordinates trajetory</span>
+curp conv-trj -crd <span class="se">\</span>
+    -p system.prmtop   -pf amber <span class="se">\</span>
+    -i nev.crd.nc      -if netcdf --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    -o stripped.crd.nc -of netcdf --orange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    mask -m mask.pdb
+
+<span class="c1"># Solvent stripping from the velocities trajectory</span>
+curp conv-trj -vel <span class="se">\</span>
+    -p system.prmtop   -pf amber <span class="se">\</span>
+    -i nev.vel.nc      -if netcdf  --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    -o stripped.vel.nc -of netcdf  --orange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    mask -m mask.pdb
+</pre></div>
+</div>
+<p>Suppose that the time step of the NVE simulation was 2 fs.
+In the first (second) example above, the <cite>mask</cite> subcommand removes the solvent degrees of freedom from the coordinates (velocities) trajectory file, <cite>nev.crd.nc</cite> (<cite>nev.vel.nc</cite>), in which coordinates are saved every 10 fs = 5 frames (2 fs = 1 frame), and a solvent-stripped trajectory is stored in <cite>stripped.crd.nc</cite> (<cite>stripped.nev.nc</cite>). The filename of the parameter/topology file is specified after the <cite>-p</cite> option.</p>
+<dl class="simple">
+<dt><strong>mask</strong></dt><dd><p>This subcommand extracts selected atoms, which are recorded in the PDB file specified after the <cite>-m</cite> option. Make sure that the PDB file contains only the selected atoms, and each atom id coincides with the sequential number of the corresponding atom in the trajectory file. The other atoms will be excluded from the system.</p>
+</dd>
+</dl>
+<p><cite>conv-trj</cite> command options</p>
+<dl class="simple">
+<dt><cite>-crd</cite></dt><dd><p>Setting coordinates trajectory files, whose type is assumed to be the coordinate type by default.
+Note that this option is mutually exclusive with the <cite>-vel</cite> option.</p>
+</dd>
+<dt><cite>-vel</cite></dt><dd><p>Setting velocities trajectories files.
+Note that this option is mutually exclusive with the <cite>-crd</cite> option.</p>
+</dd>
+<dt><cite>-p</cite></dt><dd><p>Specifies the parameter and topology file.</p>
+</dd>
+<dt><cite>-pf</cite></dt><dd><p>Specifies the format of the parameter and topology file.</p>
+</dd>
+<dt><cite>-i</cite></dt><dd><p>This option specifies the input trajectory file. By repeating this option,
+multiple trajectory files are read in the order you provided.</p>
+</dd>
+<dt><cite>-if</cite></dt><dd><p>Specifies the format of the input trajectory file.</p>
+</dd>
+<dt><cite>–irange</cite></dt><dd><p>Specifies &lt;first_frame&gt;, &lt;last_frame&gt; and &lt;frame_interval&gt; for the input trajectory file.
+<cite>-1</cite> for &lt;last_frame&gt; represents the last frame of the trajectory.
+For example, if “1 -1 5” is provided, the conv-trj command reads
+1st, 6th, 11th, … , up to the last frames out from the trajectory.</p>
+</dd>
+<dt><cite>-o</cite></dt><dd><p>Specifies the trajectory file for output. You are not allowed to
+specify this option multiple times.</p>
+</dd>
+<dt><cite>-of</cite></dt><dd><p>Specifies the format of the output trajectory file.</p>
+</dd>
+<dt><cite>–orange</cite></dt><dd><p>Specifies &lt;first_frame&gt;, &lt;last_frame&gt; and &lt;frame_interval&gt; for the output trajectory file.
+<cite>-1</cite> for &lt;last_frame&gt; represents the last frame of the trajectory.</p>
+</dd>
+</dl>
+<p>Note that the parameter and topology file is needed to be modified
+according to the solvent splitting for the subsequent MD simulations of the
+new system.</p>
+</section>
+<section id="adjusting-the-time-points-for-the-coordinates-and-velocities-trajectory">
+<h3>Adjusting the time points for the coordinates and velocities trajectory<a class="headerlink" href="#adjusting-the-time-points-for-the-coordinates-and-velocities-trajectory" title="Permalink to this headline">¶</a></h3>
+<p>In the Amber restart and trajectory files, the time frames of atomic velocities are shifted by <span class="math notranslate nohighlight">\(-\Delta t/2\)</span> from those of atomic coordinates.
+In the CURP program, however, the time points of the atomic coordinates must coincide with those of the atomic velocities.
+Therefore, the atomic velocities in the Amber trajectory file must be
+modified before the energy flow calculations. As explained below,
+the <cite>conv-trj</cite> program of the CURP package estimates the atomic velocities at
+the time point of <span class="math notranslate nohighlight">\(t\)</span> from those at the time points of
+<span class="math notranslate nohighlight">\(t - \Delta t/2\)</span>, and <span class="math notranslate nohighlight">\(t + \Delta t/2\)</span>. Accordingly, the
+velocity frames should be recorded every step to the trajectory file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Suppose that you started your MD simulation from time <span class="math notranslate nohighlight">\(t_0\)</span>. Time points of the Amber coordinate and the velocity frames are, then, (<span class="math notranslate nohighlight">\(t_0 + \Delta t, t_0 + 2\Delta t, t_0 + 3\Delta t, \cdots\)</span>), (<span class="math notranslate nohighlight">\(t_0 + \Delta t/2, t_0 + 3\Delta t/2, t_0 + 5\Delta t/2, \cdots\)</span>), respectively. In addition, the restart file contains the coordinate and the velocity frames at the time points of <span class="math notranslate nohighlight">\(t_0\)</span> and <span class="math notranslate nohighlight">\(t_0 - \Delta t/2\)</span>, respectively.</p>
+</div>
+<p>To modify the time points of the Amber velocities trajectory, the following
+script is available:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># adjust the velocity time</span>
+curp conv-trj -vel <span class="se">\</span>
+    -p stripped.prmtop -pf amber <span class="se">\</span>
+    -i stripped.vel.nc -if netcdf --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    -o adjusted.vel.nc -of netcdf --orange <span class="m">5</span> -1 <span class="m">5</span> <span class="se">\</span>
+    adjust-vel
+</pre></div>
+</div>
+<p>Suppose the the NVE simulation was performed with the time step of 2 fs.
+In the above example, the 1st, 2nd, … , up to the last frames are read from
+the <cite>stripped.vel.nc</cite> file obtained in the <a class="reference internal" href="#solvent-stripping">Solvent stripping</a> section.
+For each of the frame-pairs, (4th, 5th), (9th, 10th), <span class="math notranslate nohighlight">\(\cdots\)</span> , a new frame is generated at the midtime point of the frame-pair. Consequently, the time points of the the original 5th, 10th, <span class="math notranslate nohighlight">\(\cdots\)</span>, frames are shifted by <span class="math notranslate nohighlight">\(- \Delta t/2\)</span> altogether and output to the <cite>adjusted.vel.nc</cite> file. Note that this process is needed for the velocities trajectory obtained by the leap frog algorithm, while not needed for that obtained by the velocity Verlet algorithm.</p>
+<dl class="simple">
+<dt><strong>adjust-vel</strong></dt><dd><p>This subcommand shifts the time points of the velocities trajectories as described above.</p>
+</dd>
+</dl>
+<p>In this tutorial, we provided the sample trajectories in which the
+time points of the coordinates and velocities trajectories were adjusted.</p>
+</section>
+<section id="avoiding-missing-frame-problem-while-concatenating-multiple-trajectory-files">
+<h3>Avoiding missing frame problem while concatenating multiple trajectory files<a class="headerlink" href="#avoiding-missing-frame-problem-while-concatenating-multiple-trajectory-files" title="Permalink to this headline">¶</a></h3>
+<p>A special care is needed when you use the leap frog integrator, which is usually employed in the AMBER program, and split your trajectory into multipile files. Suppose that the time period of the <cite>i</cite>-th trajectory segment is <span class="math notranslate nohighlight">\([T_{i-1} + \Delta t, T_{i}]\)</span>, and the atomic coordinates and the velocities in this segment are recorded at the time points of <span class="math notranslate nohighlight">\((T_{i-1} + \Delta t, T_{i-1} + 2\Delta t, \cdots ,T_{i} - \Delta t, T_{i})\)</span> and <span class="math notranslate nohighlight">\((T_{i-1} + \Delta t/2, T_{i-1} + 3\Delta t/2, \cdots, T_{i} - 3\Delta t/2, T_{i} - \Delta t/2)\)</span>, respectively. If you need to consider the velocities at <span class="math notranslate nohighlight">\(T_{i}\)</span> for the further calculations of energy flow, you need the velocity trajectory files of both <cite>i</cite>-th and <cite>(i+1)</cite>-st segments, because the velocities at <span class="math notranslate nohighlight">\(T_{i}\)</span> are estimated from those at <span class="math notranslate nohighlight">\(T_{i} - \Delta t/2\)</span> and <span class="math notranslate nohighlight">\(T_{i} + \Delta t/2\)</span>. Note that the velocity trajectory file of the <cite>i</cite>-th segment can be replaced with the restart file generated at the end of the <cite>i</cite>-th segment.</p>
+<dl class="simple">
+<dt><strong>Example</strong></dt><dd><p>When you perform a MD simulation for 10 ps with the time step of <span class="math notranslate nohighlight">\(\Delta t\)</span> = 2 fs, and save the atomic coordinates every 10 fs, the time points of the atomic coordinates are 10 fs, 20 fs, <span class="math notranslate nohighlight">\(\cdots\)</span>, 9990 fs, and 10000 fs. On the other hand, you need to save the velocities every step because you need to adjust the time points of the velocities to those of the atomic coordinates. Suppose that you divide the velocities trajectory into halves, and save the first (second) half to the trajectory file named <cite>nve1.vel.nc</cite> (<cite>nve2.vel.nc</cite>). Then the time points of the velocities in <cite>nve1.vel.nc</cite> (<cite>nve2.vel.nc</cite>) are 1 fs, 3 fs, <span class="math notranslate nohighlight">\(\cdots\)</span>, 4999 fs (5001 fs, 5003 fs, <span class="math notranslate nohighlight">\(\cdots\)</span>, 9999 fs).</p>
+</dd>
+</dl>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example 1: adjust velocities for the 1st half of the velocity trajectory</span>
+curp conv-trj -vel <span class="se">\</span>
+    -p system.prmtop -pf amber <span class="se">\</span>
+    -i nve1.vel.nc -if netcdf --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    -o stripped1.vel.nc -of netcdf --orange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    mask -m mask.pdb
+
+ curp convtrj -vel <span class="se">\</span>
+     -p strip.prmtop -pf amber <span class="se">\</span>
+     -i stripped1.vel.nc -if netcdf --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+     -o adjusted1.vel.nc -of netcdf --orange <span class="m">5</span> -1 <span class="m">5</span> <span class="se">\</span>
+     adjust-vel
+</pre></div>
+</div>
+<p>Example 1 shows how to adjust the time points of the velocities to those of the atomic coordinates for the first half of the trajectory after removing unnecessary part of the system. Note that <cite>strip.prmtop</cite> represents the parameter/topology file generated for <cite>mask.pdb</cite>. As a result of the adjustment, the velocities at the time points of 10f, 20fs, <span class="math notranslate nohighlight">\(\cdots\)</span>, and 4990 fs are saved to <cite>adjusted1.vel.nc</cite>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example 2: adjust velocities for the 2nd half of the velocity trajectory</span>
+curp conv-trj -vel <span class="se">\</span>
+    -p system.prmtop -pf amber <span class="se">\</span>
+    -i nve1.rst -if restart --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    -i nve2.vel.nc -if netcdf --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    -o stripped2.vel.nc -of netcdf --orange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+    mask -m mask.pdb
+
+curp convtrj -vel <span class="se">\</span>
+     -p strip.prmtop -pf amber <span class="se">\</span>
+     -i stripped2.vel.nc -if netcdf --irange <span class="m">1</span> -1 <span class="m">1</span> <span class="se">\</span>
+     -o adjusted2.vel.nc -of netcdf --orange <span class="m">1</span> -1 <span class="m">5</span> <span class="se">\</span>
+     adjust-vel
+</pre></div>
+</div>
+<p>Similarly, example 2 shows the velocity adjustment for the 2nd half of the trajectory. Here we need to read the restart file, <cite>nve1.rst</cite> before reading the velocity trajectory <cite>nve2.vel.nc</cite>. The velocities at <cite>t</cite> = 4999 fs (<cite>t</cite> = 5001 fs) are saved in <cite>nve1.rst</cite> (at the 1st frame of <cite>nve2.vel.nc</cite>), and the velocities at <cite>t</cite> = 5000 fs are estimated from those at 4999 and 5001 fs. If the velocities at <cite>t</cite> = 5000 fs are not necessary for the final output file, you do not need to read the restart file in this example. Note that the final velocity file is generated with <cite>“–orange 1 -1 5”</cite> so that the first frame at <cite>t</cite> = 5000 fs is included in the output file named <cite>adjusted2.vel.nc</cite> and, thus, the velocities at 5000 fs, 5010 fs, <span class="math notranslate nohighlight">\(\cdots\)</span>, and 9990 fs are save in the output file.</p>
+</section>
+</section>
+<section id="calculating-iref">
+<h2><a class="toc-backref" href="#id2"><span class="section-number">3.3.2. </span>Calculating irEF</a><a class="headerlink" href="#calculating-iref" title="Permalink to this headline">¶</a></h2>
+<p>Here we explain how to calculate irEF using PDZ3 as an example, with</p>
+<ol class="arabic simple">
+<li><p>velocities and coordinates trajectory file (see above)</p>
+<ul class="simple">
+<li><p>You will find test data in <cite>tutorial/pdz3-eflow/amber-mddata</cite>.</p></li>
+<li><p>Atomic coordinates and velocities saved every 10 fs and the total number frames is 100.</p></li>
+</ul>
+</li>
+<li><p>parameter and topology file of target system</p></li>
+<li><p>configuration file for the CURP calculation</p></li>
+</ol>
+<p>To start the calculations, please type in the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curp compute eflow.cfg &gt; eflow.log
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mpiexec -n <span class="m">2</span> curp compute eflow.cfg &gt; eflow.log
+</pre></div>
+</div>
+<p>for parallel calculations with OpenMPI. In this case the number of cores is 2, <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code> (see below)  is a configuration file for the irEF calculations and <code class="docutils literal notranslate"><span class="pre">eflow.log</span></code> is the log file.</p>
+<p>Alternatively, <code class="docutils literal notranslate"><span class="pre">run_eflow.sh</span></code> performs the equivalent tasks.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> tutorial/pdz3-eflow/eflow+ec
+$ ./run_eflow.sh
+</pre></div>
+</div>
+<p>These commands should produce the following two files:</p>
+<ul class="simple">
+<li><p>eflow.log</p></li>
+<li><p>flux_grp.nc</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">flux_grp.nc</span></code> stores the fime series of irEF in the netcdf format.
+To check the content of this file, type in the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ncdump outdata/flux_grp.nc
+</pre></div>
+</div>
+<section id="setting-up-eflow-cfg">
+<h3>Setting up <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code><a class="headerlink" href="#setting-up-eflow-cfg" title="Permalink to this headline">¶</a></h3>
+<p>Here we show an example of <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="nb">input</span><span class="p">]</span>
+<span class="nb">format</span> <span class="o">=</span> <span class="n">amber</span>
+<span class="c1"># first_last_interval = 1 4 1</span>
+<span class="c1"># group_file = group.ndx</span>
+
+<span class="p">[</span><span class="n">input_amber</span><span class="p">]</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">trajectory</span>
+<span class="n">topology_file</span> <span class="o">=</span> <span class="o">../</span><span class="n">pdz3</span><span class="o">/</span><span class="n">stripped</span><span class="o">.</span><span class="n">prmtop</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">coordinate_format</span> <span class="o">=</span> <span class="n">netcdf</span>
+<span class="n">coordinate_file</span> <span class="o">=</span> <span class="o">../</span><span class="n">pdz3</span><span class="o">/</span><span class="n">strip</span><span class="o">.</span><span class="n">crd</span><span class="o">.</span><span class="n">nc</span>
+<span class="n">velocity_format</span> <span class="o">=</span> <span class="n">netcdf</span>
+<span class="n">velocity_file</span> <span class="o">=</span> <span class="o">../</span><span class="n">pdz3</span><span class="o">/</span><span class="n">strip</span><span class="o">.</span><span class="n">vel</span><span class="o">.</span><span class="n">nc</span>
+
+<span class="p">[</span><span class="n">curp</span><span class="p">]</span>
+<span class="n">potential</span> <span class="o">=</span> <span class="n">amber12SB</span>
+<span class="n">method</span> <span class="o">=</span> <span class="n">energy</span><span class="o">-</span><span class="n">flux</span>
+
+<span class="n">group_method</span> <span class="o">=</span> <span class="n">residue</span>
+<span class="n">flux_grain</span> <span class="o">=</span> <span class="n">group</span>
+<span class="c1"># target_atoms =</span>
+<span class="c1"># enable_inverse_pair = no</span>
+<span class="n">group_pair_file</span> <span class="o">=</span> <span class="n">gpair</span><span class="o">.</span><span class="n">ndx</span>
+
+<span class="n">remove_trans</span> <span class="o">=</span>  <span class="n">no</span>
+<span class="n">remove_rotate</span> <span class="o">=</span> <span class="n">no</span>
+
+<span class="n">log_frequency</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="p">[</span><span class="n">output</span><span class="p">]</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">outdata</span><span class="o">/</span><span class="n">flux</span><span class="o">.</span><span class="n">nc</span>
+<span class="nb">format</span> <span class="o">=</span> <span class="n">netcdf</span>
+<span class="n">decomp</span> <span class="o">=</span> <span class="n">no</span>
+
+<span class="n">output_energy</span> <span class="o">=</span> <span class="n">no</span>
+</pre></div>
+</div>
+<p>A detailed explanation is provided below:</p>
+<section id="input">
+<h4>[input]<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h4>
+<p>The input file format.</p>
+<dl class="simple">
+<dt>format = amber</dt><dd><p>Read Amber formatted files.</p>
+</dd>
+<dt>first_last_interval = 1 4 1</dt><dd><p>For the irEF calculations, the &lt;first&gt; and &lt;last&gt; frame with the interval of &lt;intraval&gt; frames are set in this line as &lt;first&gt; &lt;last&gt; &lt;interval&gt;.</p>
+</dd>
+<dt>group_file = group.ndx</dt><dd><p>In this line, atom group definition file is specified. In this file, you can define an arbitrary group of atoms that is different than the standard amino acid residues.</p>
+</dd>
+</dl>
+</section>
+<section id="input-amber">
+<h4>[input_amber]<a class="headerlink" href="#input-amber" title="Permalink to this headline">¶</a></h4>
+<p>In this section name,
+after <code class="docutils literal notranslate"><span class="pre">input_</span></code> comes the keyword specified as the format key in the <code class="docutils literal notranslate"><span class="pre">[input]</span></code> section.
+The following keywords are used in the <code class="docutils literal notranslate"><span class="pre">input_amber</span></code> section.</p>
+<dl class="simple">
+<dt>target = trajectory | restart</dt><dd><p>Specifies whether the input file is a trajectory file or a restart file.</p>
+</dd>
+<dt>topology_file = &lt;prm_top_file&gt;</dt><dd><p>Set the path to the parameter and topology file.</p>
+</dd>
+<dt>coordinate_format = ascii | netcdf</dt><dd><p>Set the format of the coordinate trajectory file.</p>
+</dd>
+<dt>coordinate_file = &lt;mdcrd_file&gt;</dt><dd><p>File name of the coordinate trajectory file.</p>
+</dd>
+<dt>velocity_format = ascii | netcdf</dt><dd><p>Set the format of the velocity trajectory file.</p>
+</dd>
+<dt>velocity_file = &lt;mdvel_file&gt;</dt><dd><p>File name of the velocity trajectory file.</p>
+</dd>
+</dl>
+</section>
+<section id="curp">
+<h4>[curp]<a class="headerlink" href="#curp" title="Permalink to this headline">¶</a></h4>
+<p>In this section, parameters and keywords are set for the irEF calculations.</p>
+<dl class="simple">
+<dt>potential = amberbase | amber94 | amber96 | amber99 | amber99SB | amber03 | amber12SB</dt><dd><p>In this line, the type of the potential function is set.</p>
+</dd>
+<dt>method = momentum-current | energy-flux</dt><dd><p>This line specifies whether the calculation is for irEF or for atomic stress tensors (momentum current). In this example, we choose <code class="docutils literal notranslate"><span class="pre">energy-flux</span></code>.</p>
+</dd>
+<dt>group_method = none | united | residue | file</dt><dd><p>In this line, the unit of irEF is set.
+<code class="docutils literal notranslate"><span class="pre">none</span></code>: No groups are defined.
+<code class="docutils literal notranslate"><span class="pre">united</span></code>: This specifies fixed united atom groups. All of the hydrogen atoms, whether polar or apolar, belong to the united atom group represented by the heavy atom to which they attached.
+<code class="docutils literal notranslate"><span class="pre">residue</span></code>: Groups are defined by residues unit.
+<code class="docutils literal notranslate"><span class="pre">file</span></code>: User defined atom groups are adopted. (see <code class="docutils literal notranslate"><span class="pre">group_file</span></code> key in the input section.)
+none: No groups are formed.</p>
+</dd>
+<dt>flux_grain = atom | group | both</dt><dd><p>Output option for the energy flow data.
+<code class="docutils literal notranslate"><span class="pre">atom</span></code>: Output inter-atomic energy flow for all atom pairs. (not recommended)
+<code class="docutils literal notranslate"><span class="pre">group</span></code>: Output inter-group energy flow between all pairs of groups defined by the <code class="docutils literal notranslate"><span class="pre">group_method</span></code> keyword.
+<code class="docutils literal notranslate"><span class="pre">both</span></code>: Output both of the above two data (not recommended).</p>
+</dd>
+<dt>target_atoms = 1-33</dt><dd><p>Specifies the target segment for the calculations. In this example, atom 1 to
+33 are considered and the other atoms are neglected. If not
+specified, all atoms of the system are considered. Note that the CURP program
+excludes atoms other than the ones specifed by this option from the calculations, even when the group option is set to any of united/residue/file.</p>
+</dd>
+<dt>group_pair_file = gpair.ndx</dt><dd><p>Set group pair file. This option defines the set of group pair for which
+the energy flow is calculated. This can be used to focus only on
+the region of interest, saving the computational time considerably.
+Without this option, CURP calculates the energy flow between all pairs of groups.</p>
+</dd>
+<dt>remove_trans = yes | no</dt><dd><p>If yes, the translational movement of the system is removed.</p>
+</dd>
+<dt>remove_rotate = yes | no</dt><dd><p>If yes, the rotational movement of the system is removed.</p>
+</dd>
+<dt>log_frequency = 2</dt><dd><p>The frequencey of output information to stdout.</p>
+</dd>
+</dl>
+</section>
+<section id="output">
+<h4>[output]<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h4>
+<p>Setting the output format.</p>
+<dl class="simple">
+<dt>filename = outdata/flux.nc</dt><dd><p>Filename of the energy flow data.</p>
+</dd>
+<dt>format = ascii | netcdf</dt><dd><p>Format of the energy flow data. (netcdf format is highly recommended.)</p>
+</dd>
+<dt>decomp = no | yes</dt><dd><p>During the calculations, choose whether the energy is decomposed into different
+components.</p>
+</dd>
+<dt>output_energy = no | yes</dt><dd><p>CURP is able to evaluate the energy using the atomic velocities and coordinates of the trajectory files. When set to “no”, this energy value is not output.</p>
+</dd>
+</dl>
+<p>The log file looks like  <a class="reference external" href="./curplog.txt">this</a>.</p>
+</section>
+</section>
+</section>
+<section id="calculating-irec">
+<h2><a class="toc-backref" href="#id3"><span class="section-number">3.3.3. </span>Calculating irEC</a><a class="headerlink" href="#calculating-irec" title="Permalink to this headline">¶</a></h2>
+<p>After irEF calculations, irEC is calculated based on the linear response theory.
+You will need the time series of irEF stored in <cite>flux_grp.nc</cite>. Type in the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curp cal-tc <span class="se">\</span>
+    --frame-range <span class="m">1</span> <span class="m">10</span> <span class="m">1</span> --average-shift <span class="m">1</span> <span class="se">\</span>
+    -a outdata/acf.nc <span class="se">\</span>
+    -o outdata/ec.dat outdata/flux_grp.nc &gt; ec.log
+</pre></div>
+</div>
+<dl class="simple">
+<dt><cite>–frame-range &lt;first_frame&gt; &lt;last_frame&gt; &lt;frame_interval&gt;</cite></dt><dd><p>This specifies the range of the time integration of the auto-correlation function of irEF, <span class="math notranslate nohighlight">\((J(0)J(t))\)</span>.
+The upper and lower limits of the integral are set in &lt;first_frame&gt;,
+&lt;last_frame&gt;, respectively. During the integration, every &lt;frame_interval&gt;
+frames are used for calculations.</p>
+</dd>
+<dt><cite>–average-shift &lt;ave_shift&gt;</cite></dt><dd><p>In the calculation of irEC, J(0)J(t) is integrated from &lt;first_fram&gt; to
+&lt;last_frame&gt;. Then, the origin of the integration is shifted by &lt;ave_shift&gt;
+and the time integration is again conducted from &lt;first_frame&gt; to &lt;last_frame&gt;.
+This procedure is then repeated until the end point of the time integration
+reaches the end of the trajectory.</p>
+</dd>
+<dt><cite>-a &lt;file_name&gt;</cite></dt><dd><p>The time-correlation function data are output to &lt;file_name&gt;.
+The data format is netcdf. If this key is not specified, no data is output.</p>
+</dd>
+<dt><cite>-o &lt;file_name&gt;</cite></dt><dd><p>Energy conductivity data is output to &lt;file_name&gt;.</p>
+</dd>
+</dl>
+<p>A useful script file, <code class="docutils literal notranslate"><span class="pre">run_ec.sh</span></code> is available for these calculations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> tutorial/pdz3-eflow/eflow+ec
+$ ./run_ec.sh
+</pre></div>
+</div>
+<p>You will then obtain energy conductivity data <code class="docutils literal notranslate"><span class="pre">output/ec.dat</span></code> and the
+time-correlatioin data file, <code class="docutils literal notranslate"><span class="pre">outdata/acf.nc</span></code>.</p>
+<section id="format-of-irec-data-file">
+<h3>Format of irEC data file<a class="headerlink" href="#format-of-irec-data-file" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>In each line of the data file, <cite>ec.dat</cite>, a pair of residues and the corresponding value of irEC is written as &lt;residue_A&gt; &lt;residue_B&gt; &lt;L_AB * RT&gt;, where &lt;A&gt; = donor residue, &lt;B&gt; = acceptor residue, L_AB = irEC between the residues A and B, R is the gas constant, and T is the absolute temperature (= 300 K for most cases). The unit of &lt;L_AB * RT&gt; is measured in <span class="math notranslate nohighlight">\((kcal/mol)^2/fs\)</span>. Note that the order of &lt;A&gt; and &lt;B&gt; makes no difference bacause the value of L_AB is evaluated for the pair (A,B) without any directionality. However, the difference between the donor and acceptor could be important in some cases. For example, the interatomic electron tunneling current has directionality and in that case the order of the donor and the acceptor is important.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="drawing-the-een-energy-exchange-network">
+<h2><a class="toc-backref" href="#id4"><span class="section-number">3.3.4. </span>Drawing the EEN(Energy Exchange Network)</a><a class="headerlink" href="#drawing-the-een-energy-exchange-network" title="Permalink to this headline">¶</a></h2>
+<p>Example scripts to draw the EEN are found in <code class="docutils literal notranslate"><span class="pre">tutorial/pdz3-eflow/een</span></code> directory, that contains:</p>
+<dl class="simple">
+<dt>graph-een</dt><dd><p>This directory includes some useful scripts that: (1) remove the residue pairs adjacent in the sequence, (2) renumber the residue numbers.</p>
+</dd>
+<dt>graph-een-apo</dt><dd><p>Draw an EEN graph for apo PDZ3 domain.</p>
+</dd>
+<dt>graph-een-a3rem</dt><dd><p>Draw an EEN graph for <span class="math notranslate nohighlight">\(\alpha 3\)</span>-truncated PDZ3 domain.</p>
+</dd>
+<dt>graph-een-diff</dt><dd><p>Draw a difference graph of the EEN graphs of apo- and <span class="math notranslate nohighlight">\(\alpha 3\)</span>-truncated PDZ3 domains.</p>
+</dd>
+<dt>view-een-3D</dt><dd><p>Mapping EEN connectivity on the 3D structure using PyMOL.</p>
+</dd>
+</dl>
+<section id="drawing-the-een">
+<h3>Drawing the EEN<a class="headerlink" href="#drawing-the-een" title="Permalink to this headline">¶</a></h3>
+<section id="preparation">
+<h4>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h4>
+<p>In this example, the working directory for drawing EEN graph is <cite>graph-een</cite>. We used the data file <cite>apo.ec.dat</cite> in this directory. If user wish to use the user’s own irEC data file, perform the following steps:</p>
+<ol class="arabic simple">
+<li><p>copy the sample graph-een directory to a location wherever you like.</p></li>
+<li><p>copy the user’s irEC data file to the new graph-een directory.</p></li>
+<li><p>Set the <cite>ec_fp</cite> variable in the <cite>config.mk</cite> file to the user’s irEC data file name.</p></li>
+</ol>
+<p>Then you will get the EEN graph output by running <cite>make</cite>.</p>
+</section>
+<section id="basic-usage">
+<h4>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h4>
+<p>After editing the <cite>config.mk</cite> file and specifying some parameters for the
+<cite>graph-een</cite> command, run <cite>make</cite> to obtain an <cite>strong.ec.pdf</cite> file, which
+graphically illustrates the EEN.</p>
+</section>
+<section id="other-usage">
+<h4>Other Usage<a class="headerlink" href="#other-usage" title="Permalink to this headline">¶</a></h4>
+<p>By running make with different options, you can obtain the
+EEN in different representations as follows:</p>
+<dl class="simple">
+<dt><cite>make</cite></dt><dd><p>The standard way to generate the EEN of the target system.
+Both weak interactions and strong interactions
+are shown on the graph.</p>
+</dd>
+<dt><cite>make clean</cite></dt><dd><p>Clean up the working directory. EEN graph output files
+and the associated intermediate files are removed.</p>
+</dd>
+<dt><cite>make strong</cite></dt><dd><p>Only strong inter-residue interactions that are greater than
+the thresh value (see below) are shown on the EEN graph.</p>
+</dd>
+<dt><cite>make weak</cite></dt><dd><p>Weak interactions that are greater than the thresh_weak value (see below)
+are shown on the graph together with the strong interactions.</p>
+</dd>
+</dl>
+</section>
+<section id="setting-config-mk">
+<h4>Setting config.mk<a class="headerlink" href="#setting-config-mk" title="Permalink to this headline">¶</a></h4>
+<p>To customize the graph drawing conditions, the <cite>config.mk</cite> fle should be edited.
+An example of the <cite>config.mk</cite> file
+is shown below:</p>
+<dl class="simple">
+<dt>ec_fp = ../all.ec.dat</dt><dd><p>The name of the file that contains the irEC data.</p>
+</dd>
+<dt>fix_resnums = 1:306</dt><dd><p>Renumbering of the residue numbers of the polypeptide chain. In this example,
+the number of residue 1 is changed to 306. You may add multiple items
+separated by a space between them.</p>
+</dd>
+<dt>thresh = 0.008</dt><dd><p>Setting the threshold value for drawing the EEN graph with the
+strong option (see above).</p>
+</dd>
+<dt>thresh_weak = 0.003</dt><dd><p>Setting the threshold value for drawing the EEN graph with the
+weak option (see above).</p>
+</dd>
+<dt>line_values = 0.015  0.008  0.003</dt><dd><p>The threshold values for line attributes. Number of elements in the list must be equal with all line attribute.</p>
+</dd>
+<dt>line_colors = red  blue  green</dt><dd><p>The colors of lines. Number of elements in the list must be equal with all line attribute.</p>
+</dd>
+<dt>line_thicks = 4.0  4.0  2.5</dt><dd><p>The thickness of lines. Number of elements in the list must be equal with all line attribute.</p>
+</dd>
+<dt>line_weights = 5.0  3.0  1.0</dt><dd><p>The weight of line. Number of elements in the list must be equal with all line attribute.</p>
+</dd>
+<dt>other_opts = –ratio 0.3 –direction TB -I</dt><dd><p>Setting other options passed to the <cite>graph-een</cite> command. (see below)</p>
+</dd>
+</dl>
+</section>
+<section id="selecting-the-important-residue-pairs">
+<h4>Selecting the important residue pairs<a class="headerlink" href="#selecting-the-important-residue-pairs" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ cat ../all.ec.dat <span class="p">|</span> ./renum_residue.py <span class="m">1</span>:10
+</pre></div>
+</div>
+<p>In this directory, a useful make target, <cite>make sel.ec.dat</cite>, is provided to run multiple python scripts at a time.</p>
+</section>
+<section id="brief-usages-of-scripts-that-process-irec-data">
+<h4>Brief usages of scripts that process irEC data<a class="headerlink" href="#brief-usages-of-scripts-that-process-irec-data" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">sed</span> <span class="pre">-e</span> <span class="pre">&quot;s/CYX/CYS/g&quot;</span> <span class="pre">&lt;</span> <span class="pre">ec-org.dat</span> <span class="pre">&gt;</span> <span class="pre">ec-new.dat</span></code></dt><dd><p>Convert the cysteine name from CYX used in Amber into the standard one.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">tool</span> <span class="pre">renum-residue</span> <span class="pre">$(fix_resnums)</span> <span class="pre">&lt;</span> <span class="pre">ec-org.dat</span> <span class="pre">&gt;</span> <span class="pre">ec-new.dat</span></code></dt><dd><p>Renumbering the residue numbers according to the <cite>fix_resnums</cite> variable.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">tool</span> <span class="pre">noneighbor</span> <span class="pre">WAT</span> <span class="pre">$(ligand)</span> <span class="pre">&lt;</span> <span class="pre">ec-org.dat</span> <span class="pre">&gt;</span> <span class="pre">ec-new.dat</span></code></dt><dd><p>Remove neighboring residue pairs that indicate covalent peptide bonds.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">tool</span> <span class="pre">nocap</span> <span class="pre">WAT</span> <span class="pre">$(ligand)</span> <span class="pre">&lt;</span> <span class="pre">ec-org.dat</span> <span class="pre">&gt;</span> <span class="pre">ec-new.dat</span></code></dt><dd><p>Remove residue pairs that contain the capped residues.</p>
+</dd>
+</dl>
+</section>
+<section id="usage-of-graph-een">
+<h4>Usage of <cite>graph-een</cite><a class="headerlink" href="#usage-of-graph-een" title="Permalink to this headline">¶</a></h4>
+<p>Here we describe parameters for the <code class="docutils literal notranslate"><span class="pre">curp</span> <span class="pre">graph-een</span></code> command.</p>
+<dl class="simple">
+<dt><cite>-h, –help</cite></dt><dd><p>Display help menu.</p>
+</dd>
+<dt><cite>-f, –output-een-filename</cite></dt><dd><p>Specifies the output file name for the EEN.
+An obtained figure in pdf format can be edited with Adobe Illustrator.</p>
+</dd>
+<dt><cite>-r, –threshold</cite></dt><dd><p>Specifies the threshold value of irEC for drawing. If a residue pair (A, B) has energy conductivity L_AB such that L_AB * RT is greater than this threshold value, then the residue pair appears in the EEN. Here R is the gas constant and T is the absolute temperature (= 300K for most cases). The default value is 0.01 <span class="math notranslate nohighlight">\((kcal/mol)^2/fs\)</span>.</p>
+</dd>
+<dt><cite>–ratio</cite></dt><dd><p>Specifies the inverse aspect ratio. This value specifies the ratio of the height of the image to its width. Without this parameter, the inverse aspect ratio is set automatically.</p>
+</dd>
+<dt><cite>-c, –cluster-filename</cite></dt><dd><p>The cluster structure of the EEN is illustrated in the image. The cluster structure of the nodes (residues) in the EEN is described in the file specified by –cluster-filename. See <cite>Format of cluster definition file</cite> for details.</p>
+</dd>
+<dt><cite>-n, –node-style-filename</cite></dt><dd><p>Specifies the file name for the node style definition. See <cite>Format of the node style definition file</cite> for details.</p>
+</dd>
+<dt><cite>–direction</cite></dt><dd><p>Specifies the orientation of the EEN, which is drawn from left to right with <strong>LR</strong> and top to bottom with <strong>TB</strong>. The default value is <strong>TB</strong>.</p>
+</dd>
+</dl>
+<p>The selected residues will appear in the image irrespective of whether the residues are donors or acceptors.</p>
+<dl class="simple">
+<dt><cite>–with-one-lettr</cite></dt><dd><p>Specfication of this option leads to the showing of one letter symbols
+for the amino acid residues.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt><cite>-p,  –bring-node-pair-close-together</cite></dt><dd><p>Bring the node pair close together on the EEN graph. ex), 1:2, 3:5, 3:15.</p>
+</dd>
+</dl>
+</section>
+<section id="input-data">
+<h4>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>node.cfg</dt><dd><p>This file describes the style of each node in the image.
+See <a class="reference internal" href="#format-of-node-style-definition-file">Format of node style definition file</a> for details.</p>
+</dd>
+<dt>cluster.cfg</dt><dd><p>This file describes the cluster structure of the nodes in the EEN. See <a class="reference internal" href="#format-of-the-cluster-definition-file">Format of the cluster definition file</a> for details.</p>
+</dd>
+</dl>
+</section>
+<section id="format-of-the-cluster-definition-file">
+<h4>Format of the cluster definition file<a class="headerlink" href="#format-of-the-cluster-definition-file" title="Permalink to this headline">¶</a></h4>
+<p>Here we describe the format of the cluster definition file, <cite>cluster.cfg</cite>.</p>
+<p>Example of <cite>cluster.cfg</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Ligand</span> <span class="n">binding</span> <span class="n">pocket</span><span class="p">]</span>
+<span class="mi">322</span> <span class="mi">323</span> <span class="mi">324</span> <span class="mi">325</span> <span class="mi">326</span> <span class="mi">327</span> <span class="mi">328</span> <span class="mi">331</span> <span class="mi">339</span> <span class="mi">372</span> <span class="mi">376</span> <span class="mi">379</span> <span class="mi">380</span>
+
+<span class="n">shape</span> <span class="o">=</span> <span class="n">box</span><span class="p">,</span> <span class="n">filled</span>
+<span class="n">color</span> <span class="o">=</span> <span class="n">black</span>
+<span class="n">fillcolor</span> <span class="o">=</span> <span class="n">yellow</span>
+<span class="n">fontsize</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="o">.</span>
+<span class="o">.</span>
+<span class="o">.</span>
+</pre></div>
+</div>
+<p>In the above example each cluster name is indicated by square brackets <code class="docutils literal notranslate"><span class="pre">[</span></code> and <code class="docutils literal notranslate"><span class="pre">]</span></code>. This is followed by the listing of the members of each cluster. For instance, residues 29-60 are included in the cluster TM1.</p>
+<p>Cluster attributes may be specified as well. You can specify multiple attributes
+such as <cite>color</cite> (= red, yellow, …), <cite>shape</cite> (= box, rounded,…) and so on. Basically, any <a class="reference external" href="http://www.graphviz.org/doc/info/attrs.html">Graphviz-attributes</a> can be specified.</p>
+<p>Examples of common attributes:</p>
+<ul class="simple">
+<li><p>style =</p></li>
+<li><p>shape = box, rounded, circle, filled, …</p></li>
+<li><p>Make a backgroud white</p>
+<ul>
+<li><p>color = white</p></li>
+<li><p>fillcolor = white</p></li>
+</ul>
+</li>
+<li><p>fontcolor = -</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Sometimes, you may group multiple nodes together. To do so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fillcolor</span> <span class="o">=</span> <span class="n">white</span>
+<span class="n">label</span> <span class="o">=</span>
+<span class="n">color</span> <span class="o">=</span> <span class="n">white</span>
+</pre></div>
+</div>
+<p>An important point is to leave <cite>label</cite>-attribute blank.</p>
+</div>
+</section>
+<section id="format-of-node-style-definition-file">
+<h4>Format of node style definition file<a class="headerlink" href="#format-of-node-style-definition-file" title="Permalink to this headline">¶</a></h4>
+<p>This file describes node attributes. The format of this file is similar to that of cluster definition file. The difference between the two files is that the cluster definition file describes the attributes of the cluster as a whole, while the node style definition file specifies the attributes of each individual node.</p>
+<p>Example of the node style definition file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
+<span class="mi">1</span><span class="o">-</span>
+
+<span class="n">fillcolor</span> <span class="o">=</span> <span class="n">lavender</span>
+<span class="n">fontcolor</span> <span class="o">=</span> <span class="n">black</span>
+<span class="n">fontname</span> <span class="o">=</span> <span class="n">Arial</span> <span class="n">Bold</span>
+<span class="c1"># fontname = Helvetica Neue Bold</span>
+<span class="n">fontsize</span> <span class="o">=</span> <span class="mi">14</span>
+<span class="n">height</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">width</span>  <span class="o">=</span> <span class="mf">0.7</span>
+
+<span class="p">[</span><span class="n">alpha</span> <span class="n">helix</span> <span class="mi">3</span><span class="p">]</span>
+<span class="mi">393</span><span class="o">-</span><span class="mi">399</span>
+
+<span class="n">fillcolor</span> <span class="o">=</span> <span class="n">black</span>
+<span class="n">fontcolor</span> <span class="o">=</span> <span class="n">white</span>
+</pre></div>
+</div>
+<p>A section name is indicated by square brackets <code class="docutils literal notranslate"><span class="pre">[</span></code> and <code class="docutils literal notranslate"><span class="pre">]</span></code>. In contrast to the cluster names, section names do not actually appear on the image of the EEN. If a node belongs to two different sections, the attribute setting of the new section overwrites the previous one. Therefore, it is convenient to put the <code class="docutils literal notranslate"><span class="pre">[default]</span></code> section at the top and set the default attributes there. The line, <code class="docutils literal notranslate"><span class="pre">1-</span></code>, in the default section means that the default attributes apply to all of the nodes.</p>
+<p>Attribute examples:</p>
+<ul class="simple">
+<li><p>label = &lt;value&gt;</p></li>
+<li><p>style = &lt;value&gt;</p></li>
+<li><p>shape = elliple | box | rounded | circle |</p></li>
+<li><p>color = &lt;value&gt;</p></li>
+<li><p>fillcolor = &lt;value&gt;</p></li>
+<li><p>fontcolor = &lt;value&gt;</p></li>
+<li><p>fontsize = &lt;value&gt;</p></li>
+<li><p>height = &lt;value&gt;</p></li>
+<li><p>width = &lt;value&gt;</p></li>
+</ul>
+</section>
+</section>
+<section id="drawing-the-differential-een">
+<h3>Drawing the differential EEN<a class="headerlink" href="#drawing-the-differential-een" title="Permalink to this headline">¶</a></h3>
+<p>The differential EEN graph illustrates the difference of the irEC between a pair of homologous proteins or different states of the same protein as an EEN representation. The working directory for this is <cite>graph-een-diff</cite>. In this example, we show how to draw the differential EEN between the apo- and the <span class="math notranslate nohighlight">\(\alpha 3\)</span>-truncated forms of PDZ3 domain. The respective irEC data are stored in <cite>chart-een-apo/outdata/sel.ec.dat</cite> and <cite>chart-een-a3rem/outdata/sel.ec.dat</cite>. Before drawing the differential EEN graph, set the <cite>ec_fp1</cite> (<cite>ec_fp2</cite>) variable to <cite>chart-een-apo/outata/sel.ec.dat</cite> (<cite>chart-een-a3rem/outdata/sel.ec.dat</cite>) in the <cite>config.mk</cite> file.</p>
+<p>The differential EEN is consisted of two parts: For the 1st (2nd) part, the values of irEC increase (decrease) from <cite>ec_fp1</cite> to <cite>ec_fp2</cite>, and these parts are denoted as <code class="docutils literal notranslate"><span class="pre">inc</span></code> and <code class="docutils literal notranslate"><span class="pre">dec</span></code>, respectively. Note that <code class="docutils literal notranslate"><span class="pre">inc</span></code> (<code class="docutils literal notranslate"><span class="pre">dec</span></code>) would contain the node pairs that are found only one of either <cite>ec_fp1</cite> or <cite>ec_fp2</cite>. In such cases, there are two kinds of possibilities as described below:</p>
+<dl class="simple">
+<dt>Union</dt><dd><p>We consider such pairs for the differential EEN. The missing pairs in either <cite>ec_fp1</cite> or <cite>ec_fp2</cite> are assumed to have the virtual value (see below) specified by the <cite>dval</cite> variable in <cite>Makefile</cite>. Such pairs are shown in the <cite>inc-fill.ec.pdf</cite> (<cite>dec-fill.ec.pdf</cite>) file.</p>
+</dd>
+<dt>Intersection</dt><dd><p>Such pairs are neglected for the differential EEN.</p>
+</dd>
+</dl>
+<p>In <cite>Makefile</cite> in the <cite>graph-een-diff</cite> directory, you will the following variables:</p>
+<p>dval = 0.0001</p>
+<p>Set the virtual value of irEC if a node pair is missing in either <cite>ec_fp1</cite> or <cite>ec_fp2</cite> (see above). If you running <cite>make</cite>, you will get the following five files:</p>
+<dl class="simple">
+<dt><cite>inc.ec.pdf</cite></dt><dd><p>The <cite>inc</cite> part of the differential EEN (Union).</p>
+</dd>
+<dt><cite>dec.ec.pdf</cite></dt><dd><p>The <cite>dec</cite> part of the differential EEN (Union).</p>
+</dd>
+<dt><cite>inc-fill.ec.pdf</cite></dt><dd><p>The <cite>inc</cite> part of the differential EEN (Intersection).</p>
+</dd>
+<dt><cite>dec-fill.ec.pdf</cite></dt><dd><p>The <cite>dec</cite> part of the differential EEN (Intersection).</p>
+</dd>
+<dt><cite>both.ec.pdf</cite></dt><dd><p>Both <cite>inc</cite> and <cite>dec</cite> parts are shown as solid and dashed lines, respectively. (Union)</p>
+</dd>
+</dl>
+<p>Sometimes, you may be interested in only on of the five files.
+In such a case, for instance, if you type the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make inc
+</pre></div>
+</div>
+<p>then you will get only <cite>inc.ec.pdf</cite>.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.3. Energy flow analysis</a><ul>
+<li><a class="reference internal" href="#preparing-trajectories">3.3.1. Preparing trajectories</a><ul>
+<li><a class="reference internal" href="#solvent-stripping">Solvent stripping</a></li>
+<li><a class="reference internal" href="#adjusting-the-time-points-for-the-coordinates-and-velocities-trajectory">Adjusting the time points for the coordinates and velocities trajectory</a></li>
+<li><a class="reference internal" href="#avoiding-missing-frame-problem-while-concatenating-multiple-trajectory-files">Avoiding missing frame problem while concatenating multiple trajectory files</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#calculating-iref">3.3.2. Calculating irEF</a><ul>
+<li><a class="reference internal" href="#setting-up-eflow-cfg">Setting up <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code></a><ul>
+<li><a class="reference internal" href="#input">[input]</a></li>
+<li><a class="reference internal" href="#input-amber">[input_amber]</a></li>
+<li><a class="reference internal" href="#curp">[curp]</a></li>
+<li><a class="reference internal" href="#output">[output]</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#calculating-irec">3.3.3. Calculating irEC</a><ul>
+<li><a class="reference internal" href="#format-of-irec-data-file">Format of irEC data file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#drawing-the-een-energy-exchange-network">3.3.4. Drawing the EEN(Energy Exchange Network)</a><ul>
+<li><a class="reference internal" href="#drawing-the-een">Drawing the EEN</a><ul>
+<li><a class="reference internal" href="#preparation">Preparation</a></li>
+<li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li><a class="reference internal" href="#other-usage">Other Usage</a></li>
+<li><a class="reference internal" href="#setting-config-mk">Setting config.mk</a></li>
+<li><a class="reference internal" href="#selecting-the-important-residue-pairs">Selecting the important residue pairs</a></li>
+<li><a class="reference internal" href="#brief-usages-of-scripts-that-process-irec-data">Brief usages of scripts that process irEC data</a></li>
+<li><a class="reference internal" href="#usage-of-graph-een">Usage of <cite>graph-een</cite></a></li>
+<li><a class="reference internal" href="#input-data">Input Data</a></li>
+<li><a class="reference internal" href="#format-of-the-cluster-definition-file">Format of the cluster definition file</a></li>
+<li><a class="reference internal" href="#format-of-node-style-definition-file">Format of node style definition file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#drawing-the-differential-een">Drawing the differential EEN</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="stress_tutorial.html"
+                        title="previous chapter"><span class="section-number">3.2. </span>Atomic stress tensor analysis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter"><span class="section-number">4. </span>Reference</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/eflow_tutorial.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="reference.html" title="4. Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="stress_tutorial.html" title="3.2. Atomic stress tensor analysis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="tutorials.html" ><span class="section-number">3. </span>Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.3. </span>Energy flow analysis</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2017, Yamato Labaratory.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

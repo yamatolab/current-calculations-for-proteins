@@ -1,0 +1,771 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4. Reference &#8212; CURP 1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5. How to participate ?" href="developer/participate.html" />
+    <link rel="prev" title="3.3. Energy flow analysis" href="eflow_tutorial.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="developer/participate.html" title="5. How to participate ?"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="eflow_tutorial.html" title="3.3. Energy flow analysis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">4. </span>Reference</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="reference">
+<h1><span class="section-number">4. </span>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<section id="specification-of-curp-setting-file">
+<h2><span class="section-number">4.1. </span>Specification of curp setting file<a class="headerlink" href="#specification-of-curp-setting-file" title="Permalink to this headline">¶</a></h2>
+<p>This section introduces the description about the setting for the CURP.
+The character <code class="docutils literal notranslate"><span class="pre">:</span></code> after each of the keyword and the value means value
+types allowed. For example:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Int</dt>
+<dd class="field-odd"><p>integer value.</p>
+</dd>
+<dt class="field-even">Float</dt>
+<dd class="field-even"><p>floating value.</p>
+</dd>
+<dt class="field-odd">Bool</dt>
+<dd class="field-odd"><p>boolean value. yes or no.</p>
+</dd>
+<dt class="field-even">File</dt>
+<dd class="field-even"><p>specify file path.</p>
+</dd>
+<dt class="field-odd">List[type]</dt>
+<dd class="field-odd"><p>list of the value for the type given in <code class="docutils literal notranslate"><span class="pre">[</span></code> and <code class="docutils literal notranslate"><span class="pre">]</span></code>.</p>
+</dd>
+<dt class="field-even">Choice[A|B|C]</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code> or <code class="docutils literal notranslate"><span class="pre">C</span></code> must be chosen.</p>
+</dd>
+</dl>
+<section id="setting-options">
+<h3><span class="section-number">4.1.1. </span>Setting options<a class="headerlink" href="#setting-options" title="Permalink to this headline">¶</a></h3>
+<section id="curp-section">
+<h4>curp section<a class="headerlink" href="#curp-section" title="Permalink to this headline">¶</a></h4>
+<p><strong>vdw_cutoff_method = atom</strong> (default) : Choice[atom]</p>
+<blockquote>
+<div><p>The method to cut off the van der Waals interaction.</p>
+</div></blockquote>
+<p><strong>coulomb_method = cutoff</strong> (default) : Choice[cutoff]</p>
+<blockquote>
+<div><p>The method to calculate coulomb interaction.</p>
+</div></blockquote>
+<p><strong>remove_rotate = yes</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Remove the coordinate and velocity of rotation for the target atoms</p>
+</div></blockquote>
+<p><strong>enable_inverse_pair = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Calculate and write out inverse pairs j &lt;- i for flux adding normal group pairs: i &lt;- j. This option is used in the case for calculating energy flux.</p>
+</div></blockquote>
+<p><strong>decomp_group_current = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Flag whether decompose the group current into inside and outside contributions of group region.This option is used for calculating momentum current</p>
+</div></blockquote>
+<p><strong>coulomb_cutoff_method = atom</strong> (default) : Choice[atom]</p>
+<blockquote>
+<div><p>The method to cut off the coulomb interaction.</p>
+</div></blockquote>
+<p><strong>group_pair_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>Path to file to define group pair. If you didn’t given, all of pairs within the targets will be calculated.</p>
+</div></blockquote>
+<p><strong>target_atoms = 1-</strong> (default) : List[String]</p>
+<blockquote>
+<div><p>The atom list calculated.</p>
+</div></blockquote>
+<p><strong>potential = amberbase</strong> (default) : Choice[amberbase|amber94|amber96|amber99|amber99SB|amber03|amber12SB]</p>
+<blockquote>
+<div><p>The potential function to calculate the pairwise forces.</p>
+</div></blockquote>
+<p><strong>vdw_cutoff_length = 99.9</strong> (default) : Float</p>
+<blockquote>
+<div><p>The cutoff length for the van der Waals interaction.</p>
+</div></blockquote>
+<p><strong>remove_trans = yes</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Remove the coordinate and velocity of translation for the target atoms</p>
+</div></blockquote>
+<p><strong>log_frequency = 10</strong> (default) : Int</p>
+<blockquote>
+<div><p>Log informations will be written out every given steps.</p>
+</div></blockquote>
+<p><strong>flux_grain = group</strong> (default) : Choice[atom|group|both]</p>
+<blockquote>
+<div><p>The grain to calculate the flux.”atom”, “group” and “both” values mean that the flux for atom parirs, group pairs and both of them will be calculated, respectively.</p>
+</div></blockquote>
+<p><strong>method = momentum-current</strong> (default) : Choice[energy-flux|momentum-current|microcanonical|heat-flux]</p>
+<blockquote>
+<div><p>The method of calculation.”momentum-current” calculates the stress tensor for systems. “energy-flux” calculates the energy flow for systems. “dynamics is mainly used to verify the validity of  the CURP program numerically, so its implementation is very simple</p>
+</div></blockquote>
+<p><strong>group_method = none</strong> (default) : Choice[united|residue|file|none]</p>
+<blockquote>
+<div><p>The method to construct the group.”united” means that hydrogen atoms are included in hevy atoms covalent to them.”residue” means that the groups are calculated by residue level. If “file” is specified, the groups definition is givenby the group file in input section.</p>
+</div></blockquote>
+<p><strong>coulomb_cutoff_length = 99.9</strong> (default) : Float</p>
+<blockquote>
+<div><p>The cutoff length for the coulomb interaction.</p>
+</div></blockquote>
+</section>
+<section id="dynamics-section">
+<h4>dynamics section<a class="headerlink" href="#dynamics-section" title="Permalink to this headline">¶</a></h4>
+<p><strong>trj_format = ascii</strong> (default) : Choice[ascii|netcdf]</p>
+<blockquote>
+<div><p>The format of coordinates and velocities trajectory file.</p>
+</div></blockquote>
+<p><strong>vels_frequency = 1</strong> (default) : Int</p>
+<blockquote>
+<div><p>The interval step to write velocity trajectory.</p>
+</div></blockquote>
+<p><strong>vels_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>The file path to write out the velocities trajectory. If empty, then don’t write.</p>
+</div></blockquote>
+<p><strong>integrator = vverlet</strong> (default) : Choice[vverlet|leapfrog]</p>
+<blockquote>
+<div><p>The integrator to want to use with the dynamics.</p>
+</div></blockquote>
+<p><strong>num_steps = 1</strong> (default) : Int</p>
+<blockquote>
+<div><p>The number of integration steps.</p>
+</div></blockquote>
+<p><strong>crds_frequency = 1</strong> (default) : Int</p>
+<blockquote>
+<div><p>The interval step to write coordinate trajectory.</p>
+</div></blockquote>
+<p><strong>crds_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>The file path to write out the coordinates trajectory. If empty, then don’t write.</p>
+</div></blockquote>
+<p><strong>dt = 0.001</strong> (default) : Float</p>
+<blockquote>
+<div><p>Time step to advance snapshots to next step, in ps unit.</p>
+</div></blockquote>
+</section>
+<section id="input-section">
+<h4>input section<a class="headerlink" href="#input-section" title="Permalink to this headline">¶</a></h4>
+<p><strong>group_file = group.cfg</strong> (default) : File</p>
+<blockquote>
+<div><p>The group file path to define group.if curp.group_method == file then this definition is used.</p>
+</div></blockquote>
+<p><strong>first_last_interval = 0  -1  1</strong> (default) : List[Int]</p>
+<blockquote>
+<div><p>The first, last and interval step to read coordinates and velocities trajectory.</p>
+</div></blockquote>
+<p><strong>use_simtime = yes</strong> (default) : Bool</p>
+<blockquote>
+<div><p>use the simulation time information in trajectory.</p>
+</div></blockquote>
+<p><strong>format = amber</strong> (default) : Choice[presto|amber]</p>
+<blockquote>
+<div><p>The format of the various files generated by other grograms.</p>
+</div></blockquote>
+</section>
+<section id="input-amber-section">
+<h4>input_amber section<a class="headerlink" href="#input-amber-section" title="Permalink to this headline">¶</a></h4>
+<p><strong>restart_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>Restart file path.</p>
+</div></blockquote>
+<p><strong>velocity_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>Velocity trajectory file path.</p>
+</div></blockquote>
+<p><strong>target = trajectory</strong> (default) : Choice[trajectory|restart]</p>
+<blockquote>
+<div><p>The target input file to be used.</p>
+</div></blockquote>
+<p><strong>coordinate_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>Coordinate trajectory file path.</p>
+</div></blockquote>
+<p><strong>restart_format = restart</strong> (default) : Choice[restart]</p>
+<blockquote>
+<div><p>The format of restart file.</p>
+</div></blockquote>
+<p><strong>dump_parameters = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Dump the parsed Amber force field parameter set.</p>
+</div></blockquote>
+<p><strong>velocity_format = ascii</strong> (default) : Choice[ascii|netcdf]</p>
+<blockquote>
+<div><p>The format of velocity file.</p>
+</div></blockquote>
+<p><strong>topology_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>Topology file path.</p>
+</div></blockquote>
+<p><strong>coordinate_format = ascii</strong> (default) : Choice[ascii|netcdf]</p>
+<blockquote>
+<div><p>The format of coordinate file.</p>
+</div></blockquote>
+</section>
+<section id="output-section">
+<h4>output section<a class="headerlink" href="#output-section" title="Permalink to this headline">¶</a></h4>
+<p><strong>energy_decomp = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Flag whether decompose the total energy to bonded, coulomb, and van der Waals interaction.</p>
+</div></blockquote>
+<p><strong>energy_freqency = 0</strong> (default) : Int</p>
+<blockquote>
+<div><p>The frequency to write the energy information.</p>
+</div></blockquote>
+<p><strong>format = ascii</strong> (default) : Choice[ascii|netcdf]</p>
+<blockquote>
+<div><p>The format of flux data.</p>
+</div></blockquote>
+<p><strong>compress = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Flag whether compress with gnu zip, then the extension of the file name became “.gz”.</p>
+</div></blockquote>
+<p><strong>filename = current.dat</strong> (default) : File</p>
+<blockquote>
+<div><p>The file name to output the current or flux information.</p>
+</div></blockquote>
+<p><strong>frequency = 0</strong> (default) : Int</p>
+<blockquote>
+<div><p>The frequency to create new file to write the additional file.</p>
+</div></blockquote>
+<p><strong>energy_compress = yes</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Flag whether compress with gnu zip for energy_file, then the extension of the file name became “.gz”.</p>
+</div></blockquote>
+<p><strong>energy_file = energy.dat</strong> (default) : File</p>
+<blockquote>
+<div><p>The file path to output the energy information.</p>
+</div></blockquote>
+<p><strong>output_energy = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Flag whether output the energy information or not.</p>
+</div></blockquote>
+<p><strong>decomp = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Flag whether decompose the total current or flux to bonded, coulomb, and van der Waals interaction.</p>
+</div></blockquote>
+</section>
+<section id="volume-section">
+<h4>volume section<a class="headerlink" href="#volume-section" title="Permalink to this headline">¶</a></h4>
+<p><strong>voronoi_solvation = none</strong> (default) : Choice[none|RANDOM20]</p>
+<blockquote>
+<div><p>The kind of solvation system to sink the target system in vacuum for the voronoi method. The density value of the water under NPT ensemble is 0.99651 [g/cm^3] at 27 [Kelvin]</p>
+</div></blockquote>
+<p><strong>output_gvolume_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>The file path to write out the group volumes trajectory. If this value is not given, writing out is not performed.The file written by this option can be used in the optionsgroup_trajectory_file.</p>
+</div></blockquote>
+<p><strong>atomic_trajectory_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>Atomic volumes trajectory file path for outer method.</p>
+</div></blockquote>
+<p><strong>group_trajectory_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>Group volumes trajectory file path for outer method.</p>
+</div></blockquote>
+<p><strong>voronoi_no_hydrogen = no</strong> (default) : Bool</p>
+<blockquote>
+<div><p>Flag to determine whether include hydrogen atomsfor the voronoi calculation.</p>
+</div></blockquote>
+<p><strong>voronoi_output_solvation_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>The file path to write out the solvation pdb data in the case of voronoi_solvation == “none”.If the file path is not given, writing out is not performed.</p>
+</div></blockquote>
+<p><strong>voronoi_cutoff = 6.0</strong> (default) : Float</p>
+<blockquote>
+<div><p>The cutoff length that the voronoi calculation finds outneighbour candidate particles.</p>
+</div></blockquote>
+<p><strong>output_volume_file = none</strong> (default) : File</p>
+<blockquote>
+<div><p>The file path to write out the atomic volumes trajectory. If this value is not given, writing out is not performed.The file written by this option can be used in the options,atomic_trajectory_file.</p>
+</div></blockquote>
+<p><strong>voronoi_probe_length = 2.4</strong> (default) : Float</p>
+<blockquote>
+<div><p>The probe length of the solvation for the voronoi method.The water molecules within the probe length from the system are removed.</p>
+</div></blockquote>
+<p><strong>method = voronoi</strong> (default) : Choice[none|vdw|voronoi|outer]</p>
+<blockquote>
+<div><p>Algorithm to calculate the atomic volumes.</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+<section id="input-and-output-files-specification">
+<h2><span class="section-number">4.2. </span>Input and Output files specification<a class="headerlink" href="#input-and-output-files-specification" title="Permalink to this headline">¶</a></h2>
+<section id="netcdf-specification-of-energy-flux-data-file">
+<h3><span class="section-number">4.2.1. </span>NetCDF specification of energy flux data file<a class="headerlink" href="#netcdf-specification-of-energy-flux-data-file" title="Permalink to this headline">¶</a></h3>
+<p>Please visit NetCDF website to use NetCDF format file for more information.</p>
+<section id="dimensions">
+<h4>dimensions<a class="headerlink" href="#dimensions" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>nframe</dt><dd><p>The number of frames. This dimension is unlimited.</p>
+</dd>
+<dt>npair</dt><dd><p>The number of group pairs.</p>
+</dd>
+<dt>ncomponent</dt><dd><p>The number of components that contains total, bond, angle, torsion, improper torsion, coulomb14, vdw14, coulomb and vdw of energy flux if user turn on the keyword, decomp.</p>
+</dd>
+<dt>nchar</dt><dd><p>The number of character array.</p>
+</dd>
+</dl>
+</section>
+<section id="variables">
+<h4>variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>time(nframe)</dt><dd><p>Array of the calculated time.</p>
+</dd>
+<dt>donors(npair, nchar)</dt><dd><p>Array of donor name at i:sup:<cite>th</cite> pair.</p>
+</dd>
+<dt>acceptors(npair, nchar)</dt><dd><p>Array of acceptor name at i:sup:<cite>th</cite> pair.</p>
+</dd>
+<dt>components(ncomponent, nchar)</dt><dd><p>Array of component names</p>
+</dd>
+<dt>flux(nframe, npair, ncomponent)</dt><dd><p>Array flux data.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="netcdf-specification-of-time-correlation-data">
+<h3><span class="section-number">4.2.2. </span>NetCDF specification of time-correlation data<a class="headerlink" href="#netcdf-specification-of-time-correlation-data" title="Permalink to this headline">¶</a></h3>
+<p>Please visit NetCDF website to use NetCDF format file for more information.</p>
+<section id="id1">
+<h4>dimensions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>nframe</dt><dd><p>The number of frames.</p>
+</dd>
+<dt>npair</dt><dd><p>The number of group pairs. This dimension is unlimited.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that there isn’t ncomponent variable in time-correlation data
+unlike energy flux data file</p>
+</div>
+<dl class="simple">
+<dt>nchar</dt><dd><p>The number of character array.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h4>variables<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>time(nframe)</dt><dd><p>Array of the calculated time.</p>
+</dd>
+<dt>donors(npair, nchar)</dt><dd><p>Array of donor name at i:sup:<cite>th</cite> pair.</p>
+</dd>
+<dt>acceptors(npair, nchar)</dt><dd><p>Array of acceptor name at i:sup:<cite>th</cite> pair.</p>
+</dd>
+<dt>acf(npair, nframe)</dt><dd><p>Array flux data.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="group-file-specification">
+<h3><span class="section-number">4.2.3. </span>Group file specification<a class="headerlink" href="#group-file-specification" title="Permalink to this headline">¶</a></h3>
+<p>For example, you can separate the main chain and the side chain parts by
+using the following specification:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">01</span><span class="n">_ALA_M</span><span class="p">]</span>
+<span class="mi">1</span><span class="o">-</span><span class="mi">6</span> <span class="mi">11</span><span class="o">-</span><span class="mi">12</span>
+
+<span class="p">[</span><span class="mi">01</span><span class="n">_ALA_S</span><span class="p">]</span>
+<span class="mi">7</span><span class="o">-</span><span class="mi">10</span>
+
+<span class="p">[</span><span class="mi">02</span><span class="n">_ALA_M</span><span class="p">]</span>
+<span class="mi">13</span><span class="o">-</span><span class="mi">16</span> <span class="mi">21</span><span class="o">-</span><span class="mi">22</span>
+
+<span class="p">[</span><span class="mi">02</span><span class="n">_ALA_S</span><span class="p">]</span>
+<span class="mi">17</span><span class="o">-</span><span class="mi">20</span>
+
+<span class="p">[</span><span class="mi">03</span><span class="n">_ALA_M</span><span class="p">]</span>
+<span class="mi">23</span><span class="o">-</span><span class="mi">26</span> <span class="mi">31</span><span class="o">-</span><span class="mi">33</span>
+
+<span class="p">[</span><span class="mi">03</span><span class="n">_ALA_S</span><span class="p">]</span>
+<span class="mi">27</span><span class="o">-</span><span class="mi">30</span>
+</pre></div>
+</div>
+<p>The group names are surrounded by <cite>[</cite> and <cite>]</cite>.
+Then the range of the constituent atoms are provided.
+You can spacify the range by using <cite>-</cite> symbol.
+You can provide
+multiple data saparated by space, empty line, or tab.</p>
+</section>
+</section>
+<section id="how-to-use-the-curp-tools">
+<h2><span class="section-number">4.3. </span>How to use the CURP tools<a class="headerlink" href="#how-to-use-the-curp-tools" title="Permalink to this headline">¶</a></h2>
+<section id="curp">
+<h3><span class="section-number">4.3.1. </span>curp<a class="headerlink" href="#curp" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">compute</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">conf</span><span class="o">-</span><span class="n">default</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">conf</span><span class="o">-</span><span class="n">formatted</span><span class="p">]</span>
+               <span class="p">[</span><span class="n">input_</span><span class="p">]</span>
+
+<span class="n">Launch</span> <span class="n">flux</span> <span class="ow">or</span> <span class="n">stress</span> <span class="n">tensor</span> <span class="n">computations</span> <span class="n">given</span> <span class="n">a</span> <span class="n">configuration</span> <span class="n">file</span><span class="o">.</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">input_</span>                <span class="n">Specify</span> <span class="nb">input</span> <span class="n">filenames</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">vervose</span>         <span class="n">Print</span> <span class="n">out</span> <span class="n">informations</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">serial</span>   <span class="n">Calculate</span> <span class="ow">in</span> <span class="n">serial</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t calculatein parallel.</span>
+  <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">conf</span><span class="o">-</span><span class="n">default</span>
+                        <span class="n">Output</span> <span class="n">the</span> <span class="n">config</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">ini</span> <span class="nb">format</span> <span class="k">with</span>
+                        <span class="n">default</span> <span class="n">values</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">conf</span><span class="o">-</span><span class="n">formatted</span>
+                        <span class="n">Output</span> <span class="n">the</span> <span class="n">config</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">rest</span> <span class="n">style</span> <span class="k">with</span>
+                        <span class="n">default</span> <span class="n">values</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3><span class="section-number">4.3.2. </span>curp<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">conv</span><span class="o">-</span><span class="n">trj</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">crd</span> <span class="o">|</span> <span class="o">-</span><span class="n">vel</span><span class="p">]</span> <span class="o">-</span><span class="n">i</span> <span class="n">TRJ_FILENAME</span> <span class="p">[</span><span class="n">TRJ_FILENAME</span> <span class="o">...</span><span class="p">]</span> <span class="o">-</span><span class="k">if</span>
+                <span class="n">FORMAT</span> <span class="p">[</span><span class="o">--</span><span class="n">irange</span> <span class="n">FIRST</span> <span class="n">LAST</span> <span class="n">INTER</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">TRJ_FILENAME</span><span class="p">]</span>
+                <span class="p">[</span><span class="o">-</span><span class="n">of</span> <span class="n">FORMAT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">orange</span> <span class="n">FIRST</span> <span class="n">LAST</span> <span class="n">INTER</span><span class="p">]</span> <span class="o">-</span><span class="n">pf</span> <span class="n">FORMAT</span> <span class="o">-</span><span class="n">p</span>
+                <span class="n">TPL_FILENAME</span> <span class="p">[</span><span class="o">-</span><span class="n">nf</span> <span class="n">DIST_FORMAT</span><span class="p">]</span>
+                <span class="p">{</span><span class="n">convert</span><span class="o">-</span><span class="n">only</span><span class="p">,</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">,</span><span class="n">adjust</span><span class="o">-</span><span class="n">vel</span><span class="p">,</span><span class="n">mask</span><span class="p">,</span><span class="n">dist</span><span class="p">}</span> <span class="o">...</span>
+
+<span class="n">Various</span> <span class="n">scripts</span> <span class="n">to</span> <span class="n">process</span> <span class="ow">and</span> <span class="n">analyze</span> <span class="n">trajectories</span><span class="o">.</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="p">{</span><span class="n">convert</span><span class="o">-</span><span class="n">only</span><span class="p">,</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">,</span><span class="n">adjust</span><span class="o">-</span><span class="n">vel</span><span class="p">,</span><span class="n">mask</span><span class="p">,</span><span class="n">dist</span><span class="p">}</span>
+                        <span class="n">Processing</span> <span class="n">command</span> <span class="n">help</span>
+    <span class="n">convert</span><span class="o">-</span><span class="n">only</span>        <span class="n">Convert</span> <span class="n">the</span> <span class="n">trajectory</span> <span class="n">intoother</span> <span class="nb">format</span><span class="o">.</span>
+    <span class="n">dry</span><span class="o">-</span><span class="n">run</span>             <span class="n">Do</span> <span class="n">dry</span><span class="o">-</span><span class="n">run</span> <span class="n">mode</span><span class="o">.</span>
+    <span class="n">adjust</span><span class="o">-</span><span class="n">vel</span>          <span class="n">Adjust</span> <span class="n">time</span> <span class="n">of</span> <span class="n">the</span> <span class="n">velocity</span> <span class="n">trajectory</span> <span class="n">to</span> <span class="n">t</span> <span class="kn">from</span>
+                        <span class="nn">t</span><span class="o">-</span><span class="n">dt</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">mask</span>                <span class="n">Remove</span> <span class="n">solvent</span> <span class="kn">from</span> <span class="nn">trajectory.</span>
+    <span class="n">dist</span>                <span class="n">Calculate</span> <span class="n">inter</span><span class="o">-</span><span class="n">residue</span> <span class="n">distances</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">crd</span>                  <span class="n">Specify</span> <span class="n">the</span> <span class="nb">format</span> <span class="n">of</span> <span class="n">the</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">This</span> <span class="n">argument</span>
+                        <span class="n">allows</span> <span class="n">you</span> <span class="n">specify</span> <span class="n">multiple</span> <span class="n">formats</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">vel</span>                  <span class="n">Specify</span> <span class="n">the</span> <span class="nb">format</span> <span class="n">of</span> <span class="n">the</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">This</span> <span class="n">argument</span>
+                        <span class="n">allows</span> <span class="n">you</span> <span class="n">specify</span> <span class="n">multiple</span> <span class="n">formats</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">i</span> <span class="n">TRJ_FILENAME</span> <span class="p">[</span><span class="n">TRJ_FILENAME</span> <span class="o">...</span><span class="p">],</span> <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">filenames</span> <span class="n">TRJ_FILENAME</span> <span class="p">[</span><span class="n">TRJ_FILENAME</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">The</span> <span class="n">trajectory</span> <span class="n">file</span> <span class="n">names</span><span class="o">.</span>
+  <span class="o">-</span><span class="k">if</span> <span class="n">FORMAT</span><span class="p">,</span> <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">formats</span> <span class="n">FORMAT</span>
+                        <span class="n">Specify</span> <span class="n">the</span> <span class="nb">format</span> <span class="n">of</span> <span class="n">the</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">This</span> <span class="n">argument</span>
+                        <span class="n">allows</span> <span class="n">you</span> <span class="n">specify</span> <span class="n">multiple</span> <span class="n">formats</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">irange</span> <span class="n">FIRST</span> <span class="n">LAST</span> <span class="n">INTER</span>
+                        <span class="n">The</span> <span class="n">trajectory</span> <span class="nb">range</span> <span class="n">to</span> <span class="n">process</span> <span class="n">over</span> <span class="nb">all</span> <span class="n">trajectory</span>
+                        <span class="n">file</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">o</span> <span class="n">TRJ_FILENAME</span><span class="p">,</span> <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">filename</span> <span class="n">TRJ_FILENAME</span>
+                        <span class="n">The</span> <span class="n">trajectory</span> <span class="n">file</span> <span class="n">name</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">of</span> <span class="n">FORMAT</span><span class="p">,</span> <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="nb">format</span> <span class="n">FORMAT</span>
+                        <span class="n">The</span> <span class="n">trajectory</span> <span class="n">file</span> <span class="nb">format</span> <span class="k">for</span> <span class="n">output</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">orange</span> <span class="n">FIRST</span> <span class="n">LAST</span> <span class="n">INTER</span>
+                        <span class="n">The</span> <span class="n">trajectory</span> <span class="nb">range</span> <span class="k">for</span> <span class="n">output</span>
+  <span class="o">-</span><span class="n">pf</span> <span class="n">FORMAT</span><span class="p">,</span> <span class="o">--</span><span class="n">topology</span><span class="o">-</span><span class="nb">format</span> <span class="n">FORMAT</span>
+                        <span class="n">Specify</span> <span class="n">the</span> <span class="nb">format</span> <span class="n">of</span> <span class="n">the</span> <span class="n">topology</span> <span class="n">file</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">p</span> <span class="n">TPL_FILENAME</span><span class="p">,</span> <span class="o">--</span><span class="n">topology</span><span class="o">-</span><span class="n">file</span> <span class="n">TPL_FILENAME</span>
+                        <span class="n">Specify</span> <span class="n">the</span> <span class="n">topology</span> <span class="n">file</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">nf</span> <span class="n">DIST_FORMAT</span><span class="p">,</span> <span class="o">--</span><span class="n">name</span><span class="o">-</span><span class="nb">format</span> <span class="n">DIST_FORMAT</span>
+                        <span class="n">Specify</span> <span class="n">the</span> <span class="nb">format</span> <span class="k">for</span> <span class="n">representing</span> <span class="n">residue</span> <span class="n">identify</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><span class="section-number">4.3.3. </span>curp<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">cal</span><span class="o">-</span><span class="n">tc</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">o</span> <span class="n">FILE</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span> <span class="n">FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">af</span> <span class="n">FORMAT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">FIRST</span> <span class="n">LAST</span> <span class="n">INTER</span><span class="p">]</span>
+              <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SHIFT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">number</span> <span class="n">NSAMPLE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dt</span> <span class="n">DT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span> <span class="n">COEFFICIENT</span><span class="p">]</span>
+              <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">axes</span><span class="p">]</span>
+              <span class="n">FLUX_FILENAME</span>
+
+<span class="n">Calculate</span> <span class="n">transport</span> <span class="n">coefficients</span> <span class="kn">from</span> <span class="nn">energy</span> <span class="n">flux</span> <span class="n">data</span><span class="o">.</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">FLUX_FILENAME</span>         <span class="n">The</span> <span class="n">filepath</span> <span class="n">of</span> <span class="n">flux</span> <span class="n">data</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">o</span> <span class="n">FILE</span><span class="p">,</span> <span class="o">--</span><span class="n">tc</span><span class="o">-</span><span class="n">file</span> <span class="n">FILE</span>
+                        <span class="n">The</span> <span class="n">filename</span> <span class="n">of</span> <span class="n">tc</span> <span class="n">data</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">a</span> <span class="n">FILE</span><span class="p">,</span> <span class="o">--</span><span class="n">acf</span><span class="o">-</span><span class="n">file</span> <span class="n">FILE</span>
+                        <span class="n">The</span> <span class="n">filename</span> <span class="n">of</span> <span class="n">acf</span> <span class="n">data</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">af</span> <span class="n">FORMAT</span><span class="p">,</span> <span class="o">--</span><span class="n">acf</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="nb">format</span> <span class="n">FORMAT</span>
+                        <span class="n">The</span> <span class="n">file</span> <span class="nb">format</span> <span class="n">of</span> <span class="n">acf</span> <span class="n">data</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">r</span> <span class="n">FIRST</span> <span class="n">LAST</span> <span class="n">INTER</span><span class="p">,</span> <span class="o">--</span><span class="n">frame</span><span class="o">-</span><span class="nb">range</span> <span class="n">FIRST</span> <span class="n">LAST</span> <span class="n">INTER</span>
+                        <span class="n">The</span> <span class="nb">range</span> <span class="n">of</span> <span class="n">frame</span><span class="p">;</span> <span class="n">first</span> <span class="n">frame</span><span class="p">,</span> <span class="n">last</span> <span class="n">frame</span><span class="p">,</span> <span class="n">interval</span>
+                        <span class="n">step</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">s</span> <span class="n">SHIFT</span><span class="p">,</span> <span class="o">--</span><span class="n">average</span><span class="o">-</span><span class="n">shift</span> <span class="n">SHIFT</span>
+                        <span class="n">The</span> <span class="n">frame</span> <span class="n">to</span> <span class="n">shift</span> <span class="k">for</span> <span class="n">averaging</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">number</span> <span class="n">NSAMPLE</span>
+                        <span class="n">number</span> <span class="n">of</span> <span class="n">sample</span> <span class="k">for</span> <span class="n">one</span> <span class="n">flux</span> <span class="n">data</span> <span class="n">file</span><span class="o">.</span> <span class="n">Default</span> <span class="n">value</span>
+                        <span class="ow">is</span> <span class="mi">0</span> <span class="n">that</span> <span class="n">present</span> <span class="n">to</span> <span class="n">make</span> <span class="n">samples</span> <span class="k">as</span> <span class="n">much</span> <span class="k">as</span> <span class="n">possible</span>
+  <span class="o">-</span><span class="n">dt</span> <span class="n">DT</span><span class="p">,</span> <span class="o">--</span><span class="n">dt</span> <span class="n">DT</span>       <span class="n">t</span> <span class="n">of</span> <span class="n">between</span> <span class="n">the</span> <span class="n">neighbour</span> <span class="n">frames</span><span class="o">.</span> <span class="n">The</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">ps</span><span class="o">.</span>
+                        <span class="n">Default</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">determined</span> <span class="n">by</span> <span class="n">time</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">flux</span>
+                        <span class="n">data</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">c</span> <span class="n">COEFFICIENT</span><span class="p">,</span> <span class="o">--</span><span class="n">coefficient</span> <span class="n">COEFFICIENT</span>
+                        <span class="n">Multiply</span> <span class="n">acf</span> <span class="n">by</span> <span class="n">given</span> <span class="n">coefficient</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">vervose</span>         <span class="n">turn</span> <span class="n">on</span> <span class="n">debug</span> <span class="n">mode</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">axes</span>             <span class="k">with</span> <span class="n">this</span> <span class="n">option</span><span class="p">,</span> <span class="n">scalar</span> <span class="n">flux</span> <span class="ow">is</span> <span class="n">handled</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><span class="section-number">4.3.4. </span>curp<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="nb">sum</span><span class="o">-</span><span class="n">acf</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">a</span> <span class="n">FILE</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="n">FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span> <span class="n">COEFFICIENT</span><span class="p">]</span> <span class="n">ACF_FILE</span> <span class="p">[</span><span class="n">ACF_FILE</span> <span class="o">...</span><span class="p">]</span>
+
+<span class="n">Average</span> <span class="n">auto</span><span class="o">-</span><span class="n">correlation</span> <span class="n">function</span> <span class="n">over</span> <span class="n">the</span> <span class="n">given</span> <span class="n">trajectories</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">ACF_FILE</span>              <span class="n">The</span> <span class="n">filepath</span> <span class="n">of</span> <span class="n">auto</span><span class="o">-</span><span class="n">correlation</span> <span class="n">function</span> <span class="n">data</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">a</span> <span class="n">FILE</span><span class="p">,</span> <span class="o">--</span><span class="n">acf</span><span class="o">-</span><span class="n">file</span> <span class="n">FILE</span>
+                        <span class="n">The</span> <span class="n">filepath</span> <span class="n">of</span> <span class="n">acf</span> <span class="n">data</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">t</span> <span class="n">FILE</span><span class="p">,</span> <span class="o">--</span><span class="n">tcs</span><span class="o">-</span><span class="n">file</span> <span class="n">FILE</span>
+                        <span class="n">The</span> <span class="n">filepath</span> <span class="n">of</span> <span class="n">tc</span> <span class="n">time</span> <span class="n">series</span> <span class="n">data</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">c</span> <span class="n">COEFFICIENT</span><span class="p">,</span> <span class="o">--</span><span class="n">coefficient</span> <span class="n">COEFFICIENT</span>
+                        <span class="n">Multiply</span> <span class="n">acf</span> <span class="n">by</span> <span class="n">given</span> <span class="n">coefficient</span><span class="o">.</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">analyze</span> <span class="n">simplify</span><span class="o">-</span><span class="n">tensor</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">i</span> <span class="n">FILENAME</span> <span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="n">LABELS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">]</span>
+                               <span class="p">[</span><span class="n">fns</span> <span class="p">[</span><span class="n">fns</span> <span class="o">...</span><span class="p">]]</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">fns</span>                   <span class="n">Specify</span> <span class="n">additive</span> <span class="n">filenames</span><span class="o">.</span> <span class="n">ex</span><span class="o">.</span><span class="p">)</span> <span class="n">label_data1</span><span class="p">,</span>
+                        <span class="n">label_data2</span><span class="p">,</span> <span class="o">...</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">i</span> <span class="n">FILENAME</span><span class="p">,</span> <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">data</span> <span class="n">FILENAME</span>
+                        <span class="n">Specify</span> <span class="nb">input</span> <span class="n">filename</span> <span class="k">for</span> <span class="n">the</span> <span class="n">stress</span> <span class="n">data</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">l</span> <span class="n">LABELS</span><span class="p">,</span> <span class="o">--</span><span class="n">labels</span> <span class="n">LABELS</span>
+                        <span class="n">Specify</span> <span class="n">labels</span> <span class="n">of</span> <span class="n">components</span> <span class="n">to</span> <span class="n">analyze</span><span class="o">.</span><span class="n">ex</span><span class="o">.</span><span class="p">)</span> <span class="o">-</span><span class="n">l</span>
+                        <span class="s2">&quot;total,bond,angle,...&quot;</span>
+  <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="o">--</span><span class="n">every</span><span class="o">-</span><span class="n">snapshot</span>  <span class="n">Specify</span> <span class="n">flag</span> <span class="n">to</span> <span class="n">average</span> <span class="n">the</span> <span class="n">magnitude</span> <span class="k">for</span> <span class="n">every</span>
+                        <span class="n">snapshot</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><span class="section-number">4.3.5. </span>curp<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">curp</span> <span class="n">graph</span><span class="o">-</span><span class="n">een</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="p">[</span><span class="n">TARGETS</span> <span class="p">[</span><span class="n">TARGETS</span> <span class="o">...</span><span class="p">]]]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">forced</span><span class="o">-</span><span class="n">output</span><span class="o">-</span><span class="n">nodes</span> <span class="p">[</span><span class="n">FORCE_NODES</span> <span class="p">[</span><span class="n">FORCE_NODES</span> <span class="o">...</span><span class="p">]]]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="p">[</span><span class="n">CLOSE_PAIRS</span> <span class="p">[</span><span class="n">CLOSE_PAIRS</span> <span class="o">...</span><span class="p">]]]</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span> <span class="n">CLUSTER_FN</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="n">NODE_FN</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">one</span><span class="o">-</span><span class="n">letter</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">FIG_FN</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">THRESHOLD</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">R</span> <span class="n">TPL_THRESHOLD</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ratio</span> <span class="n">RATIO</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">GRAPH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">title</span> <span class="n">TITLE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">direction</span> <span class="p">{</span><span class="n">LR</span><span class="p">,</span><span class="n">TB</span><span class="p">}]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">I</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">show</span><span class="o">-</span><span class="n">negative</span><span class="o">-</span><span class="n">values</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">alpha</span> <span class="n">ALPHA</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">lv</span> <span class="p">[</span><span class="n">LINE_VALUES</span> <span class="p">[</span><span class="n">LINE_VALUES</span> <span class="o">...</span><span class="p">]]]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">lc</span> <span class="p">[</span><span class="n">LINE_COLORS</span> <span class="p">[</span><span class="n">LINE_COLORS</span> <span class="o">...</span><span class="p">]]]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">lt</span> <span class="p">[</span><span class="n">LINE_THICKS</span> <span class="p">[</span><span class="n">LINE_THICKS</span> <span class="o">...</span><span class="p">]]]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">lw</span> <span class="p">[</span><span class="n">LINE_WEIGHTS</span> <span class="p">[</span><span class="n">LINE_WEIGHTS</span> <span class="o">...</span><span class="p">]]]</span>
+                      <span class="n">data_fns</span> <span class="p">[</span><span class="n">data_fns</span> <span class="o">...</span><span class="p">]</span>
+
+<span class="n">Show</span> <span class="n">network</span> <span class="n">chart</span> <span class="n">of</span> <span class="n">the</span> <span class="n">energy</span> <span class="n">conductivities</span><span class="o">.</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">data_fns</span>              <span class="n">Specify</span> <span class="n">filenames</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">t</span> <span class="p">[</span><span class="n">TARGETS</span> <span class="p">[</span><span class="n">TARGETS</span> <span class="o">...</span><span class="p">]],</span> <span class="o">--</span><span class="n">targets</span> <span class="p">[</span><span class="n">TARGETS</span> <span class="p">[</span><span class="n">TARGETS</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">This</span> <span class="n">option</span> <span class="n">allow</span> <span class="n">you</span> <span class="n">to</span> <span class="n">show</span> <span class="n">only</span> <span class="n">target</span> <span class="ow">and</span> <span class="n">thier</span>
+                        <span class="n">neighbhor</span> <span class="n">nodes</span><span class="o">.</span> <span class="n">ex</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="mi">2</span><span class="o">-</span><span class="mi">9</span> <span class="mi">15</span> <span class="mi">17</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span>
+                        <span class="mi">25</span><span class="o">-</span><span class="p">]</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">forced</span><span class="o">-</span><span class="n">output</span><span class="o">-</span><span class="n">nodes</span> <span class="p">[</span><span class="n">FORCE_NODES</span> <span class="p">[</span><span class="n">FORCE_NODES</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">nodes</span> <span class="n">to</span> <span class="n">forcibly</span> <span class="n">show</span><span class="o">.</span><span class="n">ex</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="mi">2</span><span class="o">-</span><span class="mi">9</span> <span class="mi">15</span> <span class="mi">17</span><span class="p">],</span>
+                        <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="mi">25</span><span class="o">-</span><span class="p">]</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">p</span> <span class="p">[</span><span class="n">CLOSE_PAIRS</span> <span class="p">[</span><span class="n">CLOSE_PAIRS</span> <span class="o">...</span><span class="p">]],</span> <span class="o">--</span><span class="n">bring</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="n">pair</span><span class="o">-</span><span class="n">close</span><span class="o">-</span><span class="n">together</span> <span class="p">[</span><span class="n">CLOSE_PAIRS</span> <span class="p">[</span><span class="n">CLOSE_PAIRS</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">bring</span> <span class="n">the</span> <span class="n">node</span> <span class="n">pair</span> <span class="n">close</span> <span class="n">together</span> <span class="n">on</span> <span class="n">the</span> <span class="n">EEN</span>
+                        <span class="n">graph</span><span class="o">.</span><span class="n">ex</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mf">15.</span>
+  <span class="o">-</span><span class="n">c</span> <span class="n">CLUSTER_FN</span><span class="p">,</span> <span class="o">--</span><span class="n">cluster</span><span class="o">-</span><span class="n">filename</span> <span class="n">CLUSTER_FN</span>
+                        <span class="n">Specify</span> <span class="n">a</span> <span class="n">cluster</span> <span class="n">file</span> <span class="n">name</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">n</span> <span class="n">NODE_FN</span><span class="p">,</span> <span class="o">--</span><span class="n">node</span><span class="o">-</span><span class="n">style</span><span class="o">-</span><span class="n">filename</span> <span class="n">NODE_FN</span>
+                        <span class="n">Specify</span> <span class="n">a</span> <span class="n">file</span> <span class="n">name</span> <span class="n">which</span> <span class="n">node</span> <span class="n">style</span> <span class="n">difinitions</span> <span class="n">are</span>
+                        <span class="n">written</span><span class="o">.</span>
+  <span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">one</span><span class="o">-</span><span class="n">letter</span>     <span class="n">use</span> <span class="mi">1</span> <span class="n">letter</span> <span class="n">representation</span> <span class="k">for</span> <span class="n">amino</span> <span class="n">acid</span> <span class="n">name</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">f</span> <span class="n">FIG_FN</span><span class="p">,</span> <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">een</span><span class="o">-</span><span class="n">filename</span> <span class="n">FIG_FN</span>
+                        <span class="n">Specify</span> <span class="n">a</span> <span class="n">filename</span> <span class="n">to</span> <span class="n">graph</span> <span class="n">EEN</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">r</span> <span class="n">THRESHOLD</span><span class="p">,</span> <span class="o">--</span><span class="n">threshold</span> <span class="n">THRESHOLD</span>
+                        <span class="n">threshold</span> <span class="n">value</span> <span class="n">to</span> <span class="n">show</span> <span class="n">nodes</span> <span class="n">on</span> <span class="n">chart</span> <span class="n">figure</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">R</span> <span class="n">TPL_THRESHOLD</span><span class="p">,</span> <span class="o">--</span><span class="n">topology</span><span class="o">-</span><span class="n">threshold</span> <span class="n">TPL_THRESHOLD</span>
+                        <span class="n">threshold</span> <span class="n">value</span> <span class="n">to</span> <span class="n">define</span> <span class="n">graph</span> <span class="n">topology</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">don</span><span class="s1">&#39;t</span>
+                        <span class="n">give</span> <span class="n">this</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">the</span> <span class="n">value</span> <span class="n">of</span> <span class="n">threshold</span> <span class="n">to</span> <span class="n">show</span>
+                        <span class="n">nodes</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">ratio</span> <span class="n">RATIO</span>         <span class="n">ratio</span> <span class="n">of</span> <span class="n">height</span><span class="o">/</span><span class="n">width</span> <span class="n">to</span> <span class="n">chart</span> <span class="n">a</span> <span class="n">figure</span><span class="o">.</span> <span class="n">If</span> <span class="s1">&#39;--graph-</span>
+                        <span class="n">size</span> <span class="ow">is</span> <span class="nb">set</span><span class="p">,</span> <span class="n">this</span> <span class="n">option</span> <span class="n">will</span> <span class="n">be</span> <span class="n">overwrittenby</span> <span class="n">it</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">s</span> <span class="n">GRAPH_SIZE</span><span class="p">,</span> <span class="o">--</span><span class="n">graph</span><span class="o">-</span><span class="n">size</span> <span class="n">GRAPH_SIZE</span>
+                        <span class="n">The</span> <span class="n">graph</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">inch</span> <span class="n">unit</span><span class="o">.</span> <span class="n">ex</span><span class="p">)</span> <span class="o">-</span><span class="n">s</span> <span class="s1">&#39;3.4,2.5&#39;</span>
+  <span class="o">--</span><span class="n">title</span> <span class="n">TITLE</span>         <span class="n">Specify</span> <span class="n">the</span> <span class="n">title</span> <span class="n">of</span> <span class="n">the</span> <span class="n">figure</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">direction</span> <span class="p">{</span><span class="n">LR</span><span class="p">,</span><span class="n">TB</span><span class="p">}</span>   <span class="n">Specify</span> <span class="n">the</span> <span class="n">kind</span> <span class="n">of</span> <span class="n">the</span> <span class="n">direction</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">I</span><span class="p">,</span> <span class="o">--</span><span class="n">hide</span><span class="o">-</span><span class="n">isolated</span><span class="o">-</span><span class="n">nodes</span>
+                        <span class="n">Hide</span> <span class="n">isolated</span> <span class="n">nodes</span> <span class="n">when</span> <span class="n">appling</span> <span class="n">multiple</span> <span class="n">irEC</span> <span class="n">files</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">show</span><span class="o">-</span><span class="n">negative</span><span class="o">-</span><span class="n">values</span>
+                        <span class="n">show</span> <span class="n">the</span> <span class="n">nodes</span> <span class="n">pair</span> <span class="n">which</span> <span class="n">have</span> <span class="n">negative</span> <span class="n">values</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">alpha</span> <span class="n">ALPHA</span>         <span class="n">The</span> <span class="n">transparency</span> <span class="n">value</span> <span class="n">of</span> <span class="n">the</span> <span class="n">background</span> <span class="n">color</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">lv</span> <span class="p">[</span><span class="n">LINE_VALUES</span> <span class="p">[</span><span class="n">LINE_VALUES</span> <span class="o">...</span><span class="p">]],</span> <span class="o">--</span><span class="n">line</span><span class="o">-</span><span class="n">values</span> <span class="p">[</span><span class="n">LINE_VALUES</span> <span class="p">[</span><span class="n">LINE_VALUES</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">The</span> <span class="n">threshold</span> <span class="n">values</span> <span class="k">for</span> <span class="n">line</span> <span class="n">attributes</span><span class="o">.</span> <span class="n">Number</span> <span class="n">of</span>
+                        <span class="n">elements</span> <span class="ow">in</span> <span class="n">the</span> <span class="nb">list</span> <span class="n">must</span> <span class="n">be</span> <span class="n">equal</span> <span class="k">with</span> <span class="nb">all</span> <span class="n">line</span>
+                        <span class="n">attribute</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">lc</span> <span class="p">[</span><span class="n">LINE_COLORS</span> <span class="p">[</span><span class="n">LINE_COLORS</span> <span class="o">...</span><span class="p">]],</span> <span class="o">--</span><span class="n">line</span><span class="o">-</span><span class="n">colors</span> <span class="p">[</span><span class="n">LINE_COLORS</span> <span class="p">[</span><span class="n">LINE_COLORS</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">The</span> <span class="n">colors</span> <span class="n">of</span> <span class="n">line</span><span class="o">.</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">elements</span> <span class="ow">in</span> <span class="n">the</span> <span class="nb">list</span>
+                        <span class="n">must</span> <span class="n">be</span> <span class="n">equal</span> <span class="k">with</span> <span class="nb">all</span> <span class="n">line</span> <span class="n">attribute</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">lt</span> <span class="p">[</span><span class="n">LINE_THICKS</span> <span class="p">[</span><span class="n">LINE_THICKS</span> <span class="o">...</span><span class="p">]],</span> <span class="o">--</span><span class="n">line</span><span class="o">-</span><span class="n">thicks</span> <span class="p">[</span><span class="n">LINE_THICKS</span> <span class="p">[</span><span class="n">LINE_THICKS</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">The</span> <span class="n">thickness</span> <span class="n">of</span> <span class="n">line</span><span class="o">.</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">elements</span> <span class="ow">in</span> <span class="n">the</span> <span class="nb">list</span>
+                        <span class="n">must</span> <span class="n">be</span> <span class="n">equal</span> <span class="k">with</span> <span class="nb">all</span> <span class="n">line</span> <span class="n">attribute</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">lw</span> <span class="p">[</span><span class="n">LINE_WEIGHTS</span> <span class="p">[</span><span class="n">LINE_WEIGHTS</span> <span class="o">...</span><span class="p">]],</span> <span class="o">--</span><span class="n">line</span><span class="o">-</span><span class="n">weights</span> <span class="p">[</span><span class="n">LINE_WEIGHTS</span> <span class="p">[</span><span class="n">LINE_WEIGHTS</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">The</span> <span class="n">weight</span> <span class="n">of</span> <span class="n">line</span><span class="o">.</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">elements</span> <span class="ow">in</span> <span class="n">the</span> <span class="nb">list</span>
+                        <span class="n">mustbe</span> <span class="n">equal</span> <span class="k">with</span> <span class="nb">all</span> <span class="n">line</span> <span class="n">attribute</span><span class="o">.</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">analyze</span> <span class="n">get</span><span class="o">-</span><span class="n">ncdata</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">r</span> <span class="p">[</span><span class="n">FRIST</span><span class="p">:</span><span class="n">LAST</span> <span class="p">[</span><span class="n">FRIST</span><span class="p">:</span><span class="n">LAST</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="n">DATANAME</span><span class="p">]</span>
+                          <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">PREFIX</span><span class="p">]</span>
+                          <span class="n">ACF_FILE</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">ACF_FILE</span>              <span class="n">The</span> <span class="n">filepath</span> <span class="n">of</span> <span class="n">auto</span><span class="o">-</span><span class="n">correlation</span> <span class="n">function</span> <span class="n">data</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">r</span> <span class="p">[</span><span class="n">FRIST</span><span class="p">:</span><span class="n">LAST</span> <span class="p">[</span><span class="n">FRIST</span><span class="p">:</span><span class="n">LAST</span> <span class="o">...</span><span class="p">]],</span> <span class="o">--</span><span class="n">group</span><span class="o">-</span><span class="n">ranges</span> <span class="p">[</span><span class="n">FRIST</span><span class="p">:</span><span class="n">LAST</span> <span class="p">[</span><span class="n">FRIST</span><span class="p">:</span><span class="n">LAST</span> <span class="o">...</span><span class="p">]]</span>
+                        <span class="n">The</span> <span class="n">pair</span> <span class="nb">range</span> <span class="nb">list</span> <span class="n">to</span> <span class="n">want</span> <span class="n">to</span> <span class="n">gain</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">n</span> <span class="n">DATANAME</span><span class="p">,</span> <span class="o">--</span><span class="n">dataname</span> <span class="n">DATANAME</span>
+                        <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">netcdf</span> <span class="n">data</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">gain</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">o</span> <span class="n">PREFIX</span><span class="p">,</span> <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">prefix</span> <span class="n">PREFIX</span>
+                        <span class="n">The</span> <span class="n">prefix</span> <span class="n">of</span> <span class="n">the</span> <span class="n">files</span> <span class="n">to</span> <span class="n">want</span> <span class="n">to</span> <span class="n">write</span><span class="p">,</span> <span class="n">that</span>
+                        <span class="n">includes</span> <span class="n">directory</span> <span class="n">path</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="contact">
+<h2><span class="section-number">4.4. </span>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h2>
+<p>Takahisa YAMATO, Dr. Sci.</p>
+<p>Graduate School of Science, Nagoya University,</p>
+<p>Furo-cho, Chikusa-ku, Nagoya, 4648602, Japan.</p>
+<p>Email: <a class="reference external" href="mailto:yamato&#37;&#52;&#48;nagoya-u&#46;jp">yamato<span>&#64;</span>nagoya-u<span>&#46;</span>jp</a></p>
+<p><a class="reference external" href="http://www.tb.phys.nagoya-u.ac.jp/~yamato">http://www.tb.phys.nagoya-u.ac.jp/~yamato</a></p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4. Reference</a><ul>
+<li><a class="reference internal" href="#specification-of-curp-setting-file">4.1. Specification of curp setting file</a><ul>
+<li><a class="reference internal" href="#setting-options">4.1.1. Setting options</a><ul>
+<li><a class="reference internal" href="#curp-section">curp section</a></li>
+<li><a class="reference internal" href="#dynamics-section">dynamics section</a></li>
+<li><a class="reference internal" href="#input-section">input section</a></li>
+<li><a class="reference internal" href="#input-amber-section">input_amber section</a></li>
+<li><a class="reference internal" href="#output-section">output section</a></li>
+<li><a class="reference internal" href="#volume-section">volume section</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#input-and-output-files-specification">4.2. Input and Output files specification</a><ul>
+<li><a class="reference internal" href="#netcdf-specification-of-energy-flux-data-file">4.2.1. NetCDF specification of energy flux data file</a><ul>
+<li><a class="reference internal" href="#dimensions">dimensions</a></li>
+<li><a class="reference internal" href="#variables">variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#netcdf-specification-of-time-correlation-data">4.2.2. NetCDF specification of time-correlation data</a><ul>
+<li><a class="reference internal" href="#id1">dimensions</a></li>
+<li><a class="reference internal" href="#id2">variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#group-file-specification">4.2.3. Group file specification</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-to-use-the-curp-tools">4.3. How to use the CURP tools</a><ul>
+<li><a class="reference internal" href="#curp">4.3.1. curp</a></li>
+<li><a class="reference internal" href="#id3">4.3.2. curp</a></li>
+<li><a class="reference internal" href="#id4">4.3.3. curp</a></li>
+<li><a class="reference internal" href="#id5">4.3.4. curp</a></li>
+<li><a class="reference internal" href="#id6">4.3.5. curp</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contact">4.4. Contact</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="eflow_tutorial.html"
+                        title="previous chapter"><span class="section-number">3.3. </span>Energy flow analysis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="developer/participate.html"
+                        title="next chapter"><span class="section-number">5. </span>How to participate ?</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/reference.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="developer/participate.html" title="5. How to participate ?"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="eflow_tutorial.html" title="3.3. Energy flow analysis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">4. </span>Reference</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2017, Yamato Labaratory.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>
