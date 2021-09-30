@@ -61,7 +61,7 @@ def run_setup():
                           "mpi4py>=2.0",
                           "benchmarker",
                           "pygraphviz<1.6",
-                          "netCDF4==1.2.4"],
+                          "netCDF4>=1.2.4"],
 
         packages=setuptools.find_packages(),
 

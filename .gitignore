@@ -1,10 +1,6 @@
 # Ignores library files
 **.so
 **.pyc
-# Ignores most of the hidden files
-.*
-**/.*
-!.gitignore
 
 # Ignores curp-environ and tutorial directory
 curp-environ/

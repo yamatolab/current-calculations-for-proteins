@@ -290,7 +290,7 @@ contains
                     else
                       hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
                     end if
-           
+
                 end if
 
             end do
