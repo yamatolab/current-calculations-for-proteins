@@ -16,4 +16,4 @@ tutorial
 /test/**/*log
 
 # Ignore doc outputs
-/docs/_build/
+_build/
