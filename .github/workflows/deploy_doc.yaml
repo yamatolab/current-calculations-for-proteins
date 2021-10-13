@@ -21,7 +21,7 @@ jobs:
       run: pip install -U sphinx
     
     - name: Build pages
-      run: sphinx-build -b html -c docs/source docs/source docs/_build
+      run: sphinx-build -b dirhtml -c docs/source docs/source docs/_build
 
     - name: Deploy pages
       uses: peaceiris/actions-gh-pages@v3
