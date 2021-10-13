@@ -47,7 +47,7 @@ Please cite the following references when you use the CURP program.
 
 (1) The main citation of the CURP program
 
-T.Ishikura, Y.Iwata, T.Hatano and T.Yamato, "Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study" *J. Comput. Chem. 36:1709-1718 (2015).
+T.Ishikura, Y.Iwata, T.Hatano and T.Yamato, "Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study" J. Comput. Chem. 36:1709-1718 (2015).
 
 (2) Atomic stress tensor analysis
 
