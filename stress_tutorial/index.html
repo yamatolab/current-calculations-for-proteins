@@ -7,32 +7,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>3.2. Atomic stress tensor analysis &#8212; CURP 1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="3.3. Energy flow analysis" href="eflow_tutorial.html" />
-    <link rel="prev" title="3.1. General instructions" href="general_tutorial.html" /> 
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="3.3. Energy flow analysis" href="../eflow_tutorial/" />
+    <link rel="prev" title="3.1. General instructions" href="../general_tutorial/" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex/" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="eflow_tutorial.html" title="3.3. Energy flow analysis"
+          <a href="../eflow_tutorial/" title="3.3. Energy flow analysis"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="general_tutorial.html" title="3.1. General instructions"
+          <a href="../general_tutorial/" title="3.1. General instructions"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="tutorials.html" accesskey="U"><span class="section-number">3. </span>Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../">CURP 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../tutorials/" accesskey="U"><span class="section-number">3. </span>Tutorials</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.2. </span>Atomic stress tensor analysis</a></li> 
       </ul>
     </div>  
@@ -46,7 +47,7 @@
 <h1><span class="section-number">3.2. </span>Atomic stress tensor analysis<a class="headerlink" href="#atomic-stress-tensor-analysis" title="Permalink to this headline">¶</a></h1>
 <p>CURP performs atomistic stress tensor analysis. According to Hardy’s forluma,
 the Cauchy stress tensor of the <em>i</em>th atom is given by:</p>
-<a class="reference internal image-reference" href="_images/stress.png"><img alt="_images/stress.png" class="align-center" src="_images/stress.png" style="height: 60px;" /></a>
+<a class="reference internal image-reference" href="../_images/stress.png"><img alt="../_images/stress.png" class="align-center" src="../_images/stress.png" style="height: 60px;" /></a>
 <p>where <span class="math notranslate nohighlight">\(\Omega_i\)</span> is the volume of atom <span class="math notranslate nohighlight">\(i\)</span>,
 <span class="math notranslate nohighlight">\(\boldsymbol{F}_{ij}\)</span> is the pairwise interatomic force
 acting on <span class="math notranslate nohighlight">\(i\)</span> from <span class="math notranslate nohighlight">\(j\)</span>,
@@ -307,7 +308,7 @@ be indicated by using <cite>-</cite>.</p>
 <h4>stress tensor data file<a class="headerlink" href="#stress-tensor-data-file" title="Permalink to this headline">¶</a></h4>
 <p>For each snapshot of the MD trajectory, 3x3 stress tensors are output to
 <cite>outdata/stress_grp.dat00000</cite>. An example is shown below:</p>
-<img alt="_images/stress_grp.png" class="align-center" src="_images/stress_grp.png" />
+<img alt="../_images/stress_grp.png" class="align-center" src="../_images/stress_grp.png" />
 <p>Comment lines begin with <code class="docutils literal notranslate"><span class="pre">%</span></code>.
 For each time frame, nine elements (xx, xy, xz, yx, yy, yz, zx, zy, zz) are printed for each group.</p>
 </section>
@@ -353,7 +354,7 @@ we show how to diagonalize and time average the stress tensor as follows:</p>
 <section id="result">
 <h3>Result<a class="headerlink" href="#result" title="Permalink to this headline">¶</a></h3>
 <p>Finally, a detailed summary of the calculated data is output to <cite>grp-sim.dat</cite>.</p>
-<img alt="_images/grp-sim.png" class="align-center" src="_images/grp-sim.png" />
+<img alt="../_images/grp-sim.png" class="align-center" src="../_images/grp-sim.png" />
 <p>Examination of these results reveals the following characteristic features:</p>
 <ul class="simple">
 <li><p>The improper and torsion componets show relatively large values.</p></li>
@@ -372,7 +373,7 @@ we show how to diagonalize and time average the stress tensor as follows:</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
+  <h3><a href="../">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">3.2. Atomic stress tensor analysis</a><ul>
 <li><a class="reference internal" href="#obtaining-the-md-trajectory">3.2.1. Obtaining the MD trajectory</a></li>
@@ -403,22 +404,22 @@ we show how to diagonalize and time average the stress tensor as follows:</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="general_tutorial.html"
+  <p class="topless"><a href="../general_tutorial/"
                         title="previous chapter"><span class="section-number">3.1. </span>General instructions</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="eflow_tutorial.html"
+  <p class="topless"><a href="../eflow_tutorial/"
                         title="next chapter"><span class="section-number">3.3. </span>Energy flow analysis</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/stress_tutorial.rst.txt"
+      <li><a href="../_sources/stress_tutorial.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
+    <form class="search" action="../search/" method="get">
       <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
@@ -433,21 +434,21 @@ we show how to diagonalize and time average the stress tensor as follows:</p>
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex/" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="eflow_tutorial.html" title="3.3. Energy flow analysis"
+          <a href="../eflow_tutorial/" title="3.3. Energy flow analysis"
              >next</a> |</li>
         <li class="right" >
-          <a href="general_tutorial.html" title="3.1. General instructions"
+          <a href="../general_tutorial/" title="3.1. General instructions"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">CURP 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="tutorials.html" ><span class="section-number">3. </span>Tutorials</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../">CURP 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../tutorials/" ><span class="section-number">3. </span>Tutorials</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.2. </span>Atomic stress tensor analysis</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2014-2017, Yamato Labaratory.
+        &#169; Copyright 2014-2021, Yamato Labaratory.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
     </div>
   </body>
