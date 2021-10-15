@@ -34,7 +34,7 @@ Git
 
 If you want to develop curp or simply access to its source you can install it through its GitLab repository: ::
 
-git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git
+  git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git
 
 In the created directory, simply run ``pip install --user .`` or ``python setup.py install --user``. If you are admin and want every user of the machine to be able to use curp, use ``pip install .`` instead.
 
