@@ -24,13 +24,16 @@ subroutine cal_acf(acf, xss, nacf, first, last, interval, shift, &
    end if
 
    ! determine the default value of use_norm
-   if ( present(norm) ) then
-      use_norm = norm
-      norm_flg = 1.0d0
-   else
-      use_norm = .false.
-      norm_flg = 0.0d0
-   end if
+   ! if ( present(norm) ) then
+   !    use_norm = norm
+   !    norm_flg = 1.0d0
+   ! else
+   !    use_norm = .false.
+   !    norm_flg = 0.0d0
+   ! end if
+
+   ! Normalization is disabled
+   norm_flg = 0.0d0
  
    ! << Calculate auto-correlation function >>
    do icom=1, ncom

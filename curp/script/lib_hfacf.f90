@@ -15,15 +15,16 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
    real(8) :: a, norm_flg, b(ncom)
 
    ! determine the default value of use_norm
-   if ( present(norm) ) then
-      use_norm = norm
-      norm_flg = 1.0d0
-   else
-      use_norm = .false.
-      norm_flg = 0.0d0
-   end if
+   ! if ( present(norm) ) then
+   !    use_norm = norm
+   !    norm_flg = 1.0d0
+   ! else
+   !    use_norm = .false.
+   !    norm_flg = 0.0d0
+   ! end if
 
-   norm_flg = 1.0d0
+   ! Normalization is disabled
+   norm_flg = 0.0d0
 
    ! determine the number of samples
    if ( nsample <= 0 ) then
@@ -67,5 +68,5 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
    ! print*, first, nfrm_beg, nsam
    acf(:,:) = acf(:,:) / real(nsam)
    b(:) = b(:) / real(nsam)
-   print*, '<h(0)h(0)> = ',b(1)
+   ! print*, '<h(0)h(0)> = ',b(1)
 end subroutine
