@@ -15,7 +15,7 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
    real(8) :: a, norm_flg, b(ncom)
 
    ! determine the default value of use_norm
-   ! if ( present(norm) ) then
+   ! if ( norm .eqv. .true. ) then
    !    use_norm = norm
    !    norm_flg = 1.0d0
    ! else
