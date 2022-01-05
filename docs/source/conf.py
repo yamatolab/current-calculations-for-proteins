@@ -12,7 +12,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import os
+import datetime
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -52,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'CURP'
-copyright = u'2014-2017, Yamato Labaratory'
+copyright = u'2014-{}, Yamato Labaratory'.format(datetime.date.today().year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -67,8 +68,6 @@ release = '1.1'
 # for a list of supported languages.
 # for English version
 language = None
-# for Japanese version
-#language = 'ja'
 
 # latex_docclass = {'manual': 'book'}
 
@@ -136,7 +135,7 @@ html_theme = 'sphinxdoc'
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-#html_favicon = None
+html_favicon = "favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -184,7 +183,7 @@ html_theme = 'sphinxdoc'
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
-#html_use_opensearch = ''
+html_use_opensearch = ''
 
 # This is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = None
