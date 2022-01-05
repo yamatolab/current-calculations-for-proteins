@@ -26,8 +26,6 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
    ! Normalization is disabled
    norm_flg = 0.0d0
 
-   norm_flg = 1.0d0
-
    ! determine the number of samples
    if ( nsample <= 0 ) then
       nfrm_beg = nframe - (last-first)
