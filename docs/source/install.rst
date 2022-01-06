@@ -32,7 +32,7 @@ Run ``pip install Curp`` or any flavor of pip (``conda install curp``, ``pip ins
 Git
 ---
 
-If you want to develop curp or simply access to its source you can install it through its GitLab repository: ::
+If you want to develop curp or simply access to its source you can install it through its GitHub repository: ::
 
   git clone https://github.com/yamatolab/current-calculations-for-proteins.git
 
@@ -46,4 +46,4 @@ A few commands are also available from the terminal to analyze CURP results: ``c
 
 The users set the CURP parameters in <input_file> (default: run.cfg).
 
-Test calculations of curp can be run by cloning the GitLab repository, then running ``runall.sh`` in ``test`` folder.
+Test calculations of curp can be run by cloning the GitHab repository, then running ``runall.sh`` in ``test`` folder.

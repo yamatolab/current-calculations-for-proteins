@@ -23,7 +23,7 @@ To install curp, run ::
 or your favorite python package manager, like ``conda`` or ``pipenv``.
 You can get curp source code by running ::
 
-    git clone https://gitlab.com/yamato97/current-calculations-for-proteins.git
+    git clone https://github.com/yamatolab/current-calculations-for-proteins.git
 
 Then, go in the installed directory and use ::
 

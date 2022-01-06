@@ -34,14 +34,14 @@ def run_setup():
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
     setup(
         name="Curp",
-        version="1.3",
+        version="1.3.1",
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",
         description="Inter-residue Current calculation in Proteins from MD \
             trajectory",
         long_description=LONG_DESCRIPTION,
         long_description_content_type='text/x-rst',
-        url=("https://gitlab.com/yamato97/current-calculations-for-proteins"),
+        url=("https://github.com/yamatolab/current-calculations-for-proteins"),
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",
