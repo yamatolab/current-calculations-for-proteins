@@ -41,7 +41,7 @@ def run_setup():
             trajectory",
         long_description=LONG_DESCRIPTION,
         long_description_content_type='text/x-rst',
-        url=("https://gitlab.com/yamato97/current-calculations-for-proteins"),
+        url=("https://github.com/yamatolab/current-calculations-for-proteins"),
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",
