@@ -6,7 +6,7 @@
 COPYRIGHT Ⓒ 2012, 2013, 2014, 2015-2017, 2018-2019.
 Yamato Laboratory, Nagoya University. All rights reserved.
 
-URL: http://www.comp-biophys.com/yamato-lab/curp.html
+URL: http://www.comp-biophys.com/yamato-lab/
 Contact email: yamato@nagoya-u.jp
 
 AUTHORS:
