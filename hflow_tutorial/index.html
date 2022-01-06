@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>3.3. Energy flow analysis &#8212; CURP 1.1 documentation</title>
+    <title>3.4. Heat current analysis &#8212; CURP 1.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -17,8 +17,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex/" />
     <link rel="search" title="Search" href="../search/" />
-    <link rel="next" title="3.4. Heat current analysis" href="../hflow_tutorial/" />
-    <link rel="prev" title="3.2. Atomic stress tensor analysis" href="../stress_tutorial/" /> 
+    <link rel="next" title="4. Reference" href="../reference/" />
+    <link rel="prev" title="3.3. Energy flow analysis" href="../eflow_tutorial/" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,14 +27,14 @@
           <a href="../genindex/" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../hflow_tutorial/" title="3.4. Heat current analysis"
+          <a href="../reference/" title="4. Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../stress_tutorial/" title="3.2. Atomic stress tensor analysis"
+          <a href="../eflow_tutorial/" title="3.3. Energy flow analysis"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../">CURP 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../tutorials/" accesskey="U"><span class="section-number">3. </span>Tutorials</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.3. </span>Energy flow analysis</a></li> 
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.4. </span>Heat current analysis</a></li> 
       </ul>
     </div>  
 
@@ -43,42 +43,35 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="energy-flow-analysis">
-<h1><span class="section-number">3.3. </span>Energy flow analysis<a class="headerlink" href="#energy-flow-analysis" title="Permalink to this headline">¶</a></h1>
-<p><strong>Interresidue energy flow and energy conductivity (G)</strong></p>
-<p>In 2006, we proposed the concept of inter-residue energy conductivity (G) to measure the strength of the residue-residue interactions (Ishikura &amp; Yamato, <em>Chem. Phys. Lett.</em> 432: 533-537, (2006)). Later, in 2021, we extended our program to calculate the residue-residue heat current and its contribution to the overall thermal conductivity of a protein (CURP v.1.3).</p>
-<p>For instance, we reported the application of G to illustrate the photosignal transduction mechanism of a small water-soluble photosensory protein–photoactive yellow protein, as mentioned in the reference above. The value of the energy flow from <span class="math notranslate nohighlight">\(j\)</span> to <span class="math notranslate nohighlight">\(i\)</span> can be calculated as follows:</p>
+  <section id="heat-current-analysis">
+<h1><span class="section-number">3.4. </span>Heat current analysis<a class="headerlink" href="#heat-current-analysis" title="Permalink to this headline">¶</a></h1>
+<p><strong>Local heat current</strong></p>
+<p>The thermal conductivity, <span class="math notranslate nohighlight">\(\lambda\)</span>, is expressed in terms of the heat current autocorrelation function (HCACF) as:</p>
 <div class="math notranslate nohighlight">
-\[J_{i \leftarrow j} =
- \frac{1}{2}\left( {{{\boldsymbol{v}}_i} \cdot {{\boldsymbol{F}}_{ij}}
- - {{\boldsymbol{v}}_j} \cdot {{\boldsymbol{F}}_{ji}}} \right).\]</div>
-<p>The energy flow between atom groups, A and B, can be calculated by the summation of the inter-atomic energy flow between the pair:</p>
+\[\lambda = \frac{1}{3Vk_BT^2} \int_0^\infty \left\langle \mathbf{h}_(0) \cdot \mathbf{h}(t) \right\rangle dt.\]</div>
+<p>The heat current, <span class="math notranslate nohighlight">\(\mathbf{h}\)</span>, is written as a summation of interatomic heat current, <span class="math notranslate nohighlight">\(\mathbf{h}_{ij}\)</span>, as:</p>
 <div class="math notranslate nohighlight">
-\[J_{A \leftarrow B} =
-   \sum\limits_{i \in A}^{{N_A}} {\mathop \sum \limits_{j \in B}^{{N_B}}
-   {J_{i \leftarrow j}}}.\]</div>
-<p>If the atom groups A and B represent residues A and B, respectively, the corresponding energy flow between A and B represents the inter-residue energy flow. Next, we define a sort of energy transport coefficient based on the Green-Kubo
-linear response theory as:</p>
+\[\mathbf{h} = \sum_i \sum_{j&gt;i}(\mathbf{r}_i - \mathbf{r}_j)J_{i \leftarrow j} = \sum_i \sum_{j&gt;i} \mathbf{h}_{ij}\]</div>
+<p>The heat current between atom groups, A and B, can be calculated by the summation of local heat current between the pair:</p>
 <div class="math notranslate nohighlight">
-\[G_{AB} = \int_0^\infty  {\left\langle
-   {J_{A \leftarrow B}}(t){J_{A \leftarrow B}}(0)
-   \right\rangle dt}.\]</div>
-<p>In practice, the time integral is replaced by the sum of the auto-correlation function of <span class="math notranslate nohighlight">\(J\)</span> at discrete time points. The CURP program performs these calculations for the proteins
-and visualizes the energy conductivities using an energy exchange network (EEN).This allows the user to grasp the pattern of the inter-residue interactions at a glance. In principle, it is possible to calculate the values of G based on a single NVE trajectory. However, it is highly recommended to calulate thermal averages of them based on multiple NVE trajectories that start from different points on the energy landscape of the target protein. If the number of the NVE trajectories are sufficiently large, their average values are fair representations of the energy transport network of the thermally fluctuating protein system.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In the previous paper(<em>CPL</em> ,2006), we calculated the values of G based on the atomic decomposition of the potential energy using classical force-field functions, where the way of the decomposition involves arbitrariness. In the CURP program, the irEC calculation is performed in a different manner based on the pairwise decomposition of forces (<em>CPL</em> 539(2012)144). Accordingly, the numerical results of G may not be coincide with those obtained earlier.</p>
-</div>
-<p>We will illustrate how to perform energy flow analysis. To perform the calculations, coordinates and velocities trajectory of the system of interest are required. CURP analyzes the inter-residue interactions through the following steps:</p>
+\[\mathbf{h}_{AB} =
+   \sum_{i \in A} \sum_{j \in B} \mathbf{h}_{ij}.\]</div>
+<p>If the atom groups A and B represent residues A and B, respectively, the contribution of this local heat current between the residue pair to the overall thermal conductivity is expressed as:</p>
+<div class="math notranslate nohighlight">
+\[\Lambda_{AB} = \int_0^\infty  {\left\langle
+   {\mathbf{h}_{AB}}(t) \cdot {\mathbf{h}_{AB}}(0)
+\right\rangle dt}.\]</div>
+<p>This calculation is performed by the numerical integration of the auto-correlation function of <span class="math notranslate nohighlight">\(\mathbf{h}\)</span> using trapezoidal rule.  The CURP program performs these calculations for the proteins and visualizes the energy conductivities using an energy exchange network (EEN). This allows the user to grasp the pattern of the inter-residue interactions at a glance. In principle, it is possible to calculate <span class="math notranslate nohighlight">\(\Lambda\)</span> based on a single NVE trajectory. However, it is highly recommended to calulate thermal averages of <span class="math notranslate nohighlight">\(\Lambda\)</span> based on multiple NVE trajectories that start from different points on the energy landscape of the target protein. If the number of the NVE trajectories are sufficiently large, the thermally averaged <span class="math notranslate nohighlight">\(\Lambda\)</span> are fair representations of the <span class="math notranslate nohighlight">\(\Lambda\)</span> of the thermally fluctuating protein system.</p>
+<p>CURP analyzes the inter-residue interactions through the following steps:</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#preparing-trajectories" id="id1">Preparing trajectories</a></p></li>
-<li><p><a class="reference internal" href="#calculating-interresidue-energy-flow" id="id2">Calculating interresidue energy flow</a></p></li>
-<li><p><a class="reference internal" href="#calculating-g" id="id3">Calculating G</a></p></li>
+<li><p><a class="reference internal" href="#calculating-interresidue-heat-current" id="id2">Calculating interresidue heat current</a></p></li>
+<li><p><a class="reference internal" href="#calculating-the-time-integral-of-interresidue-heat-current" id="id3">Calculating the time-integral of interresidue heat current</a></p></li>
 </ul>
 </div>
 <section id="preparing-trajectories">
-<h2><a class="toc-backref" href="#id1"><span class="section-number">3.3.1. </span>Preparing trajectories</a><a class="headerlink" href="#preparing-trajectories" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1"><span class="section-number">3.4.1. </span>Preparing trajectories</a><a class="headerlink" href="#preparing-trajectories" title="Permalink to this headline">¶</a></h2>
 <section id="solvent-stripping">
 <h3>Solvent stripping<a class="headerlink" href="#solvent-stripping" title="Permalink to this headline">¶</a></h3>
 <p>When we are focusing on residue-residue interactions in a polypeptide chain, solvent coordinates and velocities are not needed. It is possible to save disc space by running the follwoing scripts and disregarding the solvent degrees of freedom:</p>
@@ -213,34 +206,36 @@ curp conv-trj -vel <span class="se">\</span>
 <p>Similarly, example 2 shows the velocity adjustment for the 2nd half of the trajectory. Here we need to read the restart file, <cite>nve1.rst</cite> before reading the velocity trajectory <cite>nve2.vel.nc</cite>. The velocities at <cite>t</cite> = 4999 fs (<cite>t</cite> = 5001 fs) are saved in <cite>nve1.rst</cite> (at the 1st frame of <cite>nve2.vel.nc</cite>), and the velocities at <cite>t</cite> = 5000 fs are estimated from those at 4999 and 5001 fs. If the velocities at <cite>t</cite> = 5000 fs are not necessary for the final output file, you do not need to read the restart file in this example. Note that the final velocity file is generated with <cite>“–orange 1 -1 5”</cite> so that the first frame at <cite>t</cite> = 5000 fs is included in the output file named <cite>adjusted2.vel.nc</cite> and, thus, the velocities at 5000 fs, 5010 fs, <span class="math notranslate nohighlight">\(\cdots\)</span>, and 9990 fs are save in the output file.</p>
 </section>
 </section>
-<section id="calculating-interresidue-energy-flow">
-<h2><a class="toc-backref" href="#id2"><span class="section-number">3.3.2. </span>Calculating interresidue energy flow</a><a class="headerlink" href="#calculating-interresidue-energy-flow" title="Permalink to this headline">¶</a></h2>
-<p>Here we show an exmaple about how to calculate energy flow with</p>
+<section id="calculating-interresidue-heat-current">
+<h2><a class="toc-backref" href="#id2"><span class="section-number">3.4.2. </span>Calculating interresidue heat current</a><a class="headerlink" href="#calculating-interresidue-heat-current" title="Permalink to this headline">¶</a></h2>
+<p>Here we explain how to calculate the heat currents with</p>
 <ol class="arabic simple">
+<li><p>velocities and coordinates trajectory file</p></li>
+<li><p>parameter and topology file of target system</p></li>
 <li><p>configuration file for the CURP calculation</p></li>
 </ol>
 <p>To start the calculations, please type in the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curp compute eflow.cfg &gt; eflow.log
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curp compute hflow.cfg &gt; hflow.log
 </pre></div>
 </div>
 <p>or</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mpiexec -n <span class="m">2</span> curp compute eflow.cfg &gt; eflow.log
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mpiexec -n <span class="m">2</span> curp compute hflow.cfg &gt; hflow.log
 </pre></div>
 </div>
-<p>for parallel calculations with OpenMPI. In this case the number of cores is 2, <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code> (see below)  is a configuration file for the energy flow calculations and <code class="docutils literal notranslate"><span class="pre">eflow.log</span></code> is the log file.</p>
+<p>for parallel calculations with OpenMPI. In this case the number of cores is 2, <code class="docutils literal notranslate"><span class="pre">hflow.cfg</span></code> (see below)  is a configuration file for the heat current calculations and <code class="docutils literal notranslate"><span class="pre">hflow.log</span></code> is the log file.</p>
 <p>These commands should produce the following two files:</p>
 <ul class="simple">
-<li><p>eflow.log</p></li>
+<li><p>hflow.log</p></li>
 <li><p>flux_grp.nc</p></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">flux_grp.nc</span></code> stores the fime series of energy flow in the netcdf format.
+<p><code class="docutils literal notranslate"><span class="pre">flux_grp.nc</span></code> stores the fime series of interresidue heat flux in the netcdf format.
 To check the content of this file, type in the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ncdump outdata/flux_grp.nc
 </pre></div>
 </div>
-<section id="setting-up-eflow-cfg">
-<h3>Setting up <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code><a class="headerlink" href="#setting-up-eflow-cfg" title="Permalink to this headline">¶</a></h3>
-<p>Here we show an example of <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code>:</p>
+<section id="setting-up-hflow-cfg">
+<h3>Setting up <code class="docutils literal notranslate"><span class="pre">hflow.cfg</span></code><a class="headerlink" href="#setting-up-hflow-cfg" title="Permalink to this headline">¶</a></h3>
+<p>Here we show an example of <code class="docutils literal notranslate"><span class="pre">hflow.cfg</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="nb">input</span><span class="p">]</span>
 <span class="nb">format</span> <span class="o">=</span> <span class="n">amber</span>
 <span class="c1"># first_last_interval = 1 4 1</span>
@@ -256,7 +251,7 @@ To check the content of this file, type in the following command:</p>
 
 <span class="p">[</span><span class="n">curp</span><span class="p">]</span>
 <span class="n">potential</span> <span class="o">=</span> <span class="n">amber12SB</span>
-<span class="n">method</span> <span class="o">=</span> <span class="n">energy</span><span class="o">-</span><span class="n">flux</span>
+<span class="n">method</span> <span class="o">=</span> <span class="n">heat</span><span class="o">-</span><span class="n">flux</span>
 
 <span class="n">group_method</span> <span class="o">=</span> <span class="n">residue</span>
 <span class="n">flux_grain</span> <span class="o">=</span> <span class="n">group</span>
@@ -284,7 +279,7 @@ To check the content of this file, type in the following command:</p>
 <dl class="simple">
 <dt>format = amber</dt><dd><p>Read Amber formatted files.</p>
 </dd>
-<dt>first_last_interval = 1 4 1</dt><dd><p>For the energy flow calculations, the &lt;first&gt; and &lt;last&gt; frame with the interval of &lt;intraval&gt; frames are set in this line as &lt;first&gt; &lt;last&gt; &lt;interval&gt;.</p>
+<dt>first_last_interval = 1 4 1</dt><dd><p>For the heat current calculations, the &lt;first&gt; and &lt;last&gt; frame with the interval of &lt;intraval&gt; frames are set in this line as &lt;first&gt; &lt;last&gt; &lt;interval&gt;.</p>
 </dd>
 <dt>group_file = group.ndx</dt><dd><p>In this line, atom group definition file is specified. In this file, you can define an arbitrary group of atoms that is different than the standard amino acid residues.</p>
 </dd>
@@ -316,7 +311,7 @@ The following keywords are used in the <code class="docutils literal notranslate
 <dl class="simple">
 <dt>potential = amberbase | amber94 | amber96 | amber99 | amber99SB | amber03 | amber12SB</dt><dd><p>In this line, the type of the potential function is set.</p>
 </dd>
-<dt>method = momentum-current | energy-flux | heat-flux</dt><dd><p>This line specifies whether the calculation is for energy flux or for atomic stress tensors (momentum current) or heat flux. In this example, we choose <code class="docutils literal notranslate"><span class="pre">energy-flux</span></code>.</p>
+<dt>method = momentum-current | energy-flux | heat-flux</dt><dd><p>This line specifies whether the calculation is for irEF or for atomic stress tensors (momentum current) or heat flux. In this example, we choose <code class="docutils literal notranslate"><span class="pre">heat-flux</span></code>.</p>
 </dd>
 <dt>group_method = none | united | residue | file</dt><dd><p>In this line, the unit of irEF is set.
 <code class="docutils literal notranslate"><span class="pre">none</span></code>: No groups are defined.
@@ -354,7 +349,7 @@ NOTE: Usually, we should use “yes”.</p>
 <h4>[output]<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h4>
 <p>Setting the output format.</p>
 <dl class="simple">
-<dt>filename = outdata/flux.nc</dt><dd><p>Filename of the energy flow data.</p>
+<dt>filename = outdata/flux.nc</dt><dd><p>Filename of the heat flow data.</p>
 </dd>
 <dt>format = ascii | netcdf</dt><dd><p>Format of the energy flow data. (netcdf format is highly recommended.)</p>
 </dd>
@@ -367,25 +362,23 @@ components.</p>
 </section>
 </section>
 </section>
-<section id="calculating-g">
-<h2><a class="toc-backref" href="#id3"><span class="section-number">3.3.3. </span>Calculating G</a><a class="headerlink" href="#calculating-g" title="Permalink to this headline">¶</a></h2>
-<p>After the energy flux calculations, the values of G are calculated based on the linear response theory.
-You will need the time series of irEF stored in <cite>flux_grp.nc</cite>. Type in the following command:</p>
+<section id="calculating-the-time-integral-of-interresidue-heat-current">
+<h2><a class="toc-backref" href="#id3"><span class="section-number">3.4.3. </span>Calculating the time-integral of interresidue heat current</a><a class="headerlink" href="#calculating-the-time-integral-of-interresidue-heat-current" title="Permalink to this headline">¶</a></h2>
+<p>After heat flux calculations, <span class="math notranslate nohighlight">\(\Lambda\)</span> is calculated based on the linear response theory.
+You will need the time series of <span class="math notranslate nohighlight">\(\Lambda\)</span> stored in <cite>flux_grp.nc</cite>. Type in the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curp cal-tc <span class="se">\</span>
-    --no-axes --frame-range <span class="m">1</span> <span class="m">10</span> <span class="m">1</span> --average-shift <span class="m">1</span> <span class="se">\</span>
+    --frame-range <span class="m">1</span> <span class="m">10</span> <span class="m">1</span> --average-shift <span class="m">1</span> <span class="se">\</span>
     -a outdata/acf.nc <span class="se">\</span>
-    -o outdata/ec.dat outdata/flux_grp.nc &gt; ec.log
+    -o outdata/Lambda.dat outdata/flux_grp.nc &gt; Lambda.log
 </pre></div>
 </div>
 <dl class="simple">
-<dt><cite>--no-axes</cite></dt><dd><p>This option is needed for handling J (scalar flux).</p>
-</dd>
-<dt><cite>--frame-range &lt;first_frame&gt; &lt;last_frame&gt; &lt;frame_interval&gt;</cite></dt><dd><p>This specifies the range of the time integration of the auto-correlation function of energy flux, <span class="math notranslate nohighlight">\(\left\langle J(0)J(t) \right\rangle\)</span>.
+<dt><cite>--frame-range &lt;first_frame&gt; &lt;last_frame&gt; &lt;frame_interval&gt;</cite></dt><dd><p>This specifies the range of the time integration of the auto-correlation function of heat currents, <span class="math notranslate nohighlight">\(\left\langle \mathbf{h}(0) \cdot \mathbf{h}(t) \right\rangle\)</span>.
 The upper and lower limits of the integral are set in &lt;first_frame&gt;,
 &lt;last_frame&gt;, respectively. During the integration, every &lt;frame_interval&gt;
 frames are used for calculations.</p>
 </dd>
-<dt><cite>--average-shift &lt;ave_shift&gt;</cite></dt><dd><p>In the calculation of G, J(0)J(t) is integrated from &lt;first_fram&gt; to
+<dt><cite>--average-shift &lt;ave_shift&gt;</cite></dt><dd><p>In the calculation of irEC, J(0)J(t) is integrated from &lt;first_fram&gt; to
 &lt;last_frame&gt;. Then, the origin of the integration is shifted by &lt;ave_shift&gt;
 and the time integration is again conducted from &lt;first_frame&gt; to &lt;last_frame&gt;.
 This procedure is then repeated until the end point of the time integration
@@ -394,15 +387,16 @@ reaches the end of the trajectory.</p>
 <dt><cite>-a &lt;file_name&gt;</cite></dt><dd><p>The time-correlation function data are output to &lt;file_name&gt;.
 The data format is netcdf. If this key is not specified, no data is output.</p>
 </dd>
-<dt><cite>-o &lt;file_name&gt;</cite></dt><dd><p>Energy conductivity data is output to &lt;file_name&gt;.</p>
+<dt><cite>-o &lt;file_name&gt;</cite></dt><dd><p><span class="math notranslate nohighlight">\(\Lambda\)</span> data is output to &lt;file_name&gt;.</p>
 </dd>
 </dl>
-<p>You will then obtain energy conductivity data <code class="docutils literal notranslate"><span class="pre">output/ec.dat</span></code> and the
+<p>You will then obtain energy conductivity data <code class="docutils literal notranslate"><span class="pre">output/Lambda.dat</span></code> and the
 time-correlatioin data file, <code class="docutils literal notranslate"><span class="pre">outdata/acf.nc</span></code>.</p>
-<section id="format-of-irec-data-file">
-<h3>Format of irEC data file<a class="headerlink" href="#format-of-irec-data-file" title="Permalink to this headline">¶</a></h3>
+<p>NOTE: <cite>--no-axes</cite> option should not be used here.</p>
+<section id="format-of-lambda-data-file">
+<h3>Format of <span class="math notranslate nohighlight">\(\Lambda\)</span> data file<a class="headerlink" href="#format-of-lambda-data-file" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><p>In each line of the data file, <cite>ec.dat</cite>, a pair of residues and the corresponding value of G is written as &lt;residue_A&gt; &lt;residue_B&gt; &lt;G_AB&gt;. The unit of &lt;G_AB&gt; is measured in <span class="math notranslate nohighlight">\({\rm{(kcal/mol)^2/fs}}\)</span>.</p>
+<div><p>In each line of the data file, <cite>Lambda.dat</cite>, a pair of residues and the corresponding value of <span class="math notranslate nohighlight">\(\Lambda_{AB}\)</span> is written as &lt;residue_A&gt; &lt;residue_B&gt; <span class="math notranslate nohighlight">\(\Lambda_{AB}\)</span>. The unit of <span class="math notranslate nohighlight">\(\Lambda_{AB}\)</span> is measured in <span class="math notranslate nohighlight">\((\AA \rm{\cdot kcal/mol)^2/fs}\)</span>.</p>
 </div></blockquote>
 </section>
 </section>
@@ -417,15 +411,15 @@ time-correlatioin data file, <code class="docutils literal notranslate"><span cl
         <div class="sphinxsidebarwrapper">
   <h3><a href="../">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.3. Energy flow analysis</a><ul>
-<li><a class="reference internal" href="#preparing-trajectories">3.3.1. Preparing trajectories</a><ul>
+<li><a class="reference internal" href="#">3.4. Heat current analysis</a><ul>
+<li><a class="reference internal" href="#preparing-trajectories">3.4.1. Preparing trajectories</a><ul>
 <li><a class="reference internal" href="#solvent-stripping">Solvent stripping</a></li>
 <li><a class="reference internal" href="#adjusting-the-time-points-for-the-coordinates-and-velocities-trajectory">Adjusting the time points for the coordinates and velocities trajectory</a></li>
 <li><a class="reference internal" href="#avoiding-missing-frame-problem-while-concatenating-multiple-trajectory-files">Avoiding missing frame problem while concatenating multiple trajectory files</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#calculating-interresidue-energy-flow">3.3.2. Calculating interresidue energy flow</a><ul>
-<li><a class="reference internal" href="#setting-up-eflow-cfg">Setting up <code class="docutils literal notranslate"><span class="pre">eflow.cfg</span></code></a><ul>
+<li><a class="reference internal" href="#calculating-interresidue-heat-current">3.4.2. Calculating interresidue heat current</a><ul>
+<li><a class="reference internal" href="#setting-up-hflow-cfg">Setting up <code class="docutils literal notranslate"><span class="pre">hflow.cfg</span></code></a><ul>
 <li><a class="reference internal" href="#input">[input]</a></li>
 <li><a class="reference internal" href="#input-amber">[input_amber]</a></li>
 <li><a class="reference internal" href="#curp">[curp]</a></li>
@@ -434,8 +428,8 @@ time-correlatioin data file, <code class="docutils literal notranslate"><span cl
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#calculating-g">3.3.3. Calculating G</a><ul>
-<li><a class="reference internal" href="#format-of-irec-data-file">Format of irEC data file</a></li>
+<li><a class="reference internal" href="#calculating-the-time-integral-of-interresidue-heat-current">3.4.3. Calculating the time-integral of interresidue heat current</a><ul>
+<li><a class="reference internal" href="#format-of-lambda-data-file">Format of <span class="math notranslate nohighlight">\(\Lambda\)</span> data file</a></li>
 </ul>
 </li>
 </ul>
@@ -443,15 +437,15 @@ time-correlatioin data file, <code class="docutils literal notranslate"><span cl
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../stress_tutorial/"
-                        title="previous chapter"><span class="section-number">3.2. </span>Atomic stress tensor analysis</a></p>
+  <p class="topless"><a href="../eflow_tutorial/"
+                        title="previous chapter"><span class="section-number">3.3. </span>Energy flow analysis</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../hflow_tutorial/"
-                        title="next chapter"><span class="section-number">3.4. </span>Heat current analysis</a></p>
+  <p class="topless"><a href="../reference/"
+                        title="next chapter"><span class="section-number">4. </span>Reference</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/eflow_tutorial.rst.txt"
+      <li><a href="../_sources/hflow_tutorial.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -476,14 +470,14 @@ time-correlatioin data file, <code class="docutils literal notranslate"><span cl
           <a href="../genindex/" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../hflow_tutorial/" title="3.4. Heat current analysis"
+          <a href="../reference/" title="4. Reference"
              >next</a> |</li>
         <li class="right" >
-          <a href="../stress_tutorial/" title="3.2. Atomic stress tensor analysis"
+          <a href="../eflow_tutorial/" title="3.3. Energy flow analysis"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../">CURP 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../tutorials/" ><span class="section-number">3. </span>Tutorials</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.3. </span>Energy flow analysis</a></li> 
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.4. </span>Heat current analysis</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
