@@ -21,7 +21,7 @@ def gen_indices(grange_lines):
 
 
 def write_data(prefix, donor, acceptor, acf, times):
-    fn = '{:}-{:}-{:}.dat'.format(prefix, donor, acceptor)
+    fn = '{:}-{:}-{:}.dat'.format(prefix, donor.decode(), acceptor.decode())
     numpy.savetxt(fn, numpy.array([times, acf]).T, fmt='%12.4f   % 12.7e')
 
 

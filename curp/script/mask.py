@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import os, sys
 from curp import TrjWriter
 
 
@@ -33,7 +32,7 @@ def load_mask(fn):
 
     with open(fn, 'rb') as file:
         ids_str = (line.split()[1] for line in file
-                if line.startswith('ATOM'))
+                if line.startswith(b'ATOM'))
 
         ids = [ int(id_str)-1 for id_str in ids_str ]
 

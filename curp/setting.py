@@ -5,7 +5,7 @@ configuration file.
 Defines all the .cfg sections as class variables (Section object)
 """
 
-from setting_base import *
+from curp.setting_base import *
 
 
 class Setting(SettingBase):
@@ -241,11 +241,12 @@ class Setting(SettingBase):
             desc=('The method of calculation.'
                 '"momentum-current" calculates the stress tensor for systems. '
                 '"energy-flux" calculates the energy flow for systems. '
+                '"kinetic-flux" calculates the kinetic energy flow for systems. '
                 '"dynamics is mainly used to verify the validity of '
                 ' the CURP program numerically, '
                 'so its implementation is very simple'),
             values=['energy-flux', 'momentum-current',
-                    'microcanonical', 'heat-flux']),
+                    'microcanonical', 'heat-flux', 'kinetic-flux']),
                     #'energy-current', 'stress-flux']),
 
         group_method = Choice(default='none', require=False,
@@ -445,20 +446,29 @@ def parse_config(config_filename=None):
     except:
         raise
 
-    import cStringIO as sio
-    outfile = sio.StringIO()
+    try:
+        from cStrinIO import StringIo
+    except ImportError:
+        from io import StringIO
+    except:
+        raise
+
+    outfile = StringIO()
 
     if config_filename:
-        with open(config_filename, 'rb') as config_file:
+        with open(config_filename, 'r') as config_file:
             for line in config_file:
                 body_ = line.split('#')[0]
                 body  = body_.split(';')[0]
                 outfile.write(body)
 
         outfile.seek(0)
-
+    print("Type outfile: ", type(outfile))
+    print(outfile)
     config = cp.SafeConfigParser()
+
     config.readfp(outfile)
+
     outfile.close()
 
     # config = cp.SafeConfigParser()

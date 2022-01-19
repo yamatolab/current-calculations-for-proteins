@@ -19,7 +19,7 @@ class TopologyParser:
     """
     >>> tpl = TopologyParser('./test/ala3.prmtop')
     >>> tpl.parse()
-    >>> tpl.get_molcule_info()
+    >>> tpl.get_molecule_info()
 
     """
 
@@ -37,46 +37,46 @@ class TopologyParser:
         if self._filename.endswith('.gz'):
             tpl_file = gzip.open(self._filename, 'rb')
         else:
-            tpl_file = open(self._filename, 'r')
+            tpl_file = open(self._filename, 'rb')
         fname_to_lines = self.split_content(tpl_file)
         tpl_file.close()
 
         fname_to_parsers = {
-            'ATOM_NAME'                  : self._parse_name(20, 4)    , 
-            'CHARGE'                     : self._parse_generic(float) , 
-            'MASS'                       : self._parse_generic(float) , 
-            'ATOM_TYPE_INDEX'            : self._parse_generic(int)   , 
-            'RESIDUE_LABEL'              : self._parse_name(20, 4)    , 
-            'RESIDUE_POINTER'            : self._parse_generic(int)   , 
+            'ATOM_NAME'                  : self._parse_name(20, 4)    ,
+            'CHARGE'                     : self._parse_generic(float) ,
+            'MASS'                       : self._parse_generic(float) ,
+            'ATOM_TYPE_INDEX'            : self._parse_generic(int)   ,
+            'RESIDUE_LABEL'              : self._parse_name(20, 4)    ,
+            'RESIDUE_POINTER'            : self._parse_generic(int)   ,
             'BOND_FORCE_CONSTANT'        : self._parse_generic(float) , # kcal/mol
             'BOND_EQUIL_VALUE'           : self._parse_generic(float) , # A
-            'BONDS_INC_HYDROGEN'         : self._parse_generic(int)   , 
-            'BONDS_WITHOUT_HYDROGEN'     : self._parse_generic(int)   , 
+            'BONDS_INC_HYDROGEN'         : self._parse_generic(int)   ,
+            'BONDS_WITHOUT_HYDROGEN'     : self._parse_generic(int)   ,
             'ANGLE_FORCE_CONSTANT'       : self._parse_generic(float) , # kcal/mol A^2
             'ANGLE_EQUIL_VALUE'          : self._parse_generic(float) , # radian
-            'ANGLES_INC_HYDROGEN'        : self._parse_generic(int)   , 
-            'ANGLES_WITHOUT_HYDROGEN'    : self._parse_generic(int)   , 
+            'ANGLES_INC_HYDROGEN'        : self._parse_generic(int)   ,
+            'ANGLES_WITHOUT_HYDROGEN'    : self._parse_generic(int)   ,
             'DIHEDRAL_FORCE_CONSTANT'    : self._parse_generic(float) , # kcal/mol
-            'DIHEDRAL_PERIODICITY'       : self._parse_generic(float) , 
-            'DIHEDRAL_PHASE'             : self._parse_generic(float) , 
-            'DIHEDRALS_INC_HYDROGEN'     : self._parse_generic(int)   , 
-            'DIHEDRALS_WITHOUT_HYDROGEN' : self._parse_generic(int)   , 
-            'NONBONDED_PARM_INDEX'       : self._parse_generic(int)   , 
-            'LENNARD_JONES_ACOEF'        : self._parse_generic(float) , 
-            'LENNARD_JONES_BCOEF'        : self._parse_generic(float) , 
-            'HBOND_ACOEF'                : self._parse_generic(float) , 
-            'HBOND_BCOEF'                : self._parse_generic(float) , 
-            'AMBER_ATOM_TYPE'            : self._parse_name(20, 4)    , 
-            'BOX_DIMENSIONS'             : self._parse_generic(float) , 
+            'DIHEDRAL_PERIODICITY'       : self._parse_generic(float) ,
+            'DIHEDRAL_PHASE'             : self._parse_generic(float) ,
+            'DIHEDRALS_INC_HYDROGEN'     : self._parse_generic(int)   ,
+            'DIHEDRALS_WITHOUT_HYDROGEN' : self._parse_generic(int)   ,
+            'NONBONDED_PARM_INDEX'       : self._parse_generic(int)   ,
+            'LENNARD_JONES_ACOEF'        : self._parse_generic(float) ,
+            'LENNARD_JONES_BCOEF'        : self._parse_generic(float) ,
+            'HBOND_ACOEF'                : self._parse_generic(float) ,
+            'HBOND_BCOEF'                : self._parse_generic(float) ,
+            'AMBER_ATOM_TYPE'            : self._parse_name(20, 4)    ,
+            'BOX_DIMENSIONS'             : self._parse_generic(float) ,
         }
-        for fname, parser in fname_to_parsers.items():
+        for fname, parser in list(fname_to_parsers.items()):
             if fname in fname_to_lines:
                 lines = fname_to_lines[fname]
                 self.__fname_to_info[fname] = list(parser(lines))
             else:
                 self.__fname_to_info[fname] = None
 
-        for fname, info in self.__fname_to_info.items():
+        for fname, info in list(self.__fname_to_info.items()):
             self.print_info(fname, info)
 
     def split_content(self, tpl_file):
@@ -90,7 +90,7 @@ class TopologyParser:
 
             flagname = line.split()[1]
             lines = list( self.gen_section_lines(gen_lines) )
-            fname_to_lines[flagname] = lines 
+            fname_to_lines[flagname] = lines
 
         return fname_to_lines
 
@@ -99,14 +99,14 @@ class TopologyParser:
 
         # search first section marker
         for line in lines:
-            line = line.split(self.comment)[0].strip()
+            line = line.decode().split(self.comment)[0].strip()
             if self.is_section(line):
                 yield line
                 break
 
         # rest
         for line in lines:
-            line = line.split(self.comment)[0].strip()
+            line = line.decode().split(self.comment)[0].strip()
             if self.is_section(line):
                 yield self.section_end
                 yield line
@@ -160,155 +160,155 @@ class TopologyParser:
 
 # definition of vdw radius parameters.
 type_to_vdws = {
-        'H'  : 0.6000 , 
-        # 'HO' : 0.0000 , 
+        'H'  : 0.6000 ,
+        # 'HO' : 0.0000 ,
         'HO' : 0.6000 ,  # Artifact
-        'HS' : 0.6000 , 
-        'HC' : 1.4870 , 
-        'H1' : 1.3870 , 
-        'H2' : 1.2870 , 
-        'H3' : 1.1870 , 
-        'HP' : 1.1000 , 
-        'HA' : 1.4590 , 
-        'H4' : 1.4090 , 
-        'H5' : 1.3590 , 
-        # 'HW' : 0.0000 , 
+        'HS' : 0.6000 ,
+        'HC' : 1.4870 ,
+        'H1' : 1.3870 ,
+        'H2' : 1.2870 ,
+        'H3' : 1.1870 ,
+        'HP' : 1.1000 ,
+        'HA' : 1.4590 ,
+        'H4' : 1.4090 ,
+        'H5' : 1.3590 ,
+        # 'HW' : 0.0000 ,
         'HW' : 0.6000 , # Artifact
-        'HZ' : 1.4590 , 
-        'O'  : 1.6612 , 
-        'O2' : 1.6612 , 
-        'OW' : 1.7683 , 
-        'OH' : 1.7210 , 
-        'OS' : 1.6837 , 
-        'C*' : 1.9080 , 
-        'CT' : 1.9080 , 
-        'CX' : 1.9080 , 
-        'C'  : 1.9080 , 
-        'N'  : 1.8240 , 
-        'N3' : 1.8240 , 
-        'NY' : 1.8240 , 
-        'S'  : 2.0000 , 
-        'SH' : 2.0000 , 
-        'P'  : 2.1000 , 
-        'IM' : 2.47   , 
-        'Li' : 1.1370 , 
-        'IP' : 1.8680 , 
-        'Na' : 1.8680 , 
-        'Na+': 1.8680 , 
-        'K'  : 2.6580 , 
-        'Rb' : 2.9560 , 
-        'Cs' : 3.3950 , 
-        'MG' : 0.7926 , 
-        'C0' : 1.7131 , 
-        'Zn' : 1.10   , 
-        'F'  : 1.75   , 
-        'Cl' : 1.948  , 
-        'Cl-': 1.948  , 
-        'Br' : 2.22   , 
-        'I'  : 2.35   , 
-        'IB' : 5.0    , 
-        'LP' : 0.00   , 
+        'HZ' : 1.4590 ,
+        'O'  : 1.6612 ,
+        'O2' : 1.6612 ,
+        'OW' : 1.7683 ,
+        'OH' : 1.7210 ,
+        'OS' : 1.6837 ,
+        'C*' : 1.9080 ,
+        'CT' : 1.9080 ,
+        'CX' : 1.9080 ,
+        'C'  : 1.9080 ,
+        'N'  : 1.8240 ,
+        'N3' : 1.8240 ,
+        'NY' : 1.8240 ,
+        'S'  : 2.0000 ,
+        'SH' : 2.0000 ,
+        'P'  : 2.1000 ,
+        'IM' : 2.47   ,
+        'Li' : 1.1370 ,
+        'IP' : 1.8680 ,
+        'Na' : 1.8680 ,
+        'Na+': 1.8680 ,
+        'K'  : 2.6580 ,
+        'Rb' : 2.9560 ,
+        'Cs' : 3.3950 ,
+        'MG' : 0.7926 ,
+        'C0' : 1.7131 ,
+        'Zn' : 1.10   ,
+        'F'  : 1.75   ,
+        'Cl' : 1.948  ,
+        'Cl-': 1.948  ,
+        'Br' : 2.22   ,
+        'I'  : 2.35   ,
+        'IB' : 5.0    ,
+        'LP' : 0.00   ,
   }
 
 # for gaff
 gaff_type_to_vdws = {
-        'h1' : 1.3870 , 
-        'h2' : 1.2870 , 
-        'h3' : 1.1870 , 
-        'h4' : 1.4090 , 
-        'h5' : 1.3590 , 
-        'ha' : 1.4590 , 
-        'hc' : 1.4870 , 
-        'hn' : 0.6000 , 
-        'ho' : 0.0000 , 
-        'hp' : 0.6000 , 
-        'hs' : 0.6000 , 
-        'hw' : 0.0000 , 
-        'hx' : 1.1000 , 
-        'o'  : 1.6612 , 
-        'oh' : 1.7210 , 
-        'os' : 1.6837 , 
-        'ow' : 1.7683 , 
-        'c'  : 1.9080 , 
-        'c1' : 1.9080 , 
-        'c2' : 1.9080 , 
-        'c3' : 1.9080 , 
-        'ca' : 1.9080 , 
-        'cc' : 1.9080 , 
-        'cd' : 1.9080 , 
-        'ce' : 1.9080 , 
-        'cf' : 1.9080 , 
-        'cg' : 1.9080 , 
-        'ch' : 1.9080 , 
-        'cp' : 1.9080 , 
-        'cq' : 1.9080 , 
-        'cu' : 1.9080 , 
-        'cv' : 1.9080 , 
-        'cx' : 1.9080 , 
-        'cy' : 1.9080 , 
-        'cz' : 1.9080 , 
-        'n'  : 1.8240 , 
-        'n1' : 1.8240 , 
-        'n2' : 1.8240 , 
-        'n3' : 1.8240 , 
-        'n4' : 1.8240 , 
-        'na' : 1.8240 , 
-        'nb' : 1.8240 , 
-        'nc' : 1.8240 , 
-        'nd' : 1.8240 , 
-        'ne' : 1.8240 , 
-        'nf' : 1.8240 , 
-        'nh' : 1.8240 , 
-        'no' : 1.8240 , 
-        's'  : 2.0000 , 
-        's2' : 2.0000 , 
-        's4' : 2.0000 , 
-        's6' : 2.0000 , 
-        'sx' : 2.0000 , 
-        'sy' : 2.0000 , 
-        'sh' : 2.0000 , 
-        'ss' : 2.0000 , 
-        'p2' : 2.1000 , 
-        'p3' : 2.1000 , 
-        'p4' : 2.1000 , 
-        'p5' : 2.1000 , 
-        'pb' : 2.1000 , 
-        'pc' : 2.1000 , 
-        'pd' : 2.1000 , 
-        'pe' : 2.1000 , 
-        'pf' : 2.1000 , 
-        'px' : 2.1000 , 
-        'py' : 2.1000 , 
-        'f'  : 1.75   , 
-        'cl' : 1.948  , 
-        'br' : 2.02   , 
-        'i'  : 2.15   , 
+        'h1' : 1.3870 ,
+        'h2' : 1.2870 ,
+        'h3' : 1.1870 ,
+        'h4' : 1.4090 ,
+        'h5' : 1.3590 ,
+        'ha' : 1.4590 ,
+        'hc' : 1.4870 ,
+        'hn' : 0.6000 ,
+        'ho' : 0.0000 ,
+        'hp' : 0.6000 ,
+        'hs' : 0.6000 ,
+        'hw' : 0.0000 ,
+        'hx' : 1.1000 ,
+        'o'  : 1.6612 ,
+        'oh' : 1.7210 ,
+        'os' : 1.6837 ,
+        'ow' : 1.7683 ,
+        'c'  : 1.9080 ,
+        'c1' : 1.9080 ,
+        'c2' : 1.9080 ,
+        'c3' : 1.9080 ,
+        'ca' : 1.9080 ,
+        'cc' : 1.9080 ,
+        'cd' : 1.9080 ,
+        'ce' : 1.9080 ,
+        'cf' : 1.9080 ,
+        'cg' : 1.9080 ,
+        'ch' : 1.9080 ,
+        'cp' : 1.9080 ,
+        'cq' : 1.9080 ,
+        'cu' : 1.9080 ,
+        'cv' : 1.9080 ,
+        'cx' : 1.9080 ,
+        'cy' : 1.9080 ,
+        'cz' : 1.9080 ,
+        'n'  : 1.8240 ,
+        'n1' : 1.8240 ,
+        'n2' : 1.8240 ,
+        'n3' : 1.8240 ,
+        'n4' : 1.8240 ,
+        'na' : 1.8240 ,
+        'nb' : 1.8240 ,
+        'nc' : 1.8240 ,
+        'nd' : 1.8240 ,
+        'ne' : 1.8240 ,
+        'nf' : 1.8240 ,
+        'nh' : 1.8240 ,
+        'no' : 1.8240 ,
+        's'  : 2.0000 ,
+        's2' : 2.0000 ,
+        's4' : 2.0000 ,
+        's6' : 2.0000 ,
+        'sx' : 2.0000 ,
+        'sy' : 2.0000 ,
+        'sh' : 2.0000 ,
+        'ss' : 2.0000 ,
+        'p2' : 2.1000 ,
+        'p3' : 2.1000 ,
+        'p4' : 2.1000 ,
+        'p5' : 2.1000 ,
+        'pb' : 2.1000 ,
+        'pc' : 2.1000 ,
+        'pd' : 2.1000 ,
+        'pe' : 2.1000 ,
+        'pf' : 2.1000 ,
+        'px' : 2.1000 ,
+        'py' : 2.1000 ,
+        'f'  : 1.75   ,
+        'cl' : 1.948  ,
+        'br' : 2.02   ,
+        'i'  : 2.15   ,
   }
 
 # for lipid11
 lipid_type_to_wdws = {
-        'cA' : 1.9080 , 
-        'cB' : 1.9080 , 
-        'cC' : 1.9080 , 
-        'oC' : 1.6612 , 
-        'oS' : 1.6837 , 
-        'oH' : 1.7210 , 
-        'oT' : 1.6837 , 
-        'oP' : 1.6612 , 
-        'oO' : 1.6612 , 
-        'nA' : 1.8240 , 
-        'pA' : 2.1000 , 
-        'hA' : 1.4870 , 
-        'hE' : 1.3870 , 
-        'hX' : 1.1000 , 
-        'hB' : 1.4590 , 
-        'hN' : 0.6000 , 
-        'hO' : 0.0000 , 
-        'cR' : 1.9080 , 
-        'cP' : 1.9080 , 
-        'oR' : 1.7210 , 
-        'hR' : 0.0000 , 
-        'hS' : 1.3870 , 
+        'cA' : 1.9080 ,
+        'cB' : 1.9080 ,
+        'cC' : 1.9080 ,
+        'oC' : 1.6612 ,
+        'oS' : 1.6837 ,
+        'oH' : 1.7210 ,
+        'oT' : 1.6837 ,
+        'oP' : 1.6612 ,
+        'oO' : 1.6612 ,
+        'nA' : 1.8240 ,
+        'pA' : 2.1000 ,
+        'hA' : 1.4870 ,
+        'hE' : 1.3870 ,
+        'hX' : 1.1000 ,
+        'hB' : 1.4590 ,
+        'hN' : 0.6000 ,
+        'hO' : 0.0000 ,
+        'cR' : 1.9080 ,
+        'cP' : 1.9080 ,
+        'oR' : 1.7210 ,
+        'hR' : 0.0000 ,
+        'hS' : 1.3870 ,
 }
 
 type_to_vdws.update(gaff_type_to_vdws)
@@ -436,7 +436,7 @@ class Format2AmberBaseConverter(ConverterBase):
                     iatm_end = res_ptrs[ires_1+1] - 1
                 yield iatm_beg, iatm_end
 
-        name_dptrs = zip(amb_resnames, gen_detailed_pointer(amb_res_ptrs,natom))
+        name_dptrs = list(zip(amb_resnames, gen_detailed_pointer(amb_res_ptrs,natom)))
         for ires_1, (rname, res_dptr) in enumerate(name_dptrs):
             iatm_beg, iatm_end = res_dptr
             for iatm in range(iatm_beg, iatm_end+1):
@@ -465,12 +465,10 @@ class Format2AmberBaseConverter(ConverterBase):
             for i_1, tname in enumerate(atom_types):
                 radius = type_to_vdws.get(tname)
                 if radius is not None:
-                    # print('ok', tname)
                     vdw_radii.append( radius )
                 else:
 
                     if tname in c_replace_list:
-                        # print('C* ok')
                         vdw_radii.append( type_to_vdws['C*'] )
 
                     elif tname in n_replace_list:
@@ -486,14 +484,13 @@ class Format2AmberBaseConverter(ConverterBase):
                         vdw_radii.append( type_to_vdws['C*'] )
 
                     else:
-                        # print('ng', tname)
                         type_to_vdws[tname]
 
         else:
             vdw_radii = []
 
-        ids = range(1, self.get_natom()+1)
-        self.__atom_info = dict(ids=ids, names=names, masses=masses, 
+        ids = list(range(1, self.get_natom()+1))
+        self.__atom_info = dict(ids=ids, names=names, masses=masses,
                 elems=elems, vdw_radii=vdw_radii)
 
     def _convert_bond(self):
@@ -510,8 +507,8 @@ class Format2AmberBaseConverter(ConverterBase):
         ncol = 3
 
         # for bonds including hydrogen
-        for ibnd in range( len(amb_atoms_hyd)/3 ):
-            iatoms  = [ amb_atoms_hyd[ncol*ibnd+i]/3 + 1 for i in range(ncol-1) ]
+        for ibnd in range( len(amb_atoms_hyd)//3 ):
+            iatoms  = [ amb_atoms_hyd[ncol*ibnd+i]//3 + 1 for i in range(ncol-1) ]
             index = amb_atoms_hyd[ncol*(ibnd+1) - 1]
 
             two_atoms.append( iatoms )
@@ -519,8 +516,8 @@ class Format2AmberBaseConverter(ConverterBase):
             length_eqs.append( amb_eqs[index-1] )
 
         # for bonds without hydrogen
-        for ibnd in range( len(amb_atoms_woh)/3 ):
-            iatoms = [ amb_atoms_woh[ncol*ibnd+i]/3 + 1 for i in range(ncol-1) ]
+        for ibnd in range( len(amb_atoms_woh)//3 ):
+            iatoms = [ amb_atoms_woh[ncol*ibnd+i]//3 + 1 for i in range(ncol-1) ]
             index = amb_atoms_woh[ncol*(ibnd+1) - 1]
 
             two_atoms.append( iatoms )
@@ -546,8 +543,8 @@ class Format2AmberBaseConverter(ConverterBase):
         ncol = 4
 
         # for angles including hydrogen
-        for iang in range( len(amb_atoms_hyd)/ncol ):
-            iatoms = [ amb_atoms_hyd[ncol*iang+i]/3 + 1 for i in range(ncol-1) ]
+        for iang in range( len(amb_atoms_hyd)//ncol ):
+            iatoms = [ amb_atoms_hyd[ncol*iang+i]//3 + 1 for i in range(ncol-1) ]
             index = amb_atoms_hyd[ncol*(iang+1) - 1]
 
             three_atoms.append( iatoms )
@@ -555,8 +552,8 @@ class Format2AmberBaseConverter(ConverterBase):
             theta_eqs.append( amb_eqs[index-1] )
 
         # for angles without hydrogen
-        for iang in range( len(amb_atoms_woh)/4 ):
-            iatoms = [ amb_atoms_woh[ncol*iang+i]/3 + 1 for i in range(ncol-1) ]
+        for iang in range( len(amb_atoms_woh)//4 ):
+            iatoms = [ amb_atoms_woh[ncol*iang+i]//3 + 1 for i in range(ncol-1) ]
             index = amb_atoms_woh[ncol*(iang+1) - 1]
 
             three_atoms.append( iatoms )
@@ -591,9 +588,9 @@ class Format2AmberBaseConverter(ConverterBase):
         ncol = 5
 
         # for torsion including hydrogen
-        for itor in range( len(amb_atoms_hyd)/ncol ):
+        for itor in range( len(amb_atoms_hyd)//ncol ):
             if not if_fun(amb_atoms_hyd[ncol*itor+3]): continue
-            iatoms = [ abs(amb_atoms_hyd[ncol*itor+i])/3 + 1
+            iatoms = [ abs(amb_atoms_hyd[ncol*itor+i])//3 + 1
                     for i in range(ncol-1) ]
             index = amb_atoms_hyd[ncol*(itor+1) - 1]
 
@@ -604,9 +601,9 @@ class Format2AmberBaseConverter(ConverterBase):
             initial_phases.append( amb_phases[index-1] )
 
         # for torsion without hydrogen
-        for itor in range( len(amb_atoms_woh)/ncol ):
+        for itor in range( len(amb_atoms_woh)//ncol ):
             if not if_fun(amb_atoms_woh[ncol*itor+3]): continue
-            iatoms = [ abs(amb_atoms_woh[ncol*itor+i])/3 + 1
+            iatoms = [ abs(amb_atoms_woh[ncol*itor+i])//3 + 1
                     for i in range(ncol-1) ]
             index = amb_atoms_woh[ncol*(itor+1) - 1]
 
@@ -652,7 +649,6 @@ class Format2AmberBaseConverter(ConverterBase):
 
                 ij = ntype*(itype-1) + jtype
                 index = amb_indexes[ij-1]
-                # if index < 0: print('negative', index, amb_c6s[index-1])
                 if index < 0: continue
                 c6s[itype_1, jtype_1]  = amb_c6s[index-1]
                 c12s[itype_1, jtype_1] = amb_c12s[index-1]
@@ -663,7 +659,7 @@ if __name__ == '__main__':
     logger.log_level = logger.INFO
     # tpl = TopologyParser('./test/ala3.prmtop')
     fp = "./test/b2ar-act.prmtop.gz"
-    
+
     tpl = TopologyParser(fp)
     tpl.parse()
 

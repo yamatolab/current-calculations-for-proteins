@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import numpy
 
-import interact_table as it
+import curp.table.interact_table as it
 
 def parse_target_atoms_line(target_atoms_line, natom):
 
@@ -41,7 +41,7 @@ def parse_mask_with_range(mask, atoms, natom):
     else:
         pass
 
-    return range(iatm_beg, iatm_end+1)
+    return list(range(iatm_beg, iatm_end+1))
 
 def make_iatm_to_itar(target_atoms, natom):
     """Make iatm => itarget dictionary."""

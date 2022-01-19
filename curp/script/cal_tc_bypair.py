@@ -231,7 +231,7 @@ class Log:
             file.write(str(line) + '\n')
 
 def sum_gen(gen):
-    first = gen.next()
+    first = next(gen)
     for g in gen:
         first += g
 

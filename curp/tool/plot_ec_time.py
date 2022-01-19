@@ -1,8 +1,10 @@
 #! /usr/bin/env python2
 from __future__ import print_function
-import os, sys
+import os
+import sys
 import numpy
 import pylab as pl
+
 
 def load_data(filename):
     with open(filename, 'rb') as file:
@@ -60,5 +62,5 @@ if __name__ == '__main__':
 
     pl.savefig('time-'+name+'.png', format='png', dpi=300)
     # pl.savefig('time-'+name+'.pdf', format='')
-    
+
     # pl.show()

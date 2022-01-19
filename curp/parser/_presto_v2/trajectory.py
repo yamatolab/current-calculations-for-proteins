@@ -7,7 +7,7 @@ from exception import CurpException
 
 class FileNotReadError(CurpException): pass
 
-import lib_parser
+from . import lib_parser
 class ParserBase:
 
     def __init__(self, filename, natom):

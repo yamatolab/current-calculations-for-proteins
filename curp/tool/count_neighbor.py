@@ -1,6 +1,6 @@
 #! /usr/bin/env python2
 
-import sys, os
+import sys
 
 def parse_line(line):
     cols = line.split()
@@ -44,16 +44,16 @@ if __name__ == '__main__':
     # sort
     # seq, count, rev_count
     if sort_method == 'seq':
-        sorted_items = sorted( rkey_to_count.items(),
+        sorted_items = sorted( list(rkey_to_count.items()),
             key=lambda rkey: rkey[0][0], reverse=False)
     elif sort_method == 'count':
-        sorted_items = sorted( rkey_to_count.items(),
+        sorted_items = sorted( list(rkey_to_count.items()),
             key=lambda rkey: rkey[1], reverse=True)
     elif sort_method == 'rev_count':
-        sorted_items = sorted( rkey_to_count.items(),
+        sorted_items = sorted( list(rkey_to_count.items()),
             key=lambda rkey: rkey[1], reverse=False)
     else:
-        sorted_items = rkey_to_count.items()
+        sorted_items = list(rkey_to_count.items())
 
     # print
     print('#{:>8}{:>5}   {:>2}'.format('resname', 'rid', 'count'))

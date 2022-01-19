@@ -9,12 +9,13 @@ def write_tc(tcs, pairs, tcs_rms):
     """Write transport coefficient and dispersion to standard output."""
     for pair, tc, rms in zip(pairs, tcs, tcs_rms):
         don, acc = pair
-        print('{:>12} {:>12}  {}  {}'.format(don, acc, tc, rms))
+        print('{:>12} {:>12}  {}  {}'.format(don.decode(), acc.decode(),
+                                             tc, rms))
 
 def load_tc(fp):
     fd = open(fp, 'rb')
     lines = (line for line in fd
-            if not line.startswith('#')
+            if not line.startswith(b'#')
             if not line.isspace())
 
     pairs = []

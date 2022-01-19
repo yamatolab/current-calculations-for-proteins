@@ -1,13 +1,8 @@
-import os, sys
 import numpy
 from nose.tools import *
 import numpy.testing as npt
 
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-
-import utility
+from curp import utility
 
 
 def gen_tensor3(xs, ys):

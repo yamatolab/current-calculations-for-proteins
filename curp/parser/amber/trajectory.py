@@ -3,7 +3,7 @@ from __future__ import print_function
 scale_factor = 20.455 * 10.0**(-3)
 
 try:
-    import lib_parser
+    from . import lib_parser
 except ImportError:
     lib_parser = None
 
@@ -43,24 +43,27 @@ class ParserPyBase:
         return self
 
     def parse_header(self, file):
-        return file.next()
+        return next(file)
 
     def parse_data(self, file, natom):
-        nline = natom*3 / 10
+        nline = natom*3 // 10
         rem   = natom*3 % 10
         try:
             for iline in range(nline):
-                line = file.next()
+                line = next(file)
                 for icol in range(10):
                     beg, end = 8*icol, 8*(icol+1)
                     yield float(line[beg:end])
 
             else:
                 if rem != 0:
-                    line = file.next()
+                    line = next(file)
                     for icol in range(rem):
                         beg, end = 8*icol, 8*(icol+1)
                         yield float(line[beg:end])
+
+        except StopIteration:
+            return
 
         except ValueError:
             msg = "Given the number of atoms is {}.".format(natom)
@@ -69,16 +72,20 @@ class ParserPyBase:
     def parse_crdvel_iter(self, file, natom):
         gen_data = self.parse_data(file, natom)
 
-        for iatm in range(natom):
-            x = gen_data.next()
-            y = gen_data.next()
-            z = gen_data.next()
-            yield x, y, z
+        try:
+            for iatm in range(natom):
+                x = next(gen_data)
+                y = next(gen_data)
+                z = next(gen_data)
+                yield x, y, z
+
+        except StopIteration:
+            return
 
     def parse_pbc(self, file):
 
         # parse the info of periodic boudary condition
-        line = file.next()
+        line = next(file)
         p1, p2, p3 = line[0:8],  line[8:16], line[16:24]
         return [float(p) for p in [p1, p2, p3]]
 
@@ -232,7 +239,7 @@ class NetCDFReaderBase:
     def __iter__(self): return self
 
     def parse_header(self, file):
-        return file.next()
+        return next(file)
 
     def open(self):
         if self.__trjobj is None:
@@ -317,7 +324,7 @@ class NetCDFReaderBaseNew:
     def __iter__(self): return self
 
     def parse_header(self, file):
-        return file.next()
+        return next(file)
 
     def close(self):
         pass
@@ -377,7 +384,7 @@ class RestartParser:
         elif self.__use_vel:
             self.__parsed = True
             return vel, pbc
-        else: 
+        else:
             self.__parsed = True
             return (crd, vel), pbc
 
@@ -405,10 +412,10 @@ class RestartParser:
 
     def parse_header(self, file):
         # parse title line
-        title = file.next()
+        title = next(file)
 
         # parse info line
-        line = file.next()
+        line = next(file)
         cols = line.split()
         natom, simtime = int(cols[0]), float(cols[1])
 
@@ -418,15 +425,15 @@ class RestartParser:
         return title, natom, simtime
 
     def parse_data(self, file, natom):
-        for iline in range(natom/2):
-            line = file.next()
+        for iline in range(natom//2):
+            line = next(file)
             for icol in range(6):
                 beg, end = 12*icol, 12*(icol+1)
                 yield float(line[beg:end])
 
         else:
             if natom%2 == 1:
-                line = file.next()
+                line = next(file)
                 for icol in range(3):
                     beg, end = 12*icol, 12*(icol+1)
                     yield float(line[beg:end])
@@ -435,9 +442,9 @@ class RestartParser:
         gen_data = self.parse_data(file, natom)
 
         for iatm in range(natom):
-            x = gen_data.next()
-            y = gen_data.next()
-            z = gen_data.next()
+            x = next(gen_data)
+            y = next(gen_data)
+            z = next(gen_data)
             yield x, y, z
 
     def parse_vel_iter(self, file, natom):
@@ -445,16 +452,16 @@ class RestartParser:
         c = scale_factor
 
         for iatm in range(natom):
-            x = gen_data.next() * c
-            y = gen_data.next() * c
-            z = gen_data.next() * c
+            x = next(gen_data) * c
+            y = next(gen_data) * c
+            z = next(gen_data) * c
             yield x, y, z
 
     def parse_pbc(self, file):
 
         # parse the info of periodic boudary condition
         try:
-            line = file.next()
+            line = next(file)
             p1, p2, p3 = line[0:12],  line[12:24], line[24:36]
             p4, p5, p6 = line[36:48], line[48:60], line[60:72]
             pbc = [float(p) for p in [p1, p2, p3, p4, p5, p6]]
@@ -507,7 +514,7 @@ class TrajectoryWriterBase:
     def use_pbc(self):
         return self.__use_pbc
 
-import lib_trj
+from . import lib_trj
 class AsciiCoordinateWriter(TrajectoryWriterBase):
 
     suffix = 'mdcrd'
@@ -605,7 +612,7 @@ class NetCDFWriterBase(TrajectoryWriterBase):
         cell_lengths = ncfile.createVariable('cell_lengths',
                 'f8', ('frame', 'cell_spatial'))
         cell_lengths.units = 'angstrom'
-        
+
         cell_angles = ncfile.createVariable('cell_angles',
                 'f8', ('frame', 'cell_angular'))
         cell_angles.units = 'degree'
@@ -662,7 +669,7 @@ class NetCDFWriterBase(TrajectoryWriterBase):
             self.__ncfile.sync()
             self.__ncfile.close()
             self.__ncfile = None
-        
+
 
 class NetCDFCoordinateWriter(NetCDFWriterBase):
 
@@ -733,7 +740,7 @@ if __name__ == "__main__":
         #             print('{:>5} x 10^2: size = {:>5}'.format(
         #                 i/100, len(crd)))
         #     print(i)
-                    
+
         # with bm('crd+pbc'):
             # print()
             # parser = CoordinateParser('test/ala3-woct.mdcrd.gz',

@@ -36,7 +36,7 @@ def arg_sele(parser=None):
     # Add commands as subparsers
     sp = parser.add_subparsers(dest='sele', help='Curp tool select commands')
 
-    cmd_list = manual.keys()
+    cmd_list = list(manual.keys())
     cmd_list.remove('sele')
     cmd_sp = {cmd: sp.add_parser(cmd, help=manual[cmd]) for cmd in cmd_list}
 

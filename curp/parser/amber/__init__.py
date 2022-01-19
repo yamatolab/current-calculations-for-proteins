@@ -1,5 +1,5 @@
 
-import trajectory
+from . import trajectory
 coordinate_dict = {'ascii' : trajectory.CoordinateParser,
                    'netcdf': trajectory.NetCDFCoordinateReader}
 
@@ -8,7 +8,7 @@ velocity_dict   = {'ascii' : trajectory.VelocityParser,
 
 restart_dict    = {'restart' : trajectory.RestartParser}
 
-import topology
+from . import topology
 topology_dict  = {'amber'  : topology.TopologyParser}
 
 converter_dict = {}

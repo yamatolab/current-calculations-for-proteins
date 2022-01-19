@@ -63,12 +63,17 @@ class ParallelProcessor:
     def _gen_kwds(self, kwds):
         """Generate each dictionary from listed dictionaries."""
 
-        ks = kwds.keys()    # kwd1, kwd2, ...
+        ks = list(kwds.keys())    # kwd1, kwd2, ...
         npair = len(ks)     # the number of kwds
 
         if self.is_root():
-            vs = kwds.values()  # val1_iter, val2_iter, ...
-            pair_vs_iter = it.izip(*vs)
+            vs = list(kwds.values())  # val1_iter, val2_iter, ...
+            try:
+                pair_vs_iter = it.izip(*vs)
+            except AttributeError:
+                pair_vs_iter= zip(*vs)
+            except:
+                raise
 
         else:
             def gen_none():
@@ -82,15 +87,15 @@ class ParallelProcessor:
             is_end = False
             if self.is_root():
                 try:
-                    pair_vs = pair_vs_iter.next()
+                    pair_vs = next(pair_vs_iter)
                 except StopIteration:
                     is_end = True
 
             else:
-                pair_vs = pair_vs_iter.next()
+                pair_vs = next(pair_vs_iter)
 
             is_end = self.__comm.bcast(is_end, root=0)
-            
+
             if is_end:
                 break
 
@@ -275,10 +280,15 @@ class SequentialProcessor:
     def _gen_kwds(self, kwds):
         """Generate each dictionary from listed dictionaries."""
 
-        ks = kwds.keys()    # kwd1, kwd2, ...
+        ks = list(kwds.keys())    # kwd1, kwd2, ...
         npair = len(ks)     # the number of kwds
-        vs = kwds.values()  # val1_iter, val2_iter, ...
-        pair_vs_iter = it.izip(*vs)
+        vs = list(kwds.values())  # val1_iter, val2_iter, ...
+        try:
+            pair_vs_iter = it.izip(*vs)
+        except AttributeError:
+            pair_vs_iter =zip(*vs)
+        except:
+            raise
 
         for pair_vs in pair_vs_iter:
             # (val1, val2, ...)_1, (val1, val2, ...)_2, ...
@@ -429,7 +439,7 @@ def main_arraygen(natom, ntraj):
 
     # if par.is_root():
     for r in gen_result:
-        # par.write(r) 
+        # par.write(r)
         # if par.is_root():
             print(r)
 
@@ -489,7 +499,7 @@ def main_arraygen(natom, ntraj):
 
     # if par.is_root():
     for r in gen_result:
-        # par.write(r) 
+        # par.write(r)
         # if par.is_root():
             print(r)
 

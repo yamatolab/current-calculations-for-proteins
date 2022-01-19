@@ -1,6 +1,7 @@
 #! /usr/bin/env python2
 from __future__ import print_function
-import os, sys
+import os
+import sys
 import numpy
 import pylab as pl
 
@@ -58,5 +59,5 @@ if __name__ == '__main__':
     name = os.path.splitext(os.path.basename(rel_fn))[0]
 
     pl.savefig('avg-'+name+'.png', format='png', dpi=300)
-    
+
     # pl.show()

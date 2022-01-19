@@ -17,7 +17,7 @@ class TestVolume:
 
         # preparation
         natom = 33
-        target_atoms = range(7,26+1)
+        target_atoms = list(range(7,26+1))
         iatm_to_itars = group.get_iatm_to_itars(target_atoms, natom)
 
         res_info = dict(
@@ -106,7 +106,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['N','H','H','H','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',
@@ -149,7 +149,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['H','N','H','H','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',
@@ -191,7 +191,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['H','H','N','H','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',
@@ -233,7 +233,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['H','H','H','N','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',

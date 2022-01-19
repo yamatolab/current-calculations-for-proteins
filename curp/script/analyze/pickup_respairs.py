@@ -64,7 +64,7 @@ def pickup_respairs(trj_fns, input_trj_fmt, prmtop_fn, prmtop_fmt, interval=1,
         for ext_resid in excluded_resids:
             rid_beg, rid_end = ext_resid.split(':')
             rid_beg, rid_end = int(rid_beg), int(rid_end)
-            ext_resids.extend( range(rid_beg, rid_end+1) )
+            ext_resids.extend( list(range(rid_beg, rid_end+1)) )
 
         # print(ext_resids)
 
@@ -92,7 +92,7 @@ def pickup_respairs(trj_fns, input_trj_fmt, prmtop_fn, prmtop_fmt, interval=1,
         for ext_resid in excluded_resids:
             rid_beg, rid_end = ext_resid.split(':')
             rid_beg, rid_end = int(rid_beg), int(rid_end)
-            ext_resids.extend( range(rid_beg, rid_end+1) )
+            ext_resids.extend( list(range(rid_beg, rid_end+1)) )
 
         # print(ext_resids)
 

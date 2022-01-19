@@ -26,7 +26,7 @@ def arg_tool(parser=None):
     # Add commands from manual dictionnary as subparsers
     sp = parser.add_subparsers(dest='command', help='Curp tool commands')
 
-    cmd_list = manual.keys()
+    cmd_list = list(manual.keys())
     cmd_list.remove('tool')
     cmd_sp = {cmd: sp.add_parser(cmd, help=manual[cmd]) for cmd in cmd_list}
 

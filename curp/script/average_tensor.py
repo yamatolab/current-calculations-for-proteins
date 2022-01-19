@@ -1,4 +1,3 @@
-
 import sys
 import numpy
 
@@ -72,7 +71,7 @@ def gen_section_lines(gen):
 
 
 
-            
+
 
 
 def cal_average(tensors):
@@ -122,6 +121,6 @@ if __name__ == '__main__':
         print(avet)
         print(rmsft)
 
-    
+
 
 

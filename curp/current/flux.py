@@ -5,13 +5,10 @@ import time
 import numpy
 
 # curp modules
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import utility
-import clog as logger
+from curp import utility
+import curp.clog as logger
 
-import base
+from curp.current import base, lib_flux, lib_hflux, lib_keflux
 ################################################################################
 class EnergyFluxCalculator(base.FluxCalculator):
 
@@ -39,9 +36,17 @@ class EnergyFluxCalculator(base.FluxCalculator):
         else:
             pass
 
+        method = self.get_setting().curp.method
+        if method == 'energy-flux':
+            lib = lib_flux
+        elif method == 'kinetic-flux':
+            lib = lib_keflux
+        else: 
+            pass
+
         self.fcal = EnergyFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
-                flag_atom, flag_group)
+                lib, flag_atom, flag_group)
 
     def cal_bonded(self, crd, vel, bond_type):
         """Calculate the energy flux for the bonded term."""
@@ -105,22 +110,22 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
 
 ################################################################################
-import lib_flux
 class EnergyFlux:
 
-    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
+    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs, lib,
                        flag_atm=True, flag_grp=True):
         self.__flag_atm = flag_atm
         self.__flag_grp = flag_grp
+        self.__lib = lib
 
-        lib_flux.bonded.initialize( target_atoms, iatm_to_igrp,
+        self.__lib.bonded.initialize( target_atoms, iatm_to_igrp,
                 bonded_pairs, flag_atm, flag_grp)
-        lib_flux.nonbonded.initialize( target_atoms, iatm_to_igrp,
+        self.__lib.nonbonded.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
 
     def cal_bonded(self, vel, tbfs):
         """Calculate the flux due to bonded potentials."""
-        m_bond = lib_flux.bonded
+        m_bond = self.__lib.bonded
 
         # calculate
         m_bond.cal_bonded(vel, tbfs)
@@ -135,7 +140,7 @@ class EnergyFlux:
     def cal_nonbonded(self, vel, gen_tbfs, table):
         """Calculate the flux due to nonbonded potentials."""
         t0 = time.time()
-        m_non = lib_flux.nonbonded
+        m_non = self.__lib.nonbonded
 
         # initialize
         m_non.init_cal(vel)
@@ -265,7 +270,6 @@ class HeatFluxCalculator(base.FluxCalculator):
 
 
 ################################################################################
-import lib_hflux
 class HeatFlux:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
@@ -350,7 +354,7 @@ class StressFluxCalculator(base.FluxCalculator):
                 flux_pot[gname_i, gname_j] = ts
 
         # bonded two-body force
-        for iatm, jatm, f_ij in bonded_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded_tbfs.items()):
             gname_i = self.__iatm_to_groups[iatm]
             gname_j = self.__iatm_to_groups[jatm]
 
@@ -360,7 +364,7 @@ class StressFluxCalculator(base.FluxCalculator):
             flux_pot[gname_j, gname_i] += f_ij_r_ij / volume_ji
 
         # bonded14 two-body force
-        for iatm, jatm, f_ij in bonded14_tbfs.items():
+        for iatm, jatm, f_ij in list(bonded14_tbfs.items()):
             gname_i = self.__iatm_to_groups[iatm]
             gname_j = self.__iatm_to_groups[jatm]
 

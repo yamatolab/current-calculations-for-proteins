@@ -28,7 +28,7 @@ from curp.script.lib_hfacf import cal_hfacf
 
 
 def get_stringnames(string_array):
-    return [''.join(string.tolist()).strip() for string in string_array]
+    return [b''.join(string.tolist()).strip() for string in string_array]
 
 
 def get_dt(flux_fn):
@@ -60,7 +60,7 @@ def gen_fluxdata(flux_fn, no_axes):
     tsum = 0.0
     for ipair_1, (don, acc) in enumerate(zip(donors, acceptors)):
         print('loading for {}/{} {} {} ... ** '
-              .format(ipair_1+1, npair, don, acc), end='')
+              .format(ipair_1+1, npair, don.decode(), acc.decode()), end='')
         sys.stdout.flush()
 
         t_1 = time.time()
@@ -88,7 +88,7 @@ class TCCalculator:
 
         self.__fst_lst_intvl = frame_range
         fst, lst, intvl = self.__fst_lst_intvl
-        self.nframe_acf = (lst - fst)/intvl + 1
+        self.nframe_acf = (lst - fst)//intvl + 1
         self.__fst = fst
         self.__lst = lst
         self.__intvl = intvl
@@ -178,7 +178,9 @@ class TCWriter:
 
     def write(self, don, acc, tc):
         fd = self.open()
-        fd.write('{:>12} {:>12}  {}\n'.format(don, acc, tc))
+        fd.write(bytes('{:>12} {:>12}  {}\n'.format(don.decode(),
+                                                    acc.decode(),
+                                                    tc), 'utf-8'))
         fd.flush()
 
     def open(self):
@@ -220,8 +222,8 @@ class WriterBase:
         ncfile.application = 'the CURP program'
         ncfile.program = 'cal-tc'
         ncfile.programVersion = str(0.7)
-        ncfile.Convetsions = 'CURP'
-        ncfile.ConvetsionVersion = str(self.version)
+        ncfile.Conversions = 'CURP'
+        ncfile.ConversionVersion = str(self.version)
 
         # create dimensions
         ncfile.createDimension('npair', None)
@@ -255,8 +257,8 @@ class WriterBase:
         nc_acc = ncfile.variables['acceptors']
         nc_data = ncfile.variables[self.name]
 
-        nc_don[ipair_1] = list(don.ljust(20))
-        nc_acc[ipair_1] = list(acc.ljust(20))
+        nc_don[ipair_1] = list(don.decode().ljust(20))
+        nc_acc[ipair_1] = list(acc.decode().ljust(20))
         nc_data[ipair_1] = data.ravel()
 
         self.close()
@@ -270,8 +272,8 @@ class WriterBase:
         nc_data = ncfile.variables[self.name]
 
         for ipair_1, (don, acc) in enumerate(zip(donors, acceptors)):
-            nc_don[ipair_1] = list(don.ljust(20))
-            nc_acc[ipair_1] = list(acc.ljust(20))
+            nc_don[ipair_1] = list(don.decode().ljust(20))
+            nc_acc[ipair_1] = list(acc.decode().ljust(20))
 
         nc_data[:] = datas
 
@@ -356,7 +358,7 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
 
 
 if __name__ == '__main__':
-    from console import arg_cal_tc, exec_command
+    from curp.script.console import arg_cal_tc, exec_command
 
     parser = arg_cal_tc()
     exec_command(parser)
