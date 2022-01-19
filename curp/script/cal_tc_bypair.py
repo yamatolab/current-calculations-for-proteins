@@ -112,8 +112,11 @@ def load_fluxdata(flux_fn):
     return numpy.array(xss)
 
 def cal_tc(acf, dt, coef=1.0):
-    """Calculate final transport  coefficient."""
-    return coef * dt*1000.0 * numpy.sum(acf)
+    """
+    Calculate final transport  coefficient.
+    old version: return coef * dt*1000.0 * numpy.sum(acf)
+    """
+    return coef * dt*1000.0 * numpy.trapz(acf,axis=1)[0]
 
 def cal_tcs(acf, dt, coef=1.0):
     """Calculate time series of transport coefficient."""

@@ -2,6 +2,7 @@
 
 CURP 1.1: Ishikura, 2016. Most of the Layout
 CURP 1.2: Laprevote, 2019. Heat Flux gestion (and commenting code).
+CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
 
 In main() of curp.py, a writer is initialized along with the calculator.
 The writer varies depending on setting options (in .cfg) contained in
@@ -522,7 +523,7 @@ class FluxWriter:
         self.__writer.write(lines)
 
     def ok_write(self, i, j):
-        if i < j:
+        if i <= j:
             return True
         else:
             return self.__setting.curp.enable_inverse_pair
@@ -820,7 +821,7 @@ class NetCDFFluxWriter:
             self.__decomps = ['total']
 
     def ok_pair(self, i, j):
-        if i < j:
+        if i <= j:
             return True
         else:
             return self.__setting.curp.enable_inverse_pair

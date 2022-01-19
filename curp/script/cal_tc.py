@@ -153,8 +153,11 @@ class TCCalculator:
             yield tc, acf
 
     def cal_tc(self, acf):
-        """Calculate final transport  coefficient."""
-        return self.__coef * self.d_t*1000.0 * numpy.sum(acf)
+        """
+        Calculate final transport  coefficient.
+        old version:  return self.__coef * self.d_t*1000.0 * numpy.sum(acf)
+        """
+        return self.__coef * self.d_t*1000.0 * numpy.trapz(acf,axis=0)[0]
 
     def get_times(self):
         return numpy.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
