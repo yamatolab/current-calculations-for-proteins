@@ -1,3 +1,7 @@
+!
+! CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
+!
+
 module utils
     implicit none
 
@@ -126,8 +130,13 @@ contains
                 jgrp = iatm_to_igrp(jatm)
 
                 if ( (igrp == 0) .or. (jgrp==0) ) cycle
-                flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + flux_ij
-                flux_grp(jgrp, igrp) = flux_grp(jgrp, igrp) - flux_ij
+                
+                   if ( igrp /= jgrp ) then 
+                     flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + flux_ij
+                     flux_grp(jgrp, igrp) = flux_grp(jgrp, igrp) - flux_ij
+                   else
+                     flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + flux_ij 
+                   end if 
             end if
 
         end do
@@ -273,8 +282,14 @@ contains
                     jgrp = iatm_to_igrp(jatm)
 
                     if ( (igrp == 0) .or. (jgrp==0) ) cycle
-                    flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + flux_ij
-                    flux_grp(jgrp, igrp) = flux_grp(jgrp, igrp) - flux_ij
+
+                    if ( igrp /= jgrp ) then
+                      flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + flux_ij
+                      flux_grp(jgrp, igrp) = flux_grp(jgrp, igrp) - flux_ij
+                    else
+                      flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + flux_ij 
+                    end if 
+
                 end if
 
             end do

@@ -1,0 +1,30 @@
+name: Deploy package to pypi
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "2.7"
+
+    - name: Install numpy
+      run: pip install numpy==1.16.6
+    
+    - name: Packaging
+      run: python setup.py sdist
+
+    - name: Publish a distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}

@@ -10,7 +10,6 @@ Contents:
    :numbered:
 
    install
-   participate
 
 .. toctree::
    :hidden:

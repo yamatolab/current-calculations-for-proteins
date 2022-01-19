@@ -34,14 +34,14 @@ def run_setup():
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
     setup(
         name="curp",
-        version="1.2.1",
+        version="1.3.1",
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",
         description="Inter-residue Current calculation in Proteins from MD \
             trajectory",
         long_description=LONG_DESCRIPTION,
         long_description_content_type='text/x-rst',
-        url=("https://gitlab.com/yamato97/current-calculations-for-proteins"),
+        url=("https://github.com/yamatolab/current-calculations-for-proteins"),
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",
@@ -56,11 +56,11 @@ def run_setup():
             "Topic :: Scientific/Engineering :: Chemistry"
             ],
 
-        install_requires=["numpy>=1.11.2",
+        install_requires=["numpy>=1.11.2,<1.17",
                           "nose",
                           "mpi4py>=1.2",
                           "benchmarker",
-                          "pygraphviz",
+                          "pygraphviz<1.6",
                           "netCDF4>=1.2.4"],
 
         packages=setuptools.find_packages(),
