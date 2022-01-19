@@ -24,7 +24,7 @@ def ext_modules(config, _dir):
                                      f2py_options=['--quiet']
                                     )
 
-with open('README.rst', 'r') as summary:
+with open('README.rst', 'r', encoding='utf-8') as summary:
     LONG_DESCRIPTION = summary.read()
 
 def run_setup():
@@ -33,7 +33,7 @@ def run_setup():
     ext_modules(config, "curp")
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
     setup(
-        name="Curp",
+        name="curp",
         version="1.3.1",
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",
@@ -58,7 +58,7 @@ def run_setup():
 
         install_requires=["numpy>=1.11.2,<1.17",
                           "nose",
-                          "mpi4py>=2.0",
+                          "mpi4py>=1.2",
                           "benchmarker",
                           "pygraphviz<1.6",
                           "netCDF4>=1.2.4"],
@@ -67,7 +67,7 @@ def run_setup():
 
         package_data={'curp':['volume/random20.pdb.gz']},
 
-        python_requires=">=2.7",
+        #python_requires=">=2.7, <3.0",
         entry_points={
             "console_scripts": [
                 "curp = curp.console:main",

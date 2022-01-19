@@ -33,14 +33,14 @@ class TestVoronoiVolume:
 
         # prepare trajectory
         traj_parser = CoordinateParser(traj_fn, 5844)
-        crd, box = traj_parser.next()
+        crd, box = next(traj_parser)
 
         # target_atoms = [1,5,7,11,12,13,15,17,21,22,23,25,27,31,32,33]
-        target_atoms = range(1, 33+1)
+        target_atoms = list(range(1, 33+1))
         grp_to_atoms = [
-                ('ALA_001', range(1, 12+1)),
-                ('ALA_002', range(13, 22+1)),
-                ('ALA_003', range(23, 33+1)), ]
+                ('ALA_001', list(range(1, 12+1))),
+                ('ALA_002', list(range(13, 22+1))),
+                ('ALA_003', list(range(23, 33+1))), ]
         vsetting = volmod.VolumeSetting(topology=conv, traj_parser=traj_parser,
                 target_atoms=target_atoms, grp_to_atoms=grp_to_atoms )
 
@@ -66,10 +66,10 @@ class TestVoronoiVolume:
 
         # prepare trajectory
         traj_parser = CoordinateParser(traj_fn, 5844)
-        crd, box = traj_parser.next()
+        crd, box = next(traj_parser)
 
         # target_atoms = [1,5,7,11,12,13,15,17,21,22,23,25,27,31,32,33]
-        target_atoms = range(1, 33+1)
+        target_atoms = list(range(1, 33+1))
         grp_to_atoms = [
                 ('00001_N', [1, 2, 3, 4]),
                 ('00005_CA', [5, 6]),
@@ -220,14 +220,14 @@ class TestVoronoiVolumeWithSolvation:
 
         # prepare trajectory
         traj_parser = CoordinateParser(traj_fn, 33)
-        crd, box = traj_parser.next()
+        crd, box = next(traj_parser)
 
         # target_atoms = [1,5,7,11,12,13,15,17,21,22,23,25,27,31,32,33]
-        target_atoms = range(1, 33+1)
+        target_atoms = list(range(1, 33+1))
         grp_to_atoms = [
-                ('ALA_001', range(1, 12+1)),
-                ('ALA_002', range(13, 22+1)),
-                ('ALA_003', range(23, 33+1)), ]
+                ('ALA_001', list(range(1, 12+1))),
+                ('ALA_002', list(range(13, 22+1))),
+                ('ALA_003', list(range(23, 33+1))), ]
         vsetting = volmod.VolumeSetting(topology=conv, traj_parser=traj_parser,
                 target_atoms=target_atoms, grp_to_atoms=grp_to_atoms )
 
@@ -359,11 +359,11 @@ class TestVolume1:
 
         # target_atoms = [1,5,7,11,12,13,15,17,21,22,23,25,27,31,32,33]
         natom = 33
-        target_atoms = range(1, natom+1)
+        target_atoms = list(range(1, natom+1))
         grp_to_atoms = [
-                ('ALA_001', range(1, 12+1)),
-                ('ALA_002', range(13, 22+1)),
-                ('ALA_003', range(23, natom+1)), ]
+                ('ALA_001', list(range(1, 12+1))),
+                ('ALA_002', list(range(13, 22+1))),
+                ('ALA_003', list(range(23, natom+1))), ]
 
         vsetting = volmod.VolumeSetting(
                 target_atoms=target_atoms, grp_to_atoms=grp_to_atoms )
@@ -398,11 +398,11 @@ class TestVDWVolume:
 
         # target_atoms = [1,5,7,11,12,13,15,17,21,22,23,25,27,31,32,33]
         natom = 33
-        target_atoms = range(1, natom+1)
+        target_atoms = list(range(1, natom+1))
         grp_to_atoms = [
-                ('ALA_001', range(1, 12+1)),
-                ('ALA_002', range(13, 22+1)),
-                ('ALA_003', range(23, natom+1)), ]
+                ('ALA_001', list(range(1, 12+1))),
+                ('ALA_002', list(range(13, 22+1))),
+                ('ALA_003', list(range(23, natom+1))), ]
 
         vdw_radii = [ 1.86, 0.6, 0.6, 0.6, 1.9, 0.6, 1.9, 0.6, 0.6, 0.6,
                        1.9, 1.8, 1.86, 0.6, 1.9, 0.6, 1.9, 0.6, 0.6, 0.6,
@@ -451,7 +451,7 @@ class TestOuterVolume:
 
         # preparation
         natom = 33
-        target_atoms = range(1, natom+1)
+        target_atoms = list(range(1, natom+1))
         vsetting = volmod.VolumeSetting()
         vsetting.natom = natom
         vsetting.target_atoms = target_atoms
@@ -465,9 +465,9 @@ class TestOuterVolume:
         vsetting.atomic_trajectory_file = os.path.join(
                 os.path.dirname(__file__), 'dummy_vol.traj')
         vsetting.grp_to_atoms = [ 
-                ('ALA_001', range(1, 12+1)),
-                ('ALA_002', range(13, 22+1)),
-                ('ALA_003', range(23, 33+1)), ]
+                ('ALA_001', list(range(1, 12+1))),
+                ('ALA_002', list(range(13, 22+1))),
+                ('ALA_003', list(range(23, 33+1))), ]
 
         vcal = volmod.OuterVolumeFetcher(vsetting)
         
@@ -636,11 +636,11 @@ class TestVolumeBase:
 
         # set parameters
         vsetting = volmod.VolumeSetting()
-        for key, value in parameters.items():
+        for key, value in list(parameters.items()):
             setattr(vsetting, key, value)
 
         # check
-        for key, value in parameters.items():
+        for key, value in list(parameters.items()):
             print(key, getattr(vsetting, key), value)
             eq_(getattr(vsetting, key), value)
 

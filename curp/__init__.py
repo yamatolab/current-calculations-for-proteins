@@ -4,7 +4,7 @@ from .compute import curp
 # Writer
 from .parser.writer import Writer as TrjWriter
 
-import parallel
+from . import parallel
 if parallel.use_mpi:
     ParallelProcessor = parallel.ParallelProcessor
 else:

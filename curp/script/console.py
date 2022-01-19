@@ -376,7 +376,7 @@ def arg_ncdata(parser=None):
 
     parser.add_argument(dest='acf_fp', metavar='ACF_FILE',
                         help='The filepath of auto-correlation function data.')
-    parser.add_argument('-r', '--group-ranges', metavar='FRIST:LAST',
+    parser.add_argument('-r', '--group-ranges', metavar='FIRST:LAST',
                         nargs='*',
                         dest='group_ranges', required=True,
                         default='',

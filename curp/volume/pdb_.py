@@ -1,4 +1,5 @@
-import os, sys
+import os
+
 
 class Atom:
     terminal = False
@@ -25,7 +26,7 @@ class System:
         else:
             raise StopIteration
     next = __next__
-    
+
     def __iter__(self):
         return self
 
@@ -62,7 +63,16 @@ class System:
 
         rid_shift = 0
 
-        if type(pdb_fpfd) == file:
+        print(type(pdb_fpfd))
+        try:
+            # Python 2
+            pdb_is_file = isinstance(pdb_fpfd, file)
+        except NameError:
+            # Python 3
+            from io import IOBase
+            pdb_is_file = isinstance(pdb_fpfd, IOBase)
+
+        if pdb_is_file:
             pdb_file = pdb_fpfd
 
         else:
@@ -77,6 +87,7 @@ class System:
 
         # get first atom
         for line in pdb_file:
+            line = line.decode()
             if line[0:6].strip() in ['ATOM', 'HETATM']:
                 atom_prev = parse_pdbline(line)
                 natm = 1
@@ -102,7 +113,7 @@ class System:
                 rid_shift += 10000
 
             atom.rid += rid_shift
-            
+
             atom_prev = atom
 
         else:
@@ -114,7 +125,7 @@ class System:
 
         if pdb_file.name != '<stdin>':
             pdb_file.close()
-        
+
     def _make_rid_to_atoms(self):
 
         rid_to_atoms = {}
@@ -199,7 +210,7 @@ def gen_pdbatom(pdb_fn, vervose=False):
         natm += 1
 
         yield atom_prev
-        
+
         atom_prev = atom
 
     else:
@@ -259,7 +270,7 @@ def gen_pdbline(atoms):
 def gen_residues(atoms):
 
     try:
-        atom = atoms.next()
+        atom = next(atoms)
     except AttributeError:
         atom  = atoms[0]
         atoms = atoms[1:]
@@ -290,7 +301,7 @@ if __name__ == '__main__':
     pdb_fn = './testdata/system.pdb'
     system = System(pdb_fn)
     # print(system.to_string())
-    
+
     # iatm = 5
     # print(system.atom(iatm))
     for atom in system.residue(5):

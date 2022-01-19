@@ -2,10 +2,10 @@
 from __future__ import print_function
 import sys
 import numpy
-
-from cal_tc import WriterBase, ACFWriter, get_stringnames
-
 import netCDF4 as netcdf
+
+from curp.script.cal_tc import WriterBase, ACFWriter, get_stringnames
+
 
 class TCSWriter(WriterBase):
     name = 'tcs'
@@ -25,6 +25,7 @@ def load_acf_first(acf_fp, dataname='acf'):
 
     donors    = get_stringnames( ncfile.variables['donors'][:] )
     acceptors = get_stringnames( ncfile.variables['acceptors'][:] )
+    print(donors)
 
     times     = ncfile.variables['time'][:]
     acfs       = ncfile.variables[dataname][:]

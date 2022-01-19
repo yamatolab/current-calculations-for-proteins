@@ -7,7 +7,7 @@ import numpy
 
 class TensorParser:
 
-    section_end = '%end'
+    section_end = b'%end'
 
     def __init__(self, filename):
         self.__filename = filename
@@ -23,21 +23,27 @@ class TensorParser:
 
         gen_lines = self.gen_optimized_lines(file)
         sections = []
+        # print("DEBUG: gen_lines ", gen_lines)
         for line in gen_lines:
+            # print("DEBUQ: line ", line)
             if not self.is_section(line): continue
 
             flagname = line[1:].strip()
-            if flagname == 'data':
-                lines = list( self.gen_section_lines(gen_lines) )
+            # print("DEBUG: flagname ", flagname)
+            if flagname == b'data':
+                lines = list(self.gen_section_lines(gen_lines))
+                # print("DEBUG: ", lines)
                 names, tensor = self.parse_data(lines)
-                tensors.append( tensor )
+                tensors.append(tensor)
 
         return names, tensors
 
     def parse_data(self, lines):
         names = []
         tensors = []
+        # print("DEBUG: ", lines)
         for line in lines:
+            # print("DEBUG: ", line)
             cols = line.split()
             names.append(cols[0])
             v = [float(c) for c in cols[1:]]
@@ -70,13 +76,13 @@ class TensorParser:
     def split_content(self, gen):
         lines = []
         for line in gen:
-            if line.startswith('%'):
+            if line.startswith(b'%'):
                 pass
 
     def is_section(self, line):
         if line == self.section_end:
             return False
-        elif line.startswith('%'):
+        elif line.startswith(b'%'):
             return True
         else:
             return False
@@ -198,7 +204,7 @@ def simplify_tensor(filename, fns, labels='', snapshot=False, **kwds):
         for name, tot_evalue in zip(names, avetot_evalues):
 
             # name
-            atom_id, aname = name.split('_')
+            atom_id, aname = name.decode().split('_')
 
             # output one line data
             print(fmt.format(id=int(atom_id), name=aname, total=tot_evalue))
@@ -216,12 +222,12 @@ def simplify_tensor(filename, fns, labels='', snapshot=False, **kwds):
             name, tot, others = tuples[0], tuples[1], tuples[2:]
 
             # name
-            atom_id, aname = name.split('_')
+            atom_id, aname = name.decode().split('_')
 
             # each evalue
             if not isinstance(others, tuple):
                 others = [others]
-            label_to_evalues = dict(zip(labels, others))
+            label_to_evalues = dict(list(zip(labels, others)))
 
             # output one line data
             print(fmt.format(id=atom_id, name=aname,
