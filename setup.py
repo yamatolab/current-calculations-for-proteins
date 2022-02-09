@@ -21,7 +21,8 @@ def ext_modules(config, _dir):
                 ext_name = os.path.splitext(f90_file)[0].replace("/", ".")
                 config.add_extension(ext_name,
                                      [f90_file],
-                                     f2py_options=['--quiet']
+                                     f2py_options=["--quiet"],
+                                     extra_f90_compile_args=["-fopenmp"]
                                     )
 
 with open('README.rst', 'r') as summary:

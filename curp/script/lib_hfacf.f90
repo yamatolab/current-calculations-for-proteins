@@ -2,6 +2,7 @@
 subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
                    & norm, nsample, ndim, nframe, ncom)
 
+   use omp_lib
    implicit none
    integer, intent(in) :: nacf, first, last, interval
    integer, intent(in) :: shift, nframe, ncom, nsample, ndim
@@ -21,8 +22,9 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
       nfrm_beg = first + shift*(nsample-1)
    end if
 
+   !$omp parallel private(icom, iacf, ifrm_beg, a, ifrm)
+   !$omp do
    do icom=1, ncom
-
       do iacf=1, nacf
          a = 0.0d0 
          do ifrm_beg=first, nfrm_beg, shift
@@ -33,12 +35,11 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
                   + xss(ifrm_beg,3,icom) * xss(ifrm,3,icom)
 
          end do
-  
          acf(iacf,icom) = a
-
       end do
-
    end do ! samples of one file data
+   !$omp end do
+   !$omp end parallel
 
    nsam = (nfrm_beg-first)/shift + 1
    acf(:,:) = acf(:,:) / real(nsam)

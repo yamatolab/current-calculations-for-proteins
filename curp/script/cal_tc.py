@@ -61,9 +61,9 @@ def gen_fluxdata(flux_fn):
     ncfile.close()
 
     tsum = 0.0
-    for ipair_1, (don, acc) in enumerate(zip(donors, acceptors)):
+    for ipair_1, (donor, acceptor) in enumerate(zip(donors, acceptors)):
         print('loading for {}/{} {} {} ... ** '
-              .format(ipair_1+1, npair, don, acc), end='')
+              .format(ipair_1+1, npair, donor, acceptor), end='')
         sys.stdout.flush()
 
         t_1 = time.time()
@@ -80,7 +80,7 @@ def gen_fluxdata(flux_fn):
         print('load time: {:.3f} [s]'.format(t_2-t_1))
         tsum += t_2-t_1
 
-        yield don, acc, flux, no_axes
+        yield donor, acceptor, flux, no_axes
 
     print('total load time: {:.3f} [s]'.format(tsum))
 
@@ -103,7 +103,7 @@ class TransportCoefficientCalculator:
 
     def run_mpi(self, data, **other):
         t_0 = time.time()
-        don, acc, flux, no_axes = data
+        donor, acceptor, flux, no_axes = data
 
         if no_axes:
             acf = cal_acf(flux, self.nframe_acf,
@@ -118,8 +118,8 @@ class TransportCoefficientCalculator:
         transport_coefficient = self.__coef * self.d_t * pico_in_femto * numpy.trapz(acf,axis=0)[0]
 
         print('    cal time: {:.3f} [s] for {} {}'
-              .format(time.time()-t_0, don, acc))
-        return don, acc, transport_coefficient, acf
+              .format(time.time()-t_0, donor, acceptor))
+        return donor, acceptor, transport_coefficient, acf
 
     def get_times(self):
         return numpy.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
