@@ -25,7 +25,6 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
 
       do iacf=1, nacf
          a = 0.0d0 
-         b(icom)=0.0d0
          do ifrm_beg=first, nfrm_beg, shift
 
             ifrm = ifrm_beg + (iacf - 1) * interval
