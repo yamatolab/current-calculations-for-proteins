@@ -82,35 +82,22 @@ def gen_fluxdata(flux_fn, no_axes):
     print('total load time: {:.3f} [s]'.format(tsum))
 
 
-class TCCalculator:
+class TransportCoefficientCalculator:
+    """Calculate transport coefficient
+    """
     def __init__(self, frame_range, avg_shift,
                  nsample, coef, no_axes, d_t=0.01):
-
-        self.__fst_lst_intvl = frame_range
-        fst, lst, intvl = self.__fst_lst_intvl
-        self.nframe_acf = (lst - fst)/intvl + 1
-        self.__fst = fst
-        self.__lst = lst
-        self.__intvl = intvl
+        
+        first, last, interval = frame_range
+        self.nframe_acf = (last - first)/interval + 1
+        self.__first = first
+        self.__last = last
+        self.__interval = interval
         self.__shift = avg_shift
         self.__nsample = nsample
         self.__coef = coef
         self.d_t = d_t
         self.no_axes = no_axes
-
-    def run(self, don, acc, flux):
-
-        if self.no_axes:
-            acf = cal_acf(flux, self.nframe_acf,
-                                  self.__fst, self.__lst, self.__intvl,
-                                  self.__shift, False, self.__nsample)
-        else:
-            acf = cal_hfacf(flux, self.nframe_acf,
-                                      self.__fst, self.__lst, self.__intvl,
-                                      self.__shift, False, self.__nsample, 3)
-
-        tc = self.cal_tc(acf)
-        return tc, acf
 
     def run_mpi(self, data, **other):
         t_0 = time.time()
@@ -118,46 +105,24 @@ class TCCalculator:
 
         if self.no_axes:
             acf = cal_acf(flux, self.nframe_acf,
-                                  self.__fst, self.__lst, self.__intvl,
+                                  self.__first, self.__last, self.__interval,
                                   self.__shift, False, self.__nsample)
         else:
             acf = cal_hfacf(flux, self.nframe_acf,
-                                      self.__fst, self.__lst, self.__intvl,
+                                      self.__first, self.__last, self.__interval,
                                       self.__shift, False, self.__nsample, 3)
 
         tc = self.cal_tc(acf)
 
-        # self.print('cal time:', time.time()-t_0)
         print('    cal time: {:.3f} [s] for {} {}'
               .format(time.time()-t_0, don, acc))
         return don, acc, tc, acf
 
-    def run_all(self, flux_iter):
-        fst, lst, intvl = self.__fst_lst_intvl
-        for flux in flux_iter:
-            t_0 = time.time()
-
-            if self.no_axes:
-                acf = cal_acf(flux, self.nframe_acf, fst, lst, intvl,
-                                      self.__shift, False, self.__nsample)
-            else:
-                acf = cal_hfacf(flux, self.nframe_acf, fst, lst,
-                                          intvl, self.__shift, False,
-                                          self.__nsample, 3)
-
-            tc = cal_tc(acf, self.d_t, self.__coef)
-
-            t_1 = time.time()
-            print('    cal time: {:.3f} [s]'.format(t_1-t_0))
-
-            yield tc, acf
-
     def cal_tc(self, acf):
         """
-        Calculate final transport  coefficient.
-        old version:  return self.__coef * self.d_t*1000.0 * numpy.sum(acf)
+        Calculate final transport coefficient.
         """
-        return self.__coef * self.d_t*1000.0 * numpy.trapz(acf,axis=0)[0]
+        return self.__coef * self.d_t * 1000.0 * numpy.trapz(acf,axis=0)[0]
 
     def get_times(self):
         return numpy.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
@@ -312,7 +277,7 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
         d_t = d_t * frame_range[2]    # in ps
 
     # prepare calculator
-    cal = TCCalculator(frame_range, avg_shift, nsample, coef, no_axes, d_t)
+    cal = TransportCoefficientCalculator(frame_range, avg_shift, nsample, coef, no_axes, d_t)
     cal.print = par.write
 
     # prepare writer
