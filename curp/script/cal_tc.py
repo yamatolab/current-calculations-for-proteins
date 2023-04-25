@@ -37,6 +37,14 @@ def get_dt(flux_fn):
 
     return d_t
 
+def get_decomp(flux_fn):
+
+    ncfile = netcdf.Dataset(flux_fn, mode='r')
+    len_decomps = len(ncfile.dimensions['ncomponent'])
+    ncfile.close()
+
+    
+    return len_decomps
 
 def gen_fluxdata(flux_fn):
 
@@ -72,7 +80,7 @@ def gen_fluxdata(flux_fn):
         if no_axes:
             flux = ncfile.variables['flux'][:, ipair_1, icom]
         else:
-            flux = ncfile.variables['flux'][:, :, ipair_1, icom]
+            flux = ncfile.variables['flux'][:, :, ipair_1, :]
 
         ncfile.close()
 
@@ -89,7 +97,7 @@ class TransportCoefficientCalculator:
     """Calculate transport coefficient
     """
     def __init__(self, frame_range, avg_shift,
-                 nsample, coef, d_t=0.01):
+                 nsample, coef, len_decomps, d_t=0.01):
         
         first, last, interval = frame_range
         self.nframe_acf = (last - first)/interval + 1
@@ -99,6 +107,7 @@ class TransportCoefficientCalculator:
         self.__shift = avg_shift
         self.__nsample = nsample
         self.__coef = coef
+        self.__decomps= len_decomps
         self.d_t = d_t
 
     def run_mpi(self, data, **other):
@@ -115,7 +124,7 @@ class TransportCoefficientCalculator:
                                       self.__shift, False, self.__nsample, 3)
 
         pico_in_femto = 1000
-        transport_coefficient = self.__coef * self.d_t * pico_in_femto * numpy.trapz(acf,axis=0)[0]
+        transport_coefficient = self.__coef * self.d_t * pico_in_femto * numpy.trapz(acf,axis=0)
 
         print('    cal time: {:.3f} [s] for {} {}'
               .format(time.time()-t_0, donor, acceptor))
@@ -134,13 +143,17 @@ class TCWriter:
     Write transport coefficient.
     """
 
-    def __init__(self, fn):
+    def __init__(self, fn , len_decomps):
         self.__fn = fn
         self.__file = open(self.__fn, 'wb')
+        self.__decomps= len_decomps
 
     def write(self, don, acc, tc):
         fd = self.open()
-        fd.write('{:>12} {:>12}  {}\n'.format(don, acc, tc))
+        fd.write('{:>12} {:>12} '.format(don, acc))
+        for i in range(self.__decomps):
+            fd.write('{} '.format(tc[i]))
+        fd.write('{}'.format('\n'))
         fd.flush()
 
     def open(self):
@@ -161,13 +174,14 @@ class WriterBase:
     name = ''
     unit = ''
 
-    def __init__(self, fp, nframe, d_t, label='test', title=''):
+    def __init__(self, fp, nframe, len_decomps, d_t, label='test', title=''):
 
         self.__fp = fp
         self.__ncfile = None
         self.__nframe = nframe
         self.__title = title
         self.__label = label
+        self.__decomps= len_decomps
         self.__d_t = d_t
 
         self.setup()
@@ -188,6 +202,7 @@ class WriterBase:
         # create dimensions
         ncfile.createDimension('npair', None)
         ncfile.createDimension('nframe', self.__nframe)
+        ncfile.createDimension('ncomponent' , self.__decomps)
         ncfile.createDimension('nchar', 20)
 
         # create variables
@@ -202,8 +217,11 @@ class WriterBase:
         ncfile.createVariable('donors', 'c', ('npair', 'nchar'))
         ncfile.createVariable('acceptors', 'c', ('npair', 'nchar'))
 
+        # add components
+        nc_com = ncfile.createVariable('components','c', ('ncomponent','nchar'))
+
         # trajectory
-        nc_data = ncfile.createVariable(self.name, 'f4', ('npair', 'nframe'),)
+        nc_data = ncfile.createVariable(self.name, 'f4', ('npair', 'nframe', 'ncomponent'),)
         nc_data.units = self.unit
 
         ncfile.sync()
@@ -260,7 +278,7 @@ class ACFWriter(WriterBase):
 
 def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
            frame_range=[1, -1, 1], avg_shift=1, nsample=0, d_t=None,
-           coef=1.0, use_debug=False, **kwds):
+           coef=1.0, use_debug=False, len_decomps=None, **kwds):
 
     ti = time.time()
     par = ParallelProcessor()
@@ -273,18 +291,24 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
     else:
         d_t = d_t * frame_range[2]    # in ps
 
+    # determine length of decomp
+    if len_decomps is None:
+        len_decomps=get_decomp(flux_fn)
+    else:
+        len_decomps=get_decomp(flux_fn)
+
     # prepare calculator
-    cal = TransportCoefficientCalculator(frame_range, avg_shift, nsample, coef, d_t)
+    cal = TransportCoefficientCalculator(frame_range, avg_shift, nsample, coef, len_decomps, d_t)
     cal.print = par.write
 
     # prepare writer
     if par.is_root():
-        tc_writer = TCWriter(tc_fn)
+        tc_writer = TCWriter(tc_fn, len_decomps)
 
     # create ACF writer if it is necessary.
     if acf_fn:
         if par.is_root():
-            acf_writer = ACFWriter(acf_fn, cal.nframe_acf, d_t)
+            acf_writer = ACFWriter(acf_fn, cal.nframe_acf, len_decomps, d_t)
     else:
         acf_writer = None
 
