@@ -42,7 +42,6 @@ def get_decomp(flux_fn):
     ncfile = netcdf.Dataset(flux_fn, mode='r')
     len_decomps = len(ncfile.dimensions['ncomponent'])
     ncfile.close()
-
     
     return len_decomps
 
