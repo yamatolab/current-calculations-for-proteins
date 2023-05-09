@@ -151,7 +151,7 @@ class TCWriter:
         fd = self.open()
         fd.write('{:>12} {:>12} '.format(don, acc))
         for i in range(self.__decomps):
-            fd.write('{} '.format(tc[i]))
+            fd.write('{} '.format(numpy.nan_to_num(tc)[i]))
         fd.write('{}'.format('\n'))
         fd.flush()
 
