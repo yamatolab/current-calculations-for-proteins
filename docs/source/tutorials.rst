@@ -8,4 +8,4 @@ Tutorials
    general_tutorial
    stress_tutorial
    eflow_tutorial
-
+   hflow_tutorial
