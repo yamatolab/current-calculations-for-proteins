@@ -204,15 +204,18 @@ class FluxCalculator(CalculatorBase):
             key_to_gflux[btype] = flux_grp
 
         # non-bonded
-        flux_atm, flux_grp = self.cal_coulomb(crd, vel)
-        key_to_aflux['coulomb'] = flux_atm
-        key_to_gflux['coulomb'] = flux_grp
-        flux_atm, flux_grp = self.cal_vdw(crd, vel)
-        key_to_aflux['vdw'] = flux_atm
-        key_to_gflux['vdw'] = flux_grp
+        # flux_atm, flux_grp = self.cal_coulomb(crd, vel)
+        # key_to_aflux['coulomb'] = flux_atm
+        # key_to_gflux['coulomb'] = flux_grp
+        # flux_atm, flux_grp = self.cal_vdw(crd, vel)
+        # key_to_aflux['vdw'] = flux_atm
+        # key_to_gflux['vdw'] = flux_grp
+        flux_atm, flux_grp = self.cal_coulomb_and_vdw(crd, vel)
+        key_to_aflux['coulomb_and_vdw'] = flux_atm
+        key_to_gflux['coulomb_and_vdw'] = flux_grp
         # total for atom
         if flux_atm is not None:
-            total_atm = numpy.zeros( key_to_aflux['vdw'].shape )
+            total_atm = numpy.zeros( key_to_aflux['coulomb_and_vdw'].shape )
 
             for flux in key_to_aflux.values():
                 total_atm += flux
@@ -222,7 +225,7 @@ class FluxCalculator(CalculatorBase):
 
         # total for group
         if flux_grp is not None:
-            total_grp = numpy.zeros( key_to_gflux['vdw'].shape )
+            total_grp = numpy.zeros( key_to_gflux['coulomb_and_vdw'].shape )
 
             for flux in key_to_gflux.values():
                 total_grp += flux
