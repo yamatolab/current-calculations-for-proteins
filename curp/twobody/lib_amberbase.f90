@@ -1533,6 +1533,106 @@ contains
 
 end module
 
+!###############################################################################
+module vdw_and_coulomb
+    implicit none
+    ! input
+    real(8), allocatable :: charges(:) ! (natom)
+    real(8) :: cutoff_length           ! cutoff length
+    ! output
+    real(8) :: energy                      ! enegry
+    real(8), allocatable :: forces(:, :)   ! (natom, 3)
+    real(8), allocatable :: tbforces(:, :) ! (max_tbf, 3)
+    !(iatm_beg:iatm_end, iatm_beg:natom, 3)
+    real(8), allocatable :: displacement(:, :) ! (ntbf, 3)
+
+contains
+    subroutine calculate(interact_table, ninteract)
+        use total
+        use common_vars
+        implicit none
+        integer, intent(in) :: ninteract
+        integer, intent(in) :: interact_table(ninteract, 3)
+                ! 1:iatm, 2:begin of jatm, 3:end of jatm
+        real(8) :: coeff, cutoff_inv
+        ! gained from PRESTO .  e^2 / (4 pi eps_0) [kcal/mol * A/eV^2]
+        ! real(8), parameter :: coeff15 = 332.06378d0
+        ! gained from Amebr difinition. ! e^2 / (4 pi eps_0) [kcal/mol * A/eV^2]
+        real(8), parameter :: coeff15 = 332.05221729d0
+
+        ! dielectric constant = 8.85418782... x 10^-12 [C^2/J M]
+
+        ! for each nonbonded atom pairs,
+        ! E_coulomb = 1/(4 pi eps_0)  q_i q_j / l_ij
+        
+        ! F_i = 1/(4 pi eps_0) q_i q_j / l_ij^3   r_ij
+        ! F_j = - F_i
+
+        ! F_ij = F_i
+        ! F_ji = F_j
+
+        ! initialization
+        energy = 0.0d0
+        forces = 0.0d0
+        tbforces = 0.0d0
+        displacement = 0.0d0
+
+        coeff = coeff15
+        cutoff_inv = 1.0d0/cutoff_length
+
+        itbf = 0
+
+        do jint=1, ninteract
+            iatm     = interact_table(jint, 1)
+            jatm_beg = interact_table(jint, 2)
+            jatm_end = interact_table(jint, 3)
+
+            do jatm=jatm_beg, jatm_end
+                itbf = itbf + 1
+
+                r_ij = crd(iatm, :) - crd(jatm, :)
+                l_ij_inv = 1.0d0/sqrt( dot_product(r_ij, r_ij) )
+
+                ! cutoff
+                if (l_ij_inv < cutoff_inv) cycle
+
+                ! calculate energy
+                ! ene = coeff*charges(iatm)*charges(jatm) / l_ij
+                ene = coeff*charges(iatm)*charges(jatm) * l_ij_inv
+                energy = energy + ene
+
+                ! calculate force
+                ! f_i = ene * r_ij / (l_ij**2)
+                f_i = ene * r_ij *l_ij_inv*l_ij_inv
+
+                ! store force
+                forces(iatm, :) = forces(iatm, :) + f_i(:)
+                forces(jatm, :) = forces(jatm, :) - f_i(:)
+
+                ! calculate and store two-body force and two-body distance vector
+                f_ij = f_i
+                tbforces(itbf, :) = f_ij(:)
+                displacement(itbf, :) = r_ij(:)
+
+                ! check
+                if (check) then
+                    print*, 'TB_CHECK: i, j =', iatm, jatm
+                    print*, 'TB_CHECK: f_i vs. f_ij =>', check_tbforce(f_i, f_ij)
+                    print*, 'TB_CHECK',f_i
+                    print*, 'TB_CHECK',f_ij
+                    print*, 'TB_CHECK: f_j vs. f_ji =>', check_tbforce(-f_i, -f_ij)
+                    print*, 'TB_CHECK',-f_i
+                    print*, 'TB_CHECK',-f_ij
+                end if
+
+            enddo
+
+        enddo
+
+    end subroutine
+
+end module
+
 ! subroutine cal_distance_restraint()
 ! end
 
