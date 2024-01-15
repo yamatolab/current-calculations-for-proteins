@@ -1596,26 +1596,16 @@ contains
 
         itbf = 0
 
-        open(unit=10, file="flux.txt", status="new", action="write", form="formatted")
-        write(10, *) 'a'
-
-        call sleep(5)
-
         do jint=1, ninteract
             iatm     = interact_table(jint, 1)
             jatm_beg = interact_table(jint, 2)
             jatm_end = interact_table(jint, 3)
-             write(10, *) 'b'
 
             do jatm=jatm_beg, jatm_end
                 itbf = itbf + 1
 
-                write(10, *) 'c'
-
                 r_ij = crd(iatm, :) - crd(jatm, :)
                 l_ij_inv = 1.0d0/sqrt( dot_product(r_ij, r_ij) )
-
-                 write(10, *) 'd'
 
                 ! cutoff
                 if (l_ij_inv < cutoff_inv) cycle
@@ -1623,8 +1613,6 @@ contains
                 !! vdw
                 c6   = c6s( atom_types(iatm), atom_types(jatm) )
                 c12  = c12s( atom_types(iatm), atom_types(jatm) )
-
-                write(10, *) 'e'
 
                 ! calculate coulomb energy
                 ! coulomb_ene = coeff*charges(iatm)*charges(jatm) / l_ij
@@ -1644,9 +1632,13 @@ contains
 
                 ! calculate and store two-body force and two-body distance vector
                 f_ij = f_i
+                open(unit=19, file="flux2.txt", status="new", action="write", form="formatted")
+                write(19, *) 'a'
+
+                call sleep(5)
                 tbforces(itbf, :) = f_ij(:)
                 displacement(itbf, :) = r_ij(:)
-
+                
                 ! check
                 if (check) then
                     print*, 'TB_CHECK: i, j =', iatm, jatm
@@ -1692,6 +1684,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     use vdw       , vdw_forces => forces, vdw_tbforces => tbforces, vdw_disp => displacement
     use coulomb14 , cou14_forces => forces, cou14_tbforces => tbforces, cou14_disp => displacement
     use vdw14     , vdw14_forces => forces, vdw14_tbforces => tbforces, vdw14_disp => displacement
+    use coulomb_and_vdw, cou_and_vdw_forces => forces, cou_and_vdw_tbforces => tbforces, cou_and_vdw_disp => displacement
 
     implicit none
     integer, intent(in) :: natom
@@ -1718,6 +1711,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(vdw_forces(t_natom, 3))
     allocate(cou14_forces(t_natom, 3))
     allocate(vdw14_forces(t_natom, 3))
+    allocate(cou_and_vdw_forces(t_natom, 3))
 
     ! allocate each two-body force for bonded
     allocate(bnd_tbforces(t_nbonded, 3))
@@ -1730,6 +1724,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     ! allocate each two-body force for nonbonded
     allocate(cou_tbforces(max_tbf, 3))
     allocate(vdw_tbforces(max_tbf, 3))
+    allocate(cou_and_vdw_tbforces(max_tbf, 3))
 
     ! allocate each two-body distance (crd_i - crd_j) matrix
     allocate(bnd_disp(t_nbonded, 3))
@@ -1740,6 +1735,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(vdw_disp(max_tbf, 3))
     allocate(cou14_disp(t_nbonded, 3))
     allocate(vdw14_disp(t_nbonded, 3))
+    allocate(cou_and_vdw_disp(max_tbf, 3))
 
 end subroutine
 
