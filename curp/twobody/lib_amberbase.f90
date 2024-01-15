@@ -11,7 +11,7 @@ module common_vars
     real(8), dimension(3) :: r_jk, r_kj, r_jl, r_lj, r_kl, r_lk
     real(8) :: l_ij, l_ji, l_ik, l_ki, l_il, l_li
     real(8) :: l_jk, l_kj, l_jl, l_lj, l_kl, l_lk
-    real(8) :: l_ij_inv
+    real(8) :: l_ij_inv, l_ij_inv2
     real(8), dimension(3) :: f_ij, f_ik, f_il, f_jk, f_jl, f_kl
     real(8), dimension(3) :: f_i, f_j, f_k, f_l
     real(8) :: ene
@@ -1605,7 +1605,8 @@ contains
                 itbf = itbf + 1
 
                 r_ij = crd(iatm, :) - crd(jatm, :)
-                l_ij_inv = 1.0d0/sqrt( dot_product(r_ij, r_ij) )
+                l_ij_inv2 = 1.0d0/dot_product(r_ij, r_ij)
+                l_ij_inv = sqrt( l_ij_inv2 )
 
                 ! cutoff
                 if (l_ij_inv < cutoff_inv) cycle
@@ -1624,7 +1625,7 @@ contains
                 ! calculate force
                 ! f_i = coulomb_ene * r_ij / (l_ij**2)
                 f_i = (coulomb_ene * r_ij *l_ij_inv*l_ij_inv) + &
-                    & (- vdw_coff*(-12.0d0*c12*l_ij_inv**7 + 6.0d0*c6*l_ij_inv**4 ) * r_ij)
+                    & (- vdw_coff*(-12.0d0*c12*l_ij_inv2**7 + 6.0d0*c6*l_ij_inv2**4 ) * r_ij)
 
                 ! store force
                 forces(iatm, :) = forces(iatm, :) + f_i(:)
