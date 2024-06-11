@@ -2,10 +2,6 @@
 CURP 1.1: Ishikura, 2016. Most of the Layout
 CURP 1.2: Yamato, 2019. Heat Flux gestion (and commenting code).
 
-- The type of flux data, i.e., scalar or vector, is specified by
-  the newly added argument "-no_axes". With (without) this option,
-  scalar (vector) flux is handled, and fortran module lib_acf (lib_hfacf)
-  is employed. The lib_hfacf fortran module was newly added.
 - For heat-flow, the unit of acf was should be changed to (A*(kcal/mol)/fs)^2.
   (to be worked)
 """
@@ -42,11 +38,18 @@ def get_dt(flux_fn):
     return d_t
 
 
-def gen_fluxdata(flux_fn, no_axes):
+def gen_fluxdata(flux_fn):
 
     t_0 = time.time()
 
     ncfile = netcdf.Dataset(flux_fn, mode='r')
+    try:
+        no_axes = ncfile.dimensions["naxes"].size == 1
+    except KeyError:
+        no_axes = True
+    except Exception:
+        print("Warning: Unexpected error occured in loading flux data. Process continue.")
+        no_axes = True
 
     icom = 0
     donors = get_stringnames(ncfile.variables['donors'][:])
@@ -58,9 +61,9 @@ def gen_fluxdata(flux_fn, no_axes):
     ncfile.close()
 
     tsum = 0.0
-    for ipair_1, (don, acc) in enumerate(zip(donors, acceptors)):
+    for ipair_1, (donor, acceptor) in enumerate(zip(donors, acceptors)):
         print('loading for {}/{} {} {} ... ** '
-              .format(ipair_1+1, npair, don.decode(), acc.decode()), end='')
+              .format(ipair_1+1, npair, donor, acceptor), end='')
         sys.stdout.flush()
 
         t_1 = time.time()
@@ -77,87 +80,46 @@ def gen_fluxdata(flux_fn, no_axes):
         print('load time: {:.3f} [s]'.format(t_2-t_1))
         tsum += t_2-t_1
 
-        yield don, acc, flux
+        yield donor, acceptor, flux, no_axes
 
     print('total load time: {:.3f} [s]'.format(tsum))
 
 
-class TCCalculator:
+class TransportCoefficientCalculator:
+    """Calculate transport coefficient
+    """
     def __init__(self, frame_range, avg_shift,
-                 nsample, coef, no_axes, d_t=0.01):
-
-        self.__fst_lst_intvl = frame_range
-        fst, lst, intvl = self.__fst_lst_intvl
-        self.nframe_acf = (lst - fst)//intvl + 1
-        self.__fst = fst
-        self.__lst = lst
-        self.__intvl = intvl
+                 nsample, coef, d_t=0.01):
+        
+        first, last, interval = frame_range
+        self.nframe_acf = (last - first)/interval + 1
+        self.__first = first
+        self.__last = last
+        self.__interval = interval
         self.__shift = avg_shift
         self.__nsample = nsample
         self.__coef = coef
         self.d_t = d_t
-        self.no_axes = no_axes
-
-    def run(self, don, acc, flux):
-
-        if self.no_axes:
-            acf = cal_acf(flux, self.nframe_acf,
-                                  self.__fst, self.__lst, self.__intvl,
-                                  self.__shift, False, self.__nsample)
-        else:
-            acf = cal_hfacf(flux, self.nframe_acf,
-                                      self.__fst, self.__lst, self.__intvl,
-                                      self.__shift, False, self.__nsample, 3)
-
-        tc = self.cal_tc(acf)
-        return tc, acf
 
     def run_mpi(self, data, **other):
         t_0 = time.time()
-        don, acc, flux = data
+        donor, acceptor, flux, no_axes = data
 
-        if self.no_axes:
+        if no_axes:
             acf = cal_acf(flux, self.nframe_acf,
-                                  self.__fst, self.__lst, self.__intvl,
+                                  self.__first, self.__last, self.__interval,
                                   self.__shift, False, self.__nsample)
         else:
             acf = cal_hfacf(flux, self.nframe_acf,
-                                      self.__fst, self.__lst, self.__intvl,
+                                      self.__first, self.__last, self.__interval,
                                       self.__shift, False, self.__nsample, 3)
 
-        tc = self.cal_tc(acf)
+        pico_in_femto = 1000
+        transport_coefficient = self.__coef * self.d_t * pico_in_femto * numpy.trapz(acf,axis=0)[0]
 
-        # self.print('cal time:', time.time()-t_0)
         print('    cal time: {:.3f} [s] for {} {}'
-              .format(time.time()-t_0, don, acc))
-        return don, acc, tc, acf
-
-    def run_all(self, flux_iter):
-        fst, lst, intvl = self.__fst_lst_intvl
-        for flux in flux_iter:
-            t_0 = time.time()
-
-            if self.no_axes:
-                acf = cal_acf(flux, self.nframe_acf, fst, lst, intvl,
-                                      self.__shift, False, self.__nsample)
-            else:
-                acf = cal_hfacf(flux, self.nframe_acf, fst, lst,
-                                          intvl, self.__shift, False,
-                                          self.__nsample, 3)
-
-            tc = cal_tc(acf, self.d_t, self.__coef)
-
-            t_1 = time.time()
-            print('    cal time: {:.3f} [s]'.format(t_1-t_0))
-
-            yield tc, acf
-
-    def cal_tc(self, acf):
-        """
-        Calculate final transport  coefficient.
-        old version:  return self.__coef * self.d_t*1000.0 * numpy.sum(acf)
-        """
-        return self.__coef * self.d_t*1000.0 * numpy.trapz(acf,axis=0)[0]
+              .format(time.time()-t_0, donor, acceptor))
+        return donor, acceptor, transport_coefficient, acf
 
     def get_times(self):
         return numpy.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
@@ -300,7 +262,7 @@ class ACFWriter(WriterBase):
 
 def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
            frame_range=[1, -1, 1], avg_shift=1, nsample=0, d_t=None,
-           coef=1.0, use_debug=False, no_axes=False, **kwds):
+           coef=1.0, use_debug=False, **kwds):
 
     ti = time.time()
     par = ParallelProcessor()
@@ -314,7 +276,7 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
         d_t = d_t * frame_range[2]    # in ps
 
     # prepare calculator
-    cal = TCCalculator(frame_range, avg_shift, nsample, coef, no_axes, d_t)
+    cal = TransportCoefficientCalculator(frame_range, avg_shift, nsample, coef, d_t)
     cal.print = par.write
 
     # prepare writer
@@ -330,7 +292,7 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
 
     # prepare flux data
     if par.is_root():
-        fluxdata_iter = gen_fluxdata(flux_fn, no_axes)
+        fluxdata_iter = gen_fluxdata(flux_fn)
     else:
         fluxdata_iter = None
 
