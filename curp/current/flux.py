@@ -232,8 +232,9 @@ class HeatFluxCalculator(base.FluxCalculator):
         cutoff    = self.get_setting().curp.coulomb_cutoff_length
 
         t0 = time.time()
-        gen_tbfs = (type_func(t)['tbforces'] for t in table)
-        gen_displacement = ( type_func(t)['displacement'] for t in table )
+        tbfs_infos = [type_func(t) for t in table]
+        gen_tbfs = (t['tbforces'] for t in tbfs_infos)
+        gen_displacement = (t['displacement'] for t in tbfs_infos)
 
         flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table,
                                                       gen_displacement )
@@ -254,8 +255,9 @@ class HeatFluxCalculator(base.FluxCalculator):
         cutoff    = self.get_setting().curp.vdw_cutoff_length
 
         t0 = time.time()
-        gen_tbfs = ( type_func(t)['tbforces'] for t in table )
-        gen_displacement = ( type_func(t)['displacement'] for t in table )
+        tbfs_infos = [type_func(t) for t in table]
+        gen_tbfs = (t['tbforces'] for t in tbfs_infos)
+        gen_displacement = (t['displacement'] for t in tbfs_infos)
 
         flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table,
                                                       gen_displacement )
