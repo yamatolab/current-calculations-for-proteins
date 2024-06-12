@@ -1596,6 +1596,8 @@ contains
 
         itbf = 0
 
+        open(unit=19, file="flux2.txt", status="unknown", action="write", form="formatted")
+
         do jint=1, ninteract
             iatm     = interact_table(jint, 1)
             jatm_beg = interact_table(jint, 2)
@@ -1633,7 +1635,6 @@ contains
 
                 ! calculate and store two-body force and two-body distance vector
                 f_ij = f_i
-                open(unit=19, file="flux2.txt", status="new", action="write", form="formatted")
                 write(19, *) 'a'
 
                 call sleep(5)
