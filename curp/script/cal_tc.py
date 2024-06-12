@@ -99,7 +99,7 @@ class TransportCoefficientCalculator:
                  nsample, coef, len_decomps, d_t=0.01):
         
         first, last, interval = frame_range
-        self.nframe_acf = (last - first)/interval + 1
+        self.nframe_acf = int((last - first)/interval + 1)
         self.__first = first
         self.__last = last
         self.__interval = interval
@@ -149,10 +149,14 @@ class TCWriter:
 
     def write(self, don, acc, tc):
         fd = self.open()
-        fd.write('{:>12} {:>12} '.format(don, acc))
+        # don: bytes
+        # acc: bytes
+        don = don.decode("utf-8")
+        acc = acc.decode("utf-8")
+        fd.write('{:>12} {:>12} '.format(don, acc).encode("utf-8"))
         for i in range(self.__decomps):
-            fd.write('{} '.format(numpy.nan_to_num(tc)[i]))
-        fd.write('{}'.format('\n'))
+            fd.write('{} '.format(numpy.nan_to_num(tc)[0]).encode("utf-8"))
+        fd.write('{}'.format('\n').encode("utf-8"))
         fd.flush()
 
     def open(self):
