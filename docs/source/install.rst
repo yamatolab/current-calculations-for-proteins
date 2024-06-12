@@ -27,7 +27,7 @@ Installation
 Pip
 ---
 
-Run ``pip install Curp`` or any flavor of pip (``conda install curp``, ``pip install --user curp``, ``pipenv install curp``, ...) 
+Run ``pip install Curp`` or any flavor of pip (``pip install --user curp``, ``pipenv install curp``, ...) 
 
 Git
 ---
