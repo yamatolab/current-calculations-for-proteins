@@ -21,8 +21,7 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
    else
       nfrm_beg = first + shift*(nsample-1)
    end if
-   open(unit=11, file="conductivity.txt", status="new", action="write", form="formatted")
-   write(11, *) 'a'
+
 
    do icom=1, ncom
       !$omp parallel private(iacf, ifrm_beg, a, ifrm)
@@ -42,8 +41,6 @@ subroutine cal_hfacf(acf, xss, nacf, first, last, interval, shift, &
       !$omp end do
       !$omp end parallel
    end do ! samples of one file data
-
-   close(11)
 
    nsam = (nfrm_beg-first)/shift + 1
    acf(:,:) = acf(:,:) / real(nsam)
