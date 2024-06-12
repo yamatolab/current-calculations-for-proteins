@@ -67,13 +67,13 @@ def get_crd_vel_trans_rot_removed(masses, crd, vel, target_atoms,
         # get the center of mass for the coordinate
         target_r_com = cal_com_crd_vel(target_crd, target_masses)
         x_com, y_com, z_com = [float(x) for x in target_r_com] # ndarray => float
-        logger.info_cycle(msg.format('crd of center of mass',
+        logger.debug_cycle(msg.format('crd of center of mass', 
                 x_com, y_com, z_com, 'A'))
 
         # get the center of mass for the velocity
         target_v_com = cal_com_crd_vel(target_vel, target_masses)
         vx_com, vy_com, vz_com = [float(v) for v in 1000.0*target_v_com] # ndarray => float
-        logger.info_cycle(msg.format('vel of center of mass',
+        logger.debug_cycle(msg.format('vel of center of mass', 
                 vx_com, vy_com, vz_com, 'A/ps'))
 
         new_crd = crd - target_r_com
@@ -82,7 +82,7 @@ def get_crd_vel_trans_rot_removed(masses, crd, vel, target_atoms,
         target_vel_minus_com = target_vel - target_v_com
 
     else:
-        logger.info_cycle(20*' ' + 'remove_trans is off.')
+        logger.debug_cycle(20*' ' + 'remove_trans is off.')
         new_crd = crd
         new_vel = vel
         target_crd_minus_com = target_crd
@@ -95,7 +95,7 @@ def get_crd_vel_trans_rot_removed(masses, crd, vel, target_atoms,
 
         # log the omega values.
         x_omega, y_omega, z_omega = [float(v) for v in 1000.0*target_omegas]
-        logger.info_cycle(msg.format('angular vel for rotation',
+        logger.debug_cycle(msg.format('angular vel for rotation', 
                 x_omega, y_omega, z_omega, 'rad/ps'))
 
         # calculate rotational motion for all of the system using target_omegas.
@@ -103,9 +103,9 @@ def get_crd_vel_trans_rot_removed(masses, crd, vel, target_atoms,
         new_vel = new_vel - target_v_rot
 
     else:
-        logger.info_cycle(20*' ' + 'remove_rotate is off.')
+        logger.debug_cycle(20*' ' + 'remove_rotate is off.')
 
-    logger.info_cycle()
+    logger.debug_cycle()
 
     return new_crd, new_vel
 

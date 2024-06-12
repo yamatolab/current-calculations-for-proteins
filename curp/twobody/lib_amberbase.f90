@@ -11,7 +11,7 @@ module common_vars
     real(8), dimension(3) :: r_jk, r_kj, r_jl, r_lj, r_kl, r_lk
     real(8) :: l_ij, l_ji, l_ik, l_ki, l_il, l_li
     real(8) :: l_jk, l_kj, l_jl, l_lj, l_kl, l_lk
-    real(8) :: l_ij_inv
+    real(8) :: l_ij_inv, l_ij_inv2
     real(8), dimension(3) :: f_ij, f_ik, f_il, f_jk, f_jl, f_kl
     real(8), dimension(3) :: f_i, f_j, f_k, f_l
     real(8) :: ene
@@ -1533,6 +1533,134 @@ contains
 
 end module
 
+!###############################################################################
+module coulomb_and_vdw
+    implicit none
+    ! input
+    !! vdw
+    integer, allocatable :: atom_types(:)  ! (natom)
+    real(8), allocatable :: c6s(:,:)       ! (num_atomtypes, num_atomtypes)
+    real(8), allocatable :: c12s(:,:)      ! (num_atomtypes, num_atomtypes)
+    !! coulomb
+    real(8), allocatable :: charges(:) ! (natom)
+    !! common
+    real(8) :: cutoff_length           ! cutoff length
+
+    ! output
+    real(8) :: energy                      ! enegry
+    real(8), allocatable :: forces(:, :)   ! (natom, 3)
+    real(8), allocatable :: tbforces(:, :) ! (max_tbf, 3)
+    !(iatm_beg:iatm_end, iatm_beg:natom, 3)
+    real(8), allocatable :: displacement(:, :) ! (ntbf, 3)
+
+contains
+    subroutine calculate(interact_table, ninteract)
+        use total
+        use common_vars
+        implicit none
+        integer, intent(in) :: ninteract
+        integer, intent(in) :: interact_table(ninteract, 3)
+                ! 1:iatm, 2:begin of jatm, 3:end of jatm
+
+        real(8) :: coulomb_ene
+        real(8) :: coulomb_coeff, vdw_coff
+        real(8) :: c6, c12, cutoff_len2
+        real(8) :: cutoff_inv
+        ! gained from PRESTO .  e^2 / (4 pi eps_0) [kcal/mol * A/eV^2]
+        ! real(8), parameter :: coeff15 = 332.06378d0
+        ! gained from Amebr difinition. ! e^2 / (4 pi eps_0) [kcal/mol * A/eV^2]
+        real(8), parameter :: coulomb_coeff15 = 332.05221729d0
+        real(8), parameter :: vdw_coeff15 = 1.0d0
+
+        ! for each nonbonded atom pairs,
+        ! E_coulomb = 1/(4 pi eps_0)  q_i q_j / l_ij
+        ! E_vdw = eps_ij ( A_ij/l_ij^12 - B_ij/l_ij^6)
+        !       = C12/l_ij^12 - C6/l_ij^6
+        
+        ! F_i = 1/(4 pi eps_0) q_i q_j / l_ij^3 r_ij + (-12*C12/l_ij^13 + 6*C6/l_ij^7 ) r_ij/l_ij
+        ! F_j = - F_i
+
+        ! F_ij = F_i
+        ! F_ji = F_j
+
+        ! initialization
+        energy = 0.0d0
+        forces = 0.0d0
+        tbforces = 0.0d0
+        displacement = 0.0d0
+
+        coulomb_coeff = coulomb_coeff15
+        vdw_coff = vdw_coeff15
+
+        cutoff_inv = 1.0d0/cutoff_length
+
+        itbf = 0
+
+        do jint=1, ninteract
+            iatm     = interact_table(jint, 1)
+            jatm_beg = interact_table(jint, 2)
+            jatm_end = interact_table(jint, 3)
+
+            do jatm=jatm_beg, jatm_end
+                itbf = itbf + 1
+
+                r_ij = crd(iatm, :) - crd(jatm, :)
+                l_ij_inv2 = 1.0d0/dot_product(r_ij, r_ij)
+                l_ij_inv = sqrt( l_ij_inv2 )
+
+                ! cutoff
+                if (l_ij_inv < cutoff_inv) cycle
+
+                !! vdw
+                c6   = c6s( atom_types(iatm), atom_types(jatm) )
+                c12  = c12s( atom_types(iatm), atom_types(jatm) )
+
+                ! calculate coulomb energy
+                ! coulomb_ene = coeff*charges(iatm)*charges(jatm) / l_ij
+                coulomb_ene = coulomb_coeff*charges(iatm)*charges(jatm) * l_ij_inv
+                ! Skip calculate vdw energy
+                ! TODO: Check this is correct or not.
+                energy = energy + coulomb_ene
+
+                ! calculate force
+                ! f_i = coulomb_ene * r_ij / (l_ij**2)
+                f_i = (coulomb_ene * r_ij *l_ij_inv*l_ij_inv) + &
+                    & (- vdw_coff*(-12.0d0*c12*l_ij_inv2**7 + 6.0d0*c6*l_ij_inv2**4 ) * r_ij)
+
+                ! store force
+                forces(iatm, :) = forces(iatm, :) + f_i(:)
+                forces(jatm, :) = forces(jatm, :) - f_i(:)
+
+                ! calculate and store two-body force and two-body distance vector
+                f_ij = f_i
+                open(unit=19, file="flux2.txt", status="new", action="write", form="formatted")
+                write(19, *) 'a'
+
+                call sleep(5)
+                tbforces(itbf, :) = f_ij(:)
+                displacement(itbf, :) = r_ij(:)
+                
+                ! check
+                if (check) then
+                    print*, 'TB_CHECK: i, j =', iatm, jatm
+                    print*, 'TB_CHECK: f_i vs. f_ij =>', check_tbforce(f_i, f_ij)
+                    print*, 'TB_CHECK',f_i
+                    print*, 'TB_CHECK',f_ij
+                    print*, 'TB_CHECK: f_j vs. f_ji =>', check_tbforce(-f_i, -f_ij)
+                    print*, 'TB_CHECK',-f_i
+                    print*, 'TB_CHECK',-f_ij
+                end if
+
+            enddo
+
+        enddo
+
+        close(10)
+
+    end subroutine
+
+end module
+
 ! subroutine cal_distance_restraint()
 ! end
 
@@ -1557,6 +1685,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     use vdw       , vdw_forces => forces, vdw_tbforces => tbforces, vdw_disp => displacement
     use coulomb14 , cou14_forces => forces, cou14_tbforces => tbforces, cou14_disp => displacement
     use vdw14     , vdw14_forces => forces, vdw14_tbforces => tbforces, vdw14_disp => displacement
+    use coulomb_and_vdw, cou_and_vdw_forces => forces, cou_and_vdw_tbforces => tbforces, cou_and_vdw_disp => displacement
 
     implicit none
     integer, intent(in) :: natom
@@ -1583,6 +1712,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(vdw_forces(t_natom, 3))
     allocate(cou14_forces(t_natom, 3))
     allocate(vdw14_forces(t_natom, 3))
+    allocate(cou_and_vdw_forces(t_natom, 3))
 
     ! allocate each two-body force for bonded
     allocate(bnd_tbforces(t_nbonded, 3))
@@ -1595,6 +1725,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     ! allocate each two-body force for nonbonded
     allocate(cou_tbforces(max_tbf, 3))
     allocate(vdw_tbforces(max_tbf, 3))
+    allocate(cou_and_vdw_tbforces(max_tbf, 3))
 
     ! allocate each two-body distance (crd_i - crd_j) matrix
     allocate(bnd_disp(t_nbonded, 3))
@@ -1605,6 +1736,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(vdw_disp(max_tbf, 3))
     allocate(cou14_disp(t_nbonded, 3))
     allocate(vdw14_disp(t_nbonded, 3))
+    allocate(cou_and_vdw_disp(max_tbf, 3))
 
 end subroutine
 
