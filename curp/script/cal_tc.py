@@ -11,7 +11,7 @@ from __future__ import print_function
 import sys
 import time
 
-import numpy
+import numpy as np
 
 import netCDF4 as netcdf
 
@@ -123,14 +123,14 @@ class TransportCoefficientCalculator:
                                       self.__shift, False, self.__nsample, 3)
 
         pico_in_femto = 1000
-        transport_coefficient = self.__coef * self.d_t * pico_in_femto * numpy.trapz(acf,axis=0)
+        transport_coefficient = self.__coef * self.d_t * pico_in_femto * np.trapz(acf,axis=0)
 
         print('    cal time: {:.3f} [s] for {} {}'
               .format(time.time()-t_0, donor, acceptor))
         return donor, acceptor, transport_coefficient, acf
 
     def get_times(self):
-        return numpy.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
+        return np.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
 
     def print(self, *args, **kwds):
         print(*args, **kwds)
@@ -155,7 +155,7 @@ class TCWriter:
         acc = acc.decode("utf-8")
         fd.write('{:>12} {:>12} '.format(don, acc).encode("utf-8"))
         for i in range(self.__decomps):
-            fd.write('{} '.format(numpy.nan_to_num(tc)[0]).encode("utf-8"))
+            fd.write('{} '.format(np.nan_to_num(tc)[0]).encode("utf-8"))
         fd.write('{}'.format('\n').encode("utf-8"))
         fd.flush()
 
