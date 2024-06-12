@@ -18,3 +18,7 @@ tutorial
 
 # Ignore doc outputs
 _build/
+
+.vscode/
+venv/
+.venv/
