@@ -24,13 +24,13 @@ to write them in a file.
 """
 
 from __future__ import print_function
-
+from ..setting import Setting
 import os
 import numpy
 
 
-def get_writer(setting, decomp_list, target_anames, group_names,
-               gpair_table=None):
+def get_writer(setting: Setting, decomp_list, target_anames, group_names,
+               gpair_table: list = None):
     """Returns Writer object depending on the setting.curp.method."""
 
     method = setting.curp.method
@@ -52,7 +52,7 @@ def get_writer(setting, decomp_list, target_anames, group_names,
                 gpair_table=gpair_table, axes=('i','j','k'))
 
     else:
-        pass
+        raise Exception("No such method. Please check the setting.")
 
     return obj
 
@@ -211,7 +211,7 @@ MultiXxWriter: choose the options for Current, Flux and NetCDFFluxWriter.
 
 class MultiCurrentWriter:
 
-    def __init__(self, setting, decomp_list, target_anames, group_names):
+    def __init__(self, setting: Setting, decomp_list, target_anames, group_names):
 
         self.__atm_writer = CurrentWriter( setting, decomp_list,
                 target_anames, revision='atm')
@@ -251,8 +251,7 @@ class MultiCurrentWriter:
 
 
 class MultiFluxWriter:
-
-    def __init__(self, setting, decomp_list,
+    def __init__(self, setting: Setting, decomp_list,
                  target_anames, group_names, gpair_table=None, axes=None):
 
         fmt = setting.output.format
@@ -276,7 +275,7 @@ class MultiFluxWriter:
 
         elif (grain, fmt) == ('atom', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, axes, revision='atm')
+                    target_anames, None, axes, revision='atm')
             self.__grp_writer = None
 
         elif (grain, fmt) == ('group', 'netcdf'):
@@ -286,12 +285,12 @@ class MultiFluxWriter:
 
         elif (grain, fmt) == ('both', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, axes, revision='atm')
+                    target_anames, None, axes, revision='atm')
             self.__grp_writer = NetCDFFluxWriter( setting, decomp_list,
                     group_names, gpair_table, axes, revision='grp')
 
         else:
-            pass
+            raise Exception("No such combination of grain and format. Please check the setting.")
 
     # elif method == 'energy-flux' and fmt=='netcdf':
         # obj = NetCDFFluxWriter(setting=setting, decomp_list, target_anames,
@@ -432,7 +431,7 @@ class CurrentWriter:
                 # total_current = total_current + results[key]
                 total_current += results[key]
 
-            lines = self.format(time, total_current, names)
+            lines = self.format(time, total_current, self.__names)
             self.__key_to_writer['total'].write(lines)
 
     def gen_decomp_keys(self, decomp_list):
@@ -771,8 +770,9 @@ class NetCDFFluxWriter:
         ncfile.close()
         # self.__ncfile = ncfile
 
-    def setup_gpairs(self, names, pair_table=None):
-
+    def setup_gpairs(self, names, pair_table: list = None):
+        """Decide the pairs to be written in the file according to pair_table.
+        """
         name_to_idx = {name:i for i, name in enumerate(names)}
         ntarget = len(names)
         self.__npair_total = ntarget*ntarget
@@ -781,7 +781,7 @@ class NetCDFFluxWriter:
         mask_indices = []
         donors = []
         acceptors = []
-        if pair_table:
+        if pair_table is not None:
             for name_i, names_j in pair_table:
                 itar_1 = name_to_idx[name_i]
 
