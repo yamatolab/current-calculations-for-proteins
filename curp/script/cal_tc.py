@@ -155,7 +155,7 @@ class TCWriter:
         acc = acc.decode("utf-8")
         fd.write('{:>12} {:>12} '.format(don, acc).encode("utf-8"))
         for i in range(self.__decomps):
-            fd.write('{} '.format(np.nan_to_num(tc)[0]).encode("utf-8"))
+            fd.write('{} '.format(np.nan_to_num(tc)[i]).encode("utf-8"))
         fd.write('{}'.format('\n').encode("utf-8"))
         fd.flush()
 
