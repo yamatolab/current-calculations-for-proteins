@@ -8,7 +8,7 @@ Energy flow data permit to picture an inter-residue Energy Exchange Network as a
 Within thermally fluctuating protein molecules under physiological conditions, tightly packed amino acid residues interact with each other through heat and energy exchanges. 
 Non-uniform pattern of heat flow in proteins are illustrated and characterized with a theoretical model based on “local heat conductivity” between each residue pair. 
 This model demonstrated characteristic features of “hidden dynamic allostery” in PDZ domain [1]_ and allosteric transition in the oxygen sensor domain of FixL [2]_.
-Also we applied it to a small protein to understand the features of local thermal transport of protein[3-5]_.
+Also we applied it to a small protein to understand the features of local thermal transport of protein[3]_ [4]_ [5]_.
 
 Offical website and tutorial can be found at `<https://curp.jp/>`_.
 
