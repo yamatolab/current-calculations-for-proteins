@@ -1,6 +1,6 @@
 """Write the results of curp calculator
 
-CURP 1.1: Ishikura, 2016. Most of the Layout  
+CURP 1.1: Ishikura, 2016. Most of the Layout
 CURP 1.2: Laprevote, 2019. Heat Flux gestion (and commenting code).
 CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
 
@@ -52,7 +52,7 @@ def get_writer(setting, decomp_list, target_anames, group_names,
                 gpair_table=gpair_table, axes=('i','j','k'))
 
     else:
-        pass
+        raise Exception("No such method. Please check the setting.")
 
     return obj
 
@@ -276,7 +276,7 @@ class MultiFluxWriter:
 
         elif (grain, fmt) == ('atom', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, axes, revision='atm')
+                    target_anames, None, axes, revision='atm')
             self.__grp_writer = None
 
         elif (grain, fmt) == ('group', 'netcdf'):
@@ -286,12 +286,12 @@ class MultiFluxWriter:
 
         elif (grain, fmt) == ('both', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, axes, revision='atm')
+                    target_anames, None, axes, revision='atm')
             self.__grp_writer = NetCDFFluxWriter( setting, decomp_list,
                     group_names, gpair_table, axes, revision='grp')
 
         else:
-            pass
+            raise Exception("No such combination of grain and format. Please check the setting.")
 
     # elif method == 'energy-flux' and fmt=='netcdf':
         # obj = NetCDFFluxWriter(setting=setting, decomp_list, target_anames,
@@ -432,7 +432,7 @@ class CurrentWriter:
                 # total_current = total_current + results[key]
                 total_current += results[key]
 
-            lines = self.format(time, total_current, names)
+            lines = self.format(time, total_current, self.__names)
             self.__key_to_writer['total'].write(lines)
 
     def gen_decomp_keys(self, decomp_list):
@@ -781,7 +781,7 @@ class NetCDFFluxWriter:
         mask_indices = []
         donors = []
         acceptors = []
-        if pair_table:
+        if pair_table is not None:
             for name_i, names_j in pair_table:
                 itar_1 = name_to_idx[name_i]
 
