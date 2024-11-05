@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os, sys
 import time
-import numpy
+import numpy as np
 
 # curp modules
 from curp import utility
@@ -321,8 +321,19 @@ class HeatFlux:
         # get current by copy
         # flux_atm = m_non.flux_atm if self.__flag_atm else None
         # flux_grp = m_non.flux_grp if self.__flag_grp else None
-        hflux_atm = m_non.hflux_atm.copy() if self.__flag_atm else None
-        hflux_grp = m_non.hflux_grp.copy() if self.__flag_grp else None
+        hflux_atm: np.ndarray = m_non.hflux_atm.copy() if self.__flag_atm else None
+        hflux_grp: np.ndarray = m_non.hflux_grp.copy() if self.__flag_grp else None
+
+        logger.debug('hflux_atm: ', hflux_atm.shape())
+        logger.debug('hflux_grp: ', hflux_grp.shape())
+        logger.debug("length of hflux_atm[0]: ", len(hflux_atm[0]))
+        logger.debug("type of hflux_atm: ", type(hflux_atm))
+        logger.debug("type of hflux_atm[0]: ", type(hflux_atm[0]))
+        
+        assert hflux_atm is m_non.hflux_atm
+        assert hflux_grp is m_non.hflux_grp
+        assert hflux_atm[0] is not m_non.hflux_atm[0]
+        assert hflux_grp[0] is not m_non.hflux_grp[0]
 
         t_total += time.time() - t2
         self.dt = t_total
@@ -352,7 +363,7 @@ class StressFluxCalculator(base.FluxCalculator):
         flux_pot = {}
         for gname_i in group_names:
             for gname_j in group_names:
-                ts = numpy.zeros([3,3])
+                ts = np.zeros([3,3])
                 flux_pot[gname_i, gname_j] = ts
 
         # bonded two-body force
@@ -384,7 +395,7 @@ class StressFluxCalculator(base.FluxCalculator):
         flux_pot = {}
         for gname_i in group_names:
             for gname_j in group_names:
-                ts = numpy.zeros([3,3])
+                ts = np.zeros([3,3])
                 flux_pot[gname_i, gname_j] = ts
 
         for iatm, jatm_ptr, f_ijs in gen_tbforces_each_atom:
