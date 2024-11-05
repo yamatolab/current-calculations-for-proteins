@@ -193,7 +193,7 @@ class InteractionTableList:
     >>> table.map()
     """
 
-    _memory_limit = 10 # MB
+    _memory_limit = 1000 # MB
 
     def __init__(self, natom=None, base_table=None):
         self.__natom = natom
