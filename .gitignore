@@ -7,13 +7,20 @@ curp-environ/
 tutorial
 
 # folders made by setup.py
-/build/
-/curp.egg-info/
-/dist/
+build/
+*.egg-info/
+dist/
+*.mod
 
 # Ignore test outputs
-/test/**/outdata/*
-/test/**/*log
+test/**/outdata/*
+test/**/*log
 
 # Ignore doc outputs
 _build/
+
+.vscode/
+venv/
+.venv/
+
+*.log
