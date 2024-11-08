@@ -297,6 +297,8 @@ def init_current(setting, par):
 
     # Decide Writer.
     t_0 = time.time()
+    
+    logger.info("length of gpair_table: {}".format(len(gpair_table)))
 
     if par.is_root():
         from curp.current.writer import get_writer
