@@ -2,7 +2,7 @@ from nose.tools import *
 import numpy.testing as npt
 
 import os, sys
-import numpy
+import numpy as np
 topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if topdir not in sys.path:
     sys.path.insert(0, topdir)
@@ -118,7 +118,7 @@ class TestVoronoiVolume:
         vcal = volmod.VoronoiVolumeCalculator(vsetting)
 
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
                 [2.53095618, 10.57237302, 8.77409149, 10.28907996, 4.39428955,
                  9.56204114, 2.86505444, 14.06828119, 13.29667321, 14.26201939,
                  6.91872261, 9.26958893, 5.98605445, 9.55967883, 4.38770271,
@@ -127,7 +127,7 @@ class TestVoronoiVolume:
                  13.0583563, 3.00119366, 12.10096405,  10.79443561, 14.06985516,
                  7.16893742, 6.12357164, 7.19708035] )
 
-        answer_group = numpy.array([106.80317111, 100.42780345, 97.12188219])
+        answer_group = np.array([106.80317111, 100.42780345, 97.12188219])
         
         # check volumes
         volumes  = vcal.get_volume(crd)
@@ -146,7 +146,7 @@ class TestVoronoiVolume:
         vcal = volmod.VoronoiVolumeCalculator(vsetting)
 
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [20.22022312 , 8.          , 8.          , 8. , 10.98203136 , 
             8.           , 30.56816177 , 8.          , 8. , 8.          , 
             8.12470536   , 18.52584001 , 12.99162867 , 8. , 15.54317338 , 
@@ -155,7 +155,7 @@ class TestVoronoiVolume:
             8.           , 27.97682307 , 8.          , 8. , 8.          , 
             8.35937656   , 16.07189061 , 16.88228382] )
 
-        answer_group = numpy.array([144.42096161, 128.16809111, 138.91020245])
+        answer_group = np.array([144.42096161, 128.16809111, 138.91020245])
         
         # check volumes
         volumes  = vcal.get_volume(crd)
@@ -175,7 +175,7 @@ class TestVoronoiVolume:
         vcal = volmod.VoronoiVolumeCalculator(vsetting)
 
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [20.22022312 , 8.          , 8.          , 8. , 10.98203136 , 
             8.           , 30.56816177 , 8.          , 8. , 8.          , 
             8.12470536   , 18.52584001 , 12.99162867 , 8. , 15.54317338 , 
@@ -184,7 +184,7 @@ class TestVoronoiVolume:
             8.           , 27.97682307 , 8.          , 8. , 8.          , 
             8.35937656   , 16.07189061 , 16.88228382] )
 
-        answer_group = numpy.array(
+        answer_group = np.array(
             [20.22022312 , 10.98203136 , 30.56816177 ,  8.12470536 ,
              18.52584001 , 12.99162867 , 15.54317338 , 33.70637798 ,
               8.39924737 , 17.52766371 , 15.78170899 , 13.83811941 , 
@@ -259,7 +259,7 @@ class TestVoronoiVolumeWithSolvation:
         vcal = volmod.VoronoiVolumeCalculatorWithSolvation(vsetting)
 
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
                 [2.47223895, 19.14232321, 16.21803614,  7.92137772,  4.22816654,
                 19.82479296,  3.13903811, 12.11502524, 14.1649559,  15.90249363,
                  5.93714983, 13.81966351,  4.72193302,  5.39133486,  3.58498268,
@@ -268,7 +268,7 @@ class TestVoronoiVolumeWithSolvation:
                 15.45197065,  2.80961053, 14.85935785, 18.02848079,  8.58282678,
                  7.61211716, 12.44204141, 18.46705607] )
 
-        answer_group = numpy.array([134.885261726, 55.581737472, 113.893515011])
+        answer_group = np.array([134.885261726, 55.581737472, 113.893515011])
 
         # check volumes
         volumes  = vcal.get_volume(crd)
@@ -286,7 +286,7 @@ class TestVoronoiVolumeWithSolvation:
         vcal = volmod.VoronoiVolumeCalculatorWithSolvation(vsetting)
 
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [27.4864788  , 8.          , 8.          , 8. , 14.37028708 ,
               8.         , 26.71430444 , 8.          , 8. ,  8.         ,
               7.9492852  , 20.02736218 , 9.12244069  , 8. ,  6.2135348  ,
@@ -295,7 +295,7 @@ class TestVoronoiVolumeWithSolvation:
               8.         , 33.86800002 , 8.          , 8. ,  8.         ,
               8.48899055 , 20.38073956 , 19.72677428] )
 
-        answer_group = numpy.array([152.54771770, 94.309692516, 144.458026778])
+        answer_group = np.array([152.54771770, 94.309692516, 144.458026778])
         # check volumes
         volumes  = vcal.get_volume(crd)
         gvolumes = vcal.get_gvolume(crd)
@@ -380,8 +380,8 @@ class TestVolume1:
         crd = []
 
         # answer value
-        answer_atom = numpy.ones([vsetting.natom])
-        answer_group = numpy.ones([len(vsetting.grp_to_atoms)])
+        answer_atom = np.ones([vsetting.natom])
+        answer_group = np.ones([len(vsetting.grp_to_atoms)])
         
         # perform
         volumes  = vcal.get_volume()
@@ -424,7 +424,7 @@ class TestVDWVolume:
         vcal = volmod.VDWVolumeCalculator(vsetting)
 
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [ 26.95426178,  0.90477868,  0.90477868,  0.90477868, 28.73091201,
                0.90477868, 28.73091201,  0.90477868,  0.90477868,  0.90477868,
               28.73091201, 24.42902447, 26.95426178,  0.90477868, 28.73091201,
@@ -433,7 +433,7 @@ class TestVDWVolume:
                0.90477868, 28.73091201,  0.90477868,  0.90477868,  0.90477868,
               28.73091201, 24.42902447, 24.42902447] )
 
-        answer_group = numpy.array(
+        answer_group = np.array(
             [143.90947308985176, 142.09991572138404, 166.52894019569828 ] )
         
         # perform
@@ -473,14 +473,14 @@ class TestOuterVolume:
         
         # ** 1th step **
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [ 18.5, 10.1, 10.1, 10.1, 21.3, 8.2, 20.2, 8.2, 8.2, 8.2, 
               19. , 22. , 15.7,  7.7, 21.6, 8.4, 19.1, 7. , 7. , 7. , 
               19.85, 23., 17.4, 9.9 , 21.5, 8.4, 18.1, 8.8, 8.8, 8.8 , 
               19.7, 21.22, 21.43
         ])
 
-        answer_group = numpy.array( [164.1, 136.35, 164.05] )
+        answer_group = np.array( [164.1, 136.35, 164.05] )
 
         # perform
         volumes  = vcal.get_volume()
@@ -492,13 +492,13 @@ class TestOuterVolume:
 
         # ** 2th step **
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [19.50, 9.10, 9.10, 9.10, 22.30, 8.20, 21.20, 7.20, 7.20, 7.20,
              20.00, 21.00, 18.70, 8.70, 22.60, 9.40, 18.10, 5.00, 5.00, 5.00,
              20.85, 24.00, 18.40, 9.70, 20.50, 9.40, 15.10, 7.80, 7.80, 7.80,
              18.70, 20.22, 20.43] )
 
-        answer_group = numpy.array( [ 161.1 ,  137.35,  155.85] )
+        answer_group = np.array( [ 161.1 ,  137.35,  155.85] )
 
         # perform
         volumes  = vcal.get_volume()
@@ -553,14 +553,14 @@ class TestOuterVolume:
         
         # ** 1th step **
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [ 18.5, 10.1, 10.1, 10.1, 21.3, 8.2, 20.2, 8.2, 8.2, 8.2, 
               19. , 22. , 15.7,  7.7, 21.6, 8.4, 19.1, 7. , 7. , 7. , 
               19.85, 23., 17.4, 9.9 , 21.5, 8.4, 18.1, 8.8, 8.8, 8.8 , 
               19.7, 21.22, 21.43
         ])
 
-        answer_group = numpy.array( 
+        answer_group = np.array( 
                 [18.50, 21.30, 20.20, 19.00, 22.00, 15.70, 21.60, 19.10, 19.85,
                  23.00, 17.40, 21.50, 18.10, 19.70, 21.22, 21.43] )
 
@@ -574,13 +574,13 @@ class TestOuterVolume:
 
         # ** 2th step **
         # answer value
-        answer_atom = numpy.array(
+        answer_atom = np.array(
             [19.50, 9.10, 9.10, 9.10, 22.30, 8.20, 21.20, 7.20, 7.20, 7.20,
              20.00, 21.00, 18.70, 8.70, 22.60, 9.40, 18.10, 5.00, 5.00, 5.00,
              20.85, 24.00, 18.40, 9.70, 20.50, 9.40, 15.10, 7.80, 7.80, 7.80,
              18.70, 20.22, 20.43] )
 
-        answer_group = numpy.array( 
+        answer_group = np.array( 
                 [18.50, 20.30, 19.20, 18.00, 20.00, 18.70, 20.60, 18.10, 19.85,
                  22.00, 18.40, 20.50, 19.10, 18.70, 22.22, 23.43] )
 

@@ -26,7 +26,7 @@ to write them in a file.
 from __future__ import print_function
 from ..setting import Setting
 import os
-import numpy
+import numpy as np
 
 
 def get_writer(setting: Setting, decomp_list, target_anames, group_names,
@@ -512,7 +512,7 @@ class FluxWriter:
 
     def write(self, istep, key_to_fluxes):
 
-        to_fluxes_ar = numpy.array(key_to_fluxes)
+        to_fluxes_ar = np.array(key_to_fluxes)
         if self.__pair_table is None:
             lines = self.format(istep, key_to_fluxes, self.__names)
         else:
@@ -541,14 +541,14 @@ class FluxWriter:
                 for i, pot_type in enumerate(self.__decomps):
                     fluxes[i] = key_to_fluxes[pot_type][itar_1, jtar_1]
 
-                fluxes_ar = numpy.array(fluxes).transpose()
+                fluxes_ar = np.array(fluxes).transpose()
                 fluxes_ar = fluxes_ar.reshape(self.__dim, -1)
 
                 line = [self.__data_fmt.format(name_i, name_j, *k)
                         for k in fluxes_ar]
                 """
 
-                fluxes = numpy.zeros([self.__num_decomps, self.__dim])
+                fluxes = np.zeros([self.__num_decomps, self.__dim])
                 for i, pot_type in enumerate(self.__decomps):
                     fluxes[i] = key_to_fluxes[pot_type][itar_1, jtar_1]
 
@@ -567,7 +567,7 @@ class FluxWriter:
                 jtar_1 = self.__name_to_idx[name_j]
                 if not self.ok_write(itar_1, jtar_1): continue
 
-                fluxes = numpy.zeros([self.__num_decomps, self.__dim])
+                fluxes = np.zeros([self.__num_decomps, self.__dim])
                 for i, pot_type in enumerate(self.__decomps):
                     fluxes[i] = key_to_fluxes[pot_type][itar_1, jtar_1]
 
@@ -845,7 +845,7 @@ class NetCDFFluxWriter:
         # Write flux
         nc_flux  = ncfile.variables['flux']
 
-        flux = numpy.array([ key_to_fluxes[pot_type].ravel()
+        flux = np.array([ key_to_fluxes[pot_type].ravel()
                 for pot_type in self.__decomps ]).T
 
         if self.__mask_indices:
@@ -866,7 +866,7 @@ class NetCDFFluxWriter:
         # Write flux
         nc_flux  = ncfile.variables['flux']
 
-        flux = numpy.array([ key_to_fluxes[pot_type]
+        flux = np.array([ key_to_fluxes[pot_type]
                 for pot_type in self.__decomps ]).T.reshape(
                                                     (len(self.__axes),
                                                      -1,

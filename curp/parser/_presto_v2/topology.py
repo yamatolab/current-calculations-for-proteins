@@ -6,8 +6,12 @@ if topdir not in sys.path:
     sys.path.insert(0, topdir)
 
 # additional package
+import numpy as np
 
 # curp package
+import table.interact_table as it
+import clog as logger
+
 
 ################################################################################
 class TopologyParser:
@@ -634,8 +638,8 @@ class Format2Amber99Converter(ConverterBase):
                 nonbond_info['vdw_depths'] ))
 
         ntype = len(nonbond_info['atom_types'])
-        c6s =  numpy.zeros((ntype,ntype))
-        c12s = numpy.zeros((ntype,ntype))
+        c6s =  np.zeros((ntype,ntype))
+        c12s = np.zeros((ntype,ntype))
         
         import math
         for itype, rad_i, dep_i in types_radii_depths:
@@ -719,8 +723,8 @@ class Format2OPLSConverter(Format2Amber99Converter):
                 nonbond_info['vdw_depths'] ))
 
         ntype = len(nonbond_info['atom_types'])
-        c6s =  numpy.zeros((ntype,ntype))
-        c12s = numpy.zeros((ntype,ntype))
+        c6s =  np.zeros((ntype,ntype))
+        c12s = np.zeros((ntype,ntype))
         
         import math
         for itype, rad_i, dep_i in types_radii_depths:

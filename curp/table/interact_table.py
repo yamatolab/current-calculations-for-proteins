@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import itertools
+import numpy as np
 
 ################################################################################
 class InteractionTableGenerator:
@@ -135,7 +136,7 @@ class InteractionTableGenerator:
         length2 = length**2
 
         def wrapper(iatm, jatm):
-            dist2 = numpy.dot(crd[iatm,:] - crd[jatm,:])
+            dist2 = np.dot(crd[iatm,:] - crd[jatm,:])
             return dist2 < length2
 
         return wrapper
@@ -352,7 +353,7 @@ class InteractionTableList:
         length2 = length**2
 
         def wrapper(iatm, jatm):
-            dist2 = numpy.dot(crd[iatm,:] - crd[jatm,:])
+            dist2 = np.dot(crd[iatm,:] - crd[jatm,:])
             return dist2 < length2
 
         return wrapper

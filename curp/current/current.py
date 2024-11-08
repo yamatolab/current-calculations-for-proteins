@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os, sys
 import time
-import numpy
+import numpy as np
 
 # curp modules
 import curp.clog as logger
@@ -192,7 +192,7 @@ class StressTensor:
 
     def cal_kinetic_old(self, vel, volumes, masses):
         ps = [m*v/vol for v, vol, m in zip(vel, volumes, masses)]
-        return utility.tensor(numpy.array(ps), vel)
+        return utility.tensor(np.array(ps), vel)
 
 
 
@@ -212,7 +212,7 @@ class EnergyCurrentCalculator(base.CurrentCalculator):
         bonded14_tbfs = self.__tbf.get_bonded14_tb_forces()
 
         # initialize
-        current_pot = numpy.zeros([self.__natom+1, 3])
+        current_pot = np.zeros([self.__natom+1, 3])
 
         # bonded two-body force
         for iatm, jatm, f_ij in list(bonded_tbfs.items()):
@@ -232,7 +232,7 @@ class EnergyCurrentCalculator(base.CurrentCalculator):
 
     #TODO: volume calculation
     def _cal_nonbond(self):
-        current_pot = numpy.zeros([self.__natom+1, 3, 3])
+        current_pot = np.zeros([self.__natom+1, 3, 3])
 
         for iatm, jatm_ptr, f_ijs in gen_tbforces_each_atom:
 

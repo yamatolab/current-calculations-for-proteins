@@ -2,7 +2,7 @@
 from __future__ import print_function
 import os, sys
 import math
-import numpy
+import numpy as np
 import gzip
 
 # fortran module
@@ -109,18 +109,18 @@ def load_fluxdata(flux_fn):
         xss.append( float(cols[1]) )
 
     file.close()
-    return numpy.array(xss)
+    return np.array(xss)
 
 def cal_tc(acf, dt, coef=1.0):
     """
     Calculate final transport  coefficient.
-    old version: return coef * dt*1000.0 * numpy.sum(acf)
+    old version: return coef * dt*1000.0 * np.sum(acf)
     """
-    return coef * dt*1000.0 * numpy.trapz(acf,axis=1)[0]
+    return coef * dt*1000.0 * np.trapz(acf,axis=1)[0]
 
 def cal_tcs(acf, dt, coef=1.0):
     """Calculate time series of transport coefficient."""
-    return coef * dt*1000.0 * numpy.add.accumulate(acf)
+    return coef * dt*1000.0 * np.add.accumulate(acf)
 
 def write_acf(times, acf, opts):
     """Write auto-correlation function data to given file."""
@@ -273,7 +273,7 @@ def main():
 
     # set coefficient
     dt = opts.dt * opts.frame_range[2] # in ps
-    times = numpy.arange(0.0, nacf*dt, dt)
+    times = np.arange(0.0, nacf*dt, dt)
 
     ################################
     # final tc and dispersion only #
@@ -282,13 +282,13 @@ def main():
     if (not opts.acf_fn) and opts.enable_disp:
 
         acf_iter = gen_acf(opts.flux_fns, 'tc+disp')
-        tc_ary = numpy.array( [cal_tc(acf, dt, opts.coef) for acf in acf_iter] )
+        tc_ary = np.array( [cal_tc(acf, dt, opts.coef) for acf in acf_iter] )
         for itraj, tc in enumerate(tc_ary): # by trajectory(file)
             print("%itraj="+str(itraj), don_acc_line, tc)
 
         # calculate tc and dispersion
-        tc_avg  = numpy.sum(tc_ary) / nfile
-        tc2_avg = numpy.sum(tc_ary*tc_ary) / nfile
+        tc_avg  = np.sum(tc_ary) / nfile
+        tc2_avg = np.sum(tc_ary*tc_ary) / nfile
 
         # average tc from tc array
         tc = tc_avg
@@ -316,18 +316,18 @@ def main():
         acf_iter = gen_acf(opts.flux_fns, 'acf+tc+disp')
 
         tc_list = []
-        acf_sum = numpy.zeros([nacf,ncom])
+        acf_sum = np.zeros([nacf,ncom])
         for acf in acf_iter:
             acf_sum += acf
             tc_list.append(cal_tc(acf, dt, opts.coef))
 
         # calculate tc and dispersion
-        tc_ary  = numpy.array(tc_list)
+        tc_ary  = np.array(tc_list)
         for itraj, tc in enumerate(tc_ary):
             print("%itraj="+str(itraj), don_acc_line, tc)
 
-        tc_avg  = numpy.sum(tc_ary) / nfile
-        tc2_avg = numpy.sum(tc_ary*tc_ary) / nfile
+        tc_avg  = np.sum(tc_ary) / nfile
+        tc2_avg = np.sum(tc_ary*tc_ary) / nfile
 
         # get average_acf and tc dispersion
         acf_avg = acf_sum / nfile
@@ -344,8 +344,8 @@ def main():
     if opts.tcs_fn: # and (not opts.enable_precise):
         acf_iter = gen_acf(opts.flux_fns, 'tcs')
 
-        tcs_sum  = numpy.zeros([nacf,ncom])
-        tcs_sum2 = numpy.zeros([nacf,ncom])
+        tcs_sum  = np.zeros([nacf,ncom])
+        tcs_sum2 = np.zeros([nacf,ncom])
         for acf in acf_iter:
             tcs = cal_tcs(acf, dt, opts.coef)
             tcs_sum  += tcs
@@ -355,7 +355,7 @@ def main():
         tcs2_avg = tcs_sum2 / nfile
 
         # dispersion of tc based on <x^2> - <x>^2
-        tcs_disp = numpy.sqrt( tcs2_avg - tcs_avg**2 )
+        tcs_disp = np.sqrt( tcs2_avg - tcs_avg**2 )
         # tc_disp and tcs_disp[-1] must be equal !
         if opts.use_debug: log.write('tc = {:22.14e} {:22.14e}'
             .format(tc, tcs_avg[-1][0]))
@@ -372,7 +372,7 @@ def main():
 
         # acf_iter = gen_acf(opts.flux_fns)
 
-        # tcs2_sum  = numpy.zeros([nacf,ncom])
+        # tcs2_sum  = np.zeros([nacf,ncom])
 
         # def gen_diff2(tcs_avg, acf_iter):
             # for acf in acf_iter:
@@ -380,7 +380,7 @@ def main():
                 # yield (tcs - tcs_avg)**2
 
         # # dispersion of tc based on <(dx)^2>
-        # tcs_disp = numpy.sqrt( sum(gen_diff2(tcs_avg, acf_iter)) / nfile )
+        # tcs_disp = np.sqrt( sum(gen_diff2(tcs_avg, acf_iter)) / nfile )
 
         # write_tcs(times, tcs_avg, tcs_disp, opts.tcs_fn, opts.flux_fns[0])
 

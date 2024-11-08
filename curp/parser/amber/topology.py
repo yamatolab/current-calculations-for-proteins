@@ -7,7 +7,7 @@ if topdir not in sys.path:
     sys.path.insert(0, topdir)
 
 # additional package
-import numpy
+import numpy as np
 
 # curp package
 import table.interact_table as it
@@ -639,8 +639,8 @@ class Format2AmberBaseConverter(ConverterBase):
         import math
         ntype = int(math.sqrt(len(amb_indexes)))
 
-        c6s  = numpy.zeros((ntype, ntype))
-        c12s = numpy.zeros((ntype, ntype))
+        c6s  = np.zeros((ntype, ntype))
+        c12s = np.zeros((ntype, ntype))
 
         for itype_1 in range(ntype):
             itype = itype_1 + 1
