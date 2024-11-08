@@ -22,7 +22,8 @@ def ext_modules(config, _dir):
                 config.add_extension(ext_name,
                                      [f90_file],
                                      f2py_options=["--quiet"],
-                                     extra_f90_compile_args=["-fopenmp"]
+                                     extra_f90_compile_args=["-O3", "-fopenmp"],
+									 extra_link_args=["-lgomp"],
                                     )
 
 with open('README.rst', 'r', encoding='utf-8') as summary:
