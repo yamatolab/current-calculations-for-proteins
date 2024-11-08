@@ -399,9 +399,9 @@ def get_data_iter(setting, topology, target_atoms):
         tuple (cstep_crd, (new_crd, new_vel, pbc_crd))
         cstep_crd : int
             Step of shown coordinates and velocity.
-        new_crd : numpy.ma.MaskedArray
+        new_crd : np.ma.MaskedArray
             Coordinates of each atom at step cstep_crd.
-        new_vel : numpy.ma.MaskedArray
+        new_vel : np.ma.MaskedArray
             Velocity of each atom at step cstep_crd.
         pbc_crd : None or tuple of float
             Periodic boundary condition coordinates.
