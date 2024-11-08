@@ -174,9 +174,9 @@ class TwoBodyForceBase:
         self.__forces += mod.forces
 
         # store energy and forces
-        self.__ptype_to_energy[bond_type] = mod.energy
-        self.__ptype_to_forces[bond_type] = mod.forces
-        self.__ptype_to_displacement[bond_type] = mod.displacement
+        self.__ptype_to_energy[bond_type] = mod.energy.copy()
+        self.__ptype_to_forces[bond_type] = mod.forces.copy()
+        self.__ptype_to_displacement[bond_type] = mod.displacement.copy()
 
         #DEBUG
         # print('** {} forces **'.format(bond_type))
@@ -216,7 +216,7 @@ class TwoBodyForceBase:
         mod.calculate(table)
         energy = mod.energy.copy()
         forces = mod.forces.copy()
-        displacement = mod.displacement
+        displacement = mod.displacement.copy()
 
         # store energy, forces and distance
         if pottype not in self.__ptype_to_energy:
