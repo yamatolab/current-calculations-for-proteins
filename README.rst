@@ -2,7 +2,8 @@
 CURP: CURrent calculations in Proteins
 ======================================
 
-![PyPI Downloads](https://static.pepy.tech/badge/curp)
+.. image:: https://pepy.tech/badge/curp
+    :target: https://pepy.tech/project/curp
 
 **CURP** permits to compute inter-residue flow of energy or heat and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD). Energy flow data permit to picture an inter-residue Energy Exchange Network as a graph.
 
