@@ -566,7 +566,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         license_fp = os.path.join(SRC_DIR, "LICENSE-short.txt")
         with open(license_fp, "r", encoding="utf-8") as license_file:
             for line in license_file:
-                logger.info(" "*8 + str(line.strip().encode('utf-8')))
+                logger.info(" "*8 +line.strip())
         logger.info()
         logger.info()
 
