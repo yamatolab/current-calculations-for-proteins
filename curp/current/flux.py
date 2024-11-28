@@ -311,10 +311,10 @@ class HeatFlux:
         for t, tbfs, displ in zip(table, gen_tbfs, gen_displ):
             t1 = time.time()
             m_non.cal_nonbonded(tbfs, t, displ)
-            logger.info("inspect tbfs inside cal_nonbonded! of HeatFlux!")
-            logger.info("table: {}".format(t))
-            logger.info("tbfs: {}".format(tbfs))
-            logger.info("displ: {}".format(displ))
+            logger.debug("inspect tbfs inside cal_nonbonded! of HeatFlux!")
+            logger.debug("table: {}".format(t))
+            logger.debug("tbfs: {}".format(tbfs))
+            logger.debug("displ: {}".format(displ))
             t_total += time.time() - t1
             tt += time.time() - t1
             # print('flux body loop: ', time.time()-t1)
@@ -325,12 +325,12 @@ class HeatFlux:
         # get flux array copy from fortran module
         if self.__flag_atm:
             hflux_atm = m_non.hflux_atm.copy()
-            logger.info("hflux_atm: {}".format(hflux_atm))
+            logger.debug("hflux_atm: {}".format(hflux_atm))
         else:
             hflux_atm = None
         if self.__flag_grp:
             hflux_grp = m_non.hflux_grp.copy()
-            logger.info("hflux_grp: {}".format(hflux_grp))
+            logger.debug("hflux_grp: {}".format(hflux_grp))
         else:
             hflux_grp = None
 
