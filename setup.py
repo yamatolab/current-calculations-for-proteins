@@ -22,7 +22,7 @@ def ext_modules(config, _dir):
                 config.add_extension(ext_name,
                                      [f90_file],
                                      f2py_options=["--quiet"],
-                                     extra_f90_compile_args=["-fopenmp", "-O2", "-ffast-math"],
+                                     extra_f90_compile_args=["-fopenmp", "-O2"],
                                      extra_link_args=["-fopenmp"],
                                     )
 
