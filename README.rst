@@ -2,8 +2,14 @@
 CURP: CURrent calculations in Proteins
 ======================================
 
-**CURP** permits to compute inter-residue flow of energy or heat and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD). 
+.. image:: https://pepy.tech/badge/curp
+    :target: https://pepy.tech/project/curp
+
+**CURP** permits to compute inter-residue flow of energy or heat and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD). Energy flow data permit to picture an inter-residue Energy Exchange Network as a graph.
 Energy flow data permit to picture an inter-residue Energy Exchange Network as a graph.
+
+.. image:: https://pepy.tech/badge/curp
+    :target: https://pepy.tech/project/curp
 
 Within thermally fluctuating protein molecules under physiological conditions, tightly packed amino acid residues interact with each other through heat and energy exchanges. 
 Non-uniform pattern of heat flow in proteins are illustrated and characterized with a theoretical model based on “local heat conductivity” between each residue pair. 
