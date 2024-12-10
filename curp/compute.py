@@ -298,7 +298,7 @@ def init_current(setting, par):
     # Decide Writer.
     t_0 = time.time()
     
-    logger.info("length of gpair_table: {}".format(len(gpair_table)))
+    logger.info("length of nonbonded_table: {}".format(len(interact_table)))
 
     if par.is_root():
         from curp.current.writer import get_writer
@@ -566,7 +566,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         license_fp = os.path.join(SRC_DIR, "LICENSE-short.txt")
         with open(license_fp, "r", encoding="utf-8") as license_file:
             for line in license_file:
-                logger.info(" "*8 + str(line.strip().encode('utf-8')))
+                logger.info(" "*8 +line.strip())
         logger.info()
         logger.info()
 

@@ -463,8 +463,11 @@ def parse_config(config_filename=None):
                 outfile.write(body)
 
         outfile.seek(0)
-    print("Type outfile: ", type(outfile))
-    print(outfile)
+    
+    import curp.clog as logger
+    logger.debug("Type outfile: ", type(outfile))
+    logger.debug(outfile)
+    
     config = cp.SafeConfigParser()
 
     config.readfp(outfile)
