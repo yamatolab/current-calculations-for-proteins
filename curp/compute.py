@@ -623,9 +623,14 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
 
         if do_run:
             t_0 = time.time()
+            
+            use_fmm = setting.curp.coulomb_method == "fmm"
 
             ############################################################
-            results_iter = par.run(cal.run, data=data_iter)
+            if use_fmm:
+                results_iter = par.run(cal.run_fmm, data=data_iter)
+            else:
+                results_iter = par.run(cal.run, data=data_iter)
             ############################################################
 
     elif do_init and do_dynamics:

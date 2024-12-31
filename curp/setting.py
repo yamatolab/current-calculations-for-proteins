@@ -279,7 +279,7 @@ class Setting(SettingBase):
 
         coulomb_method = Choice(default='cutoff', require=False,
             desc='The method to calculate coulomb interaction.',
-            values=['cutoff',], # 'multipole'],
+            values=['cutoff', 'fmm'],
             value_type=String),
 
         coulomb_cutoff_method = Choice(default='atom', require=False,
