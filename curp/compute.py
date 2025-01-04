@@ -601,6 +601,8 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
                                          "heat-flux",
                                          "kinetic-flux")
     do_dynamics = setting.curp.method == "microcanonical"
+    
+    use_fmm = setting.curp.coulomb_method == "fmm"
 
     if do_init and do_current:
         # log
@@ -621,16 +623,18 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
             data_iter = None
         label_time_pairs += [("Data object parse", time.time()-t_0)]
 
-        if do_run:
+        if do_run and use_fmm:
             t_0 = time.time()
-            
-            use_fmm = setting.curp.coulomb_method == "fmm"
 
             ############################################################
-            if use_fmm:
-                results_iter = par.run(cal.run_fmm, data=data_iter)
-            else:
-                results_iter = par.run(cal.run, data=data_iter)
+            results_iter = par.run(cal.run_fmm, data=data_iter)
+            ############################################################
+
+        elif do_run and not use_fmm:
+            t_0 = time.time()
+
+            ############################################################
+            results_iter = par.run(cal.run, data=data_iter)
             ############################################################
 
     elif do_init and do_dynamics:
