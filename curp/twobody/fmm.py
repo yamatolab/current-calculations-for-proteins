@@ -268,7 +268,7 @@ class FMMCellMaker:
 
     #----------potential evaluation: particle-particle-----#
 
-    def evaluate(particles, p, i, cells, n_crit, theta):
+    def evaluate(self, particles, p, i, cells, n_crit, theta):
         
         """Evaluate the gravitational potential at a target point i, 
         caused by source particles cell p. If nleaf of cell p is less 
@@ -297,7 +297,7 @@ class FMMCellMaker:
                     
                     # near-field child cell
                     if cells[c].r > theta*r:
-                        evaluate(particles, c, i, cells, n_crit, theta)
+                        self.evaluate(particles, c, i, cells, n_crit, theta)
                     
                     # far-field child cell
                     else:
@@ -336,7 +336,7 @@ class FMMCellMaker:
         """
         
         for i in range(len(particles)):
-            evaluate(particles, 0, i, cells, n_crit, theta)
+            self.evaluate(particles, 0, i, cells, n_crit, theta)
 
 
 
