@@ -293,11 +293,9 @@ class Setting(SettingBase):
         coulomb_fmm_cell_contains = Int(default=10, require=False,
             desc='The max number of atoms that the a cell contains.'),
         
-        coulomb_fmm_cell_direct = Int(default=1, require=False,
-            desc='The max number of neighbor cells '
-                'that perform direct coulomb calculation.'
-                'If the value is 1, then the direct calculation is performed'
-                'only in the cell the target atom belongs to.'),
+        coulomb_fmm_direct_parm = Float(default=1, require=False,
+            desc='The parameter that is used to decide  '
+                'wethert to perform direct coulomb calculation.'),
         
         # vdw_method = Choice(default='cutoff', require=False,
         #     desc='The method to calculate van der Waals interaction.',
