@@ -26,6 +26,9 @@ class TwoBodyForceBase:
 
     def set_module(self, module):
         self.__mod = module
+        
+    def set_module_fmm(self, module):
+        self.__mod_fmm = module
 
     def get_module(self):
         return self.__mod
@@ -45,7 +48,13 @@ class TwoBodyForceBase:
 
         self._setup_coulomb14()
         self._setup_vdw14()
-        self._setup_coulomb()
+        
+        # choose coulomb method
+        if self.__setting.curp.coulomb_method == 'fmm':
+            self._setup_coulomb_fmm()
+        else: 
+            self._setup_coulomb()
+            
         self._setup_vdw()
 
     def cal_force(self, crd):
@@ -110,6 +119,12 @@ class TwoBodyForceBase:
         info = self.__tpl.get_coulomb_info()
         coulomb.charges = info['charges']
         coulomb.cutoff_length = self.__setting.curp.coulomb_cutoff_length
+        
+    def _setup_coulomb_fmm(self):
+        from curp.twobody.fmm import FMMCalculator as fmm
+        coulomb_fmm = self.__mod_fmm.coulomb
+        info = self.__tpl.get_coulomb_info()
+        # coulomb_fmm.charges = info['charges']
 
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
@@ -200,6 +215,10 @@ class TwoBodyForceBase:
 
     def cal_coulomb(self, table):
         return self._cal_nonbond(table, 'coulomb')
+    
+    def cal_coulomb_fmm(self, table):
+        import fmm
+        return fmm.calculate_coulomb(table)
 
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
@@ -336,6 +355,10 @@ class TwoBodyForce(TwoBodyForceBase):
         TwoBodyForceBase.__init__(self, topology, setting)
         from . import lib_amberbase
         self.set_module(lib_amberbase)
+        
+        if setting.coulomb_method == 'fmm':
+            from . import lib_fmm
+            self.set_module_fmm()
 
 
 if __name__ == '__main__':
