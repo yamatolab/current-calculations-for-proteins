@@ -268,9 +268,8 @@ class HeatFluxCalculator(base.FluxCalculator):
     def cal_coulomb_fmm(self, crd, vel):
         """Calculate the energy flux for the coulomb term using FMM method."""
 
-        table     = self.get_interact_table()
+        table     = self.get_interact_table_fmm()
         type_func = self.get_tbforce().cal_coulomb_fmm
-        cutoff    = self.get_setting().curp.coulomb_cutoff_length
 
         t0 = time.time()
         gen_tbfs = (type_func(t)['tbforces'] for t in table)
