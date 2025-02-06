@@ -279,6 +279,12 @@ def init_current(setting, par):
         gp = group_pair.GroupPair(gpair_table, gname_iatoms_pairs, natom)
         inttable = gp.get_inttable_with_gpair(inttable)
 
+        # Make table for fmm.
+        if setting.curp.coulomb_method == "fmm":
+            table_for_fmm = gp.get_inttable_with_gpair_for_fmm(inttable)
+        else:
+            table_for_fmm = None
+    
     interact_table = gen_tables(inttable)
 
     label_time_pairs += [("Interaction table", time.time()-t_0)]
@@ -292,7 +298,8 @@ def init_current(setting, par):
     cal.prepare(topology=topology, setting=setting,
                 target_atoms=target_atoms,
                 gname_iatoms_pairs=gname_iatoms_pairs,
-                interact_table=interact_table)
+                interact_table=interact_table,
+                table_for_fmm=table_for_fmm)
     label_time_pairs += [("calculator setting", time.time()-t_0)]
 
     # Decide Writer.
