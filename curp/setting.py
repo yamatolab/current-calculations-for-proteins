@@ -290,6 +290,15 @@ class Setting(SettingBase):
         coulomb_cutoff_length = Float(default=99.9, require=False,
             desc='The cutoff length for the coulomb interaction.'),
 
+        coulomb_fmm_cell_contains = Int(default=10, require=False,
+            desc='The max number of atoms that the a cell contains.'),
+        
+        coulomb_fmm_cell_direct = Int(default=1, require=False,
+            desc='The max number of neighbor cells '
+                'that perform direct coulomb calculation.'
+                'If the value is 1, then the direct calculation is performed'
+                'only in the cell the target atom belongs to.'),
+        
         # vdw_method = Choice(default='cutoff', require=False,
         #     desc='The method to calculate van der Waals interaction.',
         #     values=['cutoff', 'multipole'], value_type=String)
