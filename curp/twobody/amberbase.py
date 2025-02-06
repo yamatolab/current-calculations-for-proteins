@@ -36,8 +36,9 @@ class TwoBodyForceBase:
     def get_natom(self):
         return self.__natom
 
-    def setup(self, interact_table, check=False):
+    def setup(self, interact_table, table_for_fmm, check=False):
         self.__interact_table = interact_table
+        self.__table_for_fmm = table_for_fmm
         max_tbf = self.get_maxpair(interact_table)
         self._setup_init(max_tbf, check)
 
