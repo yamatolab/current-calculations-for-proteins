@@ -87,6 +87,13 @@ class GroupPair:
         new_table = new_table[:ntable].tolist()
         return it.InteractionTable(base_table=new_table)
 
+    def get_inttable_with_gpair_for_fmm(self, base_table):
+        table_with_gpair = self.__table_with_gpair
+        base_table = numpy.array(list(base_table))
+        # base_tableを展開して、かぶりがあるようにする
+        # base_tableとtable_with_gpairを比較して、両者が含まれるようなtableを返す
+        #  この時、iとjが一致してもよい(計算時に除外するため)
+
 def gen_compressed_iatms( iatoms ):
     """Convert: [1,2,3,6,7,8,...,100] => [(1,3),(6,100)]"""
 
