@@ -89,6 +89,25 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
         return flux_atm, flux_grp
 
+    def cal_coulomb_fmm(self, crd, vel):
+        """Calculate the energy flux for the coulomb term using fmm."""
+
+        table     = self.get_interact_table()
+        type_func = self.get_tbforce().cal_coulomb
+        cutoff    = self.get_setting().curp.coulomb_cutoff_length
+
+        t0 = time.time()
+        gen_tbfs = ( type_func(t)['tbforces'] for t in table )
+        flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table )
+
+        t1 = time.time()
+        dt_flux = self.fcal.dt
+
+        self.store_time('coulomb pairwise' , t1 - t0 - dt_flux)
+        self.store_time('coulomb flux' , dt_flux)
+
+        return flux_atm, flux_grp
+
     def cal_vdw(self, crd, vel):
         """Calculate the energy flux for the vdW term."""
 
@@ -250,7 +269,7 @@ class HeatFluxCalculator(base.FluxCalculator):
         """Calculate the energy flux for the coulomb term using FMM method."""
 
         table     = self.get_interact_table()
-        type_func = self.get_tbforce().cal_coulomb
+        type_func = self.get_tbforce().cal_coulomb_fmm
         cutoff    = self.get_setting().curp.coulomb_cutoff_length
 
         t0 = time.time()
