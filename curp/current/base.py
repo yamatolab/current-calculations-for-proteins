@@ -21,7 +21,7 @@ class CalculatorBase(TimeStore):
         pass
 
     def prepare(self, topology, setting, target_atoms,
-            gname_iatoms_pairs, interact_table, table_for_fmm):
+            gname_iatoms_pairs, gpair_table, interact_table):
 
         self.__tpl = topology
         self.__setting = setting
@@ -30,7 +30,7 @@ class CalculatorBase(TimeStore):
         from curp import twobody
         TwoBodyCalculator = twobody.get_calculator(setting.curp.potential)
         self.__tbf = TwoBodyCalculator(topology, setting)
-        self.__tbf.setup(interact_table, table_for_fmm, check=False)
+        self.__tbf.setup(interact_table, gname_iatoms_pairs, gpair_table, check=False)
 
         # get the number of atoms
         natom = self.get_tbforce().get_natom()
@@ -44,8 +44,6 @@ class CalculatorBase(TimeStore):
 
         # interaction table
         self.__interact_table = [ numpy.array(t) for t in interact_table]
-        if table_for_fmm is not None:
-            self.__interact_table_fmm = table_for_fmm
 
         # make a table to convert the atom index into the group index.
         iatm_to_igrp = numpy.zeros([natom])
@@ -69,7 +67,7 @@ class CalculatorBase(TimeStore):
 
     def get_gname_iatoms_pairs(self):
         return self.__gname_iatoms_pairs
-
+    
     def get_groupnames(self):
         return self.__gnames
 
@@ -85,9 +83,6 @@ class CalculatorBase(TimeStore):
     def get_interact_table(self):
         return self.__interact_table
     
-    def get_interact_table_fmm(self):
-        return self.__interact_table_fmm
-
 class CurrentCalculator(CalculatorBase):
 
     def __init__(self):
@@ -257,7 +252,7 @@ class FluxCalculator(CalculatorBase):
 
         # get twobody force object
         tbcal = self.get_tbforce()
-        tbcal.initialize(crd)
+        tbcal.initialize(crd, pbc)
 
         # gather the flux for each potential types.
         key_to_aflux = {} # flux for atoms
