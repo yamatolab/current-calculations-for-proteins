@@ -23,21 +23,21 @@ You can install python here_, or anaconda there_.
 .. _here: https://www.python.org/downloads/release/python-3613/
 .. _there: https://www.anaconda.com/download
 
-.. Install CURP via pip
-.. --------------------
+Install CURP via pip
+--------------------
 
-.. ::
+::
 
-..     pip install curp
+     pip install curp
 
-.. Get CURP from source code 
-.. -------------------------
+Get CURP from source code 
+-------------------------
 
 You can get the source code from this repository and build by running following command.
 
 ::
 
-    git clone -b versioning/2.0 https://github.com/yamatolab/current-calculations-for-proteins.git
+    git clone https://github.com/yamatolab/current-calculations-for-proteins.git
     cd current-calculations-for-proteins
     pip install .
 
