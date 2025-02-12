@@ -36,9 +36,8 @@ class TwoBodyForceBase:
     def get_natom(self):
         return self.__natom
 
-    def setup(self, interact_table, table_for_fmm, check=False):
+    def setup(self, interact_table, gname_iatom_pairs, gpair_table,  check=False):
         self.__interact_table = interact_table
-        self.__table_for_fmm = table_for_fmm
         max_tbf = self.get_maxpair(interact_table)
         self._setup_init(max_tbf, check)
 
@@ -52,7 +51,7 @@ class TwoBodyForceBase:
         
         # choose coulomb method
         if self.__setting.curp.coulomb_method == 'fmm':
-            self._setup_coulomb_fmm()
+            self._setup_coulomb_fmm(gname_iatom_pairs, gpair_table)
         else: 
             self._setup_coulomb()
             
@@ -121,8 +120,14 @@ class TwoBodyForceBase:
         coulomb.charges = info['charges']
         coulomb.cutoff_length = self.__setting.curp.coulomb_cutoff_length
         
-    def _setup_coulomb_fmm(self):
-        from curp.twobody.fmm import FMMCalculator as fmm
+    def _setup_coulomb_fmm(self, gname_iatom_pairs, gpair_table):
+        from . import fmm
+        n_crit = self.__setting.curp.coulomb_fmm_cell_contains
+        theta = self.__setting.curp.coulomb_fmm_theta
+        self.__fmm_base = fmm.FMMCalculatorBase(n_crit, theta, 
+                                                gname_iatom_pairs, gpair_table, 
+                                                self.__mod_fmm)
+        
         coulomb_fmm = self.__mod_fmm.coulomb
         info = self.__tpl.get_coulomb_info()
         # coulomb_fmm.charges = info['charges']
@@ -172,8 +177,10 @@ class TwoBodyForceBase:
 
         logger.info( 'The number of 1-4 interactions', len(i14_to_itbf))
 
-    def initialize(self, crd):
+    def initialize(self, crd, pbc):
         self.__mod.initialize(crd)
+        if self.__setting.curp.coulomb_method == 'fmm':
+            self.__fmm_base.initialize(crd, pbc)
         self.__forces   = numpy.zeros( [self.__natom, 3] )
         self.__ptype_to_energy = {}
         self.__ptype_to_forces = {}
@@ -218,8 +225,10 @@ class TwoBodyForceBase:
         return self._cal_nonbond(table, 'coulomb')
     
     def cal_coulomb_fmm(self, table):
-        import fmm
-        return fmm.calculate_coulomb(table)
+        from . import fmm
+        TableMaker = fmm.FMMTableMaker(crd)
+        cells = TableMaker.make_cells()
+        return fmm.FMMCalculator().cal_fmm(cells, crd)
 
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
