@@ -29,8 +29,7 @@ v1.2 (2016-XX-XX)
 
 v1.1 (2015-XX-XX)
 ------------------
-- Improved documentation and examples.
-- Minor bug fixes and optimizations.
+- Bug fixes.
 
 v1.0 (2014-XX-XX)
 ------------------
