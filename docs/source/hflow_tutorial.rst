@@ -371,8 +371,9 @@ format = ascii | netcdf
    Format of the energy flow data. (netcdf format is highly recommended.)
 
 decomp = no | yes
-   During the calculations, choose whether the energy is decomposed into different
-   components.
+   Flag whether decompose and output the total current/flux,
+   autocorrelation function and heat conductivity
+   to bonded, coulomb, and van der Waals interaction.
 
 output_energy = no | yes
    CURP is able to evaluate the energy using the atomic velocities and coordinates of the trajectory files. When set to "no", this energy value is not output. 
