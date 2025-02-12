@@ -9,20 +9,11 @@ class FMMCalculatorBase:
         self.__theta = theta
         self.__gnames_iatoms_pairs = gnames_iatoms_pairs
         self.__gpair_table = gpair_table
-        self.__target_list = self.make_target_list(self.__gnames_iatoms_pairs)
         # self.__mod_fmm = mod_fmm
          
     def initialize(self, crd, pbc):
         self.__mod_fmm.initialize(crd, pbc)
     
-    def make_target_list(self, gnames_iatoms_pairs):
-        
-        target_list = []
-        for gname, atoms in gnames_iatoms_pairs:
-            target_list.append(gname)
-            
-        return target_list
-
 ####################################################################################################################   
 
 class FMMCellMaker(FMMCalculatorBase):
@@ -36,7 +27,7 @@ class FMMCellMaker(FMMCalculatorBase):
         root = self.set_root_cell(crd, pbc)  # rcの値を読む
         
         # build tree
-        cells = self.build_all_tree(self.__gnames_iatoms_pairs, self.__target_list, root, crd, self.__n_crit)
+        cells = self.build_all_tree(self.__gnames_iatoms_pairs, root, crd, self.__n_crit)
         
         return cells
 
@@ -86,11 +77,11 @@ class FMMCellMaker(FMMCalculatorBase):
 
         return cell
     
-    def build_all_tree(self, group_atoms, target_list, root, crd, n_crit):
+    def build_all_tree(self, group_atoms, root, crd, n_crit):
         all_cells = []
-        for target in target_list:
-            particles = group_atoms[target]
-            all_cells.append(self._build_tree(particles, crd, root, n_crit))
+        for gname, atoms in group_atoms:
+            particles = list(atoms)
+            all_cells.append(gname, self._build_tree(particles, crd, root, n_crit))
         return all_cells
     
         
