@@ -7,7 +7,7 @@ Heat current analysis
 The thermal conductivity, :math:`\lambda`, is expressed in terms of the heat current autocorrelation function (HCACF) as:
 
 .. math::
-   \lambda = \frac{1}{3Vk_BT^2} \int_0^\infty \left\langle \mathbf{h}_(0) \cdot \mathbf{h}(t) \right\rangle dt.
+   \lambda = \frac{1}{3Vk_BT^2} \int_0^\infty \left\langle \mathbf{h}(0) \cdot \mathbf{h}(t) \right\rangle dt.
 
 The heat current, :math:`\mathbf{h}`, is written as a summation of interatomic heat current, :math:`\mathbf{h}_{ij}`, as:
 
