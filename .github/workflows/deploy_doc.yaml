@@ -18,7 +18,7 @@ jobs:
         python-version: 3.x
     
     - name: Install sphinx
-      run: pip install -U sphinx
+      run: pip install -U sphinx sphinx-rtd-theme
     
     - name: Build pages
       run: sphinx-build -b dirhtml -c docs/source docs/source docs/_build
