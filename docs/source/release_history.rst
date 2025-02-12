@@ -12,26 +12,39 @@ Release History
 
 v2.0 (2025-02-17)
 ------------------
+- Initial release of CURP v2 series.
 - Added support for Python 3.6.x.
 - Added `decomp` option to output heat flux decomposed into potential and kinetic terms.
 - Performance improvements when computing nonbonded components of heat flux.
 - Bug fixes.
 - Improved documentation.
 
-v1.3.1 (2018-XX-XX)
+v1.3.2 (2025-02-17)
 --------------------
 - Final release for Python 2.x series.
-- Minor bug fixes.
+- Added `decomp` option to output heat flux decomposed into potential and kinetic terms.
+- Performance improvements when computing nonbonded components of heat flux.
+- Bug fixes.
+- Improved documentation.
 
-v1.2 (2016-XX-XX)
+v1.3.1 (2022-01-07)
+--------------------
+- Minor fixes.
+
+v1.2 (2019-06-21)
 ------------------
 - Added new features for computing heat current and heat auto-correlation functions.
 
-v1.1 (2015-XX-XX)
+v1.1 (2019-03-13)
 ------------------
 - Bug fixes.
 
-v1.0 (2014-XX-XX)
+v1.0 (?)
+------------------
+- Initial major release of CURP.
+- [wip]
+
+v0.1 (2012)
 ------------------
 - Initial release of CURP.
-- Basic functionality for energy flow and atomic stress tensor calculations.
+- [wip]
