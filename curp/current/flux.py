@@ -93,8 +93,7 @@ class EnergyFluxCalculator(base.FluxCalculator):
         """Calculate the energy flux for the coulomb term using fmm."""
 
         table     = self.get_interact_table()
-        type_func = self.get_tbforce().cal_coulomb
-        cutoff    = self.get_setting().curp.coulomb_cutoff_length
+        type_func = self.get_tbforce().cal_coulomb_fmm
 
         t0 = time.time()
         gen_tbfs = ( type_func(t)['tbforces'] for t in table )
