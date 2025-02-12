@@ -9,21 +9,17 @@ class FMMCalculatorBase:
         self.__theta = theta
         self.__gnames_iatoms_pairs = gnames_iatoms_pairs
         self.__gpair_table = gpair_table
-        self.__target_list = self.make_target_list(self.__gpair_table)
+        self.__target_list = self.make_target_list(self.__gnames_iatoms_pairs)
         # self.__mod_fmm = mod_fmm
          
     def initialize(self, crd, pbc):
         self.__mod_fmm.initialize(crd, pbc)
     
-    def make_target_list(self, gpair_table):
+    def make_target_list(self, gnames_iatoms_pairs):
         
         target_list = []
-        for source, targets in gpair_table:
-            if source not in target_list:
-                target_list.append(source)
-            for target in targets:
-                if target not in target_list:
-                    target_list.append(target)
+        for gname, atoms in gnames_iatoms_pairs:
+            target_list.append(gname)
             
         return target_list
 
