@@ -2,36 +2,49 @@
 import numpy as np
 
 
-class FMMCalculator:
+class FMMCalculatorBase:
     
-    def __init__(self):
-        # from . import lib_fmm
-        # self.__mod_fmm = lib_fmm
-        pass
-        
-    def setup(self, info, table, n_crit=10, theta=0.5):
+    def __init__(self, n_crit, theta, gnames_iatoms_pairs, gpair_table):
         self.__n_crit = n_crit
         self.__theta = theta
-        self.__charge = info['charge']
-        self.table = table
-        # calculaterにchargeを渡しておく
-        
-    def initialize(self, particles):
-        # t ごとに実行
-        # 1. cellの初期化
-        # sourceとtargetにわける
-        # 
-        pass
+        self.__gnames_iatoms_pairs = gnames_iatoms_pairs
+        self.__gpair_table = gpair_table
+        self.__target_list = self.make_target_list(self.__gpair_table)
+        # self.__mod_fmm = mod_fmm
+         
+    def initialize(self, crd, pbc):
+        self.__mod_fmm.initialize(crd, pbc)
     
-    def run_fmm(self, particles):
-        self.initialize(particles)
+    def make_target_list(self, gpair_table):
         
-        
-        
+        target_list = []
+        for source, targets in gpair_table:
+            if source not in target_list:
+                target_list.append(source)
+            for target in targets:
+                if target not in target_list:
+                    target_list.append(target)
+            
+        return target_list
+
+####################################################################################################################   
+
+class FMMCellMaker(FMMCalculatorBase):
     
+    def __init__(self, crd, pbc):
+        self.initialize(crd, pbc)
+    
+    def make_cells(self, crd, pbc):
+        
+        # set root cell
+        root = self.set_root_cell(crd, pbc)  # rcの値を読む
+        
+        # build tree
+        cells = self.build_all_tree(self.__gnames_iatoms_pairs, self.__target_list, root, crd, self.__n_crit)
+        
+        return cells
 
-class FMMCellMaker:
-
+    
     def setup_cell(self):
         """The class for a cell.
     
@@ -51,37 +64,41 @@ class FMMCellMaker:
         
         """
         
-        self.__nleaf = 0                                        # number of leaves
-        self.__leaf = np.zeros(self.__n_crit, dtype=np.int)     # array of leaf index
-        self.__nchild = 0                                       # binary counter to keep track of empty cells
-        self.__child = np.zeros(8, dtype=np.int)                # array of child index
-        self.parent = 0                                         # index of parent cell
-        self.x = self.y = self.z = 0.                           # center of the cell
-        self.r = 0.                                             # radius of the cell
-        self.multipole = np.zeros(10, dtype=np.float)           # multipole array
+        cell = []
+        cell.nleaf = 0                                          # number of leaves
+        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)       # array of leaf index
+        cell.nchild = 0                                         # binary counter to keep track of empty cells
+        cell.child = np.zeros(8, dtype=np.int)                  # array of child index
+        cell.parent = 0                                         # index of parent cell
+        cell.cx = cell.cy = cell.cz = 0.                        # center of the cell
+        cell.r = 0.                                             # radius of the cell
+        cell.multipole = np.zeros((3,10), dtype=np.float)       # multipole array
 
-        charge = self.__charge
-        phi = self.__phi
+        return cell
         
+    def set_root_cell(self, crd, pbc):
         
-    def set_root_cell(self, particles, rc):
-        
-        self.__nleaf = 0                                        # number of leaves
-        self.__leaf = np.zeros(self.__n_crit, dtype=np.int)     # array of leaf index
-        self.__nchild = 0                                       # binary counter to keep track of empty cells
-        self.__child = np.zeros(8, dtype=np.int)                # array of child index
-        self.parent = 0                                         # index of parent cell
-        self.x = rc[0]
-        self.y = rc[1]
-        self.z = rc[2]
-        self.r = max(rc)                                # radius of the cell
-        self.multipole = np.zeros(10, dtype=np.float)   # multipole array
+        cell = []
+        cell.nleaf = 0                                          # number of leaves
+        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)       # array of leaf index
+        cell.nchild = 0                                         # binary counter to keep track of empty cells
+        cell.child = np.zeros(8, dtype=np.int)                  # array of child index
+        cell.parent = 0                                         # index of parent cell
+        cell.cx = cell.cy = cell.cz = self.__mod_fmm.hoge       # center of the cell
+        cell.r = self.__mod_fmm.huga                            # radius of the cell
+        cell.multipole = np.zeros((3,10), dtype=np.float)       # multipole array
 
-    def get_charge(self):
-        return self.__charge
+        return cell
+    
+    def build_all_tree(self, group_atoms, target_list, root, crd, n_crit):
+        all_cells = []
+        for target in target_list:
+            particles = group_atoms[target]
+            all_cells.append(self._build_tree(particles, crd, root, n_crit))
+        return all_cells
+    
         
-        
-    def build_tree(self, particles, root, n_crit):
+    def _build_tree(self, particles, crd, root, n_crit):
     
         """Construct a hierarchical octree to store the particles and return 
         the tree (list) of cells.
@@ -96,7 +113,7 @@ class FMMCellMaker:
         
         """
         # set root cell
-        cells = [root]       # initialize the cells list
+        cells = root       # initialize the cells list
         
         # build tree
         n = len(particles)
@@ -105,11 +122,12 @@ class FMMCellMaker:
             
             # traverse from the root down to a leaf cell
             curr = 0
-        
+            np = particles[i] - 1  # particle`s crd index
+            
             while cells[curr].nleaf >= n_crit:
                 cells[curr].nleaf += 1
-                octant = (particles[i].x > cells[curr].x) + ((particles[i].y > cells[curr].y) << 1) \
-                    + ((particles[i].z > cells[curr].z) << 2)
+                octant = (crd[np].x > cells[curr].cx) + ((crd[np].y > cells[curr].cy) << 1) \
+                    + ((crd[np].z > cells[curr].z) << 2)
                 
                 # if there is no child cell in the particles octant, then create one
                 if not cells[curr].nchild & (1 << octant):
@@ -123,7 +141,7 @@ class FMMCellMaker:
             
             # check whether to split or not
             if cells[curr].nleaf >= n_crit:
-                self.split_cell(particles, curr, cells, n_crit)
+                self.split_cell(crd, np, curr, cells, n_crit)
         
         return cells
 
@@ -148,10 +166,10 @@ class FMMCellMaker:
         c = len(cells) - 1
         
         # geometry relationship between parent and child
-        cells[c].r = cells[p].r / 2
-        cells[c].x = cells[p].x + cells[c].r * ((octant & 1) * 2 - 1)
-        cells[c].y = cells[p].y + cells[c].r * ((octant & 2) - 1    )
-        cells[c].z = cells[p].z + cells[c].r * ((octant & 4) / 2 - 1)
+        cells[c].r  = cells[p].r / 2
+        cells[c].cx = cells[p].cx + cells[c].r * ((octant & 1) * 2 - 1)
+        cells[c].cy = cells[p].cy + cells[c].r * ((octant & 2) - 1    )
+        cells[c].cz = cells[p].cz + cells[c].r * ((octant & 4) / 2 - 1)
         
         # establish mutual reference in the cells list
         cells[c].parent = p
@@ -159,7 +177,7 @@ class FMMCellMaker:
         cells[p].nchild = (cells[p].nchild | (1 << octant))
 
 
-    def split_cell(self, particles, p, cells, n_crit):
+    def split_cell(self, crd, np, p, cells, n_crit):
         
         """Loop in parent p's leafs and reallocate the particles to subcells. 
         If a subcell has not been created in that octant, create one using add_child. 
@@ -175,8 +193,8 @@ class FMMCellMaker:
         # loop in the particles stored in the parent cell that you want to split
         for l in cells[p].leaf:
             
-            octant = (particles[l].x > cells[p].x) + ((particles[l].y > cells[p].y) << 1) \
-                + ((particles[l].z > cells[p].z) << 2)   # finds the particle's octant
+            octant = (crd[l].x > cells[p].x) + ((crd[l].y > cells[p].y) << 1) \
+                    + ((crd[l].z > cells[p].z) << 2)   # finds the particle's octant
         
             # if there is not a child cell in the particles octant, then create one
             if not cells[p].nchild & (1 << octant):
@@ -189,8 +207,29 @@ class FMMCellMaker:
             
             # check if the child reach n_crit
             if cells[c].nleaf >= n_crit:
-                self.split_cell(particles, c, cells, n_crit)
+                self.split_cell(crd, c, cells, n_crit)
 
+
+###################################### Calculator ##########################################################################
+
+#TODO
+class FMMCellCalculator(FMMCalculatorBase):
+
+    def __init__(self):
+        pass
+        
+    def cal_fmm(self, cells, crd):
+        
+        # get multipole arrays
+        multipoles = [self.get_multipole(crd, 0, cells[i], self.__target_list[i], self.__n_crit) for i in range(len(cells))]
+        
+        # upward sweep
+        self.upward_sweep(cells)
+
+        # evaluate potential
+        self.eval_potential(crd, cells, self.__n_crit, self.__theta)
+        
+        return 
 
     def get_multipole(self, particles, p, cells, leaves, n_crit):
     
@@ -216,9 +255,9 @@ class FMMCellMaker:
             # loop in leaf particles, do P2M
             for i in range(cells[p].nleaf):
                 l = cells[p].leaf[i]
-                dx, dy, dz = cells[p].x-particles[l].x, \
-                            cells[p].y-particles[l].y, \
-                            cells[p].z-particles[l].z
+                dx, dy, dz = cells[p].cx-particles[l].x, \
+                            cells[p].cy-particles[l].y, \
+                            cells[p].cz-particles[l].z
                 
                 cells[p].multipole += particles[l].m * \
                                     np.array((1, dx, dy, dz,\
@@ -265,8 +304,6 @@ class FMMCellMaker:
         for c in range(len(cells)-1, 0, -1):
             p = cells[c].parent
             self.M2M(p, c, cells)
-
-    #----------potential evaluation: particle-particle-----#
 
     def evaluate(self, particles, p, i, cells, n_crit, theta):
         
@@ -339,4 +376,16 @@ class FMMCellMaker:
             self.evaluate(particles, 0, i, cells, n_crit, theta)
 
 
+####################################################################################################################
+
+def check_setting(setting):
+    """Check setting parameters for FMM calculation."""
+
+    if setting.curp.method != 'energy-flux' or 'heat-flux':
+        raise ValueError('The method should be "energy-flux" or "heat-flux"')
+    else:
+        if setting.curp.flux_grain != 'group':
+            raise ValueError('The flux grain should be "group"')
+        else:
+            return True
 
