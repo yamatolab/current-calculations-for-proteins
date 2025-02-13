@@ -43,6 +43,7 @@ def run_setup():
             trajectory",
         long_description=LONG_DESCRIPTION,
         long_description_content_type='text/x-rst',
+        python_requires=">3.5,<3.7",
         url=("https://github.com/yamatolab/current-calculations-for-proteins"),
         classifiers=[
             "Development Status :: 5 - Production/Stable",
@@ -59,17 +60,19 @@ def run_setup():
             ],
 
         install_requires=["numpy>=1.11.2,<1.17",
-                          "nose",
+                          "nose==1.3.7",
                           "mpi4py>=1.2",
-                          "benchmarker",
-                          "pygraphviz<1.6",
-                          "netCDF4>=1.2.4"],
+                          "pygraphviz>1.2,<1.6",
+                          "netcdf4>=1.4.2,<1.7"],
+        
+        extras_require={
+            "dev": ["benchmarker>=4.0,<5",]
+        },
 
         packages=setuptools.find_packages(),
 
         package_data={'curp':['volume/random20.pdb.gz']},
-
-        #python_requires=">=2.7, <3.0",
+        
         entry_points={
             "console_scripts": [
                 "curp = curp.console:main",
