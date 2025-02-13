@@ -24,6 +24,11 @@ The system should be working under openMPI.
 Installation
 ============
 
+.. note::
+
+   CURP requires Numpy version 1.11.2 ~ 1.16.x to build package before installation.
+   Please install Numpy before installation.
+
 Pip
 ---
 
