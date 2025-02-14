@@ -10,6 +10,8 @@ import setuptools
 from numpy.distutils.core import setup
 from numpy.distutils.misc_util import Configuration
 
+from .curp._version import __version__
+
 def ext_modules(config, _dir):
     """Fetch f90 files in src and automatically create an extension"""
     pattern = "*.f90"
@@ -36,7 +38,7 @@ def run_setup():
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
     setup(
         name="Curp",
-        version="2.0",
+        version=__version__,
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",
         description="Inter-residue Current calculation in Proteins from MD \
