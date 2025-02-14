@@ -1,9 +1,9 @@
 ***************************************************************
         CURrent calculation for Proteins (CURP)
-                   version 1.3
-              Release date: Oct 1, 2021.
+                   version 2.0
+              Release date: Feb. 21, 2025.
 
-COPYRIGHT Ⓒ 2012, 2013, 2014, 2015-2017, 2018-2021.
+COPYRIGHT Ⓒ 2012-2025.
 Yamato Laboratory, Nagoya University. All rights reserved.
 
 URL: https://www.curp.jp
