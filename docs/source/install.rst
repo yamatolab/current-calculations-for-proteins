@@ -34,6 +34,11 @@ Pip
 
 Run ``pip install Curp`` or any flavor of pip (``pip install --user curp``, ``pipenv install curp``, ...) 
 
+Latest development version
+--------------------------
+Run
+``pip install git+https://github.com/yamatolab/current-calculations-for-proteins.git@develop``
+
 Git
 ---
 

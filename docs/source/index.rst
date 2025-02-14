@@ -3,17 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-CURP (CURrent calculation for Proteins) document v2.0 (2025)
+CURP (CURrent calculation for Proteins) document ver. |latest-version| (2025)
 ============================================================
 
 .. image:: curp_logo.png
    :align: center
 
-.. raw:: html
 
-   <div class="release-history-link">
-       <a href="release_history.html">View Release History</a>
-   </div>
+|latest-release-message|
 
 .. toctree::
    :maxdepth: 2
