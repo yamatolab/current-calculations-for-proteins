@@ -6,11 +6,15 @@ import os
 import fnmatch
 
 import setuptools
+import sys
+import logging
 
-from numpy.distutils.core import setup
-from numpy.distutils.misc_util import Configuration
+logging.basicConfig(level=logging.INFO)
+logger  = logging.getLogger(__name__)
+logger.addHandler(logging.FileHandler("setup.log"))
 
-from .curp._version import __version__
+sys.path.append("./curp/")
+from _version import __version__
 
 def ext_modules(config, _dir):
     """Fetch f90 files in src and automatically create an extension"""
@@ -25,7 +29,7 @@ def ext_modules(config, _dir):
                                      [f90_file],
                                      f2py_options=["--quiet"],
                                      extra_f90_compile_args=["-O1", "-fopenmp"],
-									 extra_link_args=["-lgomp"],
+                                     extra_link_args=["-lgomp"],
                                     )
 
 with open('README.rst', 'r', encoding='utf-8') as summary:
@@ -33,6 +37,11 @@ with open('README.rst', 'r', encoding='utf-8') as summary:
 
 def run_setup():
     """Setup"""
+    from numpy.distutils.core import setup
+    from numpy.distutils.misc_util import Configuration
+    
+    logger.info("Running setup...")
+
     config = Configuration(None, '', '')
     ext_modules(config, "curp")
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
@@ -66,6 +75,8 @@ def run_setup():
                           "mpi4py>=1.2",
                           "pygraphviz>1.2,<1.6",
                           "netcdf4>=1.4.2,<1.7"],
+        
+        setup_requires = ["numpy>1.11.2,<1.17"],
         
         extras_require={
             "dev": ["benchmarker>=4.0,<5",]
