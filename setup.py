@@ -7,11 +7,6 @@ import fnmatch
 
 import setuptools
 import sys
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger  = logging.getLogger(__name__)
-logger.addHandler(logging.FileHandler("setup.log"))
 
 sys.path.append("./curp/")
 from _version import __version__
@@ -40,8 +35,6 @@ def run_setup():
     from numpy.distutils.core import setup
     from numpy.distutils.misc_util import Configuration
     
-    logger.info("Running setup...")
-
     config = Configuration(None, '', '')
     ext_modules(config, "curp")
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
