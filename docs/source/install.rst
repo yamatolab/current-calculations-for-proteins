@@ -26,7 +26,7 @@ Installation
 
 .. note::
 
-   CURP requires Numpy version 1.11.2 ~ 1.16.x to build package before installation.
+   CURP version 1.x requires Numpy version 1.11.2 ~ 1.16.x to build package before installation.
    Please install Numpy before installation.
 
 Pip

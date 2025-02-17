@@ -10,7 +10,7 @@ Release History
    made in versions v2.0 and later. 
    It is recommended to use the CURP v2 series.
 
-v2.0 (2025-02-17)
+v2.0 (2025-02-21)
 ------------------
 - Initial release of CURP v2 series.
 - Added support for Python 3.6.x.
@@ -19,7 +19,7 @@ v2.0 (2025-02-17)
 - Bug fixes.
 - Improved documentation.
 
-v1.3.2 (2025-02-17)
+v1.3.2 (2025-02-21)
 --------------------
 - Final release for Python 2.x series.
 - Added `decomp` option to output heat flux decomposed into potential and kinetic terms.
