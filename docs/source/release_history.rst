@@ -39,12 +39,13 @@ v1.1 (2019-03-13)
 ------------------
 - Bug fixes.
 
-v1.0 (?)
+v1.0 (2015)
 ------------------
-- Initial major release of CURP.
-- [wip]
+- Initial major release of CURP
+- Calculations of inter-residue energy flow and its autocorrelation function
+- Analysis of energy exchange network (EEN) model
 
 v0.1 (2012)
 ------------------
+- Atomic stress tensor analysis of proteins
 - Initial release of CURP.
-- [wip]
