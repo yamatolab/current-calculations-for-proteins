@@ -24,3 +24,6 @@ jobs:
       - name: Build wheels using cibuildwheel
         run: |
           python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD: cp36-*
+          CIBW_BUILD_VERBOSITY: 1
