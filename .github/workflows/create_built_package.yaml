@@ -19,11 +19,8 @@ jobs:
     
       - name: Install building dependencies (cibuildwheel, etc.)
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install -U pip setuptools wheel
           python -m pip install -U cibuildwheel
 
-      - name: Build wheel using cibuildwheel
+      - name: Build wheels using cibuildwheel
         run: |
           python -m cibuildwheel --output-dir wheelhouse
