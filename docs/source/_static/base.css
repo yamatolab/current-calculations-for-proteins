@@ -1,0 +1,56 @@
+h1, h2, h3, h4, h5, h6, p, a, span, div, li, ol, ul {
+    font-size: 1.0rem;
+    color: #181818;
+}
+
+h1 {
+    color: #364e96;/*文字色*/
+    padding: 0.5em 0;/*上下の余白*/
+    border-top: solid 3px #364e96;/*上線*/
+    border-bottom: solid 3px #364e96;/*下線*/
+}
+
+h2 {
+    padding: 0.4em 0.5em;/*文字の上下 左右の余白*/
+    color: #494949;/*文字色*/
+    background: #f4f4f4;/*背景色*/
+    border-left: solid 5px #7db4e6;/*左線*/
+    border-bottom: solid 3px #d7d7d7;/*下線*/
+}
+
+h3 {
+    /*線の種類（実線） 太さ 色*/
+    border-bottom: solid 3px black;
+}
+
+/* Custom styles for attention directive */
+div.attention {
+    background-color: #aca497; /* Light yellow background */
+    border-left: 4px solid #ffa500; /* Orange left border */
+    padding: 10px; /* Padding inside the box */
+    margin-bottom: 20px; /* Space below the box */
+    font-weight: bold; /* Bold text */
+    color: #333; /* Text color */
+}
+
+/* Custom styles for release history link */
+.release-history-link {
+    /* text-align: center; */
+    margin: 20px 0;
+}
+
+.release-history-link a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #364e96; /* gradient bg color orange to red to blue */
+    background: linear-gradient(to right, #ea9800, #e30000, #364e96);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.release-history-link a:hover {
+    background-color: #2a3d73;
+} 
