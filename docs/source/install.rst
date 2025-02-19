@@ -19,7 +19,7 @@ Mac
 
 *  OS Version: Mavericks or Yosemite with XCode 6.1
 
-CURP runs on Python 3.6 and requires numpy to be installed.
+CURP runs on Python 3.6 and requires Numpy to be installed.
 The system should be working under OpenMPI.
 
 Installation
@@ -46,7 +46,7 @@ you can create a virtual environment with the required dependencies using conda:
 
 .. code-block:: bash
 
-   conda create -n curp-v2 --channel conda-forge python=3.6 numpy netcdf4 openmpi gfortran_linux-64
+   conda create -n curp-v2 python=3.6 pygraphviz mpi4py netcdf4
 
 Activate the environment and install CURP:
 
