@@ -12,7 +12,7 @@ class FMMCalculatorBase:
         # self.__mod_fmm = mod_fmm
          
     def initialize(self, crd, pbc):
-        self.__mod_fmm.initialize(crd, pbc)
+        self.__mod_fmm.initialize(self.__natom, crd, pbc)
     
 ####################################################################################################################   
 
@@ -52,28 +52,30 @@ class FMMCellMaker(FMMCalculatorBase):
         """
         
         cell = []
-        cell.nleaf = 0                                          # number of leaves
-        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)       # array of leaf index
-        cell.nchild = 0                                         # binary counter to keep track of empty cells
-        cell.child = np.zeros(8, dtype=np.int)                  # array of child index
-        cell.parent = 0                                         # index of parent cell
-        cell.cx = cell.cy = cell.cz = 0.                        # center of the cell
-        cell.r = 0.                                             # radius of the cell
-        cell.multipole = np.zeros((3,10), dtype=np.float)       # multipole array
+        cell.nleaf = 0                                                  # number of leaves
+        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)               # array of leaf index
+        cell.nchild = 0                                                 # binary counter to keep track of empty cells
+        cell.child = np.zeros(8, dtype=np.int)                          # array of child index
+        cell.parent = 0                                                 # index of parent cell
+        cell.rc = np.zeros(3)                                           # center of the cell
+        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]                       # center of the cell
+        cell.r = 0.                                                     # radius of the cell
+        cell.multipole = np.zeros((3,10), dtype=np.float)               # multipole array
 
         return cell
         
     def set_root_cell(self, crd, pbc):
         
         cell = []
-        cell.nleaf = 0                                          # number of leaves
-        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)       # array of leaf index
-        cell.nchild = 0                                         # binary counter to keep track of empty cells
-        cell.child = np.zeros(8, dtype=np.int)                  # array of child index
-        cell.parent = 0                                         # index of parent cell
-        cell.cx = cell.cy = cell.cz = self.__mod_fmm.hoge       # center of the cell
-        cell.r = self.__mod_fmm.huga                            # radius of the cell
-        cell.multipole = np.zeros((3,10), dtype=np.float)       # multipole array
+        cell.nleaf = 0                                                  # number of leaves
+        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)               # array of leaf index
+        cell.nchild = 0                                                 # binary counter to keep track of empty cells
+        cell.child = np.zeros(8, dtype=np.int)                          # array of child index
+        cell.parent = 0                                                 # index of parent cell
+        cell.rc = self.__mod_fmm.cal_rc                                 # center of the cell
+        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]                       # center of the cell
+        cell.r = self.__mod_fmm.huga                                    # radius of the cell
+        cell.multipole = np.zeros((3,10), dtype=np.float)               # multipole array
 
         return cell
     
@@ -203,12 +205,12 @@ class FMMCellMaker(FMMCalculatorBase):
 class FMMCellCalculator(FMMCalculatorBase):
 
     def __init__(self):
-        pass
+        self.__leaves = []
         
     def cal_fmm(self, cells, crd):
         
         # get multipole arrays
-        multipoles = [self.get_multipole(crd, 0, cells[i], self.__target_list[i], self.__n_crit) for i in range(len(cells))]
+        multipoles = [self.get_multipole(crd, 0, cells[i], self.__leaves, self.__n_crit) for i in range(len(cells))]
         
         # upward sweep
         self.upward_sweep(cells)
