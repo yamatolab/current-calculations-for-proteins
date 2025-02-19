@@ -2,8 +2,8 @@ name: Create built CURP package (wheel files) for distribution
 
 on:
   push:
-    tags:
-      - test*
+    branches:
+      - feature/generate-built-package-automatically
 
 jobs:
   manylinux-build:
