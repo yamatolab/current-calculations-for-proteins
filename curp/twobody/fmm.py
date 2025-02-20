@@ -58,7 +58,7 @@ class FMMCellMaker(FMMCalculatorBase):
         cell.rc = np.zeros(3)                                           # center of the cell
         cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]                       # center of the cell
         cell.r = 0.                                                     # radius of the cell
-        cell.multipole = np.zeros((3,10), dtype=np.float)               # multipole array
+        cell.multipole = np.zeros((10), dtype=np.float)               # multipole array
 
         return cell
         
@@ -73,7 +73,7 @@ class FMMCellMaker(FMMCalculatorBase):
         cell.rc = self.__mod_fmm.cal_rc(particles)                      # center of the cell
         cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]  # center of the cell
         cell.r = self.__mod_fmm.huga                                    # radius of the cell
-        cell.multipole = np.zeros((3,10), dtype=np.float)               # multipole array
+        cell.multipole = np.zeros((10), dtype=np.float)               # multipole array
 
         return cell
     
