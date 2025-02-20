@@ -9,6 +9,7 @@ class FMMCalculatorBase:
         self.__theta = theta
         self.__gnames_iatoms_pairs = gnames_iatoms_pairs
         self.__gpair_table = gpair_table
+        self.__gname = []
         # self.__mod_fmm = mod_fmm
          
     def initialize(self, crd, pbc):
@@ -23,11 +24,8 @@ class FMMCellMaker(FMMCalculatorBase):
     
     def make_cells(self, crd, pbc):
         
-        # set root cell
-        root = self.set_root_cell(crd, pbc)  # rcの値を読む
-        
         # build tree
-        cells = self.build_all_tree(self.__gnames_iatoms_pairs, root, crd, self.__n_crit)
+        cells = self.build_all_tree(self.__gnames_iatoms_pairs, crd, self.__n_crit)
         
         return cells
 
@@ -64,7 +62,7 @@ class FMMCellMaker(FMMCalculatorBase):
 
         return cell
         
-    def set_root_cell(self, crd, pbc):
+    def set_root_cell(self, particles):
         
         cell = []
         cell.nleaf = 0                                                  # number of leaves
@@ -72,18 +70,22 @@ class FMMCellMaker(FMMCalculatorBase):
         cell.nchild = 0                                                 # binary counter to keep track of empty cells
         cell.child = np.zeros(8, dtype=np.int)                          # array of child index
         cell.parent = 0                                                 # index of parent cell
-        cell.rc = self.__mod_fmm.cal_rc                                 # center of the cell
-        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]                       # center of the cell
+        cell.rc = self.__mod_fmm.cal_rc(particles)                      # center of the cell
+        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]  # center of the cell
         cell.r = self.__mod_fmm.huga                                    # radius of the cell
         cell.multipole = np.zeros((3,10), dtype=np.float)               # multipole array
 
         return cell
     
-    def build_all_tree(self, group_atoms, root, crd, n_crit):
+    def build_all_tree(self, group_atoms, crd, n_crit):
         all_cells = []
         for gname, atoms in group_atoms:
             particles = list(atoms)
-            all_cells.append(gname, self._build_tree(particles, crd, root, n_crit))
+            root_cell = self.set_root_cell(particles)
+            
+            all_cells.append(gname, self._build_tree(particles, crd, root_cell, n_crit))
+            self.__gname.append(gname)
+            
         return all_cells
     
         
