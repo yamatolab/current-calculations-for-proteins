@@ -1,3 +1,3 @@
 [build-system]
-requires = ["setuptools", "wheel", "numpy==1.16"]
+requires = ["setuptools", "wheel", "numpy==1.16", "mpi4py", "netCDF4", "pygraphviz"]
 build-backend = "setuptools.build_meta" 

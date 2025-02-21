@@ -30,6 +30,10 @@ jobs:
             echo "export PATH=\"$(brew --prefix gcc)/bin:\$PATH\"" >> $GITHUB_ENV
           fi
 
+      - name: Install auditwheel
+        run: |
+          pip install auditwheel
+
       - name: Verify gfortran installation
         run: |
           gfortran --version
@@ -41,7 +45,11 @@ jobs:
           CIBW_BUILD: cp36-*
           CIBW_BUILD_VERBOSITY: 1
         with:
-          output-dir: ./dist
+          output-dir: ./temp
+
+      - name: Include external dependencies
+        run: |
+          auditwheel repair ./temp/*.whl -w ./dist
 
       - name: Upload artifacts to dist/ directory
         uses: actions/upload-artifact@v4
