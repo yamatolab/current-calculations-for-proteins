@@ -3,7 +3,7 @@ name: Create built CURP package (wheel files) for PyPI distribution
 on:
   push:
     tags:
-      - "v*"
+      - "release-test/*"
 
 jobs:
   build_wheels:
