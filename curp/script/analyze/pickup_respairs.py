@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import numpy
+import numpy as np
 
 from curp import get_tpl
 from curp.script.conv_trj import gen_trj
@@ -25,7 +25,7 @@ def pickup_respairs(trj_fns, input_trj_fmt, prmtop_fn, prmtop_fmt, interval=1,
     # Generate residue group
     res_info  = tpl.get_residue_info()
     atom_info = tpl.get_atom_info()
-    rname_iatoms_pairs = list( (rname, list(numpy.array(iatoms)))
+    rname_iatoms_pairs = list( (rname, list(np.array(iatoms)))
             for rname, iatoms in gen_residue_group(
                 res_info, atom_info, name_fmt=format))
 
@@ -41,7 +41,7 @@ def pickup_respairs(trj_fns, input_trj_fmt, prmtop_fn, prmtop_fmt, interval=1,
     res_beg_end_pairs = [ (min(iatoms), max(iatoms))
             for rname, iatoms in rname_iatoms_pairs ]
 
-    pickup.res_beg_end_pairs = numpy.array(res_beg_end_pairs)
+    pickup.res_beg_end_pairs = np.array(res_beg_end_pairs)
     pickup.cutoff2 = cutoff2
     if cutoff_method == 'com':
         pickup.cutoff_method = 1
@@ -186,8 +186,8 @@ def gen_respair_table(crd, resnames, rname_iatoms_pairs, cutoff_method,cutoff2):
 def is_com(cutoff2):
 
     def _judge(crd_i, crd_j):
-        com_i = numpy.sum(crd_i, 0)
-        com_j = numpy.sum(crd_j, 0)
+        com_i = np.sum(crd_i, 0)
+        com_j = np.sum(crd_j, 0)
         return cal_dist2(com_i, com_j) <= cutoff2
 
     return _judge

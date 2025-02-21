@@ -11,14 +11,14 @@ StressTensorクラス
 
    import current
    StressTensor = current.current.StressTensor
-   import numpy
+   import numpy as np
 
 例えば、2粒子系の場合を考えます。
 各パラメータを以下のように与えると、
 
 .. doctest:: stress_tensor
 
-   >>> vel = numpy.array([[0.11,0.08,-0.02], [0.21,-0.10,0.05]])
+   >>> vel = np.array([[0.11,0.08,-0.02], [0.21,-0.10,0.05]])
    >>> masses  = [1.08, 1.08]
    >>> volumes = [1.2, 1.4]
    >>> scal = StressTensor()
@@ -32,8 +32,8 @@ StressTensorクラス
 
 .. doctest:: stress_tensor
 
-   >>> crd = numpy.array([[1.0, 1.5, -0.5], [2.2, -0.1, 0.3]])
-   >>> tbfs = numpy.array([1, 1, [0.5, 0.3, 0.2]])
+   >>> crd = np.array([[1.0, 1.5, -0.5], [2.2, -0.1, 0.3]])
+   >>> tbfs = np.array([1, 1, [0.5, 0.3, 0.2]])
 
    .. >>> volumes = [1.2, 1.4]
    .. >>> scal = StressTensor()

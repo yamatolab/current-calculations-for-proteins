@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 from __future__ import print_function
 import sys
-import numpy
+import numpy as np
 
 class InvalidNumberPairs(Exception): pass
 
@@ -46,10 +46,10 @@ def summarize_tc(tc_fps, **kwds):
             raise InvalidNumberPairs(msg
                     .format(npair, len(pairs), fp))
 
-    tc_ary = numpy.array(ipair_to_tc_ary)
+    tc_ary = np.array(ipair_to_tc_ary)
 
-    tc_avg = numpy.average(tc_ary, 0)
-    tc_rms = numpy.std(tc_ary, 0)
+    tc_avg = np.average(tc_ary, 0)
+    tc_rms = np.std(tc_ary, 0)
 
     write_tc(tc_avg, pairs, tc_rms)
 

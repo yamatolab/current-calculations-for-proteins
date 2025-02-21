@@ -2,7 +2,7 @@ from nose.tools import *
 
 
 import os, sys
-import numpy
+import numpy as np
 topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if topdir not in sys.path:
     sys.path.insert(0, topdir)
@@ -83,7 +83,7 @@ tbcal = TwoBodyForce(tpl, DummySetting())
 tbcal.setup()
 
 def cal_bond(r_i, r_j ,l_eq, kb):
-    l2 = numpy.dot(r1, r2)
+    l2 = np.dot(r1, r2)
     return kb * l2
 
 # def cal_angle(r_i, r_j, r_k, theta_eq, kt):
@@ -99,7 +99,7 @@ class TestAmber99:
 
         two_atoms    = [(1,2), (1,3), (4,5)]
         # initialize with coordinate
-        crd = numpy.array(
+        crd = np.array(
             [[1.0, 2.0, 3.0],
              [2.0, 1.0, 1.5],
              [3.0, 3.0, 3.0],
@@ -189,7 +189,7 @@ class TestAmber99:
     def test_angle(self):
 
         # initialize with coordinate
-        crd = numpy.array(
+        crd = np.array(
             [[1.0, 2.0, 3.0],
              [2.0, 1.0, 1.5],
              [3.0, 3.0, 3.0],
@@ -202,7 +202,7 @@ class TestAmber99:
     def test_torsion(self):
 
         # initialize with coordinate
-        crd = numpy.array(
+        crd = np.array(
             [[1.0, 2.0, 3.0],
              [2.0, 1.0, 1.5],
              [3.0, 3.0, 3.0],
@@ -215,7 +215,7 @@ class TestAmber99:
     def test_improper(self):
 
         # initialize with coordinate
-        crd = numpy.array(
+        crd = np.array(
             [[1.0, 2.0, 3.0],
              [2.0, 1.0, 1.5],
              [3.0, 3.0, 3.0],
@@ -235,7 +235,7 @@ class TestAmber99:
         res = tbcal.cal_vdw(table)
         tbcal.output_nonbonded(res, 'vdw', table)
 
-# # crd = numpy.array(
+# # crd = np.array(
 # #     [[2.0, 3.0, 4.1],
 # #      [3.0, 2.0, 2.5],
 # #      [4.0, 4.0, 4.0],
@@ -250,7 +250,7 @@ class TestAmber99:
 # # with Benchmarker(width=20) as bm:
 
 # #     with bm('setup'):
-# #         crd = numpy.array(
+# #         crd = np.array(
 # #             [[2.0, 3.0, 4.1],
 # #              [3.0, 2.0, 2.5],
 # #              [4.0, 4.0, 4.0],

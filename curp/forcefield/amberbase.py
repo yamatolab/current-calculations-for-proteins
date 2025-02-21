@@ -3,7 +3,7 @@ from __future__ import print_function
 import os
 import sys
 from abc import abstractmethod, abstractproperty, ABCMeta
-import numpy
+import numpy as np
 
 # curp package
 import curp.table.interact_table as it
@@ -134,7 +134,7 @@ class ConverterPrintable(object):
         n = len(idx_to_ipair)
         logger.info(' The number of indices = {}'.format(n))
 
-        if len(numpy.shape(idx_to_ipair)) == 1:
+        if len(np.shape(idx_to_ipair)) == 1:
             ncol = 1
         else:
             ncol = len(idx_to_ipair[0])
@@ -201,7 +201,7 @@ class TableMaker:
     def get_i14_to_ipair(self):
         return self._get_idx_to_ipair('14')
         # if len(self._get_idx_to_ipair('14'))==1:
-            # return numpy.array([])
+            # return np.array([])
         # else:
             # return self._get_idx_to_ipair('14')
 
@@ -239,7 +239,7 @@ class TableMaker:
     def _make_nonbonded_table(self):
         import time
 
-        bonded_pairs = numpy.array(self.get_bonded_pairs())
+        bonded_pairs = np.array(self.get_bonded_pairs())
 
         natom = self.get_natom()
         int_table = it.InteractionTable(self.get_natom())
@@ -248,7 +248,7 @@ class TableMaker:
         mod_tab = lib_nonbond.without_bonded
         mod_tab.setup(bonded_pairs, natom)
 
-        int_table = numpy.array( list(int_table) )
+        int_table = np.array( list(int_table) )
         nonbonded_table, ntable = mod_tab.get_nonbonded_table( int_table )
         new_table = it.InteractionTable(
                 base_table=nonbonded_table[:ntable].tolist())
@@ -366,7 +366,7 @@ class TableMaker:
 
         # make table
         ibnd_to_ipair = lib_bonded_pair.get_ibnd_to_ipair(
-                numpy.array(iatoms_list), numpy.array(bonded_pairs) )
+                np.array(iatoms_list), np.array(bonded_pairs) )
 
         return ibnd_to_ipair
 
@@ -376,10 +376,10 @@ class TableMaker:
 
         # make table
         if len(iatoms_list) == 0:
-            iang_to_ipair = numpy.array([[]])
+            iang_to_ipair = np.array([[]])
         else:
             iang_to_ipair = lib_bonded_pair.get_iang_to_ipair(
-                    numpy.array(iatoms_list), numpy.array(bonded_pairs) )
+                    np.array(iatoms_list), np.array(bonded_pairs) )
 
         return iang_to_ipair
 
@@ -389,10 +389,10 @@ class TableMaker:
 
         # make table
         if len(iatoms_list) == 0:
-            itor_to_ipair = numpy.array([[]])
+            itor_to_ipair = np.array([[]])
         else:
             itor_to_ipair = lib_bonded_pair.get_itor_to_ipair(
-                    numpy.array(iatoms_list), numpy.array(bonded_pairs) )
+                    np.array(iatoms_list), np.array(bonded_pairs) )
 
         return itor_to_ipair
 
@@ -402,10 +402,10 @@ class TableMaker:
 
         # make table
         if len(iatoms_list) == 0:
-            iimp_to_ipair = numpy.array([[]])
+            iimp_to_ipair = np.array([[]])
         else:
             iimp_to_ipair = lib_bonded_pair.get_itor_to_ipair(
-                    numpy.array(iatoms_list), numpy.array(bonded_pairs) )
+                    np.array(iatoms_list), np.array(bonded_pairs) )
 
         return iimp_to_ipair
 
@@ -415,10 +415,10 @@ class TableMaker:
 
         # make table
         if len(iatoms_list) == 0:
-            i14_to_ipair = numpy.array([[]])
+            i14_to_ipair = np.array([[]])
         else:
             i14_to_ipair = lib_bonded_pair.get_ibnd_to_ipair(
-                    numpy.array(iatoms_list), numpy.array(bonded_pairs) )
+                    np.array(iatoms_list), np.array(bonded_pairs) )
 
         return i14_to_ipair
 

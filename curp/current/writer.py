@@ -2,6 +2,7 @@
 
 CURP 1.1: Ishikura, 2016. Most of the Layout
 CURP 1.2: Laprevote, 2019. Heat Flux gestion (and commenting code).
+CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
 
 In main() of curp.py, a writer is initialized along with the calculator.
 The writer varies depending on setting options (in .cfg) contained in
@@ -23,13 +24,13 @@ to write them in a file.
 """
 
 from __future__ import print_function
-
+from ..setting import Setting
 import os
-import numpy
+import numpy as np
 
 
-def get_writer(setting, decomp_list, target_anames, group_names,
-               gpair_table=None):
+def get_writer(setting: Setting, decomp_list, target_anames, group_names,
+               gpair_table: list = None):
     """Returns Writer object depending on the setting.curp.method."""
 
     method = setting.curp.method
@@ -51,7 +52,7 @@ def get_writer(setting, decomp_list, target_anames, group_names,
                 gpair_table=gpair_table, axes=('i','j','k'))
 
     else:
-        pass
+        raise Exception("No such method. Please check the setting.")
 
     return obj
 
@@ -210,7 +211,7 @@ MultiXxWriter: choose the options for Current, Flux and NetCDFFluxWriter.
 
 class MultiCurrentWriter:
 
-    def __init__(self, setting, decomp_list, target_anames, group_names):
+    def __init__(self, setting: Setting, decomp_list, target_anames, group_names):
 
         self.__atm_writer = CurrentWriter( setting, decomp_list,
                 target_anames, revision='atm')
@@ -250,8 +251,7 @@ class MultiCurrentWriter:
 
 
 class MultiFluxWriter:
-
-    def __init__(self, setting, decomp_list,
+    def __init__(self, setting: Setting, decomp_list,
                  target_anames, group_names, gpair_table=None, axes=None):
 
         fmt = setting.output.format
@@ -275,7 +275,7 @@ class MultiFluxWriter:
 
         elif (grain, fmt) == ('atom', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, axes, revision='atm')
+                    target_anames, None, axes, revision='atm')
             self.__grp_writer = None
 
         elif (grain, fmt) == ('group', 'netcdf'):
@@ -285,12 +285,12 @@ class MultiFluxWriter:
 
         elif (grain, fmt) == ('both', 'netcdf'):
             self.__atm_writer = NetCDFFluxWriter( setting, decomp_list,
-                    target_anames, axes, revision='atm')
+                    target_anames, None, axes, revision='atm')
             self.__grp_writer = NetCDFFluxWriter( setting, decomp_list,
                     group_names, gpair_table, axes, revision='grp')
 
         else:
-            pass
+            raise Exception("No such combination of grain and format. Please check the setting.")
 
     # elif method == 'energy-flux' and fmt=='netcdf':
         # obj = NetCDFFluxWriter(setting=setting, decomp_list, target_anames,
@@ -431,7 +431,7 @@ class CurrentWriter:
                 # total_current = total_current + results[key]
                 total_current += results[key]
 
-            lines = self.format(time, total_current, names)
+            lines = self.format(time, total_current, self.__names)
             self.__key_to_writer['total'].write(lines)
 
     def gen_decomp_keys(self, decomp_list):
@@ -512,7 +512,7 @@ class FluxWriter:
 
     def write(self, istep, key_to_fluxes):
 
-        to_fluxes_ar = numpy.array(key_to_fluxes)
+        to_fluxes_ar = np.array(key_to_fluxes)
         if self.__pair_table is None:
             lines = self.format(istep, key_to_fluxes, self.__names)
         else:
@@ -522,7 +522,7 @@ class FluxWriter:
         self.__writer.write(lines)
 
     def ok_write(self, i, j):
-        if i < j:
+        if i <= j:
             return True
         else:
             return self.__setting.curp.enable_inverse_pair
@@ -541,14 +541,14 @@ class FluxWriter:
                 for i, pot_type in enumerate(self.__decomps):
                     fluxes[i] = key_to_fluxes[pot_type][itar_1, jtar_1]
 
-                fluxes_ar = numpy.array(fluxes).transpose()
+                fluxes_ar = np.array(fluxes).transpose()
                 fluxes_ar = fluxes_ar.reshape(self.__dim, -1)
 
                 line = [self.__data_fmt.format(name_i, name_j, *k)
                         for k in fluxes_ar]
                 """
 
-                fluxes = numpy.zeros([self.__num_decomps, self.__dim])
+                fluxes = np.zeros([self.__num_decomps, self.__dim])
                 for i, pot_type in enumerate(self.__decomps):
                     fluxes[i] = key_to_fluxes[pot_type][itar_1, jtar_1]
 
@@ -567,7 +567,7 @@ class FluxWriter:
                 jtar_1 = self.__name_to_idx[name_j]
                 if not self.ok_write(itar_1, jtar_1): continue
 
-                fluxes = numpy.zeros([self.__num_decomps, self.__dim])
+                fluxes = np.zeros([self.__num_decomps, self.__dim])
                 for i, pot_type in enumerate(self.__decomps):
                     fluxes[i] = key_to_fluxes[pot_type][itar_1, jtar_1]
 
@@ -770,8 +770,9 @@ class NetCDFFluxWriter:
         ncfile.close()
         # self.__ncfile = ncfile
 
-    def setup_gpairs(self, names, pair_table=None):
-
+    def setup_gpairs(self, names, pair_table: list = None):
+        """Decide the pairs to be written in the file according to pair_table.
+        """
         name_to_idx = {name:i for i, name in enumerate(names)}
         ntarget = len(names)
         self.__npair_total = ntarget*ntarget
@@ -780,7 +781,7 @@ class NetCDFFluxWriter:
         mask_indices = []
         donors = []
         acceptors = []
-        if pair_table:
+        if pair_table is not None:
             for name_i, names_j in pair_table:
                 itar_1 = name_to_idx[name_i]
 
@@ -820,7 +821,7 @@ class NetCDFFluxWriter:
             self.__decomps = ['total']
 
     def ok_pair(self, i, j):
-        if i < j:
+        if i <= j:
             return True
         else:
             return self.__setting.curp.enable_inverse_pair
@@ -844,7 +845,7 @@ class NetCDFFluxWriter:
         # Write flux
         nc_flux  = ncfile.variables['flux']
 
-        flux = numpy.array([ key_to_fluxes[pot_type].ravel()
+        flux = np.array([ key_to_fluxes[pot_type].ravel()
                 for pot_type in self.__decomps ]).T
 
         if self.__mask_indices:
@@ -865,7 +866,7 @@ class NetCDFFluxWriter:
         # Write flux
         nc_flux  = ncfile.variables['flux']
 
-        flux = numpy.array([ key_to_fluxes[pot_type]
+        flux = np.array([ key_to_fluxes[pot_type]
                 for pot_type in self.__decomps ]).T.reshape(
                                                     (len(self.__axes),
                                                      -1,

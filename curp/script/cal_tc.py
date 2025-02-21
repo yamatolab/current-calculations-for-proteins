@@ -2,10 +2,6 @@
 CURP 1.1: Ishikura, 2016. Most of the Layout
 CURP 1.2: Yamato, 2019. Heat Flux gestion (and commenting code).
 
-- The type of flux data, i.e., scalar or vector, is specified by
-  the newly added argument "-no_axes". With (without) this option,
-  scalar (vector) flux is handled, and fortran module lib_acf (lib_hfacf)
-  is employed. The lib_hfacf fortran module was newly added.
 - For heat-flow, the unit of acf was should be changed to (A*(kcal/mol)/fs)^2.
   (to be worked)
 """
@@ -15,7 +11,7 @@ from __future__ import print_function
 import sys
 import time
 
-import numpy
+import numpy as np
 
 import netCDF4 as netcdf
 
@@ -41,12 +37,26 @@ def get_dt(flux_fn):
 
     return d_t
 
+def get_decomp(flux_fn):
 
-def gen_fluxdata(flux_fn, no_axes):
+    ncfile = netcdf.Dataset(flux_fn, mode='r')
+    len_decomps = len(ncfile.dimensions['ncomponent'])
+    ncfile.close()
+    
+    return len_decomps
+
+def gen_fluxdata(flux_fn):
 
     t_0 = time.time()
 
     ncfile = netcdf.Dataset(flux_fn, mode='r')
+    try:
+        no_axes = ncfile.dimensions["naxes"].size == 1
+    except KeyError:
+        no_axes = True
+    except Exception:
+        print("Warning: Unexpected error occured in loading flux data. Process continue.")
+        no_axes = True
 
     icom = 0
     donors = get_stringnames(ncfile.variables['donors'][:])
@@ -58,9 +68,9 @@ def gen_fluxdata(flux_fn, no_axes):
     ncfile.close()
 
     tsum = 0.0
-    for ipair_1, (don, acc) in enumerate(zip(donors, acceptors)):
+    for ipair_1, (donor, acceptor) in enumerate(zip(donors, acceptors)):
         print('loading for {}/{} {} {} ... ** '
-              .format(ipair_1+1, npair, don.decode(), acc.decode()), end='')
+              .format(ipair_1+1, npair, donor, acceptor), end='')
         sys.stdout.flush()
 
         t_1 = time.time()
@@ -69,7 +79,7 @@ def gen_fluxdata(flux_fn, no_axes):
         if no_axes:
             flux = ncfile.variables['flux'][:, ipair_1, icom]
         else:
-            flux = ncfile.variables['flux'][:, :, ipair_1, icom]
+            flux = ncfile.variables['flux'][:, :, ipair_1, :]
 
         ncfile.close()
 
@@ -77,87 +87,50 @@ def gen_fluxdata(flux_fn, no_axes):
         print('load time: {:.3f} [s]'.format(t_2-t_1))
         tsum += t_2-t_1
 
-        yield don, acc, flux
+        yield donor, acceptor, flux, no_axes
 
     print('total load time: {:.3f} [s]'.format(tsum))
 
 
-class TCCalculator:
+class TransportCoefficientCalculator:
+    """Calculate transport coefficient
+    """
     def __init__(self, frame_range, avg_shift,
-                 nsample, coef, no_axes, d_t=0.01):
-
-        self.__fst_lst_intvl = frame_range
-        fst, lst, intvl = self.__fst_lst_intvl
-        self.nframe_acf = (lst - fst)//intvl + 1
-        self.__fst = fst
-        self.__lst = lst
-        self.__intvl = intvl
+                 nsample, coef, len_decomps, d_t=0.01):
+        
+        first, last, interval = frame_range
+        self.nframe_acf = int((last - first)/interval + 1)
+        self.__first = first
+        self.__last = last
+        self.__interval = interval
         self.__shift = avg_shift
         self.__nsample = nsample
         self.__coef = coef
+        self.__decomps= len_decomps
         self.d_t = d_t
-        self.no_axes = no_axes
-
-    def run(self, don, acc, flux):
-
-        if self.no_axes:
-            acf = cal_acf(flux, self.nframe_acf,
-                                  self.__fst, self.__lst, self.__intvl,
-                                  self.__shift, False, self.__nsample)
-        else:
-            acf = cal_hfacf(flux, self.nframe_acf,
-                                      self.__fst, self.__lst, self.__intvl,
-                                      self.__shift, False, self.__nsample, 3)
-
-        tc = self.cal_tc(acf)
-        return tc, acf
 
     def run_mpi(self, data, **other):
         t_0 = time.time()
-        don, acc, flux = data
+        donor, acceptor, flux, no_axes = data
 
-        if self.no_axes:
+        if no_axes:
             acf = cal_acf(flux, self.nframe_acf,
-                                  self.__fst, self.__lst, self.__intvl,
+                                  self.__first, self.__last, self.__interval,
                                   self.__shift, False, self.__nsample)
         else:
             acf = cal_hfacf(flux, self.nframe_acf,
-                                      self.__fst, self.__lst, self.__intvl,
+                                      self.__first, self.__last, self.__interval,
                                       self.__shift, False, self.__nsample, 3)
 
-        tc = self.cal_tc(acf)
+        pico_in_femto = 1000
+        transport_coefficient = self.__coef * self.d_t * pico_in_femto * np.trapz(acf,axis=0)
 
-        # self.print('cal time:', time.time()-t_0)
         print('    cal time: {:.3f} [s] for {} {}'
-              .format(time.time()-t_0, don, acc))
-        return don, acc, tc, acf
-
-    def run_all(self, flux_iter):
-        fst, lst, intvl = self.__fst_lst_intvl
-        for flux in flux_iter:
-            t_0 = time.time()
-
-            if self.no_axes:
-                acf = cal_acf(flux, self.nframe_acf, fst, lst, intvl,
-                                      self.__shift, False, self.__nsample)
-            else:
-                acf = cal_hfacf(flux, self.nframe_acf, fst, lst,
-                                          intvl, self.__shift, False,
-                                          self.__nsample, 3)
-
-            tc = cal_tc(acf, self.d_t, self.__coef)
-
-            t_1 = time.time()
-            print('    cal time: {:.3f} [s]'.format(t_1-t_0))
-
-            yield tc, acf
-
-    def cal_tc(self, acf):
-        """Calculate final transport  coefficient."""
-        return self.__coef * self.d_t*1000.0 * numpy.sum(acf)
+              .format(time.time()-t_0, donor, acceptor))
+        return donor, acceptor, transport_coefficient, acf
 
     def get_times(self):
-        return numpy.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
+        return np.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
 
     def print(self, *args, **kwds):
         print(*args, **kwds)
@@ -169,15 +142,21 @@ class TCWriter:
     Write transport coefficient.
     """
 
-    def __init__(self, fn):
+    def __init__(self, fn , len_decomps):
         self.__fn = fn
         self.__file = open(self.__fn, 'wb')
+        self.__decomps= len_decomps
 
     def write(self, don, acc, tc):
         fd = self.open()
-        fd.write(bytes('{:>12} {:>12}  {}\n'.format(don.decode(),
-                                                    acc.decode(),
-                                                    tc), 'utf-8'))
+        # don: bytes
+        # acc: bytes
+        don = don.decode("utf-8")
+        acc = acc.decode("utf-8")
+        fd.write('{:>12} {:>12} '.format(don, acc).encode("utf-8"))
+        for i in range(self.__decomps):
+            fd.write('{} '.format(np.nan_to_num(tc)[i]).encode("utf-8"))
+        fd.write('{}'.format('\n').encode("utf-8"))
         fd.flush()
 
     def open(self):
@@ -198,13 +177,14 @@ class WriterBase:
     name = ''
     unit = ''
 
-    def __init__(self, fp, nframe, d_t, label='test', title=''):
+    def __init__(self, fp, nframe, len_decomps, d_t, label='test', title=''):
 
         self.__fp = fp
         self.__ncfile = None
         self.__nframe = nframe
         self.__title = title
         self.__label = label
+        self.__decomps= len_decomps
         self.__d_t = d_t
 
         self.setup()
@@ -225,6 +205,7 @@ class WriterBase:
         # create dimensions
         ncfile.createDimension('npair', None)
         ncfile.createDimension('nframe', self.__nframe)
+        ncfile.createDimension('ncomponent' , self.__decomps)
         ncfile.createDimension('nchar', 20)
 
         # create variables
@@ -239,8 +220,11 @@ class WriterBase:
         ncfile.createVariable('donors', 'c', ('npair', 'nchar'))
         ncfile.createVariable('acceptors', 'c', ('npair', 'nchar'))
 
+        # add components
+        nc_com = ncfile.createVariable('components','c', ('ncomponent','nchar'))
+
         # trajectory
-        nc_data = ncfile.createVariable(self.name, 'f4', ('npair', 'nframe'),)
+        nc_data = ncfile.createVariable(self.name, 'f4', ('npair', 'nframe', 'ncomponent'),)
         nc_data.units = self.unit
 
         ncfile.sync()
@@ -297,7 +281,7 @@ class ACFWriter(WriterBase):
 
 def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
            frame_range=[1, -1, 1], avg_shift=1, nsample=0, d_t=None,
-           coef=1.0, use_debug=False, no_axes=False, **kwds):
+           coef=1.0, use_debug=False, len_decomps=None, **kwds):
 
     ti = time.time()
     par = ParallelProcessor()
@@ -310,24 +294,30 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
     else:
         d_t = d_t * frame_range[2]    # in ps
 
+    # determine length of decomp
+    if len_decomps is None:
+        len_decomps=get_decomp(flux_fn)
+    else:
+        len_decomps=get_decomp(flux_fn)
+
     # prepare calculator
-    cal = TCCalculator(frame_range, avg_shift, nsample, coef, no_axes, d_t)
+    cal = TransportCoefficientCalculator(frame_range, avg_shift, nsample, coef, len_decomps, d_t)
     cal.print = par.write
 
     # prepare writer
     if par.is_root():
-        tc_writer = TCWriter(tc_fn)
+        tc_writer = TCWriter(tc_fn, len_decomps)
 
     # create ACF writer if it is necessary.
     if acf_fn:
         if par.is_root():
-            acf_writer = ACFWriter(acf_fn, cal.nframe_acf, d_t)
+            acf_writer = ACFWriter(acf_fn, cal.nframe_acf, len_decomps, d_t)
     else:
         acf_writer = None
 
     # prepare flux data
     if par.is_root():
-        fluxdata_iter = gen_fluxdata(flux_fn, no_axes)
+        fluxdata_iter = gen_fluxdata(flux_fn)
     else:
         fluxdata_iter = None
 

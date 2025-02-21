@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 from __future__ import print_function
 import sys
-import numpy
+import numpy as np
 import netCDF4 as netcdf
 
 from curp.script.cal_tc import WriterBase, ACFWriter, get_stringnames
@@ -36,7 +36,7 @@ def load_acf_first(acf_fp, dataname='acf'):
 
 def cal_tcs(acf, dt, coef=1.0):
     """Calculate time series of transport coefficient."""
-    return coef * dt*1000.0 * numpy.add.accumulate(acf, 1)
+    return coef * dt*1000.0 * np.add.accumulate(acf, 1)
 
 def sum_acf(acf_fps, output_acf_fp, tcs_fp='', coef=1., **kwds):
     import time

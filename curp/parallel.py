@@ -18,7 +18,7 @@ except ImportError:
 
 ################################################################################
 class ParallelProcessor:
-
+    import numpy as np
     """
     The class to run in parallel from given method and dictionary list,
     using mpi4py library.
@@ -221,7 +221,6 @@ class ParallelProcessor:
 
     def get_time_info(self, nstep):
 
-        import numpy
         nproc = self.__nproc
         denom = 1.0/float(nproc*nstep)
 
@@ -379,11 +378,11 @@ def main_array(method, natom, ntraj):
 
     # initialization
     import copy
-    import numpy
-    crd = numpy.ones([natom,3])
+    import numpy as np
+    crd = np.ones([natom,3])
 
     crds = ( crd.copy() for itraj in range(ntraj) )
-    vel = numpy.ones([natom,3])
+    vel = np.ones([natom,3])
     vels = ( vel.copy() for itraj in range(ntraj) )
 
     run_bench(method, crds, vels, 'Array', t1)
@@ -391,7 +390,7 @@ def main_array(method, natom, ntraj):
 def main_arraygen(natom, ntraj):
     # initialization
     import copy
-    import numpy
+    import numpy as np
 
     par = ParallelProcessor()
     label = 'Array 2'
@@ -407,7 +406,7 @@ def main_arraygen(natom, ntraj):
 
     if par.is_root():
 
-        crdvel = numpy.ones([natom,3])
+        crdvel = np.ones([natom,3])
 
         def gen_data_iter(ntraj):
             for itraj in range(ntraj):
@@ -451,7 +450,7 @@ def main_arraygen(natom, ntraj):
 def main_arraygen(natom, ntraj):
     # initialization
     import copy
-    import numpy
+    import numpy as np
 
     par = ParallelProcessor()
     label = 'Array 2'
@@ -467,7 +466,7 @@ def main_arraygen(natom, ntraj):
 
     if par.is_root():
 
-        crdvel = numpy.ones([natom,3])
+        crdvel = np.ones([natom,3])
 
         def gen_data_iter(ntraj):
             for itraj in range(ntraj):

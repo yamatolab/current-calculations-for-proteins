@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import os
-import numpy
+import numpy as np
 
 # curp mudules
 from curp import exception
@@ -75,8 +75,8 @@ class GroupPair:
     def _make_table_with_gpair(self, base_table):
         """Make interaction table with group pairs."""
 
-        table_with_gpair = numpy.array(list(self.gen_inttable()))
-        base_table = numpy.array(list(base_table))
+        table_with_gpair = np.array(list(self.gen_inttable()))
+        base_table = np.array(list(base_table))
 
         from curp.table import lib_group_pair
         lib_gpair = lib_group_pair.within_gpair

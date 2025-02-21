@@ -10,13 +10,13 @@ time  curp compute  erun.cfg > elog
 time  curp compute  hrun.cfg > hlog
 
 # postprocess
-time  curp cal-tc --no-axes \
+time  curp cal-tc \
     --frame-range 1 10 1 --average-shift 1 --sample-number 0 \
     -a outdata/acf0.nc \
     -o outdata/tc0.dat outdata/eflux_grp.nc > tc0.log
 
 # # postprocess
-time  curp cal-tc --no-axes\
+time  curp cal-tc \
     --frame-range 1 10 1 --average-shift 2 --sample-number 0 \
     -a outdata/acf1.nc \
     -o outdata/tc1.dat outdata/eflux_grp.nc > tc1.log

@@ -3,7 +3,7 @@ from __future__ import print_function
 # standard module
 import os
 import sys
-import numpy
+import numpy as np
 
 # curp module
 import curp.clog as logger
@@ -129,7 +129,7 @@ class TwoBodyForceBase:
         i14_to_itbf = self.__tpl.get_i14_to_ipair()
 
         # if len(self.__tpl.get_i14_to_ipair())==1:
-            # i14_to_itbf = numpy.array([])
+            # i14_to_itbf = np.array([])
         # else:
             # i14_to_itbf = self.__tpl.get_i14_to_ipair()
 
@@ -145,7 +145,7 @@ class TwoBodyForceBase:
         vdw14.c12s       = info['c12s']
 
         # if len(self.__tpl.get_i14_to_ipair())==1:
-            # i14_to_itbf = numpy.array([])
+            # i14_to_itbf = np.array([])
         # else:
         i14_to_itbf = self.__tpl.get_i14_to_ipair()
 
@@ -158,7 +158,7 @@ class TwoBodyForceBase:
 
     def initialize(self, crd):
         self.__mod.initialize(crd)
-        self.__forces   = numpy.zeros( [self.__natom, 3] )
+        self.__forces   = np.zeros( [self.__natom, 3] )
         self.__ptype_to_energy = {}
         self.__ptype_to_forces = {}
 
@@ -171,9 +171,9 @@ class TwoBodyForceBase:
         self.__forces += mod.forces
 
         # store energy and forces
-        self.__ptype_to_energy[bond_type] = mod.energy
-        self.__ptype_to_forces[bond_type] = mod.forces
-        self.__ptype_to_displacement[bond_type] = mod.displacement
+        self.__ptype_to_energy[bond_type] = mod.energy.copy()
+        self.__ptype_to_forces[bond_type] = mod.forces.copy()
+        self.__ptype_to_displacement[bond_type] = mod.displacement.copy()
 
         #DEBUG
         # print('** {} forces **'.format(bond_type))
@@ -213,7 +213,7 @@ class TwoBodyForceBase:
         mod.calculate(table)
         energy = mod.energy.copy()
         forces = mod.forces.copy()
-        displacement = mod.displacement
+        displacement = mod.displacement.copy()
 
         # store energy, forces and distance
         if pottype not in self.__ptype_to_energy:
@@ -339,8 +339,6 @@ class TwoBodyForce(TwoBodyForceBase):
 
 
 if __name__ == '__main__':
-    import numpy
-
     class Setting:
         class Curp:
             coulomb_cutoff_length = 10.0
@@ -419,7 +417,7 @@ if __name__ == '__main__':
     tbcal.setup(max_tbf=10)
 
     # # initialize with coordinate
-    crd = numpy.array(
+    crd = np.array(
         [[1.0, 2.0, 3.0],
          [2.0, 1.0, 1.5],
          [3.0, 3.0, 3.0],
@@ -439,7 +437,7 @@ if __name__ == '__main__':
         res = getattr(tbcal, 'cal_'+caltype)(table)
         tbcal.output_nonbonded(res, caltype, table)
 
-    # crd = numpy.array(
+    # crd = np.array(
     #     [[2.0, 3.0, 4.1],
     #      [3.0, 2.0, 2.5],
     #      [4.0, 4.0, 4.0],
@@ -454,7 +452,7 @@ if __name__ == '__main__':
     # with Benchmarker(width=20) as bm:
 
     #     with bm('setup'):
-    #         crd = numpy.array(
+    #         crd = np.array(
     #             [[2.0, 3.0, 4.1],
     #              [3.0, 2.0, 2.5],
     #              [4.0, 4.0, 4.0],

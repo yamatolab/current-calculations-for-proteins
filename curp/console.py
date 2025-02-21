@@ -196,10 +196,6 @@ def arg_cal_tc(parser=None):
                         action='store_true', required=False,
                         help='turn on debug mode.')
 
-    parser.add_argument('--no-axes', dest='no_axes',
-                        action='store_true', required=False,
-                        help='with this option, scalar flux is handled.')
-
     if return_parser:
         return parser
 

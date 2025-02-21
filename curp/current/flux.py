@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os, sys
 import time
-import numpy
+import numpy as np
 
 # curp modules
 from curp import utility
@@ -232,8 +232,9 @@ class HeatFluxCalculator(base.FluxCalculator):
         cutoff    = self.get_setting().curp.coulomb_cutoff_length
 
         t0 = time.time()
-        gen_tbfs = (type_func(t)['tbforces'] for t in table)
-        gen_displacement = ( type_func(t)['displacement'] for t in table )
+        tbfs_infos = [type_func(t) for t in table]
+        gen_tbfs = (t['tbforces'] for t in tbfs_infos)
+        gen_displacement = (t['displacement'] for t in tbfs_infos)
 
         flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table,
                                                       gen_displacement )
@@ -254,8 +255,9 @@ class HeatFluxCalculator(base.FluxCalculator):
         cutoff    = self.get_setting().curp.vdw_cutoff_length
 
         t0 = time.time()
-        gen_tbfs = ( type_func(t)['tbforces'] for t in table )
-        gen_displacement = ( type_func(t)['displacement'] for t in table )
+        tbfs_infos = [type_func(t) for t in table]
+        gen_tbfs = (t['tbforces'] for t in tbfs_infos)
+        gen_displacement = (t['displacement'] for t in tbfs_infos)
 
         flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table,
                                                       gen_displacement )
@@ -309,6 +311,10 @@ class HeatFlux:
         for t, tbfs, displ in zip(table, gen_tbfs, gen_displ):
             t1 = time.time()
             m_non.cal_nonbonded(tbfs, t, displ)
+            logger.debug("inspect tbfs inside cal_nonbonded! of HeatFlux!")
+            logger.debug("table: {}".format(t))
+            logger.debug("tbfs: {}".format(tbfs))
+            logger.debug("displ: {}".format(displ))
             t_total += time.time() - t1
             tt += time.time() - t1
             # print('flux body loop: ', time.time()-t1)
@@ -316,11 +322,17 @@ class HeatFlux:
         # print('flux body:', tt)
         t2 = time.time()
 
-        # get current by copy
-        # flux_atm = m_non.flux_atm if self.__flag_atm else None
-        # flux_grp = m_non.flux_grp if self.__flag_grp else None
-        hflux_atm = m_non.hflux_atm.copy() if self.__flag_atm else None
-        hflux_grp = m_non.hflux_grp.copy() if self.__flag_grp else None
+        # get flux array copy from fortran module
+        if self.__flag_atm:
+            hflux_atm = m_non.hflux_atm.copy()
+            logger.debug("hflux_atm: {}".format(hflux_atm))
+        else:
+            hflux_atm = None
+        if self.__flag_grp:
+            hflux_grp = m_non.hflux_grp.copy()
+            logger.debug("hflux_grp: {}".format(hflux_grp))
+        else:
+            hflux_grp = None
 
         t_total += time.time() - t2
         self.dt = t_total
@@ -350,7 +362,7 @@ class StressFluxCalculator(base.FluxCalculator):
         flux_pot = {}
         for gname_i in group_names:
             for gname_j in group_names:
-                ts = numpy.zeros([3,3])
+                ts = np.zeros([3,3])
                 flux_pot[gname_i, gname_j] = ts
 
         # bonded two-body force
@@ -382,7 +394,7 @@ class StressFluxCalculator(base.FluxCalculator):
         flux_pot = {}
         for gname_i in group_names:
             for gname_j in group_names:
-                ts = numpy.zeros([3,3])
+                ts = np.zeros([3,3])
                 flux_pot[gname_i, gname_j] = ts
 
         for iatm, jatm_ptr, f_ijs in gen_tbforces_each_atom:

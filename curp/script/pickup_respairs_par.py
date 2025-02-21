@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import os
 import sys
-import numpy
+import numpy as np
 import argparse
 
 import curp
@@ -25,7 +25,7 @@ def main():
     # generate residue group
     res_info  = tpl.get_residue_info()
     atom_info = tpl.get_atom_info()
-    rname_iatoms_pairs = list( (rname, list(numpy.array(iatoms)-1))
+    rname_iatoms_pairs = list( (rname, list(np.array(iatoms)-1))
             for rname, iatoms in gen_residue_group(
                 res_info, atom_info, name_fmt=args.format))
 
@@ -182,8 +182,8 @@ def gen_respair_table_par(resnames, rname_iatoms_pairs, cutoff_method, cutoff2):
 def is_com(cutoff2):
 
     def _judge(crd_i, crd_j):
-        com_i = numpy.sum(crd_i, 0)
-        com_j = numpy.sum(crd_j, 0)
+        com_i = np.sum(crd_i, 0)
+        com_j = np.sum(crd_j, 0)
         return cal_dist2(com_i, com_j) <= cutoff2
 
     return _judge

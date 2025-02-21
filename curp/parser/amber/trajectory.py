@@ -12,7 +12,7 @@ class NumAtomInvalidError(CurpException): pass
 
 
 import gzip
-import numpy
+import numpy as np
 
 class ParserPyBase:
 
@@ -35,7 +35,7 @@ class ParserPyBase:
         if len(crdvel) == 0:
             raise StopIteration()
 
-        return numpy.array(crdvel), box
+        return np.array(crdvel), box
 
     next = __next__ # for python 2.x
 
@@ -396,7 +396,7 @@ class RestartParser:
     def parse(self):
         with open(self.__filename, 'rb') as file:
             title, natom, simtime = self.parse_header(file)
-            import numpy
+            import numpy as np
             crd = list( self.parse_crd_iter(file, natom) )
             vel = list( self.parse_vel_iter(file, natom) )
 
@@ -405,7 +405,7 @@ class RestartParser:
             else:
                 pbc = None
 
-        return numpy.array(crd), numpy.array(vel), pbc
+        return np.array(crd), np.array(vel), pbc
 
     def close(self):
         pass
@@ -649,7 +649,7 @@ class NetCDFWriterBase(TrajectoryWriterBase):
         nc_trj[ifrm_1] = snap[:]/self.scale_factor
         nc_time[ifrm_1] = time
 
-        if isinstance(box,numpy.ndarray): # periodic boundary conditios ##add 17.06.29
+        if isinstance(box,np.ndarray): # periodic boundary conditios ##add 17.06.29
             print('here', box)
             ncfile.variables['cell_lengths'][ifrm_1] = box
             ncfile.variables['cell_angles'][ifrm_1]  = box

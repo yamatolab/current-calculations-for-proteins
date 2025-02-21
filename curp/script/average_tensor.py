@@ -1,5 +1,5 @@
 import sys
-import numpy
+import numpy as np
 
 section_end = '%end'
 
@@ -16,7 +16,7 @@ def parse_content(file):
         if flagname == 'data':
             lines = list( gen_section_lines(gen_lines) )
             names, tensor = parse_data(lines)
-            tensors.append( numpy.array(tensor) )
+            tensors.append( np.array(tensor) )
 
     return names, tensors
 
@@ -76,7 +76,7 @@ def gen_section_lines(gen):
 
 def cal_average(tensors):
 
-    sum_tensor = numpy.zeros(tensors[0].shape)
+    sum_tensor = np.zeros(tensors[0].shape)
 
     for t in tensors:
         sum_tensor += t
@@ -86,7 +86,7 @@ def cal_average(tensors):
 
 def cal_rmsf(tensors, average_tensor):
 
-    rmsf_tensor = numpy.zeros(average_tensor.shape)
+    rmsf_tensor = np.zeros(average_tensor.shape)
 
     for t in tensors:
         diff_ten = average_tensor - t
@@ -94,7 +94,7 @@ def cal_rmsf(tensors, average_tensor):
 
     nten = len(tensors)
 
-    return numpy.sqrt(rmsf_tensor) / nten
+    return np.sqrt(rmsf_tensor) / nten
 
 if __name__ == '__main__':
 

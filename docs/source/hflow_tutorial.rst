@@ -1,42 +1,40 @@
 =====================
-Energy flow analysis
+Heat current analysis
 =====================
 
-**Interresidue energy flow and energy conductivity (G)**
+**Local heat current**
 
-In 2006, we proposed the concept of inter-residue energy conductivity (G) to measure the strength of the residue-residue interactions (Ishikura & Yamato, *Chem. Phys. Lett.* 432: 533-537, (2006)). Later, in 2021, we extended our program to calculate the residue-residue heat current and its contribution to the overall thermal conductivity of a protein (CURP v.1.3). 
+The thermal conductivity, :math:`\lambda`, is expressed in terms of the heat current autocorrelation function (HCACF) as:
 
-For instance, we reported the application of G to illustrate the photosignal transduction mechanism of a small water-soluble photosensory protein--photoactive yellow protein, as mentioned in the reference above. The value of the energy flow from :math:`j` to :math:`i` can be calculated as follows:
+.. math::
+   \lambda = \frac{1}{3Vk_BT^2} \int_0^\infty \left\langle \mathbf{h}(0) \cdot \mathbf{h}(t) \right\rangle dt.
+
+The heat current, :math:`\mathbf{h}`, is written as a summation of interatomic heat current, :math:`\mathbf{h}_{ij}`, as:
+
+.. math::
+   \mathbf{h} = \sum_i \sum_{j>i}(\mathbf{r}_i - \mathbf{r}_j)J_{i \leftarrow j} = \sum_i \sum_{j>i} \mathbf{h}_{ij}
+
+
+
+The heat current between atom groups, A and B, can be calculated by the summation of local heat current between the pair:
 
 .. math::
 
-   J_{i \leftarrow j} = 
-    \frac{1}{2}\left( {{{\boldsymbol{v}}_i} \cdot {{\boldsymbol{F}}_{ij}}
-    - {{\boldsymbol{v}}_j} \cdot {{\boldsymbol{F}}_{ji}}} \right).
+   \mathbf{h}_{AB} =
+      \sum_{i \in A} \sum_{j \in B} \mathbf{h}_{ij}.
 
-The energy flow between atom groups, A and B, can be calculated by the summation of the inter-atomic energy flow between the pair:
-
-.. math::
-
-   J_{A \leftarrow B} =
-      \sum\limits_{i \in A}^{{N_A}} {\mathop \sum \limits_{j \in B}^{{N_B}}
-      {J_{i \leftarrow j}}}.
-
-If the atom groups A and B represent residues A and B, respectively, the corresponding energy flow between A and B represents the inter-residue energy flow. Next, we define a sort of energy transport coefficient based on the Green-Kubo
-linear response theory as:
+If the atom groups A and B represent residues A and B, respectively, the contribution of this local heat current between the residue pair to the overall thermal conductivity is expressed as:
 
 .. math::
 
-   G_{AB} = \int_0^\infty  {\left\langle
-      {J_{A \leftarrow B}}(t){J_{A \leftarrow B}}(0)
-      \right\rangle dt}.
+   \Lambda_{AB} = \int_0^\infty  {\left\langle
+      {\mathbf{h}_{AB}}(t) \cdot {\mathbf{h}_{AB}}(0)
+   \right\rangle dt}.
 
-In practice, the time integral is replaced by the sum of the auto-correlation function of :math:`J` at discrete time points. The CURP program performs these calculations for the proteins
-and visualizes the energy conductivities using an energy exchange network (EEN).This allows the user to grasp the pattern of the inter-residue interactions at a glance. In principle, it is possible to calculate the values of G based on a single NVE trajectory. However, it is highly recommended to calulate thermal averages of them based on multiple NVE trajectories that start from different points on the energy landscape of the target protein. If the number of the NVE trajectories are sufficiently large, their average values are fair representations of the energy transport network of the thermally fluctuating protein system.  
+This calculation is performed by the numerical integration of the auto-correlation function of :math:`\mathbf{h}` using trapezoidal rule.  The CURP program performs these calculations for the proteins and visualizes the energy conductivities using an energy exchange network (EEN). This allows the user to grasp the pattern of the inter-residue interactions at a glance. In principle, it is possible to calculate :math:`\Lambda` based on a single NVE trajectory. However, it is highly recommended to calulate thermal averages of :math:`\Lambda` based on multiple NVE trajectories that start from different points on the energy landscape of the target protein. If the number of the NVE trajectories are sufficiently large, the thermally averaged :math:`\Lambda` are fair representations of the :math:`\Lambda` of the thermally fluctuating protein system.  
 
-.. note:: In the previous paper(*CPL* ,2006), we calculated the values of G based on the atomic decomposition of the potential energy using classical force-field functions, where the way of the decomposition involves arbitrariness. In the CURP program, the irEC calculation is performed in a different manner based on the pairwise decomposition of forces (*CPL* 539(2012)144). Accordingly, the numerical results of G may not be coincide with those obtained earlier.
 
-We will illustrate how to perform energy flow analysis. To perform the calculations, coordinates and velocities trajectory of the system of interest are required. CURP analyzes the inter-residue interactions through the following steps:
+CURP analyzes the inter-residue interactions through the following steps:
 
 .. contents::
    :local:
@@ -196,44 +194,46 @@ Example 1 shows how to adjust the time points of the velocities to those of the 
 
 Similarly, example 2 shows the velocity adjustment for the 2nd half of the trajectory. Here we need to read the restart file, `nve1.rst` before reading the velocity trajectory `nve2.vel.nc`. The velocities at `t` = 4999 fs (`t` = 5001 fs) are saved in `nve1.rst` (at the 1st frame of `nve2.vel.nc`), and the velocities at `t` = 5000 fs are estimated from those at 4999 and 5001 fs. If the velocities at `t` = 5000 fs are not necessary for the final output file, you do not need to read the restart file in this example. Note that the final velocity file is generated with `"--orange 1 -1 5"` so that the first frame at `t` = 5000 fs is included in the output file named `adjusted2.vel.nc` and, thus, the velocities at 5000 fs, 5010 fs, :math:`\cdots`, and 9990 fs are save in the output file. 
 
-Calculating interresidue energy flow
-=====================================
+Calculating interresidue heat current
+======================================
 
-Here we show an exmaple about how to calculate energy flow with 
+Here we explain how to calculate the heat currents with
 
+#. velocities and coordinates trajectory file
+#. parameter and topology file of target system
 #. configuration file for the CURP calculation
 
 To start the calculations, please type in the following command:
 
 .. code-block:: bash
 
-   $ curp compute eflow.cfg > eflow.log
+   $ curp compute hflow.cfg > hflow.log
 
 or 
 
 .. code-block:: bash
 
-   $ mpiexec -n 2 curp compute eflow.cfg > eflow.log
+   $ mpiexec -n 2 curp compute hflow.cfg > hflow.log
 
-for parallel calculations with OpenMPI. In this case the number of cores is 2, ``eflow.cfg`` (see below)  is a configuration file for the energy flow calculations and ``eflow.log`` is the log file.
+for parallel calculations with OpenMPI. In this case the number of cores is 2, ``hflow.cfg`` (see below)  is a configuration file for the heat current calculations and ``hflow.log`` is the log file.
 
 
 These commands should produce the following two files:
 
-*  eflow.log
+*  hflow.log
 *  flux_grp.nc
 
-``flux_grp.nc`` stores the fime series of energy flow in the netcdf format.
+``flux_grp.nc`` stores the fime series of interresidue heat flux in the netcdf format.
 To check the content of this file, type in the following command: 
 
 .. code-block:: bash
 
    $ ncdump outdata/flux_grp.nc
 
-Setting up ``eflow.cfg``
+Setting up ``hflow.cfg``
 --------------------------
 
-Here we show an example of ``eflow.cfg``:: 
+Here we show an example of ``hflow.cfg``:: 
 
    [input]
    format = amber
@@ -250,7 +250,7 @@ Here we show an example of ``eflow.cfg``::
 
    [curp]
    potential = amber12SB
-   method = energy-flux
+   method = heat-flux
 
    group_method = residue
    flux_grain = group
@@ -281,7 +281,7 @@ format = amber
    Read Amber formatted files.
    
 first_last_interval = 1 4 1
-   For the energy flow calculations, the <first> and <last> frame with the interval of <intraval> frames are set in this line as <first> <last> <interval>.
+   For the heat current calculations, the <first> and <last> frame with the interval of <intraval> frames are set in this line as <first> <last> <interval>.
 
 group_file = group.ndx
    In this line, atom group definition file is specified. In this file, you can define an arbitrary group of atoms that is different than the standard amino acid residues.
@@ -320,7 +320,7 @@ potential = amberbase | amber94 | amber96 | amber99 | amber99SB | amber03 | ambe
    In this line, the type of the potential function is set.
 
 method = momentum-current | energy-flux | heat-flux
-   This line specifies whether the calculation is for energy flux or for atomic stress tensors (momentum current) or heat flux. In this example, we choose ``energy-flux``.
+   This line specifies whether the calculation is for irEF or for atomic stress tensors (momentum current) or heat flux. In this example, we choose ``heat-flux``.
 
 group_method = none | united | residue | file
    In this line, the unit of irEF is set.
@@ -353,7 +353,7 @@ remove_trans = yes | no
    NOTE: Usually, we should use "yes".
 
 remove_rotate = yes | no
-   If yes, the rotational movement of the system is removed. (the default is yes) 
+   If yes, the rotational movement of the system is removed. (the default is yes)
    NOTE: Usually, we should use "yes".
 
 log_frequency = 2
@@ -365,42 +365,40 @@ log_frequency = 2
 Setting the output format.
 
 filename = outdata/flux.nc
-   Filename of the energy flow data.
+   Filename of the heat flow data.
 
 format = ascii | netcdf
    Format of the energy flow data. (netcdf format is highly recommended.)
 
 decomp = no | yes
-   During the calculations, choose whether the energy is decomposed into different
-   components.
+   Flag whether decompose and output the total current/flux,
+   autocorrelation function and heat conductivity
+   to bonded (bond, angle, torsion and improper), coulomb, and van der Waals interaction.
 
 output_energy = no | yes
    CURP is able to evaluate the energy using the atomic velocities and coordinates of the trajectory files. When set to "no", this energy value is not output. 
 
-Calculating G
+Calculating the time-integral of interresidue heat current
 =================
 
-After the energy flux calculations, the values of G are calculated based on the linear response theory.
-You will need the time series of irEF stored in `flux_grp.nc`. Type in the following command:
+After heat flux calculations, :math:`\Lambda` is calculated based on the linear response theory.
+You will need the time series of :math:`\Lambda` stored in `flux_grp.nc`. Type in the following command:
 
 .. code-block:: bash
 
    $ curp cal-tc \
-       --no-axes --frame-range 1 10 1 --average-shift 1 \
+       --frame-range 1 10 1 --average-shift 1 \
        -a outdata/acf.nc \
-       -o outdata/ec.dat outdata/flux_grp.nc > ec.log
-
-`\--no-axes`
-   This option is needed for handling J (scalar flux). 
+       -o outdata/Lambda.dat outdata/flux_grp.nc > Lambda.log
 
 `\--frame-range <first_frame> <last_frame> <frame_interval>`
-   This specifies the range of the time integration of the auto-correlation function of energy flux, :math:`\left\langle J(0)J(t) \right\rangle`.
+   This specifies the range of the time integration of the auto-correlation function of heat currents, :math:`\left\langle \mathbf{h}(0) \cdot \mathbf{h}(t) \right\rangle`.
    The upper and lower limits of the integral are set in <first_frame>, 
    <last_frame>, respectively. During the integration, every <frame_interval>
    frames are used for calculations.  
 
 `\--average-shift <ave_shift>`
-   In the calculation of G, J(0)J(t) is integrated from <first_fram> to 
+   In the calculation of irEC, J(0)J(t) is integrated from <first_fram> to 
    <last_frame>. Then, the origin of the integration is shifted by <ave_shift>
    and the time integration is again conducted from <first_frame> to <last_frame>.
    This procedure is then repeated until the end point of the time integration
@@ -411,13 +409,15 @@ You will need the time series of irEF stored in `flux_grp.nc`. Type in the follo
    The data format is netcdf. If this key is not specified, no data is output.
 
 `-o <file_name>`
-   Energy conductivity data is output to <file_name>.
+   :math:`\Lambda` data is output to <file_name>.
 
-You will then obtain energy conductivity data ``output/ec.dat`` and the
+You will then obtain energy conductivity data ``output/Lambda.dat`` and the
 time-correlatioin data file, ``outdata/acf.nc``.
 
-Format of irEC data file
+NOTE: `\--no-axes` option should not be used here.
+
+Format of :math:`\Lambda` data file
 -------------------------
 
- In each line of the data file, `ec.dat`, a pair of residues and the corresponding value of G is written as <residue_A> <residue_B> <G_AB>. The unit of <G_AB> is measured in :math:`{\rm{(kcal/mol)^2/fs}}`.
+In each line of the data file, `Lambda.dat`, a pair of residues and the corresponding value of :math:`\Lambda_{AB}` is written as <residue_A> <residue_B> :math:`\Lambda_{AB}`. The unit of :math:`\Lambda_{AB}` is measured in :math:`(\AA \rm{\cdot kcal/mol)^2/fs}`.
 

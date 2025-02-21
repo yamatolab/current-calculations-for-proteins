@@ -3,7 +3,7 @@ from __future__ import print_function
 import os
 import sys
 
-import numpy
+import numpy as np
 
 from curp.exception import CurpException
 
@@ -53,7 +53,7 @@ def search_well(rdf, dr, increment=5, eps=0.0000001):
 
 def index_float_array(array, value, eps=0.0000001):
     criterion = (value-eps <= array) & (array <= value+eps)
-    index_item = numpy.where(criterion)
+    index_item = np.where(criterion)
     if len(index_item[0]) == 0:
         return None
     else:
