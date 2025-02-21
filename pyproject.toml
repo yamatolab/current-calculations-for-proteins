@@ -12,7 +12,7 @@ before-all = [
 ]
 
 [[tool.cibuildwheel.overrides]]
-select = "*-musllinux*"
+select = "*-musllinux_*"
 before-all = [
     "apk update",
     "apk add --no-cache netcdf-dev graphviz-dev openmpi-dev"
