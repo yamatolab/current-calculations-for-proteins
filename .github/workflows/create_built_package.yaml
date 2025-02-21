@@ -24,7 +24,16 @@ jobs:
             sudo apt-get install -y build-essential gfortran libnetcdf-dev libhdf5-dev graphviz-dev libopenmpi-dev
           elif [[ ${{ matrix.os }} == "macos-13" ]]; then
             brew install gcc netcdf graphviz open-mpi
+            # Ensure gfortran is linked correctly
+            brew link --overwrite gcc
+            # Add gfortran to PATH
+            echo 'export PATH="/usr/local/bin:$PATH"' >> $GITHUB_ENV
           fi
+
+      - name: Verify gfortran installation
+        run: |
+          gfortran --version
+          which gfortran
 
       - name: Build wheels using cibuildwheel
         uses: pypa/cibuildwheel@v2.22.0
