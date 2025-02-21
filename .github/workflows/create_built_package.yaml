@@ -2,8 +2,8 @@ name: Create built CURP package (wheel files) for PyPI distribution
 
 on:
   push:
-    branches:
-      - feature/generate-built-package-automatically
+    tags:
+      - "v*"
 
 jobs:
   build_wheels:
@@ -62,3 +62,10 @@ jobs:
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./dist/*.whl
+
+      - name: Upload built package to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
