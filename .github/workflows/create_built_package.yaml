@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-13]
+        os: [ubuntu-20.04]
 
     steps:
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
             # Ensure gfortran is linked correctly
             brew link --overwrite gcc
             # Add gfortran to PATH
-            echo 'export PATH="/usr/local/bin:$PATH"' >> $GITHUB_ENV
+            echo "export PATH=\"$(brew --prefix gcc)/bin:\$PATH\"" >> $GITHUB_ENV
           fi
 
       - name: Verify gfortran installation
