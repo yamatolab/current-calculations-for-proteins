@@ -49,8 +49,12 @@ jobs:
       
       - name: Check external libraries are bundled
         run: |
-          unzip -l .dist/Curp-*.whl | grep "\.so"
-          auditwheel show .dist/Curp-*.whl
+          for whl in dist/Curp-*.whl; do
+            echo "=== Inspecting $whl ==="
+            unzip -l "$whl" | grep "\.so" || echo "(No .so found)"
+            auditwheel show "$whl"
+            echo
+          done
 
       - name: Upload artifacts to dist/ directory
         uses: actions/upload-artifact@v4
