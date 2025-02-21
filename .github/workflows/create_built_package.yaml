@@ -44,6 +44,8 @@ jobs:
         env:
           CIBW_BUILD: cp36-*
           CIBW_BUILD_VERBOSITY: 3
+          CIBW_BEFORE_ALL_LINUX: |
+            yum install -y netcdf-devel graphviz-devel openmpi-devel
         with:
           output-dir: ./dist
       
