@@ -14,6 +14,33 @@ from _version import __version__
 def ext_modules(config, _dir):
     """Fetch f90 files in src and automatically create an extension"""
     pattern = "*.f90"
+    
+    MPI_DIR = os.environ.get("MPI_DIR", "/usr")
+    NETCDF_DIR = os.environ.get("NETCDF_DIR", "/usr")
+    GRAPHVIZ_DIR = os.environ.get("GRAPHVIZ_DIR", "/usr")
+
+    # Typical library/include paths:
+    mpi_inc = os.path.join(MPI_DIR, "include")
+    mpi_lib = os.path.join(MPI_DIR, "lib")
+    netcdf_inc = os.path.join(NETCDF_DIR, "include")
+    netcdf_lib = os.path.join(NETCDF_DIR, "lib")
+    graphviz_inc = os.path.join(GRAPHVIZ_DIR, "include")
+    graphviz_lib = os.path.join(GRAPHVIZ_DIR, "lib/x86_64-linux-gnu/graphviz")
+    
+    extra_f90_compile_args = [
+        "-O1", 
+        "-fopenmp",
+        f"-I{mpi_inc}",
+        f"-I{netcdf_inc}",
+        f"-I{graphviz_inc}",
+    ]
+    extra_link_args = [
+        "-lgomp",
+        f"-L{mpi_lib}", "-lmpi",
+        f"-L{netcdf_lib}", "-lnetcdf",
+        f"-L{graphviz_lib}", "-lgraphviz",
+    ]
+    
     if os.path.isdir(_dir):
         for root, dirs, files in os.walk(_dir):
             match = fnmatch.filter(files, pattern)

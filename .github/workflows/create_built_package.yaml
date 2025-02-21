@@ -45,11 +45,13 @@ jobs:
           CIBW_BUILD: cp36-*
           CIBW_BUILD_VERBOSITY: 3
         with:
-          output-dir: ./temp
-
-      - name: Include external dependencies
+          output-dir: ./dist
+      
+      - name: Check external libraries are bundled
         run: |
-          auditwheel repair ./temp/*.whl -w ./dist
+          cd dist
+          unzip -l Curp-*.whl | grep "\.so"
+          auditwheel show Curp-*.whl
 
       - name: Upload artifacts to dist/ directory
         uses: actions/upload-artifact@v4
