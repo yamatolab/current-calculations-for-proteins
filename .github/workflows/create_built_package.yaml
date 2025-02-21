@@ -47,8 +47,8 @@ jobs:
           CIBW_BEFORE_ALL_LINUX: |
             yum update -y
             yum install -y yum-utils wget
-            wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            yum install -y ./epel-release-latest-7.noarch.rpm
+            wget https://archives.fedoraproject.org/pub/archive/epel/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm
+            yum install -y ./epel-release-7-14.noarch.rpm
             yum install -y netcdf-devel graphviz-devel openmpi-devel
         with:
           output-dir: ./dist
