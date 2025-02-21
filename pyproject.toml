@@ -1,3 +1,19 @@
 [build-system]
 requires = ["setuptools", "wheel", "numpy==1.16"]
 build-backend = "setuptools.build_meta" 
+
+[tool.cibuildwheel.linux]
+before-all = [
+    'yum update -y || true',
+    'yum install -y yum-utils wget || true',
+    'wget https://archives.fedoraproject.org/pub/archive/epel/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm || echo "epel-release is already installed, ignoring..."',
+    'yum install -y ./epel-release-7-14.noarch.rpm || true',
+    'yum install -y netcdf-devel graphviz-devel openmpi-devel || true'
+]
+
+[[tool.cibuildwheel.overrides]]
+select = "*-musllinux_*"
+before-all = [
+    "apk update",
+    "apk add --no-cache netcdf-dev graphviz-dev openmpi-dev"
+]

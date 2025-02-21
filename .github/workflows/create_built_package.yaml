@@ -1,9 +1,9 @@
-name: Deploy package to PyPI and create a GitHub Release
+name: Create built CURP package (wheel files) for PyPI distribution
 
 on:
   push:
     tags:
-      - "v*"
+      - "release-test/*"
 
 jobs:
   build_wheels:
@@ -63,15 +63,15 @@ jobs:
           name: python-package-distributions
           path: ./dist/*.whl
   
-  publish-to-pypi:
-    name: Publish to PyPI
+  publish-to-testpypi:
+    name: Publish to TestPyPI
     needs:
       - build_wheels
     runs-on: ubuntu-latest
 
     environment:
-      name: pypi
-      url: https://pypi.org/p/Curp/
+      name: testpypi
+      url: https://test.pypi.org/p/curp-v2-test/
 
     permissions:
       id-token: write  # mandatory for trusted publishing
@@ -83,17 +83,15 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-      - name: Publish distribution to PyPI
+      - name: Publish distribution to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          repository-url: https://pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
 
   github-release:
     name: Create GitHub Release
     needs:
-      - publish-to-pypi
+      - publish-to-testpypi
     runs-on: ubuntu-latest
 
     steps:
