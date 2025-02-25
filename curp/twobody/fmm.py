@@ -218,9 +218,9 @@ class FMMCellCalculator(FMMCalculatorBase):
         m2m = [self.upward_sweep(cells[i]) for i in cells]
 
         # evaluate potential
-        self.eval_potential(crd, cells, self.__n_crit, self.__theta)
+        coulomb_fmm = self.eval_potential(crd, cells, self.__n_crit, self.__theta)
         
-        return 
+        return coulomb_fmm
 
 
     def get_leaves_multipole(self, crd, gnames, cells, leaves, n_crit):
@@ -324,9 +324,16 @@ class FMMCellCalculator(FMMCalculatorBase):
             n_crit: maximum number of particles in a single cell.
             theta: tolerance parameter.    
         """
-        
-        for i in range(len(particles)):
-            self.evaluate(particles, 0, i, cells, n_crit, theta)
+        for group_i, groups in self.__gpair_table:
+            for group in groups:
+                for atom_num in self.__gnames_iatoms_pairs[group_i]:
+                    atom_index = atom_num - 1
+                    atomwise, fmm = self.evaluate(particles, 0, self.__gnames_iatoms_pairs[atom_index], cells[group], n_crit, theta)
+            
+        for cell in range(len(cells)):
+            self.evaluate(particles, 0, cell, cell, n_crit, theta)
+            
+        return dict(atomwise=atomwise, fmm=fmm)
 
 
 ####################################################################################################################
