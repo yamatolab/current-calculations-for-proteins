@@ -215,7 +215,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         self.get_leaves_multipole(crd, self.__gnames, cells, self.__leaves, self.__n_crit)
         
         # upward sweep
-        self.upward_sweep(cells)
+        m2m = [self.upward_sweep(cells[i]) for i in cells]
 
         # evaluate potential
         self.eval_potential(crd, cells, self.__n_crit, self.__theta)
@@ -255,44 +255,8 @@ class FMMCellCalculator(FMMCalculatorBase):
             leaves.append(p)
 
 
-    def M2M(self, p, c, cells):
-        
-        """Calculate parent cell p's multipole array based on child cell c's 
-        multipoles.
-        
-        Arguments:
-            p: parent cell index in cells list.
-            c: child cell index in cells list.
-            cells: the list of cells.
-        """
-        
-        dx, dy, dz = cells[p].x-cells[c].x, cells[p].y-cells[c].y, cells[p].z-cells[c].z
-        
-        Dxyz =  np.array((dx, dy, dz))
-        Dyzx = np.roll(Dxyz,-1) #It permutes the array (dx,dy,dz) to (dy,dz,dx) 
-        
-        cells[p].multipole += cells[c].multipole
-        
-        cells[p].multipole[1:4] += cells[c].multipole[0] * Dxyz
-        
-        cells[p].multipole[4:7] += cells[c].multipole[1:4] * Dxyz\
-                                + 0.5*cells[c].multipole[0] *  Dxyz**2
-        
-        cells[p].multipole[7:] += 0.5*np.roll(cells[c].multipole[1:4], -1) *  Dxyz \
-                                + 0.5*cells[c].multipole[1:4] * Dxyz \
-                                + 0.5*cells[c].multipole[0] * Dxyz * Dyzx   
-
-    def upward_sweep(self, cells):
-    
-        """Traverse from leaves to root, in order to calculate multipoles of all the cells.
-        
-        Arguments:
-            cells: the list of cells.    
-        """
-    
-        for c in range(len(cells)-1, 0, -1):
-            p = cells[c].parent
-            self.M2M(p, c, cells)
+    def cal_M2M(self, cells):
+        return self.__mod_fmm.M2M(cells)
 
     def evaluate(self, particles, p, i, cells, n_crit, theta):
         
