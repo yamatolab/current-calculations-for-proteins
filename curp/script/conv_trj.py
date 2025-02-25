@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 import os, sys
-import numpy
+import numpy as np
 import argparse
 
 from curp import get_tpl, TrjWriter

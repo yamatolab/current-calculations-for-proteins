@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os, sys
 import time
-import numpy
+import numpy as np
 
 # curp modules
 topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -43,10 +43,10 @@ class CalculatorBase(TimeStore):
         self.__gnames = [gname for gname, iatoms in gname_iatoms_pairs]
 
         # interaction table
-        self.__interact_table = [ numpy.array(t) for t in interact_table]
+        self.__interact_table = [ np.array(t) for t in interact_table]
 
         # make a table to convert the atom index into the group index.
-        iatm_to_igrp = numpy.zeros([natom])
+        iatm_to_igrp = np.zeros([natom])
         for igrp_1, (gname, iatoms) in enumerate(self.__gname_iatoms_pairs):
             for iatm in iatoms:
                 iatm_to_igrp[iatm-1] = igrp_1+1
@@ -212,7 +212,7 @@ class FluxCalculator(CalculatorBase):
         key_to_gflux['vdw'] = flux_grp
         # total for atom
         if flux_atm is not None:
-            total_atm = numpy.zeros( key_to_aflux['vdw'].shape )
+            total_atm = np.zeros( key_to_aflux['vdw'].shape )
 
             for flux in list(key_to_aflux.values()):
                 total_atm += flux
@@ -222,7 +222,7 @@ class FluxCalculator(CalculatorBase):
 
         # total for group
         if flux_grp is not None:
-            total_grp = numpy.zeros( key_to_gflux['vdw'].shape )
+            total_grp = np.zeros( key_to_gflux['vdw'].shape )
 
             for flux in list(key_to_gflux.values()):
                 total_grp += flux

@@ -1,5 +1,5 @@
 
-# import numpy
+# import numpy as np
 # class DimensionError(Exception): pass
 # class RangeError(Exception): pass
 # class MultiArray(dict):
@@ -30,10 +30,10 @@
 #         dim_maxs = [max(dim) for dim in dims]
 #         # dim_mins = [min(dim) for dim in dims]
 
-#         array = numpy.zeros(dim_maxs, dtype=float)
+#         array = np.zeros(dim_maxs, dtype=float)
 #         for dmax in dim_maxs:
 
-import numpy
+import numpy as np
 
 def tensor(xs, ys):
     axes_x = xs.shape
@@ -46,15 +46,15 @@ def tensor(xs, ys):
     dim0 = axes_x[-1]
 
     if len(axes_x) == 1:
-        result = numpy.zeros([dim0, dim0])
+        result = np.zeros([dim0, dim0])
     elif len(axes_x) == 2:
-        result = numpy.zeros([axes_x[0], dim0, dim0])
+        result = np.zeros([axes_x[0], dim0, dim0])
     elif len(axes_x) == 3:
-        result = numpy.zeros([axes_x[0], axes_x[1], dim0, dim0])
+        result = np.zeros([axes_x[0], axes_x[1], dim0, dim0])
     elif len(axes_x) == 4:
-        result = numpy.zeros([axes_x[0], axes_x[1], axes_x[2], dim0, dim0])
+        result = np.zeros([axes_x[0], axes_x[1], axes_x[2], dim0, dim0])
     else:
-        raise numpy.DimensionError()
+        raise np.DimensionError()
 
     for i in range(dim0):
         for j in range(dim0):
@@ -63,7 +63,7 @@ def tensor(xs, ys):
     return result
 
 def tensor1(x, y):
-    result = numpy.zeros([3,3])
+    result = np.zeros([3,3])
     for i in range(3):
         for j in range(3):
             result[i, j] = x[i] * y[j]
@@ -79,7 +79,7 @@ def tensor2(xs, ys):
 
     dim0 = axes_x[-1]
     if len(axes_x) == 2:
-        result = numpy.zeros([axes_x[0], dim0, dim0])
+        result = np.zeros([axes_x[0], dim0, dim0])
         for n, (x, y) in enumerate(zip(xs,ys)):
             for i in range(dim0):
                 for j in range(dim0):
@@ -89,8 +89,8 @@ def tensor2(xs, ys):
 
 
 def time_tensor(natom=10**5):
-    xs = numpy.ones([natom,3])
-    ys = numpy.ones([natom,3])
+    xs = np.ones([natom,3])
+    ys = np.ones([natom,3])
 
     from benchmarker import Benchmarker
     with Benchmarker(width=20) as bm:
@@ -99,7 +99,7 @@ def time_tensor(natom=10**5):
             result = tensor2(xs, ys)
 
         with bm('tensor 1'):
-            result = numpy.zeros([natom,3,3])
+            result = np.zeros([natom,3,3])
             for i,(x, y) in enumerate(zip(xs, ys)):
                 result[i] = tensor1(x,y)
             # print(result)
@@ -108,10 +108,10 @@ def time_tensor(natom=10**5):
             result = tensor3(xs, ys)
 
 def time_tensor2(natom=10**5):
-    xs = numpy.ones([100, natom,3])
-    ys = numpy.ones([100, natom,3])
-    # xs = numpy.array([1,2,3])
-    # ys = numpy.array([4,5,6])
+    xs = np.ones([100, natom,3])
+    ys = np.ones([100, natom,3])
+    # xs = np.array([1,2,3])
+    # ys = np.array([4,5,6])
 
     from benchmarker import Benchmarker
     with Benchmarker(width=10) as bm:
@@ -119,14 +119,14 @@ def time_tensor2(natom=10**5):
             result = tensor(xs, ys)
 
         with bm('dot product'):
-            aa = numpy.arange(10**5)
-            bb = numpy.arange(10**5)
-            aabb = numpy.dot(aa, bb)
+            aa = np.arange(10**5)
+            bb = np.arange(10**5)
+            aabb = np.dot(aa, bb)
         print(result)
         print(aabb)
 
 # def tensor(xs, ys):
-#     result = numpy.zeros(xs.shape)
+#     result = np.zeros(xs.shape)
 #     for x, y in zip(xs, ys):
 #          = x[0]*y[0], x[0]*y[1], x[0]*y[2]
 
@@ -152,7 +152,7 @@ class TBFMatrix_Old:
         self.zs[index] = value[2]
 
     def __getitem__(self, index):
-        return numpy.array([self.xs[index],self.ys[index],self.zs[index]])
+        return np.array([self.xs[index],self.ys[index],self.zs[index]])
 
     def __add__(self, other):
         if self.__shape != other.get_shape():
@@ -194,7 +194,7 @@ class TBFMatrix_Old:
     def items(self):
         ilist, jlist = self.xs.nonzero()
         for i, j in zip(ilist, jlist):
-            yield i, j, numpy.array([
+            yield i, j, np.array([
                 self.xs[i,j], self.ys[i,j], self.zs[i,j] ])
 
     def __repr__(self):
@@ -214,7 +214,7 @@ class TBFMatrix(dict):
         return self.__shape
 
     def __getitem__(self, key):
-        return self.get(key, numpy.zeros([3]))
+        return self.get(key, np.zeros([3]))
 
     def __add__(self, other):
         if self.__shape != other.get_shape():

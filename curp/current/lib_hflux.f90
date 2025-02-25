@@ -1,3 +1,7 @@
+!
+! CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
+!
+
 module utils
     implicit none
 
@@ -124,15 +128,21 @@ contains
                 jgrp = iatm_to_igrp(jatm)
 
                 if ( (igrp == 0) .or. (jgrp==0) ) cycle
-                hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
+
+                if ( igrp /= jgrp ) then
+                    hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                    hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
+                else 
+                    hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                end if
+
             end if
 
         end do
 
     end subroutine
 
-end module 
+end module
 
 
 module nonbonded
@@ -273,8 +283,14 @@ contains
                     jgrp = iatm_to_igrp(jatm)
 
                     if ( (igrp == 0) .or. (jgrp==0) ) cycle
-                    hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                    hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
+
+                    if ( igrp /= jgrp ) then
+                        hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                        hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
+                    else 
+                        hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
+                    end if
+
                 end if
 
             end do
@@ -284,5 +300,4 @@ contains
     end subroutine
 
 end module
-
 

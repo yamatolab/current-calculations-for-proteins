@@ -1,5 +1,5 @@
 import os, sys
-import numpy
+import numpy as np
 from nose.tools import *
 import numpy.testing as npt
 
@@ -10,12 +10,12 @@ if topdir not in sys.path:
 
 def tensor(x, y):
     """Calculate 3 x 3 tensor."""
-    return numpy.array([[x[0]*y[0], x[0]*y[1], x[0]*y[2]],
+    return np.array([[x[0]*y[0], x[0]*y[1], x[0]*y[2]],
                         [x[1]*y[0], x[1]*y[1], x[1]*y[2]],
                         [x[2]*y[0], x[2]*y[1], x[2]*y[2]]])
     
 def get_iatm_to_itars(target_atoms, natom):
-    iatm_to_itars = numpy.zeros( [natom], numpy.int)
+    iatm_to_itars = np.zeros( [natom], np.int)
     for itar_1, iatm in enumerate(target_atoms):
         iatm_to_itars[iatm-1] = itar_1 + 1
     return iatm_to_itars
@@ -41,8 +41,8 @@ def gen_pair_to_tbfs(zero_tbfs, tbfs):
 
 # Need for bonded current calculation
 def get_extended_tbfs(pair_to_tbfs, natom, n_ext):
-    zero_tbfs = numpy.ones((natom, n_ext),  numpy.bool)
-    tbforces  = numpy.zeros((natom, n_ext, 3), numpy.float)
+    zero_tbfs = np.ones((natom, n_ext),  np.bool)
+    tbforces  = np.zeros((natom, n_ext, 3), np.float)
     for iatm, jatm, tbf in pair_to_tbfs:
         iatm_1 = iatm-1
         iext_1 = jatm - iatm - 1
@@ -55,12 +55,12 @@ def get_extended_tbfs(pair_to_tbfs, natom, n_ext):
 def old_gen_table_tbfs(pair_to_tbfs, table, natom):
 
     # pair_to_tbfs = [
-    #         (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #         (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #         (1, 4, numpy.array([0.3, 0.5, -0.9])),
-    #         (2, 3, numpy.array([0.1, -0.3, -0.4])),
-    #         (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-    #         (3, 4, numpy.array([0.1, -0.6, -2.4])),
+    #         (1, 2, np.array([0.2, 0.3, 0.4])),
+    #         (1, 3, np.array([0.5, 0.6, 0.9])),
+    #         (1, 4, np.array([0.3, 0.5, -0.9])),
+    #         (2, 3, np.array([0.1, -0.3, -0.4])),
+    #         (2, 4, np.array([-0.1, -0.3, -1.4])),
+    #         (3, 4, np.array([0.1, -0.6, -2.4])),
     #         ]
 
     # table = [ [[1, 2, 4], [2, 3, 4]],
@@ -70,8 +70,8 @@ def old_gen_table_tbfs(pair_to_tbfs, table, natom):
         # example: tt = [[1,2,4], [2,3,4]]
         iatm_beg, jatm_beg, jatm_end = tt[0]
         iatm_end = tt[-1][0]
-        table_tbfs = numpy.zeros(
-                (iatm_end-iatm_beg+1, natom-iatm_beg+1, 3), numpy.float)
+        table_tbfs = np.zeros(
+                (iatm_end-iatm_beg+1, natom-iatm_beg+1, 3), np.float)
 
         # print(iatm_beg, iatm_end, jatm_beg, jatm_end)
         # print(table_tbfs.shape)
@@ -91,12 +91,12 @@ def old_gen_table_tbfs(pair_to_tbfs, table, natom):
 def gen_table_tbfs(pair_to_tbfs, table, natom):
 
     # pair_to_tbfs = [
-    #         (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #         (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #         (1, 4, numpy.array([0.3, 0.5, -0.9])),
-    #         (2, 3, numpy.array([0.1, -0.3, -0.4])),
-    #         (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-    #         (3, 4, numpy.array([0.1, -0.6, -2.4])),
+    #         (1, 2, np.array([0.2, 0.3, 0.4])),
+    #         (1, 3, np.array([0.5, 0.6, 0.9])),
+    #         (1, 4, np.array([0.3, 0.5, -0.9])),
+    #         (2, 3, np.array([0.1, -0.3, -0.4])),
+    #         (2, 4, np.array([-0.1, -0.3, -1.4])),
+    #         (3, 4, np.array([0.1, -0.6, -2.4])),
     #         ]
 
     # table = [ [[1, 2, 4], [2, 3, 4]],
@@ -106,8 +106,8 @@ def gen_table_tbfs(pair_to_tbfs, table, natom):
         # example: tt = [[1,2,4], [2,3,4]]
         iatm_beg, jatm_beg, jatm_end = tt[0]
         iatm_end = tt[-1][0]
-        table_tbfs = numpy.zeros(
-                (iatm_end-iatm_beg+1, natom-iatm_beg+1, 3), numpy.float)
+        table_tbfs = np.zeros(
+                (iatm_end-iatm_beg+1, natom-iatm_beg+1, 3), np.float)
 
         for t in tt:
             iatm__, jatm_beg, jatm_end = t
@@ -123,12 +123,12 @@ def gen_table_tbfs(pair_to_tbfs, table, natom):
 def gen_pair_to_tbfs_with_table(pair_to_tbfs, table):
 
     # pair_to_tbfs = [
-    #         (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #         (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #         (1, 4, numpy.array([0.3, 0.5, -0.9])),
-    #         (2, 3, numpy.array([0.1, -0.3, -0.4])),
-    #         (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-    #         (3, 4, numpy.array([0.1, -0.6, -2.4])),
+    #         (1, 2, np.array([0.2, 0.3, 0.4])),
+    #         (1, 3, np.array([0.5, 0.6, 0.9])),
+    #         (1, 4, np.array([0.3, 0.5, -0.9])),
+    #         (2, 3, np.array([0.1, -0.3, -0.4])),
+    #         (2, 4, np.array([-0.1, -0.3, -1.4])),
+    #         (3, 4, np.array([0.1, -0.6, -2.4])),
     #         ]
 
     # table = [ [[1, 2, 4], [2, 3, 4]],
@@ -150,7 +150,7 @@ def gen_pair_to_tbfs_with_table(pair_to_tbfs, table):
 
 def cal_pot_current(crd, iatm_to_itars, pair_to_tbfs, volumes):
     ntarget = max(iatm_to_itars)
-    stress_tensor  = numpy.zeros([ntarget, 3, 3])
+    stress_tensor  = np.zeros([ntarget, 3, 3])
     for iatm, jatm, f_ij in pair_to_tbfs:
         itar = iatm_to_itars[iatm-1]
         jtar = iatm_to_itars[jatm-1]
@@ -176,7 +176,7 @@ class TestStressTensorWithTarget:
     def test_kinetic_of_3_particle(self):
 
         # preparing
-        vel = numpy.array([
+        vel = np.array([
             [0.11, 0.08, -0.02],
             [0.33, 0.23, -0.11],
             [-0.13, 0.03, 0.25], ] )
@@ -186,7 +186,7 @@ class TestStressTensorWithTarget:
         natom = len(vel)
         target_atoms = [1,3]
         iatm_to_itars = get_iatm_to_itars(target_atoms, natom)
-        iatm_to_igrps = numpy.zeros([natom], numpy.int)
+        iatm_to_igrps = np.zeros([natom], np.int)
 
         target_vols = [ volumes[iatm-1] for iatm in target_atoms ]
 
@@ -205,10 +205,10 @@ class TestStressTensorWithTarget:
 
     def test_bonded_of_2_particles(self):
 
-        crd = numpy.array(
+        crd = np.array(
             [[1.0, 2.0, 3.0],
              [2.0, 1.0, 1.5]] )
-        pair_to_tbfs = [(1, 2, numpy.array([0.2, 0.3, 0.4]))]
+        pair_to_tbfs = [(1, 2, np.array([0.2, 0.3, 0.4]))]
         volumes = [1.2, 1.4]
         natom = len(crd)
         target_atoms = [2]
@@ -231,10 +231,10 @@ class TestStressTensorWithTarget:
         npt.assert_almost_equal(result, answer)
 
     def test_nonbonded_of_2_particles(self):
-        crd = numpy.array(
+        crd = np.array(
             [[1.0, 2.0, 3.0],
              [2.0, 1.0, 1.5]] )
-        pair_to_tbfs = [(1, 2, numpy.array([0.2, 0.3, 0.4]))]
+        pair_to_tbfs = [(1, 2, np.array([0.2, 0.3, 0.4]))]
         volumes = [1.2, 1.4]
 
         natom = len(crd)
@@ -271,18 +271,18 @@ class TestStressTensorWithTarget:
 
 
     def test_nonbonded_of_4_particles(self):
-        crd = numpy.array(
+        crd = np.array(
             [[1.0, 2.0,   3.0],
              [2.0, 1.0,   1.5],
              [2.5, -1.0, -1.0],
              [-0.2, -0.3, -0.6]] )
         pair_to_tbfs = [
-                (1, 2, numpy.array([0.2, 0.3, 0.4])),
-                (1, 3, numpy.array([0.5, 0.6, 0.9])),
-                (1, 4, numpy.array([0.3, 0.5, -0.9])),
-                (2, 3, numpy.array([0.1, -0.3, -0.4])),
-                (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-                (3, 4, numpy.array([0.1, -0.6, -2.4])),
+                (1, 2, np.array([0.2, 0.3, 0.4])),
+                (1, 3, np.array([0.5, 0.6, 0.9])),
+                (1, 4, np.array([0.3, 0.5, -0.9])),
+                (2, 3, np.array([0.1, -0.3, -0.4])),
+                (2, 4, np.array([-0.1, -0.3, -1.4])),
+                (3, 4, np.array([0.1, -0.6, -2.4])),
                 ]
         volumes = [1.2, 1.4, 1.3, 1.6]
 
@@ -329,7 +329,7 @@ class TestStressTensorWithTarget:
 
 #     def test_kinetic_of_1_particle(self):
 #         scal = StressTensor()
-#         vel = numpy.array([[0.11,0.08,-0.02]])
+#         vel = np.array([[0.11,0.08,-0.02]])
 #         masses  = [1.08]
 #         volumes = [1.2]
 
@@ -341,7 +341,7 @@ class TestStressTensorWithTarget:
 
     # def test_kinetic_of_3_particles(self):
     #     scal = StressTensor()
-    #     vel = numpy.array([[0.11,0.08,-0.02],
+    #     vel = np.array([[0.11,0.08,-0.02],
     #                        [0.21,-0.10,0.05],
     #                        [-0.05, 0.22, 0.15]])
     #     masses  = [1.08, 18.02, 1.08]
@@ -355,10 +355,10 @@ class TestStressTensorWithTarget:
 
     # def test_bonded_of_2_particles(self):
 
-    #     crd = numpy.array(
+    #     crd = np.array(
     #         [[1.0, 2.0, 3.0],
     #          [2.0, 1.0, 1.5]] )
-    #     pair_to_tbfs = [(1, 2, numpy.array([0.2, 0.3, 0.4]))]
+    #     pair_to_tbfs = [(1, 2, np.array([0.2, 0.3, 0.4]))]
     #     volumes = [1.2, 1.4]
     #     natom = len(crd)
     #     target_atoms = [1]
@@ -378,14 +378,14 @@ class TestStressTensorWithTarget:
     #     npt.assert_almost_equal(result, answer)
 
     # def test_bonded_of_3_particles(self):
-    #     crd = numpy.array(
+    #     crd = np.array(
     #         [[1.0, 2.0,   3.0],
     #          [2.0, 1.0,   1.5],
     #          [2.5, -1.0, -1.0]] )
     #     pair_to_tbfs = [
-    #             (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #             (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #             (2, 3, numpy.array([0.1, -0.3, -0.4]))
+    #             (1, 2, np.array([0.2, 0.3, 0.4])),
+    #             (1, 3, np.array([0.5, 0.6, 0.9])),
+    #             (2, 3, np.array([0.1, -0.3, -0.4]))
     #             ]
     #     volumes = [1.2, 1.4, 1.2]
 
@@ -399,18 +399,18 @@ class TestStressTensorWithTarget:
     #     npt.assert_almost_equal(res, right)
 
     # def test_bonded_of_4_particles(self):
-    #     crd = numpy.array(
+    #     crd = np.array(
     #         [[1.0, 2.0,   3.0],
     #          [2.0, 1.0,   1.5],
     #          [2.5, -1.0, -1.0],
     #          [-0.2, -0.3, -0.6]] )
     #     pair_to_tbfs = [
-    #             (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #             (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #             (1, 4, numpy.array([0.3, 0.5, -0.9])),
-    #             (2, 3, numpy.array([0.1, -0.3, -0.4])),
-    #             (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-    #             (3, 4, numpy.array([0.1, -0.6, -2.4])),
+    #             (1, 2, np.array([0.2, 0.3, 0.4])),
+    #             (1, 3, np.array([0.5, 0.6, 0.9])),
+    #             (1, 4, np.array([0.3, 0.5, -0.9])),
+    #             (2, 3, np.array([0.1, -0.3, -0.4])),
+    #             (2, 4, np.array([-0.1, -0.3, -1.4])),
+    #             (3, 4, np.array([0.1, -0.6, -2.4])),
     #             ]
     #     volumes = [1.2, 1.4, 1.2, 1.6]
 
@@ -423,10 +423,10 @@ class TestStressTensorWithTarget:
     #     npt.assert_almost_equal(res, right)
 
     # def test_nonbonded_of_2_particles(self):
-    #     crd = numpy.array(
+    #     crd = np.array(
     #         [[1.0, 2.0, 3.0],
     #          [2.0, 1.0, 1.5]] )
-    #     pair_to_tbfs = [(1, 2, numpy.array([0.2, 0.3, 0.4]))]
+    #     pair_to_tbfs = [(1, 2, np.array([0.2, 0.3, 0.4]))]
     #     volumes = [1.2, 1.4]
 
     #     table = [[[1, 2, 2]]]
@@ -444,18 +444,18 @@ class TestStressTensorWithTarget:
     #     npt.assert_almost_equal(res, right)
 
     # def test_nonbonded_of_4_particles(self):
-    #     crd = numpy.array(
+    #     crd = np.array(
     #         [[1.0, 2.0,   3.0],
     #          [2.0, 1.0,   1.5],
     #          [2.5, -1.0, -1.0],
     #          [-0.2, -0.3, -0.6]] )
     #     pair_to_tbfs = [
-    #             (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #             (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #             (1, 4, numpy.array([0.3, 0.5, -0.9])),
-    #             (2, 3, numpy.array([0.1, -0.3, -0.4])),
-    #             (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-    #             (3, 4, numpy.array([0.1, -0.6, -2.4])),
+    #             (1, 2, np.array([0.2, 0.3, 0.4])),
+    #             (1, 3, np.array([0.5, 0.6, 0.9])),
+    #             (1, 4, np.array([0.3, 0.5, -0.9])),
+    #             (2, 3, np.array([0.1, -0.3, -0.4])),
+    #             (2, 4, np.array([-0.1, -0.3, -1.4])),
+    #             (3, 4, np.array([0.1, -0.6, -2.4])),
     #             ]
     #     volumes = [1.2, 1.4, 1.2, 1.6]
 
@@ -467,7 +467,7 @@ class TestStressTensorWithTarget:
     #     new_pair_to_tbfs = list(
     #             gen_pair_to_tbfs_with_table(pair_to_tbfs, table))
     #     right = cal_pot_current(crd, new_pair_to_tbfs, volumes)
-    #     print(numpy.array(right))
+    #     print(np.array(right))
     #     print(new_pair_to_tbfs)
     #     print('*'*80)
 
@@ -481,18 +481,18 @@ class TestStressTensorWithTarget:
     #     npt.assert_almost_equal(res, right)
 
     # def test_nonbonded_of_4_particles_table2(self):
-    #     crd = numpy.array(
+    #     crd = np.array(
     #         [[1.0, 2.0,   3.0],
     #          [2.0, 1.0,   1.5],
     #          [2.5, -1.0, -1.0],
     #          [-0.2, -0.3, -0.6]] )
     #     pair_to_tbfs = [
-    #             (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #             (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #             (1, 4, numpy.array([0.3, 0.5, -0.9])),
-    #             (2, 3, numpy.array([0.1, -0.3, -0.4])),
-    #             (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-    #             (3, 4, numpy.array([0.1, -0.6, -2.4])),
+    #             (1, 2, np.array([0.2, 0.3, 0.4])),
+    #             (1, 3, np.array([0.5, 0.6, 0.9])),
+    #             (1, 4, np.array([0.3, 0.5, -0.9])),
+    #             (2, 3, np.array([0.1, -0.3, -0.4])),
+    #             (2, 4, np.array([-0.1, -0.3, -1.4])),
+    #             (3, 4, np.array([0.1, -0.6, -2.4])),
     #             ]
     #     volumes = [1.2, 1.4, 1.2, 1.6]
 
@@ -514,18 +514,18 @@ class TestStressTensorWithTarget:
     #     npt.assert_almost_equal(res, right)
 
     # def test_nonbonded_of_4_particles_table3(self):
-    #     crd = numpy.array(
+    #     crd = np.array(
     #         [[1.0, 2.0,   3.0],
     #          [2.0, 1.0,   1.5],
     #          [2.5, -1.0, -1.0],
     #          [-0.2, -0.3, -0.6]] )
     #     pair_to_tbfs = [
-    #             (1, 2, numpy.array([0.2, 0.3, 0.4])),
-    #             (1, 3, numpy.array([0.5, 0.6, 0.9])),
-    #             (1, 4, numpy.array([0.3, 0.5, -0.9])),
-    #             (2, 3, numpy.array([0.1, -0.3, -0.4])),
-    #             (2, 4, numpy.array([-0.1, -0.3, -1.4])),
-    #             (3, 4, numpy.array([0.1, -0.6, -2.4])),
+    #             (1, 2, np.array([0.2, 0.3, 0.4])),
+    #             (1, 3, np.array([0.5, 0.6, 0.9])),
+    #             (1, 4, np.array([0.3, 0.5, -0.9])),
+    #             (2, 3, np.array([0.1, -0.3, -0.4])),
+    #             (2, 4, np.array([-0.1, -0.3, -1.4])),
+    #             (3, 4, np.array([0.1, -0.6, -2.4])),
     #             ]
     #     volumes = [1.2, 1.4, 1.2, 1.6]
 

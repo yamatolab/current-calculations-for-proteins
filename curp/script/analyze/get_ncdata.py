@@ -1,6 +1,6 @@
 from __future__ import print_function
 import sys
-import numpy
+import numpy as np
 
 from curp.script.cal_tc import get_stringnames
 from curp.script.sum_acf import load_acf_first
@@ -22,7 +22,7 @@ def gen_indices(grange_lines):
 
 def write_data(prefix, donor, acceptor, acf, times):
     fn = '{:}-{:}-{:}.dat'.format(prefix, donor.decode(), acceptor.decode())
-    numpy.savetxt(fn, numpy.array([times, acf]).T, fmt='%12.4f   % 12.7e')
+    np.savetxt(fn, np.array([times, acf]).T, fmt='%12.4f   % 12.7e')
 
 
 def get_ncdata(acf_fp, group_ranges, dataname='acf', prefix='acf', **kwds):
