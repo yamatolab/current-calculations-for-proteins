@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os
 import sys
-import numpy
+import numpy as np
 
 from curp import exception
 import curp.clog as logger
@@ -236,7 +236,7 @@ def gen_group_pairs_with_target(gen_gname_iatoms_pairs, iatm_to_itars):
 
 
 def get_iatm_to_itars(target_atoms, natom):
-    iatm_to_itars = numpy.zeros( [natom], numpy.int)
+    iatm_to_itars = np.zeros( [natom], np.int)
     for itar_1, iatm in enumerate(target_atoms):
         iatm_to_itars[iatm-1] = itar_1 + 1
     return iatm_to_itars

@@ -1,3 +1,7 @@
+!
+! CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
+!
+
 module utils
     implicit none
 
@@ -138,7 +142,7 @@ contains
 
     end subroutine
 
-end module 
+end module
 
 
 module nonbonded
@@ -296,5 +300,4 @@ contains
     end subroutine
 
 end module
-
 

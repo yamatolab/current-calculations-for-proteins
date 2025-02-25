@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import numpy
+import numpy as np
 
 from curp.script.lib_distance import distance
 
@@ -18,7 +18,7 @@ def do_distance(tpl, trj, trj_type,
     # Generate residue group
     res_info  = tpl.get_residue_info()
     atom_info = tpl.get_atom_info()
-    rname_iatoms_pairs = list( (rname, list(numpy.array(iatoms)))
+    rname_iatoms_pairs = list( (rname, list(np.array(iatoms)))
             for rname, iatoms in gen_residue_group(
                 res_info, atom_info, name_fmt=dist_format))
 
@@ -29,7 +29,7 @@ def do_distance(tpl, trj, trj_type,
             for rname, iatoms in rname_iatoms_pairs ]
 
     mod = distance
-    mod.res_beg_end_pairs = numpy.array(res_beg_end_pairs)
+    mod.res_beg_end_pairs = np.array(res_beg_end_pairs)
     mod.cutoff2 = dist_cutoff ** 2
     if dist_method == 'com':        mod.method = 1
     elif dist_method == 'nearest':  mod.method = 2
@@ -55,7 +55,7 @@ def get_min_avg_max_rms(dist2s_trj):
     print('# itraj = {:>8}'.format(1), end='')
     dist2s_fst = next(dist2s_trj)
     dist2s_sum = dist2s_fst
-    dists_sum  = numpy.sqrt(dist2s_fst)
+    dists_sum  = np.sqrt(dist2s_fst)
 
     dist2s_min = dist2s_fst.copy()
     dist2s_max = dist2s_fst.copy()
@@ -67,9 +67,9 @@ def get_min_avg_max_rms(dist2s_trj):
         print('# itraj = {:>8}'.format(itrj), end='')
 
         dist2s_sum += dist2s
-        dists_sum  += numpy.sqrt(dist2s)
-        dist2s_min = numpy.minimum(dist2s_min, dist2s)
-        dist2s_max = numpy.maximum(dist2s_max, dist2s)
+        dists_sum  += np.sqrt(dist2s)
+        dist2s_min = np.minimum(dist2s_min, dist2s)
+        dist2s_max = np.maximum(dist2s_max, dist2s)
 
         t1 = time.time()
         print('{:12.4f}'.format(t1-t0))
@@ -78,8 +78,8 @@ def get_min_avg_max_rms(dist2s_trj):
     nframe = itrj
 
     dists_avg = dists_sum/float(nframe)
-    dists_rms = numpy.sqrt(dist2s_sum/float(nframe) - dists_avg**2)
-    return numpy.sqrt(dist2s_min), dists_avg, numpy.sqrt(dist2s_max), dists_rms
+    dists_rms = np.sqrt(dist2s_sum/float(nframe) - dists_avg**2)
+    return np.sqrt(dist2s_min), dists_avg, np.sqrt(dist2s_max), dists_rms
 
 def write_distance(dmin, davg, dmax, drms, resnames):
 

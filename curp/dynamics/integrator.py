@@ -4,7 +4,7 @@ from __future__ import print_function
 import os
 import sys
 import time
-import numpy
+import numpy as np
 
 # curp modules
 from curp.utility import TimeStore
@@ -31,7 +31,7 @@ class NEVIntegrator(TimeStore):
         self.__tbf = TwoBodyCalculator(topology, setting)
         self.__tbf.setup(interact_table, check=False)
 
-        self.__interact_table = [ numpy.array(t) for t in interact_table ]
+        self.__interact_table = [ np.array(t) for t in interact_table ]
 
         # decide integrator
         params = setting.dynamics
@@ -80,7 +80,7 @@ class NEVIntegrator(TimeStore):
         # frc_next : next step's force
 
         # Preparation of the dynamcs on 0th step
-        ms    = numpy.array(masses)[:, None]
+        ms    = np.array(masses)[:, None]
         dt    = params.dt * 1000.0
         nstep = params.num_steps
         coef  = self.coef
@@ -147,7 +147,7 @@ class NEVIntegrator(TimeStore):
         # vel_dt = 0.5*(vel + vel_next)
 
         # Preparation of the dynamcs on 0th step
-        ms    = numpy.array(masses)[:, None]
+        ms    = np.array(masses)[:, None]
         # dt    = params.dt
         # dt    = params.dts
         dt = params.dt * 1000.0
@@ -207,7 +207,7 @@ class NEVIntegrator(TimeStore):
         gas  = self.gas_const
         dof  = vel.size # defree of freedom
 
-        energy_tmp = numpy.sum( ms * vel**2)
+        energy_tmp = np.sum( ms * vel**2)
 
         energy = 0.5 * energy_tmp / self.coef
         temp   = 10.0**7 * energy_tmp / dof / gas

@@ -1,23 +1,27 @@
 # Ignores library files
 **.so
 **.pyc
-# Ignores most of the hidden files
-.*
-**/.*
-!.gitignore
+__pycache__/
 
 # Ignores curp-environ and tutorial directory
 curp-environ/
 tutorial
 
 # folders made by setup.py
-/build/
-/curp.egg-info/
-/dist/
+build/
+*.egg-info/
+dist/
+*.mod
 
 # Ignore test outputs
-/test/**/outdata/*
-/test/**/*log
+test/**/outdata/*
+test/**/*log
 
 # Ignore doc outputs
-/docs/_build/
+_build/
+
+.vscode/
+venv/
+.venv/
+
+*.log

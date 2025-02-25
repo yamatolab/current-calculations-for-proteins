@@ -1,18 +1,18 @@
 from __future__ import print_function
 
 import math
-import numpy
+import numpy as np
 
 
 def cal_rdf(crd, num_rs, rmax=5.0, dr=0.1, per_area=True):
     """Calclate a radial distribution function on each atom."""
     natom = len(crd)
-    rdfs = numpy.zeros((natom, num_rs)) # rdf on each atom.
+    rdfs = np.zeros((natom, num_rs)) # rdf on each atom.
 
     for rdf_i, r_i in zip(rdfs, crd):
         for r_j in crd:
             r_ij = r_i - r_j
-            l_ij = math.sqrt(numpy.dot(r_ij, r_ij))
+            l_ij = math.sqrt(np.dot(r_ij, r_ij))
             if l_ij <= 0.1: continue
             if l_ij >= rmax: continue
             rindex = int(round(l_ij/dr)) - 1

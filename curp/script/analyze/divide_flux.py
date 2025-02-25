@@ -2,7 +2,7 @@
 from __future__ import print_function
 import os
 import math
-import numpy
+import numpy as np
 
 
 import gzip
@@ -30,7 +30,7 @@ class FluxParser:
             self.__file.close()
             raise
 
-        return don_acc_pairs, numpy.array(fluxes)
+        return don_acc_pairs, np.array(fluxes)
 
     next = __next__ # for python 2.x
 
@@ -77,7 +77,7 @@ class FluxParser:
             values = [float(c) for c in cols[2:]]
             fluxes.append(values)
 
-        return don_acc_pairs, numpy.array(fluxes)
+        return don_acc_pairs, np.array(fluxes)
 
     def gen_optimized_lines(self, file):
         # first flag
@@ -258,8 +258,8 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
     # create average fluxes and fluxes**2 array
     npair = len(don_acc_pairs)
     print('npair', npair)
-    fluxes_sum  = numpy.zeros([npair, nvalue], numpy.float)
-    fluxes2_sum = numpy.zeros([npair, nvalue], numpy.float)
+    fluxes_sum  = np.zeros([npair, nvalue], np.float)
+    fluxes2_sum = np.zeros([npair, nvalue], np.float)
 
     # get target pairs
     target_pairs = list(gen_target_pairs(donor_line, acceptor_line,
@@ -293,7 +293,7 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
 
     avg_fluxes = fluxes_sum / float(istep+1)
     avg_fluxes2 = fluxes2_sum / float(istep+1)
-    rms_fluxes = numpy.sqrt( avg_fluxes2 - avg_fluxes**2 )
+    rms_fluxes = np.sqrt( avg_fluxes2 - avg_fluxes**2 )
 
     if len(labels) == 1:
         write_avg_rms(output_fn, target_pairs, avg_fluxes, rms_fluxes)

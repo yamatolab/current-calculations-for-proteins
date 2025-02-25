@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import numpy
+import numpy as np
 
 import curp.table.interact_table as it
 
@@ -45,7 +45,7 @@ def parse_mask_with_range(mask, atoms, natom):
 
 def make_iatm_to_itar(target_atoms, natom):
     """Make iatm => itarget dictionary."""
-    iatm_to_itar = numpy.zeros( [natom], numpy.int)
+    iatm_to_itar = np.zeros( [natom], np.int)
 
     for itar_1, iatm in enumerate(target_atoms):
         iatm_to_itar[iatm-1] = itar_1 + 1

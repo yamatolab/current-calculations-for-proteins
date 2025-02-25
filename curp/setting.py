@@ -372,7 +372,8 @@ class Setting(SettingBase):
             value_type=String),
 
         decomp = Bool(default=False, require=False,
-            desc=('Flag whether decompose the total current or flux '
+            desc=('Flag whether decompose and output the total current/flux,'
+                  'autocorrelation function and heat conductivity'
                   'to bonded, coulomb, and van der Waals interaction.') ),
 
         frequency = Int(default=0, require=False,
@@ -463,8 +464,11 @@ def parse_config(config_filename=None):
                 outfile.write(body)
 
         outfile.seek(0)
-    print("Type outfile: ", type(outfile))
-    print(outfile)
+    
+    import curp.clog as logger
+    logger.debug("Type outfile: ", type(outfile))
+    logger.debug(outfile)
+    
     config = cp.SafeConfigParser()
 
     config.readfp(outfile)

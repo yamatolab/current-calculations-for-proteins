@@ -3,7 +3,7 @@
 Developed by Yamato's lab, Nagoya University.
 Use the argument -h for a list of available arguments.
 Input: .cfg file
-(see http://www.comp-biophys.com/resources/curp-tutorial/tutorials.html
+(see https://curp.jp/tutorials/
 and the tutorial directory for more informations.)
 """
 
@@ -59,7 +59,7 @@ def write_array(array, num_per_line=10):
 
         # Last line
         if length % num_per_line != 0:
-            icol_beg = 10 * (length//num_per_line + 1)
+            icol_beg = 10 * (length//num_per_line)
             line = " ".join("{:>5}".format(col)
                             for col in array[icol_beg:])
             logger.info(line)
@@ -297,6 +297,8 @@ def init_current(setting, par):
 
     # Decide Writer.
     t_0 = time.time()
+    
+    logger.info("length of nonbonded_table: {}".format(len(interact_table)))
 
     if par.is_root():
         from curp.current.writer import get_writer
@@ -399,9 +401,9 @@ def get_data_iter(setting, topology, target_atoms):
         tuple (cstep_crd, (new_crd, new_vel, pbc_crd))
         cstep_crd : int
             Step of shown coordinates and velocity.
-        new_crd : numpy.ma.MaskedArray
+        new_crd : np.ma.MaskedArray
             Coordinates of each atom at step cstep_crd.
-        new_vel : numpy.ma.MaskedArray
+        new_vel : np.ma.MaskedArray
             Velocity of each atom at step cstep_crd.
         pbc_crd : None or tuple of float
             Periodic boundary condition coordinates.
@@ -564,7 +566,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
         license_fp = os.path.join(SRC_DIR, "LICENSE-short.txt")
         with open(license_fp, "r", encoding="utf-8") as license_file:
             for line in license_file:
-                logger.info(" "*8 + str(line.strip().encode('utf-8')))
+                logger.info(" "*8 +line.strip())
         logger.info()
         logger.info()
 

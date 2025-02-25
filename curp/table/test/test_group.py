@@ -2,7 +2,7 @@ from nose.tools import *
 import numpy.testing as npt
 
 import os, sys
-import numpy
+import numpy as np
 topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if topdir not in sys.path:
     sys.path.insert(0, topdir)
@@ -32,7 +32,7 @@ class TestVolume:
                      'C','O','OXT'], )
 
         # answer value
-        answer1 = numpy.array(
+        answer1 = np.array(
                 [ 0,  0,  0,  0,  0,  0,  1,  2,  3,  4,
                   5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
                   15, 16, 17, 18, 19, 20,  0,  0,  0,  0,
