@@ -7,7 +7,7 @@ using namespace Eigen;
 
 class cal_fmm{
 
-    
+
     // public variables
     public:
         int n_crit;
@@ -41,12 +41,12 @@ class cal_fmm{
         Eigen::VectorXd  multipole;
 
         Cell(int n_crit = 10)
-            : nleaf(0),
-            leaf(Eigen::VectorXi::Zero(n_crit)), // n_crit 個の 0 で初期化
-            nchild(0),
-            child(Eigen::VectorXi::Zero(8)),    // 子セル8個
-            parent(0),
-            rc(Eigen::Vector3d::Zero()),       // (0,0,0) で初期化
+            : nleaf(0),                             // number of atoms(leaf) in the cell
+            leaf(Eigen::VectorXi::Zero(n_crit)),    // index of atoms in the cell
+            nchild(0),                              // number of child cells
+            child(Eigen::VectorXi::Zero(8)),        // index of 8 child cells
+            parent(0),                              // index of parent cell
+            rc(Eigen::Vector3d::Zero()),            // center of the cell
             r(0.0),
             multipole(Eigen::VectorXd::Zero(10)) // 10個の multipole を 0 で初期化
         {}
