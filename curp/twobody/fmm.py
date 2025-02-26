@@ -212,7 +212,7 @@ class FMMCellCalculator(FMMCalculatorBase):
     def cal_fmm(self, cells, crd):
         
         # get multipole arrays
-        self.get_leaves_multipole(crd, self.__gnames, cells, self.__leaves, self.__n_crit)
+        [self.get_multipole(crd, 0, cells[gname], self.__leaves, self.__n_crit) for gname, atoms in self.__gnames_iatoms_pairs]
         
         # upward sweep
         m2m = [self.cal_M2M(cells[i]) for i in cells]
@@ -226,10 +226,10 @@ class FMMCellCalculator(FMMCalculatorBase):
     def get_leaves_multipole(self, crd, gnames, cells, leaves, n_crit):
         
         for gname in gnames:
-            self._get_multipole(crd, 0, cells[gname], leaves, n_crit)
+            self.get_multipole(crd, 0, cells[gname], leaves, n_crit)
         
 
-    def _get_multipole(self, crd, p, cells, leaves, n_crit):
+    def get_multipole(self, crd, p, cells, leaves, n_crit):
     
         """Calculate multipole arrays for all leaf cells under cell p. If leaf
         number of cell p is equal or bigger than n_crit (non-leaf), traverse down
@@ -251,7 +251,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         # otherwise cell p is a leaf cell
         else:
             # loop in leaf particles, do P2M
-            cells[p].multipole += self.__mod_fmm.P2M(cells[p].multipole, cells[p].rc, cells[p].nleaf) 
+            cells[p].multipole += self.__mod_fmm.cal_multipole(cells[p].multipole, cells[p].rc, cells[p].nleaf) 
             leaves.append(p)
 
 
