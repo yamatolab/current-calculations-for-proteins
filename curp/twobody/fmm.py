@@ -215,7 +215,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         self.get_leaves_multipole(crd, self.__gnames, cells, self.__leaves, self.__n_crit)
         
         # upward sweep
-        m2m = [self.upward_sweep(cells[i]) for i in cells]
+        m2m = [self.cal_M2M(cells[i]) for i in cells]
 
         # evaluate potential
         coulomb_fmm = self.eval_potential(crd, cells, self.__n_crit, self.__theta)
