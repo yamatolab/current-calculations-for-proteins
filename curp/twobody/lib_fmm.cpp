@@ -78,7 +78,7 @@ class cal_fmm{
                 }
             }
 
-            rc(i) = r_max - r_min;
+            rc(i) = r_min + abs(r_max - r_min) * 0.5;
         }
         return rc;
     }
