@@ -326,9 +326,8 @@ class FMMCellCalculator(FMMCalculatorBase):
         """
         for group_i, groups in self.__gpair_table:
             for group in groups:
-                for atom_num in self.__gnames_iatoms_pairs[group_i]:
-                    atom_index = atom_num - 1
-                    atomwise, fmm = self.evaluate(particles, 0, self.__gnames_iatoms_pairs[atom_index], cells[group], n_crit, theta)
+                for i in len(self.__gnames_iatoms_pairs[group_i]):
+                    atomwise, fmm = self.evaluate(particles, 0, self.__gnames_iatoms_pairs[i], cells[group], n_crit, theta)
             
         # for cell in range(len(cells)):
         #     self.evaluate(particles, 0, cell, cell, n_crit, theta)
