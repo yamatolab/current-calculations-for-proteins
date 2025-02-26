@@ -330,8 +330,8 @@ class FMMCellCalculator(FMMCalculatorBase):
                     atom_index = atom_num - 1
                     atomwise, fmm = self.evaluate(particles, 0, self.__gnames_iatoms_pairs[atom_index], cells[group], n_crit, theta)
             
-        for cell in range(len(cells)):
-            self.evaluate(particles, 0, cell, cell, n_crit, theta)
+        # for cell in range(len(cells)):
+        #     self.evaluate(particles, 0, cell, cell, n_crit, theta)
             
         return dict(atomwise=atomwise, fmm=fmm)
 
