@@ -6,19 +6,24 @@ using namespace py = pybind11;
 using namespace Eigen;
 
 class cal_fmm{
-public:
-    int n_crit;
-    float theta;
-    MatrixXd t_crd;
-    MatrixXd t_pbc;
-    MatrixXd t_q;
 
+    
+    // public variables
+    public:
+        int n_crit;
+        float theta;
+        MatrixXd q;
+        MatrixXd t_crd;
+        MatrixXd t_pbc;
+    
 
-    void setup(){
-        // n_crit, theta, qを読み込む
+    void setup(int n_crit, float theta, MatrixXd q){
+        n_crit = n_crit;
+        theta = theta;
+        q = q;
     };
 
-    // 
+    // read trajectory
     void initialize(const MatrixXd& crd, const MatrixXd & pbc){
         t_crd = crd;
         t_pbc = pbc;
@@ -26,14 +31,14 @@ public:
     };
 
     struct Cell {
-        int nleaf;
-        Eigen::VectorXi leaf;
-        int nchild;
-        Eigen::VectorXi child;
-        int parent;
-        Eigen::Vector3d rc;
-        double r;
-        Eigen::VectorXd multipole;
+        int              nleaf;
+        Eigen::VectorXi  leaf;
+        int              nchild;
+        Eigen::VectorXi  child;
+        int              parent;
+        Eigen::Vector3d  rc;
+        double           r;
+        Eigen::VectorXd  multipole;
 
         Cell(int n_crit = 10)
             : nleaf(0),
