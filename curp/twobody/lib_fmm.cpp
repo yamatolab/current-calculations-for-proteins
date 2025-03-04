@@ -48,7 +48,7 @@ class cal_fmm{
             parent(0),                              // index of parent cell
             rc(Eigen::Vector3d::Zero()),            // center of the cell
             r(0.0),
-            multipole(Eigen::VectorXd::Zero(10)) // 10個の multipole を 0 で初期化
+            multipole(Eigen::VectorXd::Zero(10))    // 10 multipoles
         {}
     };
 
