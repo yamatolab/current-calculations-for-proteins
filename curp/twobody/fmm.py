@@ -218,7 +218,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         m2m = [self.cal_M2M(cells[i]) for i in cells]
 
         # evaluate potential
-        coulomb_fmm = self.eval_potential(crd, cells, self.__n_crit, self.__theta)
+        coulomb_fmm = [self.eval_potential(group_i, groups, cells) for group_i, groups in self.__gpair_table]
         
         return coulomb_fmm
 
@@ -258,63 +258,7 @@ class FMMCellCalculator(FMMCalculatorBase):
     def cal_M2M(self, cells):
         return self.__mod_fmm.M2M(cells)
 
-    def evaluate(self, particles, p, i, cells, n_crit, theta):
-        
-        """Evaluate the gravitational potential at a target point i, 
-        caused by source particles cell p. If nleaf of cell p is less 
-        than n_crit (leaf), use direct summation. Otherwise (non-leaf), loop
-        in p's child cells. If child cell c is in far-field of target particle i,
-        use multipole expansion. Otherwise (near-field), call the function
-        recursively.
-        
-        Arguments:
-            particles: the list of particles
-            p: cell index in cells list
-            i: target particle index
-            cells: the list of cells
-            n_crit: maximum number of leaves in a single cell
-            theta: tolerance parameter    
-        """
-    
-        # non-leaf cell
-        if cells[p].nleaf >= n_crit:
-            
-            # loop in p's child cells (8 octants)
-            for octant in range(8):
-                if cells[p].nchild & (1 << octant):
-                    c = cells[p].child[octant]
-                    r = particles[i].distance(cells[c])
-                    
-                    # near-field child cell
-                    if cells[c].r > theta*r:
-                        self.evaluate(particles, c, i, cells, n_crit, theta)
-                    
-                    # far-field child cell
-                    else:
-                        dx = particles[i].x - cells[c].x
-                        dy = particles[i].y - cells[c].y
-                        dz = particles[i].z - cells[c].z
-                        r3 = r**3
-                        r5 = r3*r**2
-                    
-                        # calculate the weight for each multipole
-                        weight = [1/r, -dx/r3, -dy/r3, -dz/r3, 3*dx**2/r5 - 1/r3, \
-                                3*dy**2/r5 - 1/r3, 3*dz**2/r5 - 1/r3, 3*dx*dy/r5, \
-                                3*dy*dz/r5, 3*dz*dx/r5]
-                        
-                        particles[i].phi += np.dot(cells[c].multipole, weight)
-                    
-        # leaf cell
-        else:
-            # loop in twig cell's particles
-            for l in range(cells[p].nleaf):
-                source = particles[cells[p].leaf[l]]
-                r = particles[i].distance(source)
-                if r != 0:
-                    particles[i].phi += source.m / r
-
-
-    def eval_potential(self, particles, cells, n_crit, theta):
+    def eval_potential(self, group_i, groups, cells):
         
         """Evaluate the gravitational potential at all target points 
         
@@ -324,14 +268,8 @@ class FMMCellCalculator(FMMCalculatorBase):
             n_crit: maximum number of particles in a single cell.
             theta: tolerance parameter.    
         """
-        for group_i, groups in self.__gpair_table:
-            for group in groups:
-                for i in len(self.__gnames_iatoms_pairs[group_i]):
-                    atomwise, fmm = self.evaluate(particles, 0, self.__gnames_iatoms_pairs[i], cells[group], n_crit, theta)
-            
-        # for cell in range(len(cells)):
-        #     self.evaluate(particles, 0, cell, cell, n_crit, theta)
-            
+
+        atomwise, fmm = self.__mod_fmm.evaluate(group_i, groups, cells)            
         return dict(atomwise=atomwise, fmm=fmm)
 
 
