@@ -17,7 +17,7 @@ class cal_fmm{
         MatrixXd t_pbc;
     
 
-    void setup(int n_crit, float theta, MatrixXd q){
+    void setup(const int n_crit, const float theta, const MatrixXd q){
         n_crit = n_crit;
         theta = theta;
         q = q;
@@ -149,96 +149,134 @@ class cal_fmm{
         p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
     }
 
-    float cal_fiJ(source, rc, potential, theta, cell){
-        float crd_target = crd(target-1);
-        float rx = crd_target(0) - rc(0);
-        float ry = crd_target(1) - rc(1);
-        float rz = crd_target(2) - rc(2);
-        float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+    float cal_fiJ(string source, VectorXd targets, Cell cells){
 
-        if (cell.r > theta * r){
-            bool do_fmm = False;
-            exit();
+        if Cell cells(p).nleaf > n_crit{
+
+            for (int octant = 0, octant < 8, octant++){
+                
+                if (Cell cells(p).nchild & (1 << octant)) {
+                    
+                    int c = Cell cells(p).child(octant);
+
+                    Vector3d crd_target = crd(target-1);
+                    float rx = crd_target(0) - rc(0);
+                    float ry = crd_target(1) - rc(1);
+                    float rz = crd_target(2) - rc(2);
+                    float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+
+                    if (Cell cells(c).r> theta * r){
+                        cal_fiJ(source, potential, theta, Cell cells(c));
+                    }
+
+                    else{
+
+                        float dx = crd_target(0) - rc(0);
+                        float dy = crd_target(1) - rc(1);
+                        float dz = crd_target(2) - rc(2);
+
+                        Vectorxd bJx(10);
+                        Vectorxd bJy(10);
+                        Vectorxd bJz(10);
+                        float inv_r = 1.0 / r;
+                        float r2 = inv_r * inv_r;
+                        float r3 = r2 * inv_r;
+                        float r5 = r3 * r2;
+                        float r7 = r5 * r2;
+
+                        float dx2 = dx * dx;
+                        float dy2 = dy * dy;
+                        float dz2 = dz * dz;
+
+                        float dxdy = dx * dy;
+                        float dydz = dy * dz;
+                        float dzdx = dz * dx;
+
+                        float dxr5 = 3 * dx * r5;
+                        float dyr5 = 3 * dy * r5;
+                        float dzr5 = 3 * dz * r5;
+
+                        float dxdydz = 15 * dxdy * dz * r7;
+                        float dx2dy  = 15 * dx2 * dy * r7;
+                        float dy2dz  = 15 * dy2 * dz * r7;
+                        float dz2dx  = 15 * dz2 * dx * r7;
+                        float dy2dx  = 15 * dy2 * dx * r7;
+                        float dz2dy  = 15 * dz2 * dy * r7;
+                        float dx2dz  = 15 * dx2 * dz * r7;
+
+
+                        // calculate bJx
+                        bJx(0) = -dx * r3;                          // -dx/r^3
+                        bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
+                        bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
+                        bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
+                        bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
+                        bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
+                        bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
+                        bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dxdy/r^7
+                        bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
+                        bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+
+                        // calculate bJy
+                        bJy(0) = -dy * r3;                          // -dy/r^3
+                        bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
+                        bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
+                        bJy(3) =     dydz * r5;                     // 0       + 3dzdy/r^5
+                        bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
+                        bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
+                        bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
+                        bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
+                        bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydz^2/r^7
+                        bJy(9) =         - dxdydz;                  // 0       - 15dzdxdy/r^7
+
+                        // calculate bJz
+                        bJz(0) = -dz * r3;                          // -dz/r^3
+                        bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
+                        bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
+                        bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
+                        bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+                        bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
+                        bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
+                        bJz(7) =          - dxdydz;                 // 0       - 15dxdydz/r^7
+                        bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
+                        bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
+
+                        // calculate potential
+                        float fx = q(source-1) * potential * bJx;
+                        float fy = q(source-1) * potential * bJy;
+                        float fz = q(source-1) * potential * bJz;
+
+                        return Vectorxd f(fx, fy, fz), Vectorxd r(rx, ry, rz);
+
+                    }      
+                }
+            }
         }
-        else{
+        else {
+            for (int l, l < Cell cells(p).nleaf, l++){
+                source = Cell cells(p).leaf(l);
+                crd_source = crd(source-1);
+                float rx = crd_source(0) - crd_target(0);
+                float ry = crd_source(1) - crd_target(1);
+                float rz = crd_source(2) - crd_target(2);
+                float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+                float inv_r = 1.0 / r;
+                float coeff = 332.05221729
+                
+                float fx = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * rx;
+                float fy = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * ry;
+                float fz = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * rz;
 
-            float dx = crd_target(0) - rc(0);
-            float dy = crd_target(1) - rc(1);
-            float dz = crd_target(2) - rc(2);
-
-            vector::Vectorxd bJx(10);
-            vector::Vectorxd bJy(10);
-            vector::Vectorxd bJz(10);
-            float inv_r = 1.0 / r;
-            float r2 = inv_r * inv_r;
-            float r3 = r2 * inv_r;
-            float r5 = r3 * r2;
-            float r7 = r5 * r2;
-
-            float dx2 = dx * dx;
-            float dy2 = dy * dy;
-            float dz2 = dz * dz;
-
-            float dxdy = dx * dy;
-            float dydz = dy * dz;
-            float dzdx = dz * dx;
-
-            float dxr5 = 3 * dx * r5;
-            float dyr5 = 3 * dy * r5;
-            float dzr5 = 3 * dz * r5;
-
-            float dxdydz = 15 * dxdy * dz * r7;
-            float dx2dy  = 15 * dx2 * dy * r7;
-            float dy2dz  = 15 * dy2 * dz * r7;
-            float dz2dx  = 15 * dz2 * dx * r7;
-            float dy2dx  = 15 * dy2 * dx * r7;
-            float dz2dy  = 15 * dz2 * dy * r7;
-            float dx2dz  = 15 * dx2 * dz * r7;
-
-
-            // calculate bJx
-            bJx(0) = -dx * r3;                          // -dx/r^3
-            bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
-            bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
-            bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
-            bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
-            bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
-            bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
-            bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dxdy/r^7
-            bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
-            bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-
-            // calculate bJy
-            bJy(0) = -dy * r3;                          // -dy/r^3
-            bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
-            bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
-            bJy(3) =     dydz * r5;                     // 0       + 3dzdy/r^5
-            bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
-            bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
-            bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
-            bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
-            bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydz^2/r^7
-            bJy(9) =         - dxdydz;                  // 0       - 15dzdxdy/r^7
-
-            // calculate bJz
-            bJz(0) = -dz * r3;                          // -dz/r^3
-            bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
-            bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
-            bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
-            bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-            bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
-            bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
-            bJz(7) =          - dxdydz;                 // 0       - 15dxdydz/r^7
-            bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
-            bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
-
-            // calculate potential
-            float fx = potential * bJx;
-            float fy = potential * bJy;
-            float fz = potential * bJz;
-
-            return vector::Vectorxd(fx, fy, fz), vector::Vectorxd(rx, ry, rz);
+                return Vector3d f(fx, fy, fz), Vector3d r(rx, ry, rz);
+            }
         }
+    }
+
+    def evaluate(string source, VectorXd targets, Cell cells){
+        // for group in groups:
+        //      for i in len(self.__gnames_iatoms_pairs[group_i]):
+        //          atomwise, fmm = self.evaluate(particles, 0, self.__gnames_iatoms_pairs[i], cells[group], n_crit, theta)
+        
     }
 }
 
@@ -246,5 +284,6 @@ class cal_fmm{
 
 
 py(lib_fmm, m){
+    
     
 }
