@@ -21,7 +21,7 @@ class CalculatorBase(TimeStore):
         pass
 
     def prepare(self, topology, setting, target_atoms,
-            gname_iatoms_pairs, interact_table):
+            gname_iatoms_pairs, gpair_table, interact_table):
 
         self.__tpl = topology
         self.__setting = setting
@@ -30,7 +30,7 @@ class CalculatorBase(TimeStore):
         from curp import twobody
         TwoBodyCalculator = twobody.get_calculator(setting.curp.potential)
         self.__tbf = TwoBodyCalculator(topology, setting)
-        self.__tbf.setup(interact_table, check=False)
+        self.__tbf.setup(interact_table, gname_iatoms_pairs, gpair_table, check=False)
 
         # get the number of atoms
         natom = self.get_tbforce().get_natom()
@@ -67,7 +67,7 @@ class CalculatorBase(TimeStore):
 
     def get_gname_iatoms_pairs(self):
         return self.__gname_iatoms_pairs
-
+    
     def get_groupnames(self):
         return self.__gnames
 
@@ -82,7 +82,7 @@ class CalculatorBase(TimeStore):
 
     def get_interact_table(self):
         return self.__interact_table
-
+    
 class CurrentCalculator(CalculatorBase):
 
     def __init__(self):
@@ -241,4 +241,69 @@ class FluxCalculator(CalculatorBase):
             self.get_tbforce().output_force()
 
         return cstep, (key_to_aflux, key_to_gflux)
+
+
+    def run_fmm(self, data):
+        """Run the flux calculations for all of the components using FMM method."""
+
+        cstep, (crd, vel, pbc) = data
+        logger.debug_cycle('    calculating flux values at step {} ...'
+                .format(cstep))
+
+        # get twobody force object
+        tbcal = self.get_tbforce()
+        tbcal.initialize(crd, pbc)
+
+        # gather the flux for each potential types.
+        key_to_aflux = {} # flux for atoms
+        key_to_gflux = {} # flux for group
+
+        btypes = self.get_topology().get_decomp_list('bonded+')
+        for btype in btypes:
+            # check for the amount of improper torsion and torsion.
+            # if btype in ['improper','torsion']: continue
+            # bond type
+            flux_atm, flux_grp = self.cal_bonded(crd, vel, btype)
+            key_to_aflux[btype] = flux_atm
+            key_to_gflux[btype] = flux_grp
+
+        # non-bonded
+        flux_atm, flux_grp = self.cal_coulomb_fmm(crd, vel)
+        key_to_aflux['coulomb'] = flux_atm
+        key_to_gflux['coulomb'] = flux_grp
+        flux_atm, flux_grp = self.cal_vdw(crd, vel)
+        key_to_aflux['vdw'] = flux_atm
+        key_to_gflux['vdw'] = flux_grp
+        # total for atom
+        if flux_atm is not None:
+            total_atm = numpy.zeros( key_to_aflux['vdw'].shape )
+
+            for flux in list(key_to_aflux.values()):
+                total_atm += flux
+
+        else:
+            total_atm = None
+
+        # total for group
+        if flux_grp is not None:
+            total_grp = numpy.zeros( key_to_gflux['vdw'].shape )
+
+            for flux in list(key_to_gflux.values()):
+                total_grp += flux
+
+        else:
+            total_grp = None
+
+        key_to_aflux['total'] = total_atm
+        key_to_gflux['total'] = total_grp
+
+        # write energy
+        if self.get_setting().output.output_energy:
+            self.get_tbforce().output_energy()
+        # write forces
+        if logger.is_debug():
+            self.get_tbforce().output_force()
+
+        return cstep, (key_to_aflux, key_to_gflux)
+
 
