@@ -51,8 +51,10 @@ class TwoBodyForceBase:
         
         # choose coulomb method
         if self.__setting.curp.coulomb_method == 'fmm':
+            self.__coulomb_func = self.cal_coulomb_fmm
             self._setup_coulomb_fmm(gname_iatom_pairs, gpair_table)
         else: 
+            self.__coulomb_func = self.cal_coulomb
             self._setup_coulomb()
             
         self._setup_vdw()
@@ -220,6 +222,9 @@ class TwoBodyForceBase:
                     forces = mod.forces,
                     tbforces = mod.tbforces,
                     displacement = mod.displacement)
+
+    def get_coulomb_func(self):
+        return self.__coulomb_func
 
     def cal_coulomb(self, table):
         return self._cal_nonbond(table, 'coulomb')
