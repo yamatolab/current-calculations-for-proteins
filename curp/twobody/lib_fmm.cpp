@@ -24,7 +24,7 @@ class cal_fmm{
     };
 
     // read trajectory
-    void initialize(const MatrixXd& crd, const MatrixXd & pbc){
+    void initialize(const MatrixXd& crd, const MatrixXd& pbc){
         t_crd = crd;
         t_pbc = pbc;
         
@@ -42,21 +42,21 @@ class cal_fmm{
 
         Cell(int n_crit = 10)
             : nleaf(0),                             // number of atoms(leaf) in the cell
-            leaf(Eigen::VectorXi::Zero(n_crit)),    // index of atoms in the cell
+            leaf(VectorXi::Zero(n_crit)),           // index of atoms in the cell
             nchild(0),                              // number of child cells
-            child(Eigen::VectorXi::Zero(8)),        // index of 8 child cells
+            child(VectorXi::Zero(8)),               // index of 8 child cells
             parent(0),                              // index of parent cell
-            rc(Eigen::Vector3d::Zero()),            // center of the cell
+            rc(Vector3d::Zero()),                   // center of the cell
             r(0.0),
-            multipole(Eigen::VectorXd::Zero(10))    // 10 multipoles
+            multipole(VectorXd::Zero(10))           // 10 multipoles
         {}
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // max-min
     float calculate_rc_cand1(crd, particles){
-        Vectorxd rc(3);
-        Vectorxd particles = particles;
+        VectorXd rc(3);
+        VectorXd particles = particles;
         for (int i = 0, i < 3, i++){
             float r_max;
             float r_min;
@@ -84,12 +84,12 @@ class cal_fmm{
     }
     // average
     float calculate_rc_cand2(crd, particles){
-        Matrixmd rc(3);
-        Vectorxd particles = particles;
+        VectorXd rc(3);
+        VectorXd particles = particles;
         float inv_n = 1.0 / particles.size();
 
         for (int i = 0, i < 3, i++){
-            Vectorxd t_coord = t_crd.col(i)
+            VectorXd t_coord = t_crd.col(i)
             float r_sum = 0.0; 
 
             for (int j = 0, j < particles.size(), j++){
@@ -125,11 +125,11 @@ class cal_fmm{
         }
     }
 
-    float cal_M2M(cell){
-        Vectorxd p_potential(10);
-        Vectorxd c_potential(10);
-        Vectorxd c_rc(3);
-        Vectorxd p_rc(3);
+    float cal_M2M(Cell cell){
+        VectorXd p_potential(10);
+        VectorXd c_potential(10);
+        VectorXd c_rc(3);
+        VectorXd p_rc(3);
         
 
         // cellをよみこむ, cellの内容を読み込む
@@ -147,6 +147,14 @@ class cal_fmm{
         p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
         p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
         p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+    }
+
+    struct Fij{
+        int i;
+        int j;
+        VectorXd f;
+        VectorXd r;
+        F
     }
 
     float cal_fiJ(string source, VectorXd targets, Cell cells){
@@ -175,9 +183,9 @@ class cal_fmm{
                         float dy = crd_target(1) - rc(1);
                         float dz = crd_target(2) - rc(2);
 
-                        Vectorxd bJx(10);
-                        Vectorxd bJy(10);
-                        Vectorxd bJz(10);
+                        VectorXd bJx(10);
+                        VectorXd bJy(10);
+                        VectorXd bJz(10);
                         float inv_r = 1.0 / r;
                         float r2 = inv_r * inv_r;
                         float r3 = r2 * inv_r;
@@ -246,7 +254,7 @@ class cal_fmm{
                         float fy = q(source-1) * potential * bJy;
                         float fz = q(source-1) * potential * bJz;
 
-                        return Vectorxd f(fx, fy, fz), Vectorxd r(rx, ry, rz);
+                        return VectorXd f(fx, fy, fz), VectorXd r(rx, ry, rz);
 
                     }      
                 }
@@ -273,10 +281,15 @@ class cal_fmm{
     }
 
     def evaluate(string source, VectorXd targets, Cell cells){
-        // for group in groups:
-        //      for i in len(self.__gnames_iatoms_pairs[group_i]):
-        //          atomwise, fmm = self.evaluate(particles, 0, self.__gnames_iatoms_pairs[i], cells[group], n_crit, theta)
-        
+        int source_size = gnames_iatoms_pairs(source).size();
+
+        for (int i = 0, i < source_size, i++){
+            int source_atom = gnames_iatoms_pairs(source)(i);
+
+            for (int j = 0, j < targets.size(), j++){                
+                VectorXd f = cal_fiJ(source_atom, targets(j), cells(target));
+            }
+        }
     }
 }
 
