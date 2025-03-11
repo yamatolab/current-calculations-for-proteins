@@ -626,14 +626,7 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
             data_iter = None
         label_time_pairs += [("Data object parse", time.time()-t_0)]
 
-        if do_run and use_fmm:
-            t_0 = time.time()
-
-            ############################################################
-            results_iter = par.run(cal.run_fmm, data=data_iter)
-            ############################################################
-
-        elif do_run and not use_fmm:
+        if do_run:
             t_0 = time.time()
 
             ############################################################
