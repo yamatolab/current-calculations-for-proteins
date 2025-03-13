@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string>
 #include<Eigen/Dense>
 #include<cmath>
 #include<pybind11/pybind11.h>
@@ -10,17 +11,19 @@ class cal_fmm{
 
     // public variables
     public:
+        int natom;
         int n_crit;
         float theta;
-        MatrixXd q;
+        VectorXd charges;
         MatrixXd t_crd;
-        MatrixXd t_pbc;
+        Vector3d t_pbc;
     
 
-    void setup(const int n_crit, const float theta, const MatrixXd q){
-        n_crit = n_crit;
-        theta = theta;
-        q = q;
+    void setup(const int input_natom, const int input_n_crit, const float input_theta, const VectorXd input_charges){
+        natom  = input_natom;
+        n_crit = input_n_crit;
+        theta  = input_theta;
+        charges = input_charges;
     };
 
     // read trajectory
@@ -29,6 +32,8 @@ class cal_fmm{
         t_pbc = pbc;
         
     };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     struct Cell {
         int              nleaf;
