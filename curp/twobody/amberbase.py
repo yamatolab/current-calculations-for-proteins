@@ -36,7 +36,7 @@ class TwoBodyForceBase:
     def get_natom(self):
         return self.__natom
 
-    def setup(self, interact_table, gname_iatom_pairs, gpair_table,  check=False):
+    def setup(self, interact_table, gname_iatoms_pairs, gpair_table,  check=False):
         self.__interact_table = interact_table
         max_tbf = self.get_maxpair(interact_table)
         self._setup_init(max_tbf, check)
@@ -52,7 +52,7 @@ class TwoBodyForceBase:
         # choose coulomb method
         if self.__setting.curp.coulomb_method == 'fmm':
             self.__coulomb_func = self.cal_coulomb_fmm
-            self._setup_coulomb_fmm(gname_iatom_pairs, gpair_table)
+            self._setup_coulomb_fmm(gname_iatoms_pairs, gpair_table)
         else: 
             self.__coulomb_func = self.cal_coulomb
             self._setup_coulomb()
@@ -122,18 +122,13 @@ class TwoBodyForceBase:
         coulomb.charges = info['charges']
         coulomb.cutoff_length = self.__setting.curp.coulomb_cutoff_length
         
-    def _setup_coulomb_fmm(self, gname_iatom_pairs, gpair_table):
+    def _setup_coulomb_fmm(self, gname_iatoms_pairs, gpair_table):
+        """Prepare the parameter for the coulomb calculation using FMM method."""
         from . import fmm
-        n_crit = self.__setting.curp.coulomb_fmm_cell_contains
-        theta = self.__setting.curp.coulomb_fmm_theta
-        self.__fmm_base = fmm.FMMCalculatorBase(n_crit, theta, 
-                                                gname_iatom_pairs, gpair_table, 
-                                                self.__mod_fmm)
-        
-        coulomb_fmm = self.__mod_fmm.coulomb
         info = self.__tpl.get_coulomb_info()
-        # coulomb_fmm.charges = info['charges']
-
+        charges = info['charges']
+        self.__fmm_base = fmm.FMMCalculatorBase(charges, gname_iatoms_pairs, gpair_table)
+        
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
         vdw = self.__mod.vdw
