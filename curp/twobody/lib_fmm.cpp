@@ -59,9 +59,12 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // max-min
-    float calculate_rc_cand1(crd, particles){
-        VectorXd rc(3);
+    float calculate_rc(particles){
+        Vector3d rc;
+        Vector3d r;
         VectorXd particles = particles;
+        float max_r;
+
         for (int i = 0, i < 3, i++){
             float r_max;
             float r_min;
@@ -82,13 +85,31 @@ class cal_fmm{
                     }
                 }
             }
-
-            rc(i) = r_min + abs(r_max - r_min) * 0.5;
+            
+            r(i)  = abs(r_max - r_min);
+            rc(i) = r_min + r(i) * 0.5;
+            if i ==1{
+                if (rc(0) > rc(1)){
+                    r = rc(0);
+                }
+                else{
+                    r = rc(1);
+                }
+            }
+            if i ==2{
+                if (r > rc(2)){
+                    r = rc(2);
+                }
+                else{
+                    r = rc(2);
+                }
+            }
         }
-        return rc;
+
+        return rc, max_r;
     }
     // average
-    float calculate_rc_cand2(crd, particles){
+    float calculate_rc_cand(crd, particles){
         VectorXd rc(3);
         VectorXd particles = particles;
         float inv_n = 1.0 / particles.size();
