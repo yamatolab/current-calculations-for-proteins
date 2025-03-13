@@ -20,23 +20,17 @@ class FMMCalculatorBase(amberbase.TwoBodyForceBase):
 
 class FMMCellMaker(FMMCalculatorBase):
     
-    def __init__(self, crd, pbc):
-        self.initialize(crd, pbc)
-    
-    def make_cells(self, crd, pbc):
+    def make_cells(self, crd):
         
         # build tree
-        cells = self.build_all_tree(self.__gnames_iatoms_pairs, crd, self.__n_crit)
+        all_cells = self.build_all_tree(self.__gnames_iatoms_pairs, crd, self.__n_crit)
         
-        return cells
+        return all_cells
 
     
     def setup_cell(self):
         """The class for a cell.
     
-        Arguments:
-            n_crit: maximum number of particles in a leaf cell.
-        
         Attributes:
             nleaf (int): number of leaves in the cell
             leaf (array of int): array of leaf index
@@ -44,7 +38,7 @@ class FMMCellMaker(FMMCalculatorBase):
             of the empty child cells
             child (array of int): array of child index
             parent (int): index of parent cell
-            x, y, z (float): coordinates of the cell's center
+            cx, cy, cz (float): coordinates of the cell's center
             r (float): radius of the cell (half of the side length for cubic cell)
             multipole (array of float): multipole array of the cell
         
@@ -62,29 +56,13 @@ class FMMCellMaker(FMMCalculatorBase):
         cell.multipole = np.zeros((10), dtype=np.float)               # multipole array
 
         return cell
-        
-    def set_root_cell(self, particles):
-        
-        cell = []
-        cell.nleaf = 0                                                  # number of leaves
-        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)               # array of leaf index
-        cell.nchild = 0                                                 # binary counter to keep track of empty cells
-        cell.child = np.zeros(8, dtype=np.int)                          # array of child index
-        cell.parent = 0                                                 # index of parent cell
-        cell.rc = self.__mod_fmm.cal_rc(particles)                      # center of the cell
-        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]  # center of the cell
-        cell.r = self.__mod_fmm.huga                                    # radius of the cell
-        cell.multipole = np.zeros((10), dtype=np.float)               # multipole array
-
-        return cell
     
     def build_all_tree(self, group_atoms, crd, n_crit):
         all_cells = []
         for gname, atoms in group_atoms:
-            particles = list(atoms)
-            root_cell = self.set_root_cell(particles)
+            root_cell = self.setup_cell(atoms)
             
-            all_cells.append(gname, self._build_tree(particles, crd, root_cell, n_crit))
+            all_cells.append(gname, self._build_tree(atoms, crd, root_cell, n_crit))
             self.__gnames.append(gname)
             
         return all_cells
@@ -106,6 +84,7 @@ class FMMCellMaker(FMMCalculatorBase):
         """
         # set root cell
         cells = root       # initialize the cells list
+        root.rc, root.r = self.__mod_fmm.calculate_rc(particles)
         
         # build tree
         n = len(particles)
