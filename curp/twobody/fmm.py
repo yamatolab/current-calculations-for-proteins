@@ -13,8 +13,8 @@ class FMMCalculatorBase(amberbase.TwoBodyForceBase):
         self.__gnames = []
         self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges)
          
-    def initialize(self, crd, pbc):
-        self.__mod_fmm.initialize(crd, pbc)
+    def initialize(self, crd):
+        self.__mod_fmm.initialize(crd)
     
 ####################################################################################################################   
 
