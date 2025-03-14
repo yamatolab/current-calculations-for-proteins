@@ -189,27 +189,21 @@ class FMMCellCalculator(FMMCalculatorBase):
     def __init__(self):
         self.__leaves = []
         
-    def cal_fmm(self, cells, crd):
+    def cal_fmm(self, all_cells, crd):
         
         # get multipole arrays
-        [self.get_multipole(crd, 0, cells[gname], self.__leaves, self.__n_crit) for gname, atoms in self.__gnames_iatoms_pairs]
+        multipole = [self.get_multipole(crd, 0, all_cells[gname], self.__leaves) for gname, atoms in self.__gnames_iatoms_pairs]
         
         # upward sweep
-        m2m = [self.cal_M2M(cells[i]) for i in cells]
+        m2m = [self.cal_M2M(all_cells[i]) for i in all_cells]
 
         # evaluate potential
-        coulomb_fmm = [self.eval_potential(group_i, groups, cells) for group_i, groups in self.__gpair_table]
+        coulomb_fmm = [self.eval_potential(group_i, groups, all_cells) for group_i, groups in self.__gpair_table]
         
         return coulomb_fmm
-
-
-    def get_leaves_multipole(self, crd, gnames, cells, leaves, n_crit):
-        
-        for gname in gnames:
-            self.get_multipole(crd, 0, cells[gname], leaves, n_crit)
         
 
-    def get_multipole(self, crd, p, cells, leaves, n_crit):
+    def get_multipole(self, crd, p, cells, leaves):
     
         """Calculate multipole arrays for all leaf cells under cell p. If leaf
         number of cell p is equal or bigger than n_crit (non-leaf), traverse down
@@ -223,10 +217,10 @@ class FMMCellCalculator(FMMCalculatorBase):
         """
     
         # if the current cell p is not a leaf cell, then recursively traverse down
-        if cells[p].nleaf >= n_crit:
+        if cells[p].nleaf >= self.__n_crit:
             for c in range(8):
                 if cells[p].nchild & (1 << c):
-                    self.get_multipole(crd, cells[p].child[c], cells, leaves, n_crit)
+                    self.get_multipole(crd, cells[p].child[c], cells, leaves)
         
         # otherwise cell p is a leaf cell
         else:
