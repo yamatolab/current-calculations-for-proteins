@@ -1,0 +1,309 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
+#include <cmath>
+#include <pybind11/pybind11.h>
+using namespace py = pybind11;
+using namespace Eigen;
+
+class cal_fmm{
+
+
+    // public variables
+    public:
+        int natom;
+        int n_crit;
+        float theta;
+        VectorXd charges;
+        MatrixXd t_crd;
+    
+
+    void setup(const int input_natom, const int input_n_crit, const float input_theta, const VectorXd input_charges){
+        natom  = input_natom;
+        n_crit = input_n_crit;
+        theta  = input_theta;
+        charges = input_charges;
+    };
+
+    // read trajectory
+    void initialize(const MatrixXd& crd){
+        t_crd = crd;
+        
+    };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    struct Cell {
+        int              nleaf;
+        Eigen::VectorXi  leaf;
+        int              nchild;
+        Eigen::VectorXi  child;
+        int              parent;
+        Eigen::Vector3d  rc;
+        double           r;
+        Eigen::VectorXd  multipole;
+
+        Cell(int n_crit = 10)
+            : nleaf(0),                             // number of atoms(leaf) in the cell
+            leaf(VectorXi::Zero(n_crit)),           // index of atoms in the cell
+            nchild(0),                              // number of child cells
+            child(VectorXi::Zero(8)),               // index of 8 child cells
+            parent(0),                              // index of parent cell
+            rc(Vector3d::Zero()),                   // center of the cell
+            r(0.0),
+            multipole(VectorXd::Zero(10))           // 10 multipoles
+        {}
+    };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // calculate the center and radius of the cell 
+    float calculate_rc(std::vector<int> atoms){
+        Vector3d rc;
+        Vector3d r;
+        float max_r;
+        std::vector<int> atoms = atoms;
+
+        for (int i = 0, i < 3, i++){
+            float r_max;
+            float r_min;
+            float r_cand;
+
+            for (int j = 0, j < std::size(atoms), j++){
+                r_cand = t_crd(atoms[j]-1, i);
+                if (j == 0){
+                    r_max = r_cand;
+                    r_min = r_cand;
+                }
+                else{
+                    if (r_cand > r_max){
+                        r_max = r_cand;
+                    }
+                    if (r_cand < r_min){
+                        r_min = r_cand;
+                    }
+                }
+            }
+            
+            r(i)  = abs(r_max - r_min);
+            rc(i) = r_min + r(i) * 0.5;
+            if i == 1{
+                if (rc(0) > rc(1)){
+                    r = rc(0);
+                }
+                else{
+                    r = rc(1);
+                }
+            }
+            if i ==2{
+                if (r > rc(2)){
+                    r = rc(2);
+                }
+                else{
+                    r = rc(2);
+                }
+            }
+        }
+
+        return rc(0), rc(1), rc(2) max_r;
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    float cal_multipole(VectorXd& multipole, VectorXd rc, std::vector<int> atoms){
+        
+        for (int i = 0, i < std::size(atoms), i++){
+            float dx = rc(0) - t_crd(atoms[i]-1, 0);
+            float dy = rc(1) - t_crd(atoms[i]-1, 1);
+            float dz = rc(2) - t_crd(atoms[i]-1, 2);
+            float qj = charges(atoms[i]-1);
+
+            multipole(0) = multipole(0) + qj * 1.0;
+            multipole(1) = multipole(1) + qj * dx;
+            multipole(2) = multipole(2) + qj * dy;
+            multipole(3) = multipole(3) + qj * dz;
+            multipole(4) = multipole(4) + qj * dx * dx;
+            multipole(5) = multipole(5) + qj * dy * dy;
+            multipole(6) = multipole(6) + qj * dz * dz;
+            multipole(7) = multipole(7) + qj * 2 * dx * dy;
+            multipole(8) = multipole(8) + qj * 2 * dy * dz;
+            multipole(9) = multipole(9) + qj * 2 * dz * dx;
+            
+        }
+    }
+
+    float cal_M2M(Cell cell){
+        VectorXd p_potential(10);
+        VectorXd c_potential(10);
+        VectorXd c_rc(3);
+        VectorXd p_rc(3);
+        
+
+        // cellをよみこむ, cellの内容を読み込む
+        dx = p_rc(0) - c_rc(0);
+        dy = p_rc(1) - c_rc(1);
+        dz = p_rc(2) - c_rc(2);
+
+        p_potential(0) = p_potential(0) + c_potential(0);
+        p_potential(1) = p_potential(1) + c_potential(0) * dx;
+        p_potential(2) = p_potential(2) + c_potential(0) * dy;
+        p_potential(3) = p_potential(3) + c_potential(0) * dz;
+        p_potential(4) = p_potential(4) + c_potential(1) * dx + 0.5 * c_potential(1) * dx * dx;
+        p_potential(5) = p_potential(5) + c_potential(2) * dy + 0.5 * c_potential(2) * dy * dy;
+        p_potential(6) = p_potential(6) + c_potential(3) * dz + 0.5 * c_potential(3) * dz * dz;
+        p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
+        p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
+        p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+    }
+
+    struct Fij{
+        int i;
+        int j;
+        VectorXd f;
+        VectorXd r;
+        F
+    }
+
+    float cal_fiJ(string source, VectorXd targets, Cell cells){
+
+        if Cell cells(p).nleaf > n_crit{
+
+            for (int octant = 0, octant < 8, octant++){
+                
+                if (Cell cells(p).nchild & (1 << octant)) {
+                    
+                    int c = Cell cells(p).child(octant);
+
+                    Vector3d crd_target = crd(target-1);
+                    float rx = crd_target(0) - rc(0);
+                    float ry = crd_target(1) - rc(1);
+                    float rz = crd_target(2) - rc(2);
+                    float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+
+                    if (Cell cells(c).r> theta * r){
+                        cal_fiJ(source, potential, theta, Cell cells(c));
+                    }
+
+                    else{
+
+                        float dx = crd_target(0) - rc(0);
+                        float dy = crd_target(1) - rc(1);
+                        float dz = crd_target(2) - rc(2);
+
+                        VectorXd bJx(10);
+                        VectorXd bJy(10);
+                        VectorXd bJz(10);
+                        float inv_r = 1.0 / r;
+                        float r2 = inv_r * inv_r;
+                        float r3 = r2 * inv_r;
+                        float r5 = r3 * r2;
+                        float r7 = r5 * r2;
+
+                        float dx2 = dx * dx;
+                        float dy2 = dy * dy;
+                        float dz2 = dz * dz;
+
+                        float dxdy = dx * dy;
+                        float dydz = dy * dz;
+                        float dzdx = dz * dx;
+
+                        float dxr5 = 3 * dx * r5;
+                        float dyr5 = 3 * dy * r5;
+                        float dzr5 = 3 * dz * r5;
+
+                        float dxdydz = 15 * dxdy * dz * r7;
+                        float dx2dy  = 15 * dx2 * dy * r7;
+                        float dy2dz  = 15 * dy2 * dz * r7;
+                        float dz2dx  = 15 * dz2 * dx * r7;
+                        float dy2dx  = 15 * dy2 * dx * r7;
+                        float dz2dy  = 15 * dz2 * dy * r7;
+                        float dx2dz  = 15 * dx2 * dz * r7;
+
+
+                        // calculate bJx
+                        bJx(0) = -dx * r3;                          // -dx/r^3
+                        bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
+                        bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
+                        bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
+                        bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
+                        bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
+                        bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
+                        bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dxdy/r^7
+                        bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
+                        bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+
+                        // calculate bJy
+                        bJy(0) = -dy * r3;                          // -dy/r^3
+                        bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
+                        bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
+                        bJy(3) =     dydz * r5;                     // 0       + 3dzdy/r^5
+                        bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
+                        bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
+                        bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
+                        bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
+                        bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydz^2/r^7
+                        bJy(9) =         - dxdydz;                  // 0       - 15dzdxdy/r^7
+
+                        // calculate bJz
+                        bJz(0) = -dz * r3;                          // -dz/r^3
+                        bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
+                        bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
+                        bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
+                        bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+                        bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
+                        bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
+                        bJz(7) =          - dxdydz;                 // 0       - 15dxdydz/r^7
+                        bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
+                        bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
+
+                        // calculate potential
+                        float fx = q(source-1) * potential * bJx;
+                        float fy = q(source-1) * potential * bJy;
+                        float fz = q(source-1) * potential * bJz;
+
+                        return VectorXd f(fx, fy, fz), VectorXd r(rx, ry, rz);
+
+                    }      
+                }
+            }
+        }
+        else {
+            for (int l, l < Cell cells(p).nleaf, l++){
+                source = Cell cells(p).leaf(l);
+                crd_source = crd(source-1);
+                float rx = crd_source(0) - crd_target(0);
+                float ry = crd_source(1) - crd_target(1);
+                float rz = crd_source(2) - crd_target(2);
+                float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+                float inv_r = 1.0 / r;
+                float coeff = 332.05221729
+                
+                float fx = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * rx;
+                float fy = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * ry;
+                float fz = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * rz;
+
+                return Vector3d f(fx, fy, fz), Vector3d r(rx, ry, rz);
+            }
+        }
+    }
+
+    def evaluate(string source, VectorXd targets, Cell cells){
+        int source_size = gnames_iatoms_pairs(source).size();
+
+        for (int i = 0, i < source_size, i++){
+            int source_atom = gnames_iatoms_pairs(source)(i);
+
+            for (int j = 0, j < targets.size(), j++){                
+                VectorXd f = cal_fiJ(source_atom, targets(j), cells(target));
+            }
+        }
+    }
+}
+
+
+
+
+py(lib_fmm, m){
+    
+    
+}

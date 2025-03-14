@@ -43,6 +43,12 @@ class EnergyFluxCalculator(base.FluxCalculator):
             lib = lib_keflux
         else: 
             pass
+        
+        coulomb_method = self.get_setting().curp.coulomb_method
+        if coulomb_method == 'fmm':
+            self.__coulomb_func = self.cal_coulomb_fmm
+        else:
+            self.__coulomb_func = self.cal_coulomb
 
         self.fcal = EnergyFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
@@ -70,12 +76,33 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
         return flux_atm, flux_grp
 
+    def get_coulomb_func(self, crd, vel):
+        return self.__coulomb_func(crd, vel)
+
     def cal_coulomb(self, crd, vel):
         """Calculate the energy flux for the coulomb term."""
 
         table     = self.get_interact_table()
-        type_func = self.get_tbforce().cal_coulomb
+        type_func = self.get_tbforce().get_coulomb_func
         cutoff    = self.get_setting().curp.coulomb_cutoff_length
+
+        t0 = time.time()
+        gen_tbfs = ( type_func(t)['tbforces'] for t in table )
+        flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table )
+
+        t1 = time.time()
+        dt_flux = self.fcal.dt
+
+        self.store_time('coulomb pairwise' , t1 - t0 - dt_flux)
+        self.store_time('coulomb flux' , dt_flux)
+
+        return flux_atm, flux_grp
+
+    def cal_coulomb_fmm(self, crd, vel):
+        """Calculate the energy flux for the coulomb term using fmm."""
+
+        table     = self.get_interact_table()
+        type_func = self.get_tbforce().get_coulomb_func
 
         t0 = time.time()
         gen_tbfs = ( type_func(t)['tbforces'] for t in table )
@@ -197,7 +224,14 @@ class HeatFluxCalculator(base.FluxCalculator):
             flag_group = True
         else:
             pass
-
+        
+        # choose the coulomb calculation method
+        coulomb_method = self.get_setting().curp.coulomb_method
+        if coulomb_method == 'fmm':
+            self.__coulomb_func = self.cal_coulomb_fmm
+        else:
+            self.__coulomb_func = self.cal_coulomb
+        
         self.fcal = HeatFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
                 flag_atom, flag_group)
@@ -223,12 +257,15 @@ class HeatFluxCalculator(base.FluxCalculator):
         self.store_time(bond_type+' flux' , t2-t1)
 
         return flux_atm, flux_grp
+    
+    def get_coulomb_func(self, crd, vel):
+        return self.__coulomb_func(crd, vel)
 
     def cal_coulomb(self, crd, vel):
         """Calculate the energy flux for the coulomb term."""
 
         table     = self.get_interact_table()
-        type_func = self.get_tbforce().cal_coulomb
+        type_func = self.get_tbforce().get_coulomb_func
         cutoff    = self.get_setting().curp.coulomb_cutoff_length
 
         t0 = time.time()
@@ -246,6 +283,26 @@ class HeatFluxCalculator(base.FluxCalculator):
         self.store_time('coulomb flux' , dt_flux)
 
         return flux_atm, flux_grp
+    
+    def cal_coulomb_fmm(self, crd, vel):
+        """Calculate the energy flux for the coulomb term using FMM method."""
+
+        table     = self.get_interact_table_fmm()
+        type_func = self.get_tbforce().get_coulomb_func
+
+        t0 = time.time()
+        gen_tbfs = type_func(table)
+
+        flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table )
+
+        t1 = time.time()
+        dt_flux = self.fcal.dt
+
+        self.store_time('coulomb pairwise' , t1 - t0 - dt_flux)
+        self.store_time('coulomb flux' , dt_flux)
+
+        return flux_atm, flux_grp
+
 
     def cal_vdw(self, crd, vel):
         """Calculate the energy flux for the vdW term."""

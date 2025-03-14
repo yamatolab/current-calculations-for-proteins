@@ -26,6 +26,9 @@ class TwoBodyForceBase:
 
     def set_module(self, module):
         self.__mod = module
+        
+    def set_module_fmm(self, module):
+        self.__mod_fmm = module
 
     def get_module(self):
         return self.__mod
@@ -33,7 +36,7 @@ class TwoBodyForceBase:
     def get_natom(self):
         return self.__natom
 
-    def setup(self, interact_table, check=False):
+    def setup(self, interact_table, gname_iatoms_pairs, gpair_table,  check=False):
         self.__interact_table = interact_table
         max_tbf = self.get_maxpair(interact_table)
         self._setup_init(max_tbf, check)
@@ -45,7 +48,15 @@ class TwoBodyForceBase:
 
         self._setup_coulomb14()
         self._setup_vdw14()
-        self._setup_coulomb()
+        
+        # choose coulomb method
+        if self.__setting.curp.coulomb_method == 'fmm':
+            self.__coulomb_func = self.cal_coulomb_fmm
+            self._setup_coulomb_fmm(gname_iatoms_pairs, gpair_table)
+        else: 
+            self.__coulomb_func = self.cal_coulomb
+            self._setup_coulomb()
+            
         self._setup_vdw()
 
     def cal_force(self, crd):
@@ -110,7 +121,14 @@ class TwoBodyForceBase:
         info = self.__tpl.get_coulomb_info()
         coulomb.charges = info['charges']
         coulomb.cutoff_length = self.__setting.curp.coulomb_cutoff_length
-
+        
+    def _setup_coulomb_fmm(self, gname_iatoms_pairs, gpair_table):
+        """Prepare the parameter for the coulomb calculation using FMM method."""
+        from . import fmm
+        info = self.__tpl.get_coulomb_info()
+        charges = info['charges']
+        self.__fmm_base = fmm.FMMCalculatorBase(charges, gname_iatoms_pairs, gpair_table)
+        
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
         vdw = self.__mod.vdw
@@ -156,8 +174,10 @@ class TwoBodyForceBase:
 
         logger.info( 'The number of 1-4 interactions', len(i14_to_itbf))
 
-    def initialize(self, crd):
+    def initialize(self, crd, pbc):
         self.__mod.initialize(crd)
+        if self.__setting.curp.coulomb_method == 'fmm':
+            self.__fmm_base.initialize(crd)
         self.__forces   = np.zeros( [self.__natom, 3] )
         self.__ptype_to_energy = {}
         self.__ptype_to_forces = {}
@@ -198,8 +218,17 @@ class TwoBodyForceBase:
                     tbforces = mod.tbforces,
                     displacement = mod.displacement)
 
+    def get_coulomb_func(self):
+        return self.__coulomb_func
+
     def cal_coulomb(self, table):
         return self._cal_nonbond(table, 'coulomb')
+    
+    def cal_coulomb_fmm(self, table):
+        from . import fmm
+        TableMaker = fmm.FMMCellMaker
+        cells = TableMaker.make_cells(crd)
+        return fmm.FMMCellCalculator().cal_fmm(cells, crd)
 
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
@@ -336,6 +365,10 @@ class TwoBodyForce(TwoBodyForceBase):
         TwoBodyForceBase.__init__(self, topology, setting)
         from . import lib_amberbase
         self.set_module(lib_amberbase)
+        
+        if setting.coulomb_method == 'fmm':
+            from . import lib_fmm
+            self.set_module_fmm()
 
 
 if __name__ == '__main__':
