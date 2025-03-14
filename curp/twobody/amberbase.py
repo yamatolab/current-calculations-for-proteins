@@ -177,7 +177,7 @@ class TwoBodyForceBase:
     def initialize(self, crd, pbc):
         self.__mod.initialize(crd)
         if self.__setting.curp.coulomb_method == 'fmm':
-            self.__fmm_base.initialize(crd, pbc)
+            self.__fmm_base.initialize(crd)
         self.__forces   = np.zeros( [self.__natom, 3] )
         self.__ptype_to_energy = {}
         self.__ptype_to_forces = {}
@@ -226,9 +226,9 @@ class TwoBodyForceBase:
     
     def cal_coulomb_fmm(self, table):
         from . import fmm
-        TableMaker = fmm.FMMTableMaker(crd)
-        cells = TableMaker.make_cells()
-        return fmm.FMMCalculator().cal_fmm(cells, crd)
+        TableMaker = fmm.FMMCellMaker
+        cells = TableMaker.make_cells(crd)
+        return fmm.FMMCellCalculator().cal_fmm(cells, crd)
 
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
