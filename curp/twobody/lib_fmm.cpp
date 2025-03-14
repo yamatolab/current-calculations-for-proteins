@@ -110,13 +110,13 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    float cal_multipole(VectorXd& multipole, VectorXd rc, std::vector<int> particles){
+    float cal_multipole(VectorXd& multipole, VectorXd rc, std::vector<int> atoms){
         
-        for (int i = 0, i < particles.size(), i++){
-            float dx = rc(0) - t_crd(particles(i)-1, 0);
-            float dy = rc(1) - t_crd(particles(i)-1, 1);
-            float dz = rc(2) - t_crd(particles(i)-1, 2);
-            float qj = charges(particles(i)-1);
+        for (int i = 0, i < std::size(atoms), i++){
+            float dx = rc(0) - t_crd(atoms[i]-1, 0);
+            float dy = rc(1) - t_crd(atoms[i]-1, 1);
+            float dz = rc(2) - t_crd(atoms[i]-1, 2);
+            float qj = charges(atoms[i]-1);
 
             multipole(0) = multipole(0) + qj * 1.0;
             multipole(1) = multipole(1) + qj * dx;
