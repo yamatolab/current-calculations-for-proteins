@@ -58,7 +58,7 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // calculate the center and radius of the cell 
-    float calculate_rc(std::vector<int>& atoms){
+    float calculate_rc(std::vector<int> atoms){
         Vector3d rc;
         Vector3d r;
         float max_r;
@@ -110,24 +110,24 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    float cal_multipole(multipole, rc, particles){
+    float cal_multipole(VectorXd& multipole, VectorXd rc, std::vector<int> particles){
         
         for (int i = 0, i < particles.size(), i++){
             float dx = rc(0) - t_crd(particles(i)-1, 0);
             float dy = rc(1) - t_crd(particles(i)-1, 1);
             float dz = rc(2) - t_crd(particles(i)-1, 2);
-            float qj = 
+            float qj = charges(particles(i)-1);
 
-            multipole(0) = multipole(0) + 1.0;
-            multipole(1) = multipole(1) + dx;
-            multipole(2) = multipole(2) + dy;
-            multipole(3) = multipole(3) + dz;
-            multipole(4) = multipole(4) + dx * dx;
-            multipole(5) = multipole(5) + dy * dy;
-            multipole(6) = multipole(6) + dz * dz;
-            multipole(7) = multipole(7) + 2 * dx * dy;
-            multipole(8) = multipole(8) + 2 * dy * dz;
-            multipole(9) = multipole(9) + 2 * dz * dx;
+            multipole(0) = multipole(0) + qj * 1.0;
+            multipole(1) = multipole(1) + qj * dx;
+            multipole(2) = multipole(2) + qj * dy;
+            multipole(3) = multipole(3) + qj * dz;
+            multipole(4) = multipole(4) + qj * dx * dx;
+            multipole(5) = multipole(5) + qj * dy * dy;
+            multipole(6) = multipole(6) + qj * dz * dz;
+            multipole(7) = multipole(7) + qj * 2 * dx * dy;
+            multipole(8) = multipole(8) + qj * 2 * dy * dz;
+            multipole(9) = multipole(9) + qj * 2 * dz * dx;
             
         }
     }
