@@ -1,8 +1,9 @@
-#include<iostream>
-#include<string>
-#include<Eigen/Dense>
-#include<cmath>
-#include<pybind11/pybind11.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
+#include <cmath>
+#include <pybind11/pybind11.h>
 using namespace py = pybind11;
 using namespace Eigen;
 
@@ -57,19 +58,19 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // calculate the center and radius of the cell 
-    float calculate_rc(particles){
+    float calculate_rc(std::vector<int>& atoms){
         Vector3d rc;
         Vector3d r;
-        VectorXd particles = particles;
         float max_r;
+        std::vector<int> atoms = atoms;
 
         for (int i = 0, i < 3, i++){
             float r_max;
             float r_min;
             float r_cand;
 
-            for (int j = 0, j < particles.size(), j++){
-                r_cand = t_crd(particles(j)-1, i);
+            for (int j = 0, j < std::size(atoms), j++){
+                r_cand = t_crd(atoms[j]-1, i);
                 if (j == 0){
                     r_max = r_cand;
                     r_min = r_cand;
