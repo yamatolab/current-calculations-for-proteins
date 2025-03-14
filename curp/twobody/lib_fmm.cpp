@@ -16,7 +16,6 @@ class cal_fmm{
         float theta;
         VectorXd charges;
         MatrixXd t_crd;
-        Vector3d t_pbc;
     
 
     void setup(const int input_natom, const int input_n_crit, const float input_theta, const VectorXd input_charges){
@@ -27,9 +26,8 @@ class cal_fmm{
     };
 
     // read trajectory
-    void initialize(const MatrixXd& crd, const MatrixXd& pbc){
+    void initialize(const MatrixXd& crd){
         t_crd = crd;
-        t_pbc = pbc;
         
     };
 
@@ -58,7 +56,7 @@ class cal_fmm{
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // max-min
+    // calculate the center and radius of the cell 
     float calculate_rc(particles){
         Vector3d rc;
         Vector3d r;
@@ -88,7 +86,7 @@ class cal_fmm{
             
             r(i)  = abs(r_max - r_min);
             rc(i) = r_min + r(i) * 0.5;
-            if i ==1{
+            if i == 1{
                 if (rc(0) > rc(1)){
                     r = rc(0);
                 }
@@ -106,25 +104,7 @@ class cal_fmm{
             }
         }
 
-        return rc, max_r;
-    }
-    // average
-    float calculate_rc_cand(crd, particles){
-        VectorXd rc(3);
-        VectorXd particles = particles;
-        float inv_n = 1.0 / particles.size();
-
-        for (int i = 0, i < 3, i++){
-            VectorXd t_coord = t_crd.col(i)
-            float r_sum = 0.0; 
-
-            for (int j = 0, j < particles.size(), j++){
-                float r_sum = r_sum + t_coord(particles(j)-1);
-            }
-
-            rc(i) = r_sum * inv_n;
-        }
-        return rc;
+        return rc(0), rc(1), rc(2) max_r;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
