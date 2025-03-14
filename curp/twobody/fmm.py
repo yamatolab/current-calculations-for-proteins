@@ -51,9 +51,9 @@ class FMMCellMaker(FMMCalculatorBase):
         cell.child = np.zeros(8, dtype=np.int)                          # array of child index
         cell.parent = 0                                                 # index of parent cell
         cell.rc = np.zeros(3)                                           # center of the cell
-        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]                       # center of the cell
+        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]  # center of the cell
         cell.r = 0.                                                     # radius of the cell
-        cell.multipole = np.zeros((10), dtype=np.float)               # multipole array
+        cell.multipole = np.zeros((10), dtype=np.float)                 # multipole array
 
         return cell
     
@@ -68,13 +68,13 @@ class FMMCellMaker(FMMCalculatorBase):
         return all_cells
     
         
-    def _build_tree(self, particles, crd, root, n_crit):
+    def _build_tree(self, atoms, crd, root, n_crit):
     
         """Construct a hierarchical octree to store the particles and return 
         the tree (list) of cells.
         
         Arguments:
-            particles: the list of particles.
+            s: the list of particles.
             root: the root cell.
             n_crit: maximum number of particles in a single cell.
         
@@ -84,21 +84,21 @@ class FMMCellMaker(FMMCalculatorBase):
         """
         # set root cell
         cells = root       # initialize the cells list
-        root.rc, root.r = self.__mod_fmm.calculate_rc(particles)
+        root.cx, root.cy, root.cx, root.r = self.__mod_fmm.calculate_rc(atoms)
         
         # build tree
-        n = len(particles)
+        n = len(atoms)
         
         for i in range(n):
             
             # traverse from the root down to a leaf cell
             curr = 0
-            np = particles[i] - 1  # particle`s crd index
+            np = atoms[i] - 1  # particle`s crd index
             
             while cells[curr].nleaf >= n_crit:
                 cells[curr].nleaf += 1
-                octant = (crd[np].x > cells[curr].cx) + ((crd[np].y > cells[curr].cy) << 1) \
-                    + ((crd[np].z > cells[curr].z) << 2)
+                octant = (crd[np,0] > cells[curr].cx) + ((crd[np,1] > cells[curr].cy) << 1) \
+                    + ((crd[np,2] > cells[curr].cz) << 2)
                 
                 # if there is no child cell in the particles octant, then create one
                 if not cells[curr].nchild & (1 << octant):
@@ -164,8 +164,8 @@ class FMMCellMaker(FMMCalculatorBase):
         # loop in the particles stored in the parent cell that you want to split
         for l in cells[p].leaf:
             
-            octant = (crd[l].x > cells[p].x) + ((crd[l].y > cells[p].y) << 1) \
-                    + ((crd[l].z > cells[p].z) << 2)   # finds the particle's octant
+            octant = (crd[l,0] > cells[p].cx) + ((crd[l,1] > cells[p].cy) << 1) \
+                    + ((crd[l,2] > cells[p].cz) << 2)   # finds the particle's octant
         
             # if there is not a child cell in the particles octant, then create one
             if not cells[p].nchild & (1 << octant):
