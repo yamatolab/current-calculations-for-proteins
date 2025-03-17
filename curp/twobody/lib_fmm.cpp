@@ -35,17 +35,17 @@ class cal_fmm{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     struct Cell {
-        int              nleaf;
-        Eigen::VectorXi  leaf;
-        int              nchild;
-        Eigen::VectorXi  child;
-        int              parent;
-        Eigen::Vector3d  rc;
-        double           r;
-        Eigen::VectorXd  multipole;
+        int       nleaf;
+        VectorXi  leaf;
+        int       nchild;
+        VectorXi  child;
+        int       parent;
+        Vector3d  rc;
+        double    r;
+        VectorXd  multipole;
 
-        Cell(int n_crit = 10)
-            : nleaf(0),                             // number of atoms(leaf) in the cell
+        Cell(int n_crit):
+            nleaf(0),                               // number of atoms(leaf) in the cell
             leaf(VectorXi::Zero(n_crit)),           // index of atoms in the cell
             nchild(0),                              // number of child cells
             child(VectorXi::Zero(8)),               // index of 8 child cells
