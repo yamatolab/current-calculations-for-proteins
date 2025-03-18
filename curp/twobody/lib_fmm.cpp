@@ -132,28 +132,34 @@ class cal_fmm{
         }
     }
 
-    float cal_M2M(Cell cell){
-        VectorXd p_potential(10);
-        VectorXd c_potential(10);
-        VectorXd c_rc(3);
-        VectorXd p_rc(3);
+    float cal_M2M(Cell& cells[]){
+
+        for (int i = 0, i < cells[].size, i++){
+            i_inv = cells.size - 1 - i;
+
+            int c = i_inv;
+            int p = cells[i_inv].parent;
         
+            VectorXd p_potential = cells[p].multipole;
+            VectorXd c_potential = cells[c].multipole;
+            VectorXd c_rc = cells[c].rc;
+            VectorXd p_rc = cells[p].rc;
+            
+            double dx = p_rc(0) - c_rc(0);
+            double dy = p_rc(1) - c_rc(1);
+            double dz = p_rc(2) - c_rc(2);
 
-        // cellをよみこむ, cellの内容を読み込む
-        dx = p_rc(0) - c_rc(0);
-        dy = p_rc(1) - c_rc(1);
-        dz = p_rc(2) - c_rc(2);
-
-        p_potential(0) = p_potential(0) + c_potential(0);
-        p_potential(1) = p_potential(1) + c_potential(0) * dx;
-        p_potential(2) = p_potential(2) + c_potential(0) * dy;
-        p_potential(3) = p_potential(3) + c_potential(0) * dz;
-        p_potential(4) = p_potential(4) + c_potential(1) * dx + 0.5 * c_potential(1) * dx * dx;
-        p_potential(5) = p_potential(5) + c_potential(2) * dy + 0.5 * c_potential(2) * dy * dy;
-        p_potential(6) = p_potential(6) + c_potential(3) * dz + 0.5 * c_potential(3) * dz * dz;
-        p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
-        p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
-        p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+            p_potential(0) = p_potential(0) + c_potential(0);
+            p_potential(1) = p_potential(1) + c_potential(0) * dx;
+            p_potential(2) = p_potential(2) + c_potential(0) * dy;
+            p_potential(3) = p_potential(3) + c_potential(0) * dz;
+            p_potential(4) = p_potential(4) + c_potential(1) * dx + 0.5 * c_potential(1) * dx * dx;
+            p_potential(5) = p_potential(5) + c_potential(2) * dy + 0.5 * c_potential(2) * dy * dy;
+            p_potential(6) = p_potential(6) + c_potential(3) * dz + 0.5 * c_potential(3) * dz * dz;
+            p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
+            p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
+            p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+        }
     }
 
     struct Fij{
