@@ -162,12 +162,34 @@ class cal_fmm{
         }
     }
 
-    struct Fij{
+    struct atomwise{
         int i;
         int j;
         VectorXd f;
         VectorXd r;
-        F
+
+        atomwise():
+            i(0),
+            j(0),
+            f(VectorXd::Zero(3)),
+            r(VectorXd::Zero(3))
+        {}
+    }
+
+    struct cellwise{
+        string group_i;     //group name of the source(i)
+        string group_J;     //group name of the target(j)
+        int atom_i;         //atom number of the source(i)
+        VectorXd f;         //force between atom i and Cell J
+        VectorXd r;         //distance between atom i and center of Cell J
+
+        cellwise():
+            group_i(""),
+            group_J(""),
+            atom_i(0),
+            f(VectorXd::Zero(3)),
+            r(VectorXd::Zero(3))
+        {}
     }
 
     float cal_fiJ(string source, VectorXd targets, Cell cells){
