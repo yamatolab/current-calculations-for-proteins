@@ -56,6 +56,16 @@ class cal_fmm{
         {}
     };
 
+    struct All_cells {
+        string group;
+        Cell cells[];
+
+        All_cells():
+            group(""),
+            cells[]()
+        {}
+    }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // calculate the center and radius of the cell 
     float calculate_rc(std::vector<int> atoms){
@@ -315,14 +325,14 @@ class cal_fmm{
         }
     }
 
-    def evaluate(string source, VectorXd targets, Cell cells){
+    def evaluate(string source, VectorXd targets, Cell cells[]){
         int source_size = gnames_iatoms_pairs(source).size();
 
         for (int i = 0, i < source_size, i++){
             int source_atom = gnames_iatoms_pairs(source)(i);
 
             for (int j = 0, j < targets.size(), j++){                
-                VectorXd f = cal_fiJ(source_atom, targets(j), cells(target));
+                VectorXd f = cal_fiJ(source_atom, targets(j), cells[target]);
             }
         }
     }
