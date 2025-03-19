@@ -227,8 +227,9 @@ class TwoBodyForceBase:
     def cal_coulomb_fmm(self, table):
         from . import fmm
         TableMaker = fmm.FMMCellMaker
-        cells = TableMaker.make_cells(crd)
-        return fmm.FMMCellCalculator().cal_fmm(cells, crd)
+        all_cells = TableMaker.make_cells(crd)
+        CellCalculator = fmm.FMMCellCalculator(all_cells)
+        return CellCalculator.cal_fmm(all_cells, crd)
 
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
