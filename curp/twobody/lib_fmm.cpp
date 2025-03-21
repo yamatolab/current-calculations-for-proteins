@@ -17,7 +17,16 @@ class cal_fmm{
         float theta;
         VectorXd charges;
         MatrixXd t_crd;
-    
+
+        struct gnames_iatoms_pairs{
+            string group;
+            VectorXi iatoms;
+
+            gnames_iatoms_pairs():
+                group(""),
+                iatoms(VectorXi::Zero(0))
+            {}
+        };
 
     void setup(const int input_natom, const int input_n_crit, const float input_theta, const VectorXd input_charges){
         natom  = input_natom;
@@ -202,17 +211,17 @@ class cal_fmm{
         {}
     }
 
-    float cal_fiJ(string source, VectorXd targets, Cell cells){
+    float cal_fiJ(string source, int p, Cell cells[]){
 
-        if Cell cells(p).nleaf > n_crit{
+        if cells(p).nleaf > n_crit{
 
             for (int octant = 0, octant < 8, octant++){
                 
-                if (Cell cells(p).nchild & (1 << octant)) {
+                if (cells(p).nchild & (1 << octant)) {
                     
-                    int c = Cell cells(p).child(octant);
+                    int c = cells(p).child(octant);
 
-                    Vector3d crd_target = crd(target-1);
+                    Vector3d crd_target = t_crd(target - 1);
                     float rx = crd_target(0) - rc(0);
                     float ry = crd_target(1) - rc(1);
                     float rz = crd_target(2) - rc(2);
@@ -325,14 +334,15 @@ class cal_fmm{
         }
     }
 
-    def evaluate(string source, VectorXd targets, Cell cells[]){
+    def evaluate(string source, VectorXd targets, All_cells all_cells[]){
         int source_size = gnames_iatoms_pairs(source).size();
 
         for (int i = 0, i < source_size, i++){
             int source_atom = gnames_iatoms_pairs(source)(i);
 
             for (int j = 0, j < targets.size(), j++){                
-                VectorXd f = cal_fiJ(source_atom, targets(j), cells[target]);
+                target = targets(j);         
+                VectorXd f = cal_fiJ(source_atom, 0, all_cells[group=target]);
             }
         }
     }
