@@ -19,7 +19,8 @@ class TwoBodyForceBase:
         self.__ptype_to_energy = {}
         self.__ptype_to_forces = {}
         self.__ptype_to_displacement = {}
-
+        self._cal_nonbonded_terms = None # Callable
+        
     def get_pottypes(self):
         return ['bond','angle','torsion','improper',
                 'coulomb14','vdw14','coulomb','vdw']
@@ -48,7 +49,15 @@ class TwoBodyForceBase:
         self._setup_coulomb()
         self._setup_vdw()
         self._setup_coulomb_and_vdw()
-
+        
+        if self.get_decompose_force_components() and self.get_coulomb_method() != 'fmm':
+            self._cal_nonbonded_terms = self._cal_coulomb_and_vdw_at_once
+        elif not self.get_decompose_force_components():
+            self._cal_nonbonded_terms = self._cal_coulomb_and_vdw_separately
+        else:
+            # use fmm method for coulomb and existing method for vdw
+            pass
+        
     def cal_force(self, crd):
         # initialize
         self.initialize(crd)
@@ -59,9 +68,7 @@ class TwoBodyForceBase:
 
         # calculate the nonbonded components.
         for t in self.__interact_table:
-            # self.cal_coulomb(t)
-            # self.cal_vdw(t)
-            self.cal_coulomb_and_vdw(t)
+            self._cal_nonbonded_terms(t)
 
         return self.__forces
 
@@ -220,8 +227,12 @@ class TwoBodyForceBase:
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
 
-    def cal_coulomb_and_vdw(self, table):
+    def _cal_coulomb_and_vdw_at_once(self, table):
         return self._cal_nonbond(table, 'coulomb_and_vdw')
+    
+    def _cal_coulomb_and_vdw_separately(self, table):
+        self.cal_coulomb(table)
+        self.cal_vdw(table)
 
     def _cal_nonbond(self, table, pottype):
         """Calculate the pairwise forces using the bonded type modules.
@@ -348,6 +359,23 @@ class TwoBodyForceBase:
             maxpair = max(maxpair, npair)
 
         return maxpair
+    
+    def get_setting(self):
+        return self.__setting
+    
+    def get_decompose_force_components(self) -> bool:
+        """
+        Whether to output decomposed force components.
+        """
+        
+        return self.get_setting().output.decomp
+    
+    def get_coulomb_method(self) -> str:
+        """
+        Get the method for the coulomb calculation.
+        """
+        
+        return self.get_setting().curp.coulomb_method
 
 class TwoBodyForce(TwoBodyForceBase):
 
