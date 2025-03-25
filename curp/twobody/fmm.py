@@ -198,7 +198,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         m2m = [self.cal_M2M(all_cells[i]) for i in all_cells]
 
         # evaluate potential
-        coulomb_fmm = [self.eval_potential(group_i, groups, all_cells) for group_i, groups in self.__gpair_table]
+        self.__mod_fmm.cal_force(all_cells)
         
         return dict(atomwise=self.__mod_fmm.atomwise, cellwise=self.__mod_fmm.cellwise)
         
@@ -230,20 +230,6 @@ class FMMCellCalculator(FMMCalculatorBase):
 
     def cal_M2M(self, cells):
         return self.__mod_fmm.M2M(cells)
-
-    def eval_potential(self, group_i, groups, cells):
-        
-        """Evaluate the gravitational potential at all target points 
-        
-        Arguments:
-            particles: the list of particles.
-            cells: the list of cells.
-            n_crit: maximum number of particles in a single cell.
-            theta: tolerance parameter.    
-        """
-
-        self.__mod_fmm.evaluate(group_i, groups, cells)
-
 
 ####################################################################################################################
 
