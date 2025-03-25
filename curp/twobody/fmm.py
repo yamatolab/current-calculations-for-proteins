@@ -200,7 +200,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         # evaluate potential
         coulomb_fmm = [self.eval_potential(group_i, groups, all_cells) for group_i, groups in self.__gpair_table]
         
-        return coulomb_fmm
+        return dict(atomwise=self.__mod_fmm.atomwise, cellwise=self.__mod_fmm.cellwise)
         
 
     def get_multipole(self, crd, p, cells):
@@ -242,8 +242,7 @@ class FMMCellCalculator(FMMCalculatorBase):
             theta: tolerance parameter.    
         """
 
-        atomwise, fmm = self.__mod_fmm.evaluate(group_i, groups, cells)            
-        return dict(atomwise=atomwise, fmm=fmm)
+        self.__mod_fmm.evaluate(group_i, groups, cells)
 
 
 ####################################################################################################################
