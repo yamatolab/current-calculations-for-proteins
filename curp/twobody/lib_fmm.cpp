@@ -18,6 +18,18 @@ class cal_fmm{
         VectorXd charges;
         MatrixXd t_crd;
 
+        struct Gpair_table_fmm{
+            string group_i;
+            vector<string> group_js;
+            
+            Gpair_table_fmm():
+                group_i(""),
+                group_js(vector<string>())
+            {}
+        };
+
+        std::vector<Gpair_table_fmm> gpair_table_fmm;
+
         struct Gnames_iatom_pairs{
             string group;
             VectorXi iatoms;
@@ -27,6 +39,8 @@ class cal_fmm{
                 iatoms(VectorXi::Zero(0))
             {}
         };
+
+        std::vector<Gnames_iatom_pairs> gnames_iatom_pairs;
 
         struct Atomwise{
             int i;
@@ -57,8 +71,6 @@ class cal_fmm{
                 r(VectorXd::Zero(3))
             {}
         };
-    
-        std::vector<Gnames_iatom_pairs> gnames_iatom_pairs;
 
     void setup(const int input_natom, const int& input_n_crit, const double& input_theta, \
         const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
@@ -362,28 +374,32 @@ class cal_fmm{
         return std::vector<int>();
     }
 
-    void evaluate(const std::string& source, const std::vector<std::string>& targets, \
-        const std::vector<All_cells>& all_cells){
+    void cal_force(const std::vector<All_cells>& all_cells){
+
+        for (int i = 0; i < gpair_table_fmm.size(); i++){
+            std::string source = gpair_table_fmm[i].group_i;
+            std::vector<std::string> targets = gpair_table_fmm[i].group_js;
         
-        std::vector<int> source_atoms = get_atoms(source, gnames_iatom_pairs);
-        int source_size = source_atoms.size();
+            std::vector<int> source_atoms = get_atoms(source, gnames_iatom_pairs);
+            int source_size = source_atoms.size();
 
-        std::vector<Cellwise> cellwise;
-        std::vector<Atomwise> atomwise;
-        int idx_cell = 0;
-        int idx_atom = 0;
+            std::vector<Cellwise> cellwise;
+            std::vector<Atomwise> atomwise;
+            int idx_cell = 0;
+            int idx_atom = 0;
 
-        for (int i = 0; i < source_size; i++){
-            int source_atom = source_atoms[i];
+            for (int i = 0; i < source_size; i++){
+                int source_atom = source_atoms[i];
 
-            for (int j = 0; j < targets.size(); j++){                
-                std::string target = targets[j];
-                std::vector<Cell> cells = all_cells.target;
-                cal_fiJ(source, source_atom, target, 0, cells, idx_cell, idx_atom);
+                for (int j = 0; j < targets.size(); j++){                
+                    std::string target = targets[j];
+                    std::vector<Cell> cells = all_cells.target;
+                    cal_fiJ(source, source_atom, target, 0, cells, idx_cell, idx_atom);
+                }
             }
-        }
     }
-}
+
+};
 
 
 
