@@ -11,7 +11,7 @@ class FMMCalculatorBase(amberbase.TwoBodyForceBase):
         self.__gnames_iatoms_pairs = gnames_iatoms_pairs
         self.__gpair_table = gpair_table
         self.__gnames = []
-        self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges)
+        self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges, self.__gnames_iatoms_pairs)
          
     def initialize(self, crd):
         self.__mod_fmm.initialize(crd)
