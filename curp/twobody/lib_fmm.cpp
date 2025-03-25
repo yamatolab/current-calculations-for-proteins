@@ -14,7 +14,7 @@ class cal_fmm{
     public:
         int natom;
         int n_crit;
-        float theta;
+        double theta;
         VectorXd charges;
         MatrixXd t_crd;
 
@@ -30,7 +30,7 @@ class cal_fmm{
 
         std::vector<Gnames_iatoms_pairs> gnames_iatoms_pairs;
 
-    void setup(const int input_natom, const int& input_n_crit, const float& input_theta, const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
+    void setup(const int input_natom, const int& input_n_crit, const double& input_theta, const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
         natom  = input_natom;
         n_crit = input_n_crit;
         theta  = input_theta;
@@ -80,16 +80,16 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // calculate the center and radius of the cell 
-    float calculate_rc(std::vector<int> atoms){
+    double calculate_rc(std::vector<int> atoms){
         Vector3d rc;
         Vector3d r;
-        float max_r;
+        double max_r;
         std::vector<int> atoms = atoms;
 
         for (int i = 0, i < 3, i++){
-            float r_max;
-            float r_min;
-            float r_cand;
+            double r_max;
+            double r_min;
+            double r_cand;
 
             for (int j = 0, j < std::size(atoms), j++){
                 r_cand = t_crd(atoms[j]-1, i);
@@ -132,13 +132,13 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    float cal_multipole(VectorXd& multipole, VectorXd rc, std::vector<int> atoms){
+    void cal_multipole(VectorXd& multipole, VectorXd& rc, std::vector<int>& atoms){
         
         for (int i = 0, i < std::size(atoms), i++){
-            float dx = rc(0) - t_crd(atoms[i]-1, 0);
-            float dy = rc(1) - t_crd(atoms[i]-1, 1);
-            float dz = rc(2) - t_crd(atoms[i]-1, 2);
-            float qj = charges(atoms[i]-1);
+            double dx = rc(0) - t_crd(atoms[i]-1, 0);
+            double dy = rc(1) - t_crd(atoms[i]-1, 1);
+            double dz = rc(2) - t_crd(atoms[i]-1, 2);
+            double qj = charges(atoms[i]-1);
 
             multipole(0) = multipole(0) + qj * 1.0;
             multipole(1) = multipole(1) + qj * dx;
@@ -154,7 +154,7 @@ class cal_fmm{
         }
     }
 
-    float cal_M2M(Cell& cells[]){
+    void cal_M2M(Cell& cells[]){
 
         for (int i = 0, i < cells[].size, i++){
             i_inv = cells.size - 1 - i;
@@ -214,7 +214,7 @@ class cal_fmm{
         {}
     }
 
-    float cal_fiJ(std::string source, int source_atom, std::string target, int p, \
+    void cal_fiJ(std::string source, int source_atom, std::string target, int p, \
         std::vector<Cell> cells, int idx_cell, int idx_atom){
 
         if (cells[p].nleaf > n_crit){
@@ -228,10 +228,10 @@ class cal_fmm{
                     Vector3d rc = cells[c].rc;
                     Vector3d crd_target = t_crd.row(target-1);
                     
-                    float dx = crd_target(0) - rc(0);
-                    float dy = crd_target(1) - rc(1);
-                    float dz = crd_target(2) - rc(2);
-                    float r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
+                    double dx = crd_target(0) - rc(0);
+                    double dy = crd_target(1) - rc(1);
+                    double dz = crd_target(2) - rc(2);
+                    double r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
 
                     if (cells[c].r> theta * r){
                         cal_fiJ(source, source_atom, c, target, cells, idx_cell, idx_atom);
@@ -243,31 +243,31 @@ class cal_fmm{
                         VectorXd bJy = VectorXd::Zero(10);
                         VectorXd bJz = VectorXd::Zero(10);
 
-                        float inv_r = 1.0 / r;
-                        float r2 = inv_r * inv_r;
-                        float r3 = r2 * inv_r;
-                        float r5 = r3 * r2;
-                        float r7 = r5 * r2;
+                        double inv_r = 1.0 / r;
+                        double r2 = inv_r * inv_r;
+                        double r3 = r2 * inv_r;
+                        double r5 = r3 * r2;
+                        double r7 = r5 * r2;
 
-                        float dx2 = dx * dx;
-                        float dy2 = dy * dy;
-                        float dz2 = dz * dz;
+                        double dx2 = dx * dx;
+                        double dy2 = dy * dy;
+                        double dz2 = dz * dz;
 
-                        float dxdy = dx * dy;
-                        float dydz = dy * dz;
-                        float dzdx = dz * dx;
+                        double dxdy = dx * dy;
+                        double dydz = dy * dz;
+                        double dzdx = dz * dx;
 
-                        float dxr5 = 3 * dx * r5;
-                        float dyr5 = 3 * dy * r5;
-                        float dzr5 = 3 * dz * r5;
+                        double dxr5 = 3 * dx * r5;
+                        double dyr5 = 3 * dy * r5;
+                        double dzr5 = 3 * dz * r5;
 
-                        float dxdydz = 15 * dxdy * dz * r7;
-                        float dx2dy  = 15 * dx2 * dy * r7;
-                        float dy2dz  = 15 * dy2 * dz * r7;
-                        float dz2dx  = 15 * dz2 * dx * r7;
-                        float dy2dx  = 15 * dy2 * dx * r7;
-                        float dz2dy  = 15 * dz2 * dy * r7;
-                        float dx2dz  = 15 * dx2 * dz * r7;
+                        double dxdydz = 15 * dxdy * dz * r7;
+                        double dx2dy  = 15 * dx2 * dy * r7;
+                        double dy2dz  = 15 * dy2 * dz * r7;
+                        double dz2dx  = 15 * dz2 * dx * r7;
+                        double dy2dx  = 15 * dy2 * dx * r7;
+                        double dz2dy  = 15 * dz2 * dy * r7;
+                        double dx2dz  = 15 * dx2 * dz * r7;
 
 
                         // calculate bJx
@@ -311,9 +311,9 @@ class cal_fmm{
                         double charge = charges(source - 1);
                         potential = potential * charge
 
-                        float fx = potential * bJx;
-                        float fy = potential * bJy;
-                        float fz = potential * bJz;
+                        double fx = potential * bJx;
+                        double fy = potential * bJy;
+                        double fz = potential * bJz;
 
                         int idx = idx_cell;
                         cellwise[idx].group_i = source;
@@ -333,21 +333,21 @@ class cal_fmm{
                 VectorXd crd_source = t_crd.row(source_atom-1);
                 VectorXd crd_target = t_crd.row(target-1);
 
-                float rx = crd_source(0) - crd_target(0);
-                float ry = crd_source(1) - crd_target(1);
-                float rz = crd_source(2) - crd_target(2);
-                float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
-                float inv_r = 1.0 / r;
-                float coeff = 332.05221729
+                double rx = crd_source(0) - crd_target(0);
+                double ry = crd_source(1) - crd_target(1);
+                double rz = crd_source(2) - crd_target(2);
+                double r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+                double inv_r = 1.0 / r;
+                double coeff = 332.05221729
 
                 double charge_i = charges(source - 1);
                 double charge_j = charges(target - 1);
                 double qij = coeff * charge_i * charge_j;
                 double qij = qij * inv_r * inv_r * inv_r;
                 
-                float fx = qij * rx;
-                float fy = qij * ry;
-                float fz = qij * rz;
+                double fx = qij * rx;
+                double fy = qij * ry;
+                double fz = qij * rz;
 
                 int idx = idx_atom;
                 atomwise[idx].i = source;
