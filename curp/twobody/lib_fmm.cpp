@@ -18,21 +18,24 @@ class cal_fmm{
         VectorXd charges;
         MatrixXd t_crd;
 
-        struct gnames_iatoms_pairs{
+        struct Gnames_iatoms_pairs{
             string group;
             VectorXi iatoms;
 
-            gnames_iatoms_pairs():
+            Gnames_iatoms_pairs():
                 group(""),
                 iatoms(VectorXi::Zero(0))
             {}
         };
 
-    void setup(const int input_natom, const int input_n_crit, const float input_theta, const VectorXd input_charges){
+        std::vector<Gnames_iatoms_pairs> gnames_iatoms_pairs;
+
+    void setup(const int input_natom, const int& input_n_crit, const float& input_theta, const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
         natom  = input_natom;
         n_crit = input_n_crit;
         theta  = input_theta;
         charges = input_charges;
+        gnames_iatoms_pairs = input_gnames_iatoms_pairs;
     };
 
     // read trajectory
@@ -181,13 +184,13 @@ class cal_fmm{
         }
     }
 
-    struct atomwise{
+    struct Atomwise{
         int i;
         int j;
         VectorXd f;
         VectorXd r;
 
-        atomwise():
+        Atomwise():
             i(0),
             j(0),
             f(VectorXd::Zero(3)),
@@ -195,14 +198,14 @@ class cal_fmm{
         {}
     }
 
-    struct cellwise{
+    struct Cellwise{
         string group_i;     //group name of the source(i)
         string group_J;     //group name of the target(j)
         int atom_i;         //atom number of the source(i)
         VectorXd f;         //force between atom i and Cell J
         VectorXd r;         //distance between atom i and center of Cell J
 
-        cellwise():
+        Cellwise():
             group_i(""),
             group_J(""),
             atom_i(0),
@@ -211,35 +214,35 @@ class cal_fmm{
         {}
     }
 
-    float cal_fiJ(string source, int p, Cell cells[]){
+    float cal_fiJ(std::string source, int source_atom, std::string target, int p, \
+        std::vector<Cell> cells, int idx_cell, int idx_atom){
 
-        if cells(p).nleaf > n_crit{
+        if (cells[p].nleaf > n_crit){
 
-            for (int octant = 0, octant < 8, octant++){
+            for (int octant = 0; octant < 8; octant++){
                 
-                if (cells(p).nchild & (1 << octant)) {
+                if (cells[p].nchild & (1 << octant)) {
                     
-                    int c = cells(p).child(octant);
+                    int c = cells[p].child(octant);
 
-                    Vector3d crd_target = t_crd(target - 1);
-                    float rx = crd_target(0) - rc(0);
-                    float ry = crd_target(1) - rc(1);
-                    float rz = crd_target(2) - rc(2);
-                    float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+                    Vector3d rc = cells[c].rc;
+                    Vector3d crd_target = t_crd.row(target-1);
+                    
+                    float dx = crd_target(0) - rc(0);
+                    float dy = crd_target(1) - rc(1);
+                    float dz = crd_target(2) - rc(2);
+                    float r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
 
-                    if (Cell cells(c).r> theta * r){
-                        cal_fiJ(source, potential, theta, Cell cells(c));
+                    if (cells[c].r> theta * r){
+                        cal_fiJ(source, source_atom, c, target, cells, idx_cell, idx_atom);
                     }
 
                     else{
 
-                        float dx = crd_target(0) - rc(0);
-                        float dy = crd_target(1) - rc(1);
-                        float dz = crd_target(2) - rc(2);
+                        VectorXd bJx = VectorXd::Zero(10);
+                        VectorXd bJy = VectorXd::Zero(10);
+                        VectorXd bJz = VectorXd::Zero(10);
 
-                        VectorXd bJx(10);
-                        VectorXd bJy(10);
-                        VectorXd bJz(10);
                         float inv_r = 1.0 / r;
                         float r2 = inv_r * inv_r;
                         float r3 = r2 * inv_r;
@@ -304,45 +307,85 @@ class cal_fmm{
                         bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
 
                         // calculate potential
-                        float fx = q(source-1) * potential * bJx;
-                        float fy = q(source-1) * potential * bJy;
-                        float fz = q(source-1) * potential * bJz;
+                        VectorXd potential = cells[c].multipole;
+                        double charge = charges(source - 1);
+                        potential = potential * charge
 
-                        return VectorXd f(fx, fy, fz), VectorXd r(rx, ry, rz);
+                        float fx = potential * bJx;
+                        float fy = potential * bJy;
+                        float fz = potential * bJz;
 
+                        int idx = idx_cell;
+                        cellwise[idx].group_i = source;
+                        cellwise[idx].group_j = target;
+                        cellwise[idx].atom_i = c;
+                        cellwise[idx].f = Vector3d(fx, fy, fz);
+                        cellwise[idx].r = Vector3d(dx, dy, dz);
+
+                        idx_cell = idx_cell + 1;
                     }      
                 }
             }
         }
         else {
-            for (int l, l < Cell cells(p).nleaf, l++){
-                source = Cell cells(p).leaf(l);
-                crd_source = crd(source-1);
+            for (int l; l < cells[p].nleaf; l++){
+                int source = cells[p].leaf(l);
+                VectorXd crd_source = t_crd.row(source_atom-1);
+                VectorXd crd_target = t_crd.row(target-1);
+
                 float rx = crd_source(0) - crd_target(0);
                 float ry = crd_source(1) - crd_target(1);
                 float rz = crd_source(2) - crd_target(2);
                 float r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
                 float inv_r = 1.0 / r;
                 float coeff = 332.05221729
-                
-                float fx = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * rx;
-                float fy = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * ry;
-                float fz = coeff * q(source-1) * q(target-1) * inv_r * inv_r * inv_r * rz;
 
-                return Vector3d f(fx, fy, fz), Vector3d r(rx, ry, rz);
+                double charge_i = charges(source - 1);
+                double charge_j = charges(target - 1);
+                double qij = coeff * charge_i * charge_j;
+                double qij = qij * inv_r * inv_r * inv_r;
+                
+                float fx = qij * rx;
+                float fy = qij * ry;
+                float fz = qij * rz;
+
+                int idx = idx_atom;
+                atomwise[idx].i = source;
+                atomwise[idx].j = target;
+                atomwise[idx].f = VectorXd(fx, fy, fz);
+                atomwise[idx].r = VectorXd(rx, ry, rz);
+
+                idx_atom = idx_atom + 1;
             }
         }
     }
+    std::vector<int> get_atoms(const std::string& source, const std::vector<gnames_iatoms_pairs>& pairs) {
+        for (const auto& pair : pairs) {
+            if (pair.group == source) {
+                return std::vector<int>(pair.iatoms.data(), pair.iatoms.data() + pair.iatoms.size());
+            }
+        }
+        return std::vector<int>();
+    }
 
-    def evaluate(string source, VectorXd targets, All_cells all_cells[]){
-        int source_size = gnames_iatoms_pairs(source).size();
+    void evaluate(const std::string& source, const std::vector<std::string>& targets, \
+        const std::vector<All_cells>& all_cells){
+        
+        std::vector<int> source_atoms = get_atoms(source, gnames_iatoms_pairs);
+        int source_size = source.iatoms.size();
 
-        for (int i = 0, i < source_size, i++){
-            int source_atom = gnames_iatoms_pairs(source)(i);
+        std::vector<Cellwise> cellwise;
+        std::vector<Atomwise> atomwise;
+        int idx_cell = 0;
+        int idx_atom = 0;
 
-            for (int j = 0, j < targets.size(), j++){                
-                target = targets(j);         
-                VectorXd f = cal_fiJ(source_atom, 0, all_cells[group=target]);
+        for (int i = 0; i < source_size; i++){
+            int source_atom = gnames_iatoms_pairs[i];
+
+            for (int j = 0; j < targets.size(); j++){                
+                std::string target = targets[j];
+                std::vector<Cell> cells = all_cells.target;
+                cal_fiJ(source, source_atom, target, 0, cells, idx_cell, idx_atom);
             }
         }
     }
