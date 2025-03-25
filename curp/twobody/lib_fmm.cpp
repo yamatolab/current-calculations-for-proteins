@@ -30,7 +30,8 @@ class cal_fmm{
 
         std::vector<Gnames_iatoms_pairs> gnames_iatoms_pairs;
 
-    void setup(const int input_natom, const int& input_n_crit, const double& input_theta, const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
+    void setup(const int input_natom, const int& input_n_crit, const double& input_theta, \
+        const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
         natom  = input_natom;
         n_crit = input_n_crit;
         theta  = input_theta;
@@ -86,12 +87,12 @@ class cal_fmm{
         double max_r;
         std::vector<int> atoms = atoms;
 
-        for (int i = 0, i < 3, i++){
+        for (int i = 0; i < 3; i++){
             double r_max;
             double r_min;
             double r_cand;
 
-            for (int j = 0, j < std::size(atoms), j++){
+            for (int j = 0; j < std::size(atoms); j++){
                 r_cand = t_crd(atoms[j]-1, i);
                 if (j == 0){
                     r_max = r_cand;
@@ -134,29 +135,35 @@ class cal_fmm{
 
     void cal_multipole(VectorXd& multipole, VectorXd& rc, std::vector<int>& atoms){
         
-        for (int i = 0, i < std::size(atoms), i++){
-            double dx = rc(0) - t_crd(atoms[i]-1, 0);
-            double dy = rc(1) - t_crd(atoms[i]-1, 1);
-            double dz = rc(2) - t_crd(atoms[i]-1, 2);
+        for (int i = 0; i < std::size(atoms); i++){
+
+            Vector3d crd_atom = t_crd.row(atoms[i]-1);
+            double dx = rc(0) - crd_atom(0);
+            double dy = rc(1) - crd_atom(1);
+            double dz = rc(2) - crd_atom(2);
             double qj = charges(atoms[i]-1);
 
+            double qjdx = qj * dx;
+            double qjdy = qj * dy;
+            double qjdz = qj * dz;
+            
             multipole(0) = multipole(0) + qj * 1.0;
-            multipole(1) = multipole(1) + qj * dx;
-            multipole(2) = multipole(2) + qj * dy;
-            multipole(3) = multipole(3) + qj * dz;
-            multipole(4) = multipole(4) + qj * dx * dx;
-            multipole(5) = multipole(5) + qj * dy * dy;
-            multipole(6) = multipole(6) + qj * dz * dz;
-            multipole(7) = multipole(7) + qj * 2 * dx * dy;
-            multipole(8) = multipole(8) + qj * 2 * dy * dz;
-            multipole(9) = multipole(9) + qj * 2 * dz * dx;
+            multipole(1) = multipole(1) + qjdx;
+            multipole(2) = multipole(2) + qjdy;
+            multipole(3) = multipole(3) + qjdz;
+            multipole(4) = multipole(4) + qjdx * dx;
+            multipole(5) = multipole(5) + qjdy * dy;
+            multipole(6) = multipole(6) + qjdz * dz;
+            multipole(7) = multipole(7) + qjdx * 2 * dy;
+            multipole(8) = multipole(8) + qjdy * 2 * dz;
+            multipole(9) = multipole(9) + qjdx * 2 * dx;
             
         }
     }
 
-    void cal_M2M(Cell& cells[]){
+    void cal_M2M(std::vector<Cell> cells){
 
-        for (int i = 0, i < cells[].size, i++){
+        for (int i = 0; i < cells.size; i++){
             i_inv = cells.size - 1 - i;
 
             int c = i_inv;
