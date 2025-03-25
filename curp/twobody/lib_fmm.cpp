@@ -18,17 +18,47 @@ class cal_fmm{
         VectorXd charges;
         MatrixXd t_crd;
 
-        struct Gnames_iatoms_pairs{
+        struct Gnames_iatom_pairs{
             string group;
             VectorXi iatoms;
 
-            Gnames_iatoms_pairs():
+            Gnames_iatom_pairs():
                 group(""),
                 iatoms(VectorXi::Zero(0))
             {}
         };
 
-        std::vector<Gnames_iatoms_pairs> gnames_iatoms_pairs;
+        struct Atomwise{
+            int i;
+            int j;
+            VectorXd f;
+            VectorXd r;
+    
+            Atomwise():
+                i(0),
+                j(0),
+                f(VectorXd::Zero(3)),
+                r(VectorXd::Zero(3))
+            {}
+        };
+    
+        struct Cellwise{
+            string group_i;     //group name of the source(i)
+            string group_J;     //group name of the target(j)
+            int atom_i;         //atom number of the source(i)
+            VectorXd f;         //force between atom i and Cell J
+            VectorXd r;         //distance between atom i and center of Cell J
+    
+            Cellwise():
+                group_i(""),
+                group_J(""),
+                atom_i(0),
+                f(VectorXd::Zero(3)),
+                r(VectorXd::Zero(3))
+            {}
+        };
+    
+        std::vector<Gnames_iatom_pairs> gnames_iatom_pairs;
 
     void setup(const int input_natom, const int& input_n_crit, const double& input_theta, \
         const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
@@ -81,25 +111,24 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // calculate the center and radius of the cell 
-    double calculate_rc(std::vector<int> atoms){
+    std::tuple calculate_rc(std::vector<int> atoms){
         Vector3d rc;
         Vector3d r;
         double max_r;
-        std::vector<int> atoms = atoms;
 
         for (int i = 0; i < 3; i++){
-            double r_max;
-            double r_min;
-            double r_cand;
+            double r_max = 0.0;
+            double r_min = 0.0;
+            double r_cand = 0.0;
 
-            for (int j = 0; j < std::size(atoms); j++){
+            for (int j = 0; j < atoms.size(); j++){
                 r_cand = t_crd(atoms[j]-1, i);
                 if (j == 0){
                     r_max = r_cand;
                     r_min = r_cand;
                 }
                 else{
-                    if (r_cand > r_max){
+                    if (r_cand >= r_max){
                         r_max = r_cand;
                     }
                     if (r_cand < r_min){
@@ -110,26 +139,13 @@ class cal_fmm{
             
             r(i)  = abs(r_max - r_min);
             rc(i) = r_min + r(i) * 0.5;
-            if i == 1{
-                if (rc(0) > rc(1)){
-                    r = rc(0);
-                }
-                else{
-                    r = rc(1);
-                }
-            }
-            if i ==2{
-                if (r > rc(2)){
-                    r = rc(2);
-                }
-                else{
-                    r = rc(2);
-                }
-            }
+            
         }
-
-        return rc(0), rc(1), rc(2), max_r;
+            max_r = r.maxCoeff();
+            return rc(0), rc(1), rc(2), max_r;
     }
+        
+    
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -162,9 +178,9 @@ class cal_fmm{
     }
 
     void cal_M2M(std::vector<Cell> cells){
-
-        for (int i = 0; i < cells.size; i++){
-            i_inv = cells.size - 1 - i;
+        int cells_size = cells.size();
+        for (int i = 0; i < cells_size; i++){
+            i_inv = cells.size() - 1 - i;
 
             int c = i_inv;
             int p = cells[i_inv].parent;
@@ -191,35 +207,6 @@ class cal_fmm{
         }
     }
 
-    struct Atomwise{
-        int i;
-        int j;
-        VectorXd f;
-        VectorXd r;
-
-        Atomwise():
-            i(0),
-            j(0),
-            f(VectorXd::Zero(3)),
-            r(VectorXd::Zero(3))
-        {}
-    }
-
-    struct Cellwise{
-        string group_i;     //group name of the source(i)
-        string group_J;     //group name of the target(j)
-        int atom_i;         //atom number of the source(i)
-        VectorXd f;         //force between atom i and Cell J
-        VectorXd r;         //distance between atom i and center of Cell J
-
-        Cellwise():
-            group_i(""),
-            group_J(""),
-            atom_i(0),
-            f(VectorXd::Zero(3)),
-            r(VectorXd::Zero(3))
-        {}
-    }
 
     void cal_fiJ(std::string source, int source_atom, std::string target, int p, \
         std::vector<Cell> cells, int idx_cell, int idx_atom){
@@ -241,7 +228,7 @@ class cal_fmm{
                     double r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
 
                     if (cells[c].r> theta * r){
-                        cal_fiJ(source, source_atom, c, target, cells, idx_cell, idx_atom);
+                        cal_fiJ(source, source_atom, target, c, cells, idx_cell, idx_atom);
                     }
 
                     else{
@@ -315,7 +302,7 @@ class cal_fmm{
 
                         // calculate potential
                         VectorXd potential = cells[c].multipole;
-                        double charge = charges(source - 1);
+                        double charge = charges(source_atom - 1);
                         potential = potential * charge
 
                         double fx = potential * bJx;
@@ -336,9 +323,9 @@ class cal_fmm{
         }
         else {
             for (int l; l < cells[p].nleaf; l++){
-                int source = cells[p].leaf(l);
+                int target_atom = cells[p].leaf(l);
                 VectorXd crd_source = t_crd.row(source_atom-1);
-                VectorXd crd_target = t_crd.row(target-1);
+                VectorXd crd_target = t_crd.row(target_atom-1);
 
                 double rx = crd_source(0) - crd_target(0);
                 double ry = crd_source(1) - crd_target(1);
@@ -359,14 +346,14 @@ class cal_fmm{
                 int idx = idx_atom;
                 atomwise[idx].i = source;
                 atomwise[idx].j = target;
-                atomwise[idx].f = VectorXd(fx, fy, fz);
-                atomwise[idx].r = VectorXd(rx, ry, rz);
+                atomwise[idx].f = (fx, fy, fz);
+                atomwise[idx].r = (rx, ry, rz);
 
                 idx_atom = idx_atom + 1;
             }
         }
     }
-    std::vector<int> get_atoms(const std::string& source, const std::vector<gnames_iatoms_pairs>& pairs) {
+    std::vector<int> get_atoms(const std::string& source, const std::vector<Gnames_iatom_pairs>& pairs) {
         for (const auto& pair : pairs) {
             if (pair.group == source) {
                 return std::vector<int>(pair.iatoms.data(), pair.iatoms.data() + pair.iatoms.size());
@@ -378,8 +365,8 @@ class cal_fmm{
     void evaluate(const std::string& source, const std::vector<std::string>& targets, \
         const std::vector<All_cells>& all_cells){
         
-        std::vector<int> source_atoms = get_atoms(source, gnames_iatoms_pairs);
-        int source_size = source.iatoms.size();
+        std::vector<int> source_atoms = get_atoms(source, gnames_iatom_pairs);
+        int source_size = source_atoms.size();
 
         std::vector<Cellwise> cellwise;
         std::vector<Atomwise> atomwise;
@@ -387,7 +374,7 @@ class cal_fmm{
         int idx_atom = 0;
 
         for (int i = 0; i < source_size; i++){
-            int source_atom = gnames_iatoms_pairs[i];
+            int source_atom = source_atoms[i];
 
             for (int j = 0; j < targets.size(); j++){                
                 std::string target = targets[j];
