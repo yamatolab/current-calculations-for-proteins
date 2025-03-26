@@ -5,13 +5,13 @@ from . import amberbase
 
 class FMMCalculatorBase(amberbase.TwoBodyForceBase):
     
-    def __init__(self, charges, gnames_iatoms_pairs, gpair_table):
+    def __init__(self, charges, gname_iatoms_pairs, gpair_table):
         self.__n_crit = self.__setting.curp.coulomb_fmm_cell_contains
         self.__theta = self.__setting.curp.coulomb_fmm_theta
-        self.__gnames_iatoms_pairs = gnames_iatoms_pairs
+        self.__gname_iatoms_pairs = gname_iatoms_pairs
         self.__gpair_table = gpair_table
         self.__gnames = []
-        self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges, self.__gnames_iatoms_pairs)
+        self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges, self.__gname_iatoms_pairs)
          
     def initialize(self, crd):
         self.__mod_fmm.initialize(crd)
@@ -23,7 +23,7 @@ class FMMCellMaker(FMMCalculatorBase):
     def make_cells(self, crd):
         
         # build tree
-        all_cells = self.build_all_tree(self.__gnames_iatoms_pairs, crd, self.__n_crit)
+        all_cells = self.build_all_tree(self.__gname_iatoms_pairs, crd, self.__n_crit)
         
         return all_cells
 
