@@ -59,10 +59,12 @@ class FMMCellMaker(FMMCalculatorBase):
     
     def build_all_tree(self, group_atoms, crd, n_crit):
         all_cells = []
+        group_num = 0
         for gname, atoms in group_atoms:
+            group_num = group_num + 1
             root_cell = self.setup_cell(atoms)
             
-            all_cells.append(gname, self._build_tree(atoms, crd, root_cell, n_crit))
+            all_cells.append(group_num, self._build_tree(atoms, crd, root_cell, n_crit))
             self.__gnames.append(gname)
             
         return all_cells
@@ -192,10 +194,10 @@ class FMMCellCalculator(FMMCalculatorBase):
     def cal_fmm(self, all_cells, crd):
         
         # get multipole arrays
-        multipole = [self.get_multipole(crd, 0, all_cells[gname]) for gname, atoms in self.__gnames_iatoms_pairs]
+        multipole = [self.get_multipole(crd, 0, all_cells[i]) for i in range(len(all_cells))]
         
         # upward sweep
-        m2m = [self.cal_M2M(all_cells[i]) for i in all_cells]
+        m2m = [self.cal_M2M(all_cells[i]) for i in range(len(all_cells))]
 
         # evaluate potential
         self.__mod_fmm.cal_force(all_cells)
