@@ -30,17 +30,17 @@ class cal_fmm{
 
         std::vector<Gpair_table_fmm> gpair_table_fmm;
 
-        struct Gnames_iatom_pairs{
+        struct Gname_iatoms_pairs{
             string group;
             VectorXi iatoms;
 
-            Gnames_iatom_pairs():
+            Gname_iatoms_pairs():
                 group(""),
                 iatoms(VectorXi::Zero(0))
             {}
         };
 
-        std::vector<Gnames_iatom_pairs> gnames_iatom_pairs;
+        std::vector<Gname_iatoms_pairs> gname_iatoms_pairs;
 
         struct Atomwise{
             int i;
@@ -73,12 +73,12 @@ class cal_fmm{
         };
 
     void setup(const int input_natom, const int& input_n_crit, const double& input_theta, \
-        const VectorXd& input_charges, std::vector<Gnames_iatoms_pairs>& input_gnames_iatoms_pairs){
+        const VectorXd& input_charges, std::vector<Gname_iatoms_pairs>& input_gname_iatoms_pairs){
         natom  = input_natom;
         n_crit = input_n_crit;
         theta  = input_theta;
         charges = input_charges;
-        gnames_iatoms_pairs = input_gnames_iatoms_pairs;
+        gname_iatoms_pairs = input_gname_iatoms_pairs;
     };
 
     // read trajectory
@@ -365,7 +365,7 @@ class cal_fmm{
             }
         }
     }
-    std::vector<int> get_atoms(const std::string& source, const std::vector<Gnames_iatom_pairs>& pairs) {
+    std::vector<int> get_atoms(const std::string& source, const std::vector<Gname_iatoms_pairs>& pairs) {
         for (const auto& pair : pairs) {
             if (pair.group == source) {
                 return std::vector<int>(pair.iatoms.data(), pair.iatoms.data() + pair.iatoms.size());
@@ -380,7 +380,7 @@ class cal_fmm{
             std::string source = gpair_table_fmm[i].group_i;
             std::vector<std::string> targets = gpair_table_fmm[i].group_js;
         
-            std::vector<int> source_atoms = get_atoms(source, gnames_iatom_pairs);
+            std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
 
             std::vector<Cellwise> cellwise;
