@@ -172,11 +172,13 @@ class cal_fmm{
         
         for (int i = 0; i < std::size(atoms); i++){
 
-            Vector3d crd_atom = t_crd.row(atoms(i)-1);
+            int index_atom = atoms(i) - 1;
+
+            Vector3d crd_atom = t_crd.row(index_atom);
             double dx = rc(0) - crd_atom(0);
             double dy = rc(1) - crd_atom(1);
             double dz = rc(2) - crd_atom(2);
-            double qj = charges(atoms(i)-1);
+            double qj = charges(index_atom);
 
             double qjdx = qj * dx;
             double qjdy = qj * dy;
@@ -197,9 +199,10 @@ class cal_fmm{
     };
 
     void cal_M2M(std::vector<Cell> cells){
+
         int cells_size = cells.size();
         for (int i = 0; i < cells_size; i++){
-            i_inv = cells.size() - 1 - i;
+            int i_inv = cells.size() - 1 - i;
 
             int c = i_inv;
             int p = cells[i_inv].parent;
