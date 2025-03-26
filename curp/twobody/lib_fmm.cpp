@@ -161,15 +161,15 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void cal_multipole(VectorXd& multipole, VectorXd& rc, std::vector<int>& atoms){
+    void cal_multipole(VectorXd& multipole, VectorXd& rc, VectorXi& atoms){
         
         for (int i = 0; i < std::size(atoms); i++){
 
-            Vector3d crd_atom = t_crd.row(atoms[i]-1);
+            Vector3d crd_atom = t_crd.row(atoms(i)-1);
             double dx = rc(0) - crd_atom(0);
             double dy = rc(1) - crd_atom(1);
             double dz = rc(2) - crd_atom(2);
-            double qj = charges(atoms[i]-1);
+            double qj = charges(atoms(i)-1);
 
             double qjdx = qj * dx;
             double qjdy = qj * dy;
@@ -397,6 +397,7 @@ class cal_fmm{
                     cal_fiJ(source, source_atom, target, 0, cells, idx_cell, idx_atom);
                 }
             }
+        }
     }
 
 };
