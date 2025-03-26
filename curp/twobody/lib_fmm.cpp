@@ -113,32 +113,39 @@ class cal_fmm{
 
     struct All_cells {
         string group;
-        Cell cells[];
+        std::vector<Cell> cells;
 
         All_cells():
             group(""),
-            cells[]()
+            cells[]
         {}
-    }
+    };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // calculate the center and radius of the cell 
     std::tuple calculate_rc(std::vector<int> atoms){
-        Vector3d rc;
-        Vector3d r;
-        double max_r;
 
-        for (int i = 0; i < 3; i++){
+        Vector3d rc = Vector3d::Zero();
+        Vector3d r = Vector3d::Zero();
+        double max_r = 0.0;
+
+        for (int j = 0; j < atoms.size(); j++){
+
             double r_max = 0.0;
             double r_min = 0.0;
             double r_cand = 0.0;
+            Vector3d crd_atom = t_crd.row(atoms[j]-1);
 
-            for (int j = 0; j < atoms.size(); j++){
-                r_cand = t_crd(atoms[j]-1, i);
+            for (int i = 0; i < 3; i++){
+
+                r_cand = crd_atom(i);
+
                 if (j == 0){
                     r_max = r_cand;
                     r_min = r_cand;
                 }
+                
                 else{
                     if (r_cand >= r_max){
                         r_max = r_cand;
@@ -155,7 +162,7 @@ class cal_fmm{
         }
             max_r = r.maxCoeff();
             return rc(0), rc(1), rc(2), max_r;
-    }
+    };
         
     
 
@@ -187,7 +194,7 @@ class cal_fmm{
             multipole(9) = multipole(9) + qjdx * 2 * dx;
             
         }
-    }
+    };
 
     void cal_M2M(std::vector<Cell> cells){
         int cells_size = cells.size();
@@ -217,7 +224,7 @@ class cal_fmm{
             p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
             p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
         }
-    }
+    };
 
 
     void cal_fiJ(std::string source, int source_atom, std::string target, int p, \
@@ -364,7 +371,8 @@ class cal_fmm{
                 idx_atom = idx_atom + 1;
             }
         }
-    }
+    };
+
     std::vector<int> get_atoms(const std::string& source, const std::vector<Gname_iatoms_pairs>& pairs) {
         for (const auto& pair : pairs) {
             if (pair.group == source) {
@@ -372,7 +380,7 @@ class cal_fmm{
             }
         }
         return std::vector<int>();
-    }
+    };
 
     void cal_force(const std::vector<All_cells>& all_cells){
 
@@ -398,7 +406,7 @@ class cal_fmm{
                 }
             }
         }
-    }
+    };
 
 };
 
