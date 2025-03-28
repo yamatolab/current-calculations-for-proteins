@@ -369,7 +369,7 @@ class TwoBodyForce(TwoBodyForceBase):
         
         if setting.coulomb_method == 'fmm':
             from . import lib_fmm
-            self.set_module_fmm()
+            self.set_module_fmm(lib_fmm)
 
 
 if __name__ == '__main__':
