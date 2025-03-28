@@ -45,28 +45,28 @@ class cal_fmm{
         struct Atomwise{
             int i;
             int j;
-            VectorXd f;
-            VectorXd r;
+            Vector3d f;
+            Vector3d r;
     
             Atomwise():
                 i(0),
                 j(0),
-                f(VectorXd::Zero(3)),
-                r(VectorXd::Zero(3))
+                f(Vector3d::Zero()),
+                r(Vector3d::Zero())
             {}
         };
     
         struct Cellwise{
             int atom_i;         //atom number of the source(i)
             VectorXd atoms_J;   //atom numbers of the target cell J
-            VectorXd f;         //force between atom i and Cell J
-            VectorXd r;         //distance between atom i and center of Cell J
+            Vector3d f;         //force between atom i and Cell J
+            Vector3d r;         //distance between atom i and center of Cell J
     
             Cellwise():
                 atom_i(0),
                 atoms_J(VectorXd::Zero(0)),
-                f(VectorXd::Zero(3)),
-                r(VectorXd::Zero(3))
+                f(Vector3d::Zero()),
+                r(Vector3d::Zero())
             {}
         };
 
@@ -326,7 +326,6 @@ class cal_fmm{
                         VectorXd potential = cells[c].multipole;
                         double charge = charges(source_atom - 1);
                         potential = potential * charge;
-
 
                         double fx = potential * bJx;
                         double fy = potential * bJy;
