@@ -169,7 +169,7 @@ class cal_fmm{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void cal_multipole(VectorXd& multipole, VectorXd& rc, VectorXi& atoms){
+    void cal_multipole(VectorXd& multipole, Vector3d& rc, VectorXi& atoms){
         
         for (int i = 0; i < std::size(atoms); i++){
 
