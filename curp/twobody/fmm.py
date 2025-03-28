@@ -11,6 +11,8 @@ class FMMCalculatorBase(amberbase.TwoBodyForceBase):
         self.__gname_iatoms_pairs = gname_iatoms_pairs
         self.__gpair_table = gpair_table
         self.__gnames = []
+        
+        self.__mod_fmm = self.__mod_fmm.cal_fmm
         self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges, self.__gname_iatoms_pairs)
          
     def initialize(self, crd):
@@ -59,12 +61,10 @@ class FMMCellMaker(FMMCalculatorBase):
     
     def build_all_tree(self, group_atoms, crd, n_crit):
         all_cells = []
-        group_num = 0
         for gname, atoms in group_atoms:
-            group_num = group_num + 1
             root_cell = self.setup_cell(atoms)
             
-            all_cells.append(group_num, self._build_tree(atoms, crd, root_cell, n_crit))
+            all_cells.append(gname, self._build_tree(atoms, crd, root_cell, n_crit))
             self.__gnames.append(gname)
             
         return all_cells
@@ -185,7 +185,6 @@ class FMMCellMaker(FMMCalculatorBase):
 
 ###################################### Calculator ##########################################################################
 
-#TODO
 class FMMCellCalculator(FMMCalculatorBase):
 
     def __init__(self, all_cells):
