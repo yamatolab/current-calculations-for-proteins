@@ -421,10 +421,25 @@ class cal_fmm{
 
 };
 
-
-
-
 py(lib_fmm, m){
     
+    py::class_<cal_fmm>(m, "cal_fmm")
+        .def(py::init<>())
+        .def("setup", &cal_fmm::setup)
+        .def("initialize", &cal_fmm::initialize)
+        .def("calculate_rc", &cal_fmm::calculate_rc)
+        .def("cal_multipole", &cal_fmm::cal_multipole)
+        .def("cal_M2M", &cal_fmm::cal_M2M)
+        .def("cal_force", &cal_fmm::cal_force)
+        .def_readwrite("natom", &cal_fmm::natom)
+        .def_readwrite("n_crit", &cal_fmm::n_crit)
+        .def_readwrite("theta", &cal_fmm::theta)
+        .def_readwrite("charges", &cal_fmm::charges)
+        .def_readwrite("t_crd", &cal_fmm::t_crd)
+        .def_readwrite("gpair_table_fmm", &cal_fmm::gpair_table_fmm)
+        .def_readwrite("gname_iatoms_pairs", &cal_fmm::gname_iatoms_pairs)
+        .def_readwrite("idx_cell", &cal_fmm::idx_cell)
+        .def_readwrite("idx_atom", &cal_fmm::idx_atom)
+        ;
     
 }
