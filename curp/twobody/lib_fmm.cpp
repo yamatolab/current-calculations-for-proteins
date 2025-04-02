@@ -345,6 +345,11 @@ class cal_fmm{
         else {
             for (int l; l < cells[p].nleaf; l++){
                 int target_atom = cells[p].leaf(l);
+
+                if (target_atom == source_atom){
+                    continue;
+                }
+
                 VectorXd crd_source = t_crd.row(source_atom-1);
                 VectorXd crd_target = t_crd.row(target_atom-1);
 
