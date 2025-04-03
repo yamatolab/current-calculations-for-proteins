@@ -8,7 +8,7 @@ import numpy as np
 from curp import utility
 import curp.clog as logger
 
-from curp.current import base, lib_flux, lib_hflux, lib_keflux
+from curp.current import base, lib_flux, lib_hflux, lib_keflux, lib_flux_fmm
 ################################################################################
 class EnergyFluxCalculator(base.FluxCalculator):
 
@@ -101,18 +101,19 @@ class EnergyFluxCalculator(base.FluxCalculator):
     def cal_coulomb_fmm(self, crd, vel):
         """Calculate the energy flux for the coulomb term using fmm."""
 
-        table     = self.get_interact_table()
+        table     = self.get_interact_table_fmm()
         type_func = self.get_tbforce().get_coulomb_func
 
         t0 = time.time()
-        gen_tbfs = ( type_func(t)['tbforces'] for t in table )
-        flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table )
+        gen_tbfs = type_func(table)
+
+        flux_atm, flux_grp = self.fcal.cal_coulomb_fmm( vel, gen_tbfs, table )
 
         t1 = time.time()
         dt_flux = self.fcal.dt
 
         self.store_time('coulomb pairwise' , t1 - t0 - dt_flux)
-        self.store_time('coulomb flux' , dt_flux)
+        self.store_time('coulomb flux(fmm)' , dt_flux)
 
         return flux_atm, flux_grp
 
@@ -149,6 +150,11 @@ class EnergyFlux:
                 bonded_pairs, flag_atm, flag_grp)
         self.__lib.nonbonded.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
+        if self.__coulomb_method == 'fmm':
+            lib_flux_fmm.cal_fmm.initialize( target_atoms, iatm_to_igrp,
+                flag_atm, flag_grp)
+            lib_flux_fmm.cal_fmm.set_flux("energy")
+
 
     def cal_bonded(self, vel, tbfs):
         """Calculate the flux due to bonded potentials."""
@@ -195,6 +201,34 @@ class EnergyFlux:
         self.dt = t_total
 
         return flux_atm, flux_grp
+    
+    def cal_coulomb_fmm(self, vel, gen_tbfs, table_fmm):
+        """Calculate the flux due to nonbonded potentials using FMM."""
+        t0 = time.time()
+        m_non_fmm = lib_flux_fmm.cal_fmm
+
+        # initialize
+        m_non_fmm.init_cal(vel)
+
+        # calculate
+        t_total = time.time() - t0
+        
+        atomwise, cellwise = gen_tbfs
+        t1 = time.time()
+        m_non_fmm.cal_eflux_atomwise(atomwise)
+        m_non_fmm.cal_eflux_cellwise(cellwise)
+        
+        flux_grp = m_non_fmm.eflux_ij
+        flux_atm = None
+        
+        t_total += time.time() - t1
+
+        t2 = time.time()
+
+        t_total += time.time() - t2
+        self.dt = t_total
+
+        return flux_atm, flux_grp
 
 ################################################################################
 ################################## HEAT FLUX ###################################
@@ -226,8 +260,8 @@ class HeatFluxCalculator(base.FluxCalculator):
             pass
         
         # choose the coulomb calculation method
-        coulomb_method = self.get_setting().curp.coulomb_method
-        if coulomb_method == 'fmm':
+        self.__coulomb_method = self.get_setting().curp.coulomb_method
+        if self.__coulomb_method == 'fmm':
             self.__coulomb_func = self.cal_coulomb_fmm
         else:
             self.__coulomb_func = self.cal_coulomb
@@ -293,13 +327,13 @@ class HeatFluxCalculator(base.FluxCalculator):
         t0 = time.time()
         gen_tbfs = type_func(table)
 
-        flux_atm, flux_grp = self.fcal.cal_nonbonded( vel, gen_tbfs, table )
+        flux_atm, flux_grp = self.fcal.cal_coulomb_fmm( vel, gen_tbfs, table)
 
         t1 = time.time()
         dt_flux = self.fcal.dt
 
         self.store_time('coulomb pairwise' , t1 - t0 - dt_flux)
-        self.store_time('coulomb flux' , dt_flux)
+        self.store_time('coulomb flux(fmm)' , dt_flux)
 
         return flux_atm, flux_grp
 
@@ -340,6 +374,10 @@ class HeatFlux:
                 bonded_pairs, flag_atm, flag_grp)
         lib_hflux.nonbonded.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
+        if self.__coulomb_method == 'fmm':
+            lib_flux_fmm.cal_fmm.initialize( target_atoms, iatm_to_igrp,
+                flag_atm, flag_grp)
+            lib_flux_fmm.cal_fmm.set_flux("heat")
 
     def cal_bonded(self, vel, tbfs, displ):
         """Calculate the flux due to bonded potentials."""
@@ -396,7 +434,33 @@ class HeatFlux:
 
         return hflux_atm, hflux_grp
 
+    def cal_coulomb_fmm(self, vel, gen_tbfs, table_fmm):
+        """Calculate the flux due to nonbonded potentials using FMM."""
+        t0 = time.time()
+        m_non_fmm = lib_flux_fmm.cal_fmm
 
+        # initialize
+        m_non_fmm.init_cal(vel)
+
+        # calculate
+        t_total = time.time() - t0
+        
+        atomwise, cellwise = gen_tbfs
+        t1 = time.time()
+        m_non_fmm.cal_hflux_atomwise(atomwise)
+        m_non_fmm.cal_hflux_cellwise(cellwise)
+        
+        hflux_grp = m_non_fmm.hflux_ij
+        hflux_atm = None
+        
+        t_total += time.time() - t1
+
+        t2 = time.time()
+
+        t_total += time.time() - t2
+        self.dt = t_total
+
+        return hflux_atm, hflux_grp
 
 
 ################################################################################
