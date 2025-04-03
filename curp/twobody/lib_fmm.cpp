@@ -58,7 +58,7 @@ class cal_fmm{
     
         struct Cellwise{
             int atom_i;         //atom number of the source(i)
-            VectorXd atoms_J;   //atom numbers of the target cell J
+            VectorXi atoms_J;   //atom numbers of the target cell J
             Vector3d f;         //force between atom i and Cell J
             Vector3d r;         //distance between atom i and center of Cell J
     
@@ -426,7 +426,7 @@ class cal_fmm{
 
 };
 
-py(lib_fmm, m){
+PYBIND11_MODULE(lib_fmm, m){
     
     py::class_<cal_fmm>(m, "cal_fmm")
         .def(py::init<>())
