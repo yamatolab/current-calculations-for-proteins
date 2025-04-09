@@ -14,8 +14,8 @@ class cal_flux_fmm{
     public:
         int natom;
         int ngrp;
-        VectorXi target_atoms;
-        VectorXi iatoms_group;
+        std::vector<int> target_atoms;
+        std::vector<int> iatoms_group;
         MatrixXd t_vel;
         MatrixXd hflux_ij;
         MatrixXd eflux_ij;
@@ -81,7 +81,8 @@ class cal_flux_fmm{
 
     void cal_hflux_atomwise(const std::vector<Atomwise>& atomwise){
 
-        for (int i = 0; i < atomwise.size(); i++){
+        int size_atomwise = atomwise.size();
+        for (int i = 0; i < size_atomwise; i++){
             int atom_i = atomwise[i].atom_i;
             int atom_j = atomwise[i].atom_j;
             int idx_i = atom_i - 1;
@@ -96,8 +97,8 @@ class cal_flux_fmm{
 
             Vector3d h_ij = r * (fij.dot(vij)) * 0.5;
 
-            int igrp = iatoms_group(idx_i);
-            int jgrp = iatoms_group(idx_j);
+            int igrp = iatoms_group[idx_i];
+            int jgrp = iatoms_group[idx_j];
 
             if (igrp == 0 or jgrp == 0){
                 continue;
@@ -109,7 +110,8 @@ class cal_flux_fmm{
 
     void cal_hflux_cellwise(std::vector<Cellwise> cellwise){
 
-        for (int i = 0; i < cellwise.size(); i++){
+        int size_cellwise = cellwise.size();
+        for (int i = 0; i < size_cellwise; i++){
             int atom_i = cellwise[i].atom_i;
             int idx_i = atom_i - 1;
 
@@ -121,8 +123,8 @@ class cal_flux_fmm{
             Vector3d h_ij = r * (fij.dot(vi)) * 0.5;
 
             int atom_J = cellwise[i].atoms_J.coeff(0);
-            int igrp = iatoms_group(idx_i);
-            int Jgrp = iatoms_group(atoms_J - 1);
+            int igrp = iatoms_group[idx_i];
+            int Jgrp = iatoms_group[atom_J - 1];
 
             if (igrp == 0 or Jgrp == 0){
                 continue;
@@ -137,6 +139,7 @@ class cal_flux_fmm{
 
     void cal_eflux_atomwise(const std::vector<Atomwise>& atomwise){
 
+        int size_atomwise = atomwise.size();
         for (int i = 0; i < atomwise.size(); i++){
             int atom_i = atomwise[i].atom_i;
             int atom_j = atomwise[i].atom_j;
@@ -150,22 +153,23 @@ class cal_flux_fmm{
             Vector3d vj = t_vel.col(idx_j);
             Vector3d vij = vi + vj;
 
-            Vector3d e_ij = fij.dot(vij);
+            double e_ij = fij.dot(vij);
 
-            int igrp = iatoms_group(idx_i);
-            int jgrp = iatoms_group(idx_j);
+            int igrp = iatoms_group[idx_i];
+            int jgrp = iatoms_group[idx_j];
 
             if (igrp == 0 or jgrp == 0){
                 continue;
             }
 
-            eflux_ij(jgrp, igrp) += -e_ij;
+            eflux_ij(igrp, jgrp) += e_ij;
 
         }
     };
 
     void cal_eflux_cellwise(std::vector<Cellwise> cellwise){
 
+        int size_cellwise = cellwise.size();
         for (int i = 0; i < cellwise.size(); i++){
             int atom_i = cellwise[i].atom_i;
             int idx_i = atom_i - 1;
@@ -175,11 +179,11 @@ class cal_flux_fmm{
 
             Vector3d vi = t_vel.col(idx_i);
 
-            Vector3d e_ij = fij.dot(vi);
+            double e_ij = fij.dot(vi);
 
             int atom_J = cellwise[i].atoms_J(0);
-            int igrp = iatoms_group(idx_i);
-            int Jgrp = iatoms_group(atoms_J - 1);
+            int igrp = iatoms_group[idx_i];
+            int Jgrp = iatoms_group[atom_J - 1];
             
             if (igrp == 0 or jgrp == 0){
                 continue;
