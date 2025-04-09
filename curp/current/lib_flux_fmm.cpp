@@ -3,7 +3,8 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <pybind11/pybind11.h>
-using namespace py = pybind11;
+#include <pybind11/eigen.h>
+namespace py = pybind11;
 using namespace Eigen;
 
 
