@@ -131,7 +131,7 @@ class cal_fmm{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // calculate the center and radius of the cell 
-    std::tuple calculate_rc(std::vector<int> atoms){
+    void calculate_rc(std::vector<int> atoms){
 
         Vector3d rc = Vector3d::Zero();
         Vector3d r = Vector3d::Zero();
@@ -167,8 +167,7 @@ class cal_fmm{
             rc(i) = r_min + r(i) * 0.5;
             
         }
-            max_r = r.maxCoeff();
-            return rc(0), rc(1), rc(2), max_r;
+        max_r = r.maxCoeff();
     };
         
     
