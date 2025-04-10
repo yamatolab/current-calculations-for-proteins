@@ -17,7 +17,7 @@ class cal_flux_fmm{
         std::vector<int> target_atoms;
         std::vector<int> iatoms_group;
         MatrixXd t_vel;
-        MatrixXd hflux_ij;
+        std::vector<std::vector<Vector3d>> hflux_ij;
         MatrixXd eflux_ij;
         bool flag_heat = false;
         bool flag_energy = false;
@@ -54,7 +54,7 @@ class cal_flux_fmm{
 
         if (flux_type == "heat"){
             flag_heat = true;
-            hflux_ij = MatrixXd::Zero(ngrp, ngrp);
+            hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
         }
         else if (flux_type == "energy"){
             flag_energy = true;
@@ -69,7 +69,7 @@ class cal_flux_fmm{
 
         t_vel = vel;
         if (flag_heat == true){
-            hflux_ij = MatrixXd::Zero(ngrp, ngrp);
+            hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
         }
         else if (flag_energy == true){
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
@@ -104,7 +104,7 @@ class cal_flux_fmm{
                 continue;
             }
             
-            hflux_ij(igrp, jgrp) += h_ij;        
+            hflux_ij[igrp][jgrp] += h_ij;        
         }
     };
 
@@ -130,7 +130,7 @@ class cal_flux_fmm{
                 continue;
             }
 
-            hflux_ij(igrp, Jgrp) += h_ij;
+            hflux_ij[igrp][Jgrp] += h_ij;
         }
     };
 
