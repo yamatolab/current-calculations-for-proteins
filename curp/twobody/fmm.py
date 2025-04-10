@@ -86,7 +86,9 @@ class FMMCellMaker(FMMCalculatorBase):
         """
         # set root cell
         cells = root       # initialize the cells list
-        root.cx, root.cy, root.cx, root.r = self.__mod_fmm.calculate_rc(atoms)
+        self.__mod_fmm.calculate_rc(atoms)  # calculate the center of the root cell
+        root.rc = self.__mod_fmm.calculate_rc.r 
+        root.r = self.__mod_fmm.calculate_rc.max_r
         
         # build tree
         n = len(atoms)
