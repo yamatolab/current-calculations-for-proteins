@@ -352,13 +352,11 @@ class cal_fmm{
                     continue;
                 }
 
-                VectorXd crd_source = t_crd.row(idx_source);
-                VectorXd crd_target = t_crd.row(idx_target);
+                Vector3d crd_source = t_crd.row(idx_source);
+                Vector3d crd_target = t_crd.row(idx_target);
 
-                double rx = crd_source(0) - crd_target(0);
-                double ry = crd_source(1) - crd_target(1);
-                double rz = crd_source(2) - crd_target(2);
-                double r = sqrt(pow(rx, 2) + pow(ry, 2) + pow(rz, 2));
+                Vector3d rij = crd_source - crd_target;
+                double r = sqrt(pow(rij(0), 2) + pow(rij(1), 2) + pow(rij(2), 2));
                 double inv_r = 1.0 / r;
                 double coeff = 332.05221729;
 
@@ -367,15 +365,13 @@ class cal_fmm{
                 double qij = coeff * charge_i * charge_j;
                 qij = qij * inv_r * inv_r * inv_r;
             
-                double fx = qij * rx;
-                double fy = qij * ry;
-                double fz = qij * rz;
+                Vector3d Fij = rij * qij;
 
                 int idx = idx_atom;
                 atomwise[idx].i = num_source;
                 atomwise[idx].j = num_target;
-                atomwise[idx].f = Vector3d(fx, fy, fz);
-                atomwise[idx].r = Vector3d(rx, ry, rz);
+                atomwise[idx].f = Fij;
+                atomwise[idx].r = rij;
 
                 idx_atom = idx_atom + 1;
             }
