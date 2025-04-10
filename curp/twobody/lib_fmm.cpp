@@ -135,39 +135,24 @@ class cal_fmm{
 
         Vector3d rc = Vector3d::Zero();
         Vector3d r = Vector3d::Zero();
-        double max_r = 0.0;
+        int size_atoms = atoms.size();
 
-        for (int j = 0; j < atoms.size(); j++){
+        MatrixXd crd_atom = VectorXd::Zero(size_atoms,3);
 
-            double r_max = 0.0;
-            double r_min = 0.0;
-            double r_cand = 0.0;
-            Vector3d crd_atom = t_crd.row(atoms[j]-1);
+        for (int i = 0; i < size_atoms; i++){
 
-            for (int i = 0; i < 3; i++){
-
-                r_cand = crd_atom(i);
-
-                if (j == 0){
-                    r_max = r_cand;
-                    r_min = r_cand;
-                }
-                
-                else{
-                    if (r_cand >= r_max){
-                        r_max = r_cand;
-                    }
-                    if (r_cand < r_min){
-                        r_min = r_cand;
-                    }
-                }
+            for (int j = 0; j < 3; j++){
+                crd_atom(i,j) = t_crd(atoms[i]-1, j);
             }
-            
-            r(i)  = abs(r_max - r_min);
-            rc(i) = r_min + r(i) * 0.5;
-            
         }
-        max_r = r.maxCoeff();
+
+        for (int i = 0; i < 3; i++){
+
+            double min_r = crd_atom.col(i).minCoeff();
+            r(i) = abs(crd_atom.col(i).maxCoeff() - min_r);
+            rc(i) = min_r + 0.5 * r(i);
+        }
+        double max_r = r.maxCoeff();
     };
         
     
@@ -419,7 +404,7 @@ class cal_fmm{
 
                 int num_source = source_atoms[i];
                 int size_targets = targets.size();
-                
+
                 for (int j = 0; j < size_targets; j++){      
 
                     std::string target = targets[j];
