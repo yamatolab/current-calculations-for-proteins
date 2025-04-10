@@ -44,15 +44,15 @@ class EnergyFluxCalculator(base.FluxCalculator):
         else: 
             pass
         
-        coulomb_method = self.get_setting().curp.coulomb_method
-        if coulomb_method == 'fmm':
+        self.__coulomb_method = self.get_setting().curp.coulomb_method
+        if self.__coulomb_method == 'fmm':
             self.__coulomb_func = self.cal_coulomb_fmm
         else:
             self.__coulomb_func = self.cal_coulomb
 
         self.fcal = EnergyFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
-                lib, flag_atom, flag_group)
+                self.__coulomb_method, lib, flag_atom, flag_group)
 
     def cal_bonded(self, crd, vel, bond_type):
         """Calculate the energy flux for the bonded term."""
@@ -101,8 +101,8 @@ class EnergyFluxCalculator(base.FluxCalculator):
     def cal_coulomb_fmm(self, crd, vel):
         """Calculate the energy flux for the coulomb term using fmm."""
 
-        table     = self.get_interact_table_fmm()
-        type_func = self.get_tbforce().get_coulomb_func
+        table     = self.get_interact_table()
+        type_func = self.get_tbforce().get_coulomb_func()
 
         t0 = time.time()
         gen_tbfs = type_func(table)
@@ -140,8 +140,8 @@ class EnergyFluxCalculator(base.FluxCalculator):
 ################################################################################
 class EnergyFlux:
 
-    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs, lib,
-                       flag_atm=True, flag_grp=True):
+    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
+                       coulomb_method, lib, flag_atm=True, flag_grp=True):
         self.__flag_atm = flag_atm
         self.__flag_grp = flag_grp
         self.__lib = lib
@@ -150,7 +150,7 @@ class EnergyFlux:
                 bonded_pairs, flag_atm, flag_grp)
         self.__lib.nonbonded.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
-        if self.__coulomb_method == 'fmm':
+        if coulomb_method == 'fmm':
             lib_flux_fmm.cal_fmm.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
             lib_flux_fmm.cal_fmm.set_flux("energy")
@@ -268,7 +268,7 @@ class HeatFluxCalculator(base.FluxCalculator):
         
         self.fcal = HeatFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
-                flag_atom, flag_group)
+                self.__coulomb_method, flag_atom, flag_group)
 
     def cal_bonded(self, crd, vel, bond_type):
         """Calculate the energy flux for the bonded term."""
@@ -299,7 +299,7 @@ class HeatFluxCalculator(base.FluxCalculator):
         """Calculate the energy flux for the coulomb term."""
 
         table     = self.get_interact_table()
-        type_func = self.get_tbforce().get_coulomb_func
+        type_func = self.get_tbforce().get_coulomb_func()
         cutoff    = self.get_setting().curp.coulomb_cutoff_length
 
         t0 = time.time()
@@ -366,7 +366,7 @@ class HeatFluxCalculator(base.FluxCalculator):
 class HeatFlux:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
-                       flag_atm=True, flag_grp=True):
+                       coulomb_method, flag_atm=True, flag_grp=True):
         self.__flag_atm = flag_atm
         self.__flag_grp = flag_grp
 
@@ -374,7 +374,7 @@ class HeatFlux:
                 bonded_pairs, flag_atm, flag_grp)
         lib_hflux.nonbonded.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
-        if self.__coulomb_method == 'fmm':
+        if coulomb_method == 'fmm':
             lib_flux_fmm.cal_fmm.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
             lib_flux_fmm.cal_fmm.set_flux("heat")
