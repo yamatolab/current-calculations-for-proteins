@@ -66,7 +66,7 @@ class cal_fmm{
     
             Cellwise():
                 atom_i(0),
-                atoms_J(VectorXd::Zero(0)),
+                atoms_J(VectorXi::Zero(0)),
                 f(Vector3d::Zero()),
                 r(Vector3d::Zero())
             {}
