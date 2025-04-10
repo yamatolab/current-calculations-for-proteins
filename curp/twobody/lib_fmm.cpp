@@ -85,7 +85,7 @@ class cal_fmm{
     // read trajectory
     void initialize(const MatrixXd& crd){
         t_crd = crd;
-        
+
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -328,9 +328,9 @@ class cal_fmm{
                         double charge = charges(idx_source);
                         potential = potential * charge;
 
-                        double fx = potential * bJx;
-                        double fy = potential * bJy;
-                        double fz = potential * bJz;
+                        double fx = potential.dot(bJx);
+                        double fy = potential.dot(bJy);
+                        double fz = potential.dot(bJz);
 
                         int idx = idx_cell;
                         cellwise[idx].atom_i = num_source;
@@ -365,7 +365,7 @@ class cal_fmm{
                 double charge_i = charges(idx_source);
                 double charge_j = charges(idx_target);
                 double qij = coeff * charge_i * charge_j;
-                double qij = qij * inv_r * inv_r * inv_r;
+                qij = qij * inv_r * inv_r * inv_r;
             
                 double fx = qij * rx;
                 double fy = qij * ry;
@@ -374,8 +374,8 @@ class cal_fmm{
                 int idx = idx_atom;
                 atomwise[idx].i = num_source;
                 atomwise[idx].j = num_target;
-                atomwise[idx].f = (fx, fy, fz);
-                atomwise[idx].r = (rx, ry, rz);
+                atomwise[idx].f = Vector3d(fx, fy, fz);
+                atomwise[idx].r = Vector3d(rx, ry, rz);
 
                 idx_atom = idx_atom + 1;
             }
