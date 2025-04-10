@@ -140,7 +140,7 @@ class cal_flux_fmm{
     void cal_eflux_atomwise(const std::vector<Atomwise>& atomwise){
 
         int size_atomwise = atomwise.size();
-        for (int i = 0; i < atomwise.size(); i++){
+        for (int i = 0; i < size_atomwise; i++){
             int atom_i = atomwise[i].atom_i;
             int atom_j = atomwise[i].atom_j;
             int idx_i = atom_i - 1;
@@ -170,7 +170,7 @@ class cal_flux_fmm{
     void cal_eflux_cellwise(std::vector<Cellwise> cellwise){
 
         int size_cellwise = cellwise.size();
-        for (int i = 0; i < cellwise.size(); i++){
+        for (int i = 0; i < size_cellwise; i++){
             int atom_i = cellwise[i].atom_i;
             int idx_i = atom_i - 1;
 
@@ -185,7 +185,7 @@ class cal_flux_fmm{
             int igrp = iatoms_group[idx_i];
             int Jgrp = iatoms_group[atom_J - 1];
             
-            if (igrp == 0 or jgrp == 0){
+            if (igrp == 0 or Jgrp == 0){
                 continue;
             }
 
