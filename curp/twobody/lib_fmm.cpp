@@ -231,10 +231,10 @@ class cal_fmm{
     };
 
 
-    void cal_fiJ(int source_atom, int p, std::vector<Cell> cells, \
+    void cal_fiJ(int num_source, int p, std::vector<Cell> cells, \
             int idx_cell, int idx_atom){
 
-        int idx_source = source_atom - 1;
+        int idx_source = num_source - 1;
 
         if (cells[p].nleaf > n_crit){
 
@@ -252,7 +252,7 @@ class cal_fmm{
                     double r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
 
                     if (cells[c].r> theta * r){
-                        cal_fiJ(source_atom, c, cells, idx_cell, idx_atom);
+                        cal_fiJ(num_source, c, cells, idx_cell, idx_atom);
                     }
                     else{
 
@@ -333,7 +333,7 @@ class cal_fmm{
                         double fz = potential * bJz;
 
                         int idx = idx_cell;
-                        cellwise[idx].atom_i = source_atom;
+                        cellwise[idx].atom_i = num_source;
                         cellwise[idx].atoms_J = cells[c].leaf;
                         cellwise[idx].f = Vector3d(fx, fy, fz);
                         cellwise[idx].r = Vector3d(dx, dy, dz);
@@ -345,10 +345,10 @@ class cal_fmm{
         }
         else {
             for (int l; l < cells[p].nleaf; l++){
-                int target_atom = cells[p].leaf(l);
-                int idx_target = target_atom - 1;
+                int num_target = cells[p].leaf(l);
+                int idx_target = num_target - 1;
 
-                if (target_atom == source_atom){
+                if (num_target == num_source){
                     continue;
                 }
 
@@ -372,8 +372,8 @@ class cal_fmm{
                 double fz = qij * rz;
 
                 int idx = idx_atom;
-                atomwise[idx].i = source_atom;
-                atomwise[idx].j = target_atom;
+                atomwise[idx].i = num_source;
+                atomwise[idx].j = num_target;
                 atomwise[idx].f = (fx, fy, fz);
                 atomwise[idx].r = (rx, ry, rz);
 
@@ -415,12 +415,12 @@ class cal_fmm{
             int source_size = source_atoms.size();
 
             for (int i = 0; i < source_size; i++){
-                int source_atom = source_atoms[i];
+                int num_source = source_atoms[i];
 
                 for (int j = 0; j < targets.size(); j++){                
                     std::string target = targets[j];
                     std::vector<Cell> cells = get_cells(target, all_cells);
-                    cal_fiJ(source_atom, 0, cells, idx_cell, idx_atom);
+                    cal_fiJ(num_source, 0, cells, idx_cell, idx_atom);
                 }
             }
         }
