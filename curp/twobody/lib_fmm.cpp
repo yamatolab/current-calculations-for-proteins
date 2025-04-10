@@ -19,19 +19,19 @@ class cal_fmm{
         MatrixXd t_crd;
 
         struct Gpair_table_fmm{
-            string group_i;
-            vector<string> group_js;
+            std::string group_i;
+            std::vector<std::string> group_js;
             
             Gpair_table_fmm():
                 group_i(""),
-                group_js(vector<string>())
+                group_js(std::vector<std::string>())
             {}
         };
 
         std::vector<Gpair_table_fmm> gpair_table_fmm;
 
         struct Gname_iatoms_pairs{
-            string group;
+            std::string group;
             VectorXi iatoms;
 
             Gname_iatoms_pairs():
@@ -113,7 +113,7 @@ class cal_fmm{
     };
 
     struct All_cells {
-        string group;
+        std::string group;
         std::vector<Cell> cells;
 
         All_cells():
