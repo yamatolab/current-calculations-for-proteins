@@ -55,6 +55,8 @@ class cal_fmm{
                 r(Vector3d::Zero())
             {}
         };
+
+        std::vector<Atomwise> atomwise;
     
         struct Cellwise{
             int atom_i;         //atom number of the source(i)
@@ -69,6 +71,8 @@ class cal_fmm{
                 r(Vector3d::Zero())
             {}
         };
+
+        std::vector<Cellwise> cellwise;
 
         int idx_cell;
         int idx_atom;
@@ -85,6 +89,8 @@ class cal_fmm{
     // read trajectory
     void initialize(const MatrixXd& crd){
         t_crd = crd;
+        atomwise = std::vector<Atomwise>();
+        cellwise = std::vector<Cellwise>();
 
     };
 
@@ -398,8 +404,6 @@ class cal_fmm{
 
     void cal_force(const std::vector<All_cells>& all_cells){
 
-        std::vector<Cellwise> cellwise;
-        std::vector<Atomwise> atomwise;
         int idx_cell = 0;
         int idx_atom = 0;
 
