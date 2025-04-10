@@ -7,6 +7,9 @@ import fnmatch
 
 import setuptools
 import sys
+import numpy
+import pybind11
+from pathlib import Path
 
 sys.path.append("./curp/")
 from _version import __version__
@@ -14,10 +17,13 @@ from _version import __version__
 def ext_modules(config, _dir):
     """Fetch f90 files in src and automatically create an extension"""
     pattern = "*.f90"
+    pattern_cpp = "*.cpp"
     
+    conda_prefix = Path(os.environ["CONDA_PREFIX"])
     MPI_DIR = os.environ.get("MPI_DIR", "/usr")
     NETCDF_DIR = os.environ.get("NETCDF_DIR", "/usr")
     GRAPHVIZ_DIR = os.environ.get("GRAPHVIZ_DIR", "/usr")
+    EIGEN_DIR = os.environ.get("EIGEN3_INCLUDE_DIR", conda_prefix)
 
     # Typical library/include paths:
     mpi_inc = os.path.join(MPI_DIR, "include")
@@ -26,6 +32,10 @@ def ext_modules(config, _dir):
     netcdf_lib = os.path.join(NETCDF_DIR, "lib")
     graphviz_inc = os.path.join(GRAPHVIZ_DIR, "include")
     graphviz_lib = os.path.join(GRAPHVIZ_DIR, "lib/x86_64-linux-gnu/graphviz")
+    eigen_inc = os.path.join(EIGEN_DIR, "include/eigen3")
+    if not os.path.isdir(eigen_inc):
+        raise RuntimeError(
+            f"Eigen3 include directory not found: {eigen_inc}. ")
     
     extra_f90_compile_args = [
         "-O1", 
@@ -42,6 +52,7 @@ def ext_modules(config, _dir):
     ]
     
     if os.path.isdir(_dir):
+        # add fortran scripts
         for root, dirs, files in os.walk(_dir):
             match = fnmatch.filter(files, pattern)
             for name in match:
@@ -51,6 +62,19 @@ def ext_modules(config, _dir):
                                      [f90_file],
                                      f2py_options=["--quiet"],
                                      extra_f90_compile_args=["-O1", "-fopenmp"],
+                                     extra_link_args=["-lgomp"],
+                                    )
+        # add cpp scripts
+        for root, dirs, files in os.walk(_dir):
+            match = fnmatch.filter(files, pattern_cpp)
+            for name in match:
+                cpp_file = os.path.join(root, name)
+                ext_name = os.path.splitext(cpp_file)[0].replace("/", ".")
+                config.add_extension(ext_name,
+                                     [cpp_file],
+                                     include_dirs=[numpy.get_include(), pybind11.get_include(), eigen_inc],
+                                     libraries=["mpi", "netcdf"],
+                                     extra_compile_args=["-O3", "-fopenmp"],
                                      extra_link_args=["-lgomp"],
                                     )
 
@@ -94,9 +118,11 @@ def run_setup():
                           "nose==1.3.7",
                           "mpi4py>=1.2",
                           "pygraphviz>1.2,<1.6",
-                          "netcdf4>=1.4.2,<1.7"],
+                          "netcdf4>=1.4.2,<1.7",
+                          "pybind11>=2.12,<2.13"],
         
-        setup_requires = ["numpy>1.11.2,<1.17"],
+        setup_requires = ["numpy>1.11.2,<1.17",
+                          "pybind11>=2.12,<2.13"],
         
         extras_require={
             "dev": ["benchmarker>=4.0,<5",]
