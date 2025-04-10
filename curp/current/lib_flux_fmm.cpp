@@ -192,7 +192,7 @@ class cal_flux_fmm{
             int idx_i = atom_i - 1;
 
             Vector3d fij = cellwise[i].f;
-            
+
             Vector3d vi = t_vel.col(idx_i);
 
             double e_ij = fij.dot(vi);
@@ -214,7 +214,7 @@ class cal_flux_fmm{
             }
         }
     };
-}
+};
 
 PYBIND11_MODULE(lib_flux_fmm, m){
     py::class_<cal_flux_fmm>(m, "cal_flux_fmm")
@@ -237,4 +237,4 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("flag_energy", &cal_flux_fmm::flag_energy)
         .def_readwrite("hflux_ij", &cal_flux_fmm::hflux_ij)
         .def_readwrite("eflux_ij", &cal_flux_fmm::eflux_ij);
-}
+};
