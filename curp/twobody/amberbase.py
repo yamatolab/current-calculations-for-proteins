@@ -367,7 +367,7 @@ class TwoBodyForce(TwoBodyForceBase):
         from . import lib_amberbase
         self.set_module(lib_amberbase)
         
-        if setting.coulomb_method == 'fmm':
+        if setting.curp.coulomb_method == 'fmm':
             from . import lib_fmm
             self.set_module_fmm(lib_fmm)
 
