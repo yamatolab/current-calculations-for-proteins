@@ -293,7 +293,7 @@ class Setting(SettingBase):
         coulomb_fmm_cell_contains = Int(default=10, require=False,
             desc='The max number of atoms that the a cell contains.'),
         
-        coulomb_fmm_direct_parm = Float(default=1, require=False,
+        coulomb_fmm_direct_parm = Float(default=1.0, require=False,
             desc='The parameter that is used to decide  '
                 'wethert to perform direct coulomb calculation.'),
         
