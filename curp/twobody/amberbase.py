@@ -174,7 +174,7 @@ class TwoBodyForceBase:
 
         logger.info( 'The number of 1-4 interactions', len(i14_to_itbf))
 
-    def initialize(self, crd, pbc):
+    def initialize(self, crd):
         self.__mod.initialize(crd)
         if self.__setting.curp.coulomb_method == 'fmm':
             self.__fmm_base.initialize(crd)
