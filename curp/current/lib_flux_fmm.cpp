@@ -159,7 +159,6 @@ class cal_flux_fmm{
             int idx_j = atom_j - 1;
 
             Vector3d fij = atomwise[i].f;
-            Vector3d r = atomwise[i].r;
 
             Vector3d vi = t_vel.col(idx_i);
             Vector3d vj = t_vel.col(idx_j);
@@ -193,8 +192,7 @@ class cal_flux_fmm{
             int idx_i = atom_i - 1;
 
             Vector3d fij = cellwise[i].f;
-            Vector3d r = cellwise[i].r;
-
+            
             Vector3d vi = t_vel.col(idx_i);
 
             double e_ij = fij.dot(vi);
