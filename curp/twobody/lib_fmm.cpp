@@ -234,6 +234,8 @@ class cal_fmm{
     void cal_fiJ(int source_atom, int p, std::vector<Cell> cells, \
             int idx_cell, int idx_atom){
 
+        int idx_source = source_atom - 1;
+
         if (cells[p].nleaf > n_crit){
 
             for (int octant = 0; octant < 8; octant++){
@@ -241,9 +243,8 @@ class cal_fmm{
                 if (cells[p].nchild & (1 << octant)) {
                     
                     int c = cells[p].child(octant);
-
                     Vector3d rc = cells[c].rc;
-                    Vector3d crd_source = t_crd.row(source_num-1);
+                    Vector3d crd_source = t_crd.row(idx_source);
                     
                     double dx = crd_source(0) - rc(0);
                     double dy = crd_source(1) - rc(1);
@@ -324,7 +325,7 @@ class cal_fmm{
 
                         // calculate potential
                         VectorXd potential = cells[c].multipole;
-                        double charge = charges(source_atom - 1);
+                        double charge = charges(idx_source);
                         potential = potential * charge;
 
                         double fx = potential * bJx;
@@ -345,13 +346,14 @@ class cal_fmm{
         else {
             for (int l; l < cells[p].nleaf; l++){
                 int target_atom = cells[p].leaf(l);
+                int idx_target = target_atom - 1;
 
                 if (target_atom == source_atom){
                     continue;
                 }
 
-                VectorXd crd_source = t_crd.row(source_atom-1);
-                VectorXd crd_target = t_crd.row(target_atom-1);
+                VectorXd crd_source = t_crd.row(idx_source);
+                VectorXd crd_target = t_crd.row(idx_target);
 
                 double rx = crd_source(0) - crd_target(0);
                 double ry = crd_source(1) - crd_target(1);
@@ -360,8 +362,8 @@ class cal_fmm{
                 double inv_r = 1.0 / r;
                 double coeff = 332.05221729;
 
-                double charge_i = charges(source_atom - 1);
-                double charge_j = charges(target_atom - 1);
+                double charge_i = charges(idx_source);
+                double charge_j = charges(idx_target);
                 double qij = coeff * charge_i * charge_j;
                 double qij = qij * inv_r * inv_r * inv_r;
             
