@@ -392,9 +392,9 @@ class cal_fmm{
     };
 
     std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cells>& all_cells) {
-        for (const auto& cells : all_cells) {
-            if (cells.group == source) {
-                return cells.cells;
+        for (const auto& all_cell : all_cells) {
+            if (all_cell.group == source) {
+                return all_cell.cells;
             }
         }
         return std::vector<Cell>();
