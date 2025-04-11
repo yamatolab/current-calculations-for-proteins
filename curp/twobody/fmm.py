@@ -2,17 +2,19 @@
 import numpy as np
 from . import amberbase
 
+from . import lib_fmm
+
 
 class FMMCalculatorBase(amberbase.TwoBodyForceBase):
     
     def __init__(self, charges, gname_iatoms_pairs, gpair_table):
-        self.__n_crit = self.__setting.curp.coulomb_fmm_cell_contains
-        self.__theta = self.__setting.curp.coulomb_fmm_theta
+        self.__n_crit = self.get_setting().curp.coulomb_fmm_cell_contains
+        self.__theta = self.get_setting().curp.coulomb_fmm_theta
         self.__gname_iatoms_pairs = gname_iatoms_pairs
         self.__gpair_table = gpair_table
         self.__gnames = []
         
-        self.__mod_fmm = self.__mod_fmm.cal_fmm
+        self.__mod_fmm = lib_fmm.cal_fmm
         self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges, self.__gname_iatoms_pairs)
          
     def initialize(self, crd):
