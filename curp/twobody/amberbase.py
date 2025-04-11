@@ -35,6 +35,9 @@ class TwoBodyForceBase:
 
     def get_natom(self):
         return self.__natom
+    
+    def get_setting(self):
+        return self.__setting
 
     def setup(self, interact_table, gname_iatoms_pairs, gpair_table,  check=False):
         self.__interact_table = interact_table
