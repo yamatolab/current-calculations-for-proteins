@@ -36,9 +36,6 @@ class TwoBodyForceBase:
     def get_natom(self):
         return self.__natom
     
-    def get_setting(self):
-        return self.__setting
-
     def setup(self, interact_table, gname_iatoms_pairs, gpair_table,  check=False):
         self.__interact_table = interact_table
         max_tbf = self.get_maxpair(interact_table)
@@ -130,7 +127,7 @@ class TwoBodyForceBase:
         from . import fmm
         info = self.__tpl.get_coulomb_info()
         charges = info['charges']
-        self.__fmm_base = fmm.FMMCalculatorBase(charges, gname_iatoms_pairs, gpair_table)
+        self.__fmm_base = fmm.FMMCalculatorBase(self.__setting, charges, gname_iatoms_pairs, gpair_table)
         
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
