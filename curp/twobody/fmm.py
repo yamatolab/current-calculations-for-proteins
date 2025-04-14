@@ -6,15 +6,16 @@ from . import lib_fmm
 
 class FMMCalculatorBase:
     
-    def __init__(self, setting, charges, gname_iatoms_pairs, gpair_table):
+    def __init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table):
         self.__n_crit = setting.curp.coulomb_fmm_cell_contains
-        self.__theta = setting.curp.coulomb_fmm_theta
+        self.__theta = setting.curp.coulomb_fmm_direct_parm
         self.__gname_iatoms_pairs = gname_iatoms_pairs
         self.__gpair_table = gpair_table
         self.__gnames = []
         
         self.__mod_fmm = lib_fmm.cal_fmm
-        self.__mod_fmm.setup(self.__natom, self.__n_crit, self.__theta, charges, self.__gname_iatoms_pairs)
+        self.__mod_fmm.setup(natom, self.__n_crit, self.__theta, charges, self.__gname_iatoms_pairs, 
+                             self.__gpair_table)
          
     def initialize(self, crd):
         self.__mod_fmm.initialize(crd)
