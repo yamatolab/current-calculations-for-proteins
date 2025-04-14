@@ -1,9 +1,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
+#include <algorithm>
 #include <Eigen/Dense>
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
+#include <pybind11/stl.h>
 namespace py = pybind11;
 using namespace Eigen;
 
@@ -15,7 +18,7 @@ class cal_fmm{
         int natom;
         int n_crit;
         double theta;
-        VectorXd charges;
+        std::vector<double> charges;
         MatrixXd t_crd;
 
         struct Gpair_table_fmm{
@@ -32,11 +35,11 @@ class cal_fmm{
 
         struct Gname_iatoms_pairs{
             std::string group;
-            VectorXi iatoms;
+            std::vector<int> iatoms;
 
             Gname_iatoms_pairs():
                 group(""),
-                iatoms(VectorXi::Zero(0))
+                iatoms(std::vector<int>())
             {}
         };
 
@@ -78,12 +81,14 @@ class cal_fmm{
         int idx_atom;
 
     void setup(const int input_natom, const int& input_n_crit, const double& input_theta, \
-        const VectorXd& input_charges, std::vector<Gname_iatoms_pairs>& input_gname_iatoms_pairs){
+        const std::vector<double>& input_charges, std::vector<Gname_iatoms_pairs>& input_gname_iatoms_pairs, \
+        const std::vector<Gpair_table_fmm>& input_gpair_table_fmm){
         natom  = input_natom;
         n_crit = input_n_crit;
         theta  = input_theta;
         charges = input_charges;
         gname_iatoms_pairs = input_gname_iatoms_pairs;
+        gpair_table_fmm = input_gpair_table_fmm;
     };
 
     // read trajectory
@@ -169,7 +174,7 @@ class cal_fmm{
             double dx = rc(0) - crd_atom(0);
             double dy = rc(1) - crd_atom(1);
             double dz = rc(2) - crd_atom(2);
-            double qj = charges(index_atom);
+            double qj = charges[index_atom];
 
             double qjdx = qj * dx;
             double qjdy = qj * dy;
@@ -315,7 +320,7 @@ class cal_fmm{
 
                         // calculate potential
                         VectorXd potential = cells[c].multipole;
-                        double charge = charges(idx_source);
+                        double charge = charges[idx_source];
                         potential = potential * charge;
 
                         double fx = potential.dot(bJx);
@@ -350,8 +355,8 @@ class cal_fmm{
                 double inv_r = 1.0 / r;
                 double coeff = 332.05221729;
 
-                double charge_i = charges(idx_source);
-                double charge_j = charges(idx_target);
+                double charge_i = charges[idx_source];
+                double charge_j = charges[idx_target];
                 double qij = coeff * charge_i * charge_j;
                 qij = qij * inv_r * inv_r * inv_r;
             
