@@ -127,7 +127,7 @@ class TwoBodyForceBase:
         from . import fmm
         info = self.__tpl.get_coulomb_info()
         charges = info['charges']
-        self.__fmm_base = fmm.FMMCalculatorBase(self.__setting, charges, gname_iatoms_pairs, gpair_table)
+        self.__fmm_base = fmm.FMMCalculatorBase(self.__setting, self.__natom, charges, gname_iatoms_pairs, gpair_table)
         
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
