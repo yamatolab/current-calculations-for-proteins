@@ -152,9 +152,8 @@ class EnergyFlux:
                 flag_atm, flag_grp)
         if coulomb_method == 'fmm':
             self.__lib_fmm = lib_flux_fmm.cal_flux_fmm()
-            self.__lib_fmm.initialize( target_atoms, iatm_to_igrp,
-                                        flag_atm, flag_grp)
-            self.__lib_fmm.cal_flux_fmm.set_flux("energy")
+            self.__lib_fmm.initialize( target_atoms, iatm_to_igrp)
+            self.__lib_fmm.set_flux("energy")
 
 
     def cal_bonded(self, vel, tbfs):
@@ -377,9 +376,8 @@ class HeatFlux:
                 flag_atm, flag_grp)
         if coulomb_method == 'fmm':
             self.__lib_fmm = lib_flux_fmm.cal_flux_fmm()
-            self.__lib_fmm.initialize( target_atoms, iatm_to_igrp,
-                                        flag_atm, flag_grp)
-            self.__lib_fmm.cal_flux_fmm.set_flux("heat")
+            self.__lib_fmm.initialize( target_atoms, iatm_to_igrp)
+            self.__lib_fmm.set_flux("heat")
 
     def cal_bonded(self, vel, tbfs, displ):
         """Calculate the flux due to bonded potentials."""
