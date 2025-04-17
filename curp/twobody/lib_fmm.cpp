@@ -12,7 +12,7 @@ using namespace Eigen;
 
 class cal_fmm{
     
-private:
+public:
     // private variables
     int natom;
     int n_crit;
@@ -20,29 +20,8 @@ private:
     std::vector<double> charges;
     MatrixXd t_crd;
 
-    struct Gpair_table_fmm{
-        std::string group_i;
-        std::vector<std::string> group_js;
-        
-        Gpair_table_fmm():
-            group_i(""),
-            group_js(std::vector<std::string>())
-        {}
-    };
-
-    std::vector<Gpair_table_fmm> gpair_table_fmm;
-
-    struct Gname_iatoms_pairs{
-        std::string group;
-        std::vector<int> iatoms;
-
-        Gname_iatoms_pairs():
-            group(""),
-            iatoms(std::vector<int>())
-        {}
-    };
-
-    std::vector<Gname_iatoms_pairs> gname_iatoms_pairs;
+    std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table_fmm;
+    std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;
 
     struct Atomwise{
         int i;
@@ -79,8 +58,6 @@ private:
     int idx_cell;
     int idx_atom;
 
-
-public:
     // create instance
     cal_fmm():
         natom(0),
@@ -88,8 +65,8 @@ public:
         theta(0.0),
         charges(std::vector<double>()),
         t_crd(MatrixXd::Zero(natom, 3)),
-        gpair_table_fmm(std::vector<Gpair_table_fmm>()),
-        gname_iatoms_pairs(std::vector<Gname_iatoms_pairs>()),
+        gpair_table_fmm(std::vector<std::pair<std::string, std::vector<std::string>>>()),
+        gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
         atomwise(std::vector<Atomwise>()),
         cellwise(std::vector<Cellwise>()),
         idx_cell(0),
@@ -97,9 +74,9 @@ public:
     {};
 
 
-    void setup(const int input_natom, const int& input_n_crit, const double& input_theta, \
-        const std::vector<double>& input_charges, std::vector<Gname_iatoms_pairs>& input_gname_iatoms_pairs, \
-        const std::vector<Gpair_table_fmm>& input_gpair_table_fmm){
+    void setup(const int input_natom, const int& input_n_crit, const double& input_theta, const std::vector<double>& input_charges, \
+        const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
+        const std::vector<std::pair<std::string, std::vector<std::string>>>& input_gpair_table_fmm){
         natom  = input_natom;
         n_crit = input_n_crit;
         theta  = input_theta;
@@ -391,10 +368,10 @@ public:
         }
     };
 
-    std::vector<int> get_atoms(const std::string& source, const std::vector<Gname_iatoms_pairs>& pairs) {
+    std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
         for (const auto& pair : pairs) {
-            if (pair.group == source) {
-                return std::vector<int>(pair.iatoms.data(), pair.iatoms.data() + pair.iatoms.size());
+            if (pair.first == source) {
+                return pair.second;
             }
         }
         return std::vector<int>();
@@ -417,8 +394,8 @@ public:
         int size_table = gpair_table_fmm.size();
         for (int i = 0; i < size_table; i++){
 
-            std::string source = gpair_table_fmm[i].group_i;
-            std::vector<std::string> targets = gpair_table_fmm[i].group_js;
+            std::string source = gpair_table_fmm[i].first;
+            std::vector<std::string> targets = gpair_table_fmm[i].second;
         
             std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
@@ -455,20 +432,10 @@ PYBIND11_MODULE(lib_fmm, m){
         .def_readwrite("theta", &cal_fmm::theta)
         .def_readwrite("charges", &cal_fmm::charges)
         .def_readwrite("t_crd", &cal_fmm::t_crd)
+        .def_readwrite("gpair_table_fmm", &cal_fmm::gpair_table_fmm)
+        .def_readwrite("gname_iatoms_pairs", &cal_fmm::gname_iatoms_pairs)
         ;
     
-    py::class_<cal_fmm::Gpair_table_fmm>(m, "Gpair_table_fmm")
-        .def(py::init<>())
-        .def_readwrite("group_i", &cal_fmm::Gpair_table_fmm::group_i)
-        .def_readwrite("group_js", &cal_fmm::Gpair_table_fmm::group_js)
-        ;
-
-    py::class_<cal_fmm::Gname_iatoms_pairs>(m, "Gname_iatoms_pairs")
-        .def(py::init<>())
-        .def_readwrite("group", &cal_fmm::Gname_iatoms_pairs::group)
-        .def_readwrite("iatoms", &cal_fmm::Gname_iatoms_pairs::iatoms)
-        ;
-
     py::class_<cal_fmm::Atomwise>(m, "Atomwise")
         .def(py::init<>())
         .def_readwrite("i", &cal_fmm::Atomwise::i)
