@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
+#include <pybind11/stl.h>
 namespace py = pybind11;
 using namespace Eigen;
 
@@ -244,10 +245,22 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("target_atoms", &cal_flux_fmm::target_atoms)
         .def_readwrite("iatoms_group", &cal_flux_fmm::iatoms_group)
         .def_readwrite("t_vel", &cal_flux_fmm::t_vel)
-        .def_readwrite("atomwise", &cal_flux_fmm::atomwise)
-        .def_readwrite("cellwise", &cal_flux_fmm::cellwise)
         .def_readwrite("flag_heat", &cal_flux_fmm::flag_heat)
         .def_readwrite("flag_energy", &cal_flux_fmm::flag_energy)
         .def_readwrite("hflux_ij", &cal_flux_fmm::hflux_ij)
         .def_readwrite("eflux_ij", &cal_flux_fmm::eflux_ij);
+
+    py::class_<cal_flux_fmm::Atomwise>(m, "Atomwise")
+        .def(py::init<>())
+        .def_readwrite("atom_i", &cal_flux_fmm::Atomwise::atom_i)
+        .def_readwrite("atom_j", &cal_flux_fmm::Atomwise::atom_j)
+        .def_readwrite("f", &cal_flux_fmm::Atomwise::f)
+        .def_readwrite("r", &cal_flux_fmm::Atomwise::r);
+
+    py::class_<cal_flux_fmm::Cellwise>(m, "Cellwise")
+        .def(py::init<>())
+        .def_readwrite("atom_i", &cal_flux_fmm::Cellwise::atom_i)
+        .def_readwrite("atoms_J", &cal_flux_fmm::Cellwise::atoms_J)
+        .def_readwrite("f", &cal_flux_fmm::Cellwise::f)
+        .def_readwrite("r", &cal_flux_fmm::Cellwise::r);
 };
