@@ -10,6 +10,7 @@ import sys
 import numpy
 import pybind11
 from pathlib import Path
+import subprocess
 
 sys.path.append("./curp/")
 from _version import __version__
@@ -36,6 +37,9 @@ def ext_modules(config, _dir):
     if not os.path.isdir(eigen_inc):
         raise RuntimeError(
             f"Eigen3 include directory not found: {eigen_inc}. ")
+    pybind11_inc = subprocess.check_output(
+        ["python3", "-m", "pybind11", "--includes"], universal_newlines=True
+    ).strip()
     
     extra_f90_compile_args = [
         "-O1", 
@@ -70,11 +74,13 @@ def ext_modules(config, _dir):
             for name in match:
                 cpp_file = os.path.join(root, name)
                 ext_name = os.path.splitext(cpp_file)[0].replace("/", ".")
+                include_dirs = [numpy.get_include(), pybind11.get_include(), eigen_inc]
                 config.add_extension(ext_name,
                                      [cpp_file],
-                                     include_dirs=[numpy.get_include(), pybind11.get_include(), eigen_inc],
+                                     include_dirs=include_dirs,
                                      libraries=["mpi", "netcdf"],
-                                     extra_compile_args=["-O3", "-fopenmp"],
+                                     extra_compile_args=["-O3", "-Wall","-std=c++11", "-fopenmp",
+                                                         "-fPIC", pybind11_inc],
                                      extra_link_args=["-lgomp"],
                                     )
 
@@ -119,10 +125,10 @@ def run_setup():
                           "mpi4py>=1.2",
                           "pygraphviz>1.2,<1.6",
                           "netcdf4>=1.4.2,<1.7",
-                          "pybind11>=2.12,<2.13"],
+                          "pybind11>2.11,<2.13"],
         
         setup_requires = ["numpy>1.11.2,<1.17",
-                          "pybind11>=2.12,<2.13"],
+                          "pybind11>2.11,<2.13"],
         
         extras_require={
             "dev": ["benchmarker>=4.0,<5",]
