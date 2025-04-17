@@ -437,10 +437,51 @@ PYBIND11_MODULE(lib_fmm, m){
         .def_readwrite("theta", &cal_fmm::theta)
         .def_readwrite("charges", &cal_fmm::charges)
         .def_readwrite("t_crd", &cal_fmm::t_crd)
-        .def_readwrite("gpair_table_fmm", &cal_fmm::gpair_table_fmm)
-        .def_readwrite("gname_iatoms_pairs", &cal_fmm::gname_iatoms_pairs)
-        .def_readwrite("idx_cell", &cal_fmm::idx_cell)
-        .def_readwrite("idx_atom", &cal_fmm::idx_atom)
         ;
     
+    py::class_<cal_fmm::Gpair_table_fmm>(m, "Gpair_table_fmm")
+        .def(py::init<>())
+        .def_readwrite("group_i", &cal_fmm::Gpair_table_fmm::group_i)
+        .def_readwrite("group_js", &cal_fmm::Gpair_table_fmm::group_js)
+        ;
+
+    py::class_<cal_fmm::Gname_iatoms_pairs>(m, "Gname_iatoms_pairs")
+        .def(py::init<>())
+        .def_readwrite("group", &cal_fmm::Gname_iatoms_pairs::group)
+        .def_readwrite("iatoms", &cal_fmm::Gname_iatoms_pairs::iatoms)
+        ;
+
+    py::class_<cal_fmm::Atomwise>(m, "Atomwise")
+        .def(py::init<>())
+        .def_readwrite("i", &cal_fmm::Atomwise::i)
+        .def_readwrite("j", &cal_fmm::Atomwise::j)
+        .def_readwrite("f", &cal_fmm::Atomwise::f)
+        .def_readwrite("r", &cal_fmm::Atomwise::r)
+        ;
+    
+    py::class_<cal_fmm::Cellwise>(m, "Cellwise")
+        .def(py::init<>())
+        .def_readwrite("atom_i", &cal_fmm::Cellwise::atom_i)
+        .def_readwrite("atoms_J", &cal_fmm::Cellwise::atoms_J)
+        .def_readwrite("f", &cal_fmm::Cellwise::f)
+        .def_readwrite("r", &cal_fmm::Cellwise::r)
+        ;
+    
+    py::class_<cal_fmm::Cell>(m, "Cell")
+        .def(py::init<int>())
+        .def_readwrite("nleaf", &cal_fmm::Cell::nleaf)
+        .def_readwrite("leaf", &cal_fmm::Cell::leaf)
+        .def_readwrite("nchild", &cal_fmm::Cell::nchild)
+        .def_readwrite("child", &cal_fmm::Cell::child)
+        .def_readwrite("parent", &cal_fmm::Cell::parent)
+        .def_readwrite("rc", &cal_fmm::Cell::rc)
+        .def_readwrite("r", &cal_fmm::Cell::r)
+        .def_readwrite("multipole", &cal_fmm::Cell::multipole)
+        ;
+    
+    py::class_<cal_fmm::All_cells>(m, "All_cells")
+        .def(py::init<>())
+        .def_readwrite("group", &cal_fmm::All_cells::group)
+        .def_readwrite("cells", &cal_fmm::All_cells::cells)
+        ;
 }
