@@ -11,35 +11,48 @@ using namespace Eigen;
 
 class cal_flux_fmm{
 
-    public:
-        int natom;
-        int ngrp;
-        std::vector<int> target_atoms;
-        std::vector<int> iatoms_group;
-        MatrixXd t_vel;
-        std::vector<std::vector<Vector3d>> hflux_ij;
-        MatrixXd eflux_ij;
-        bool flag_heat = false;
-        bool flag_energy = false;
+public:
+    int natom;
+    int ngrp;
+    std::vector<int> target_atoms;
+    std::vector<int> iatoms_group;
+    MatrixXd t_vel;
+    std::vector<std::vector<Vector3d>> hflux_ij;
+    MatrixXd eflux_ij;
+    bool flag_heat = false;
+    bool flag_energy = false;
 
-        struct Atomwise{
-            int atom_i;
-            int atom_j;
-            Vector3d f;
-            Vector3d r;
+    struct Atomwise{
+        int atom_i;
+        int atom_j;
+        Vector3d f;
+        Vector3d r;
 
-        };
+    };
 
-        struct Cellwise{
-            int atom_i;
-            VectorXi atoms_J;
-            Vector3d f;
-            Vector3d r;
+    struct Cellwise{
+        int atom_i;
+        VectorXi atoms_J;
+        Vector3d f;
+        Vector3d r;
 
-        };
+    };
 
-        std::vector<Atomwise> atomwise;
-        std::vector<Cellwise> cellwise;
+    std::vector<Atomwise> atomwise;
+    std::vector<Cellwise> cellwise;
+
+    // create instance
+    cal_flux_fmm():
+        natom(0),
+        ngrp(0),
+        target_atoms(std::vector<int>()),
+        iatoms_group(std::vector<int>()),
+        t_vel(MatrixXd::Zero(natom, 3)),
+        hflux_ij(std::vector<std::vector<Vector3d>>()),
+        eflux_ij(MatrixXd::Zero(0, 0)),
+        flag_heat(false),
+        flag_energy(false)
+    {};
 
 
     void initialize(std::vector<int>& target_atoms_input, std::vector<int>& iatoms_group_input){
