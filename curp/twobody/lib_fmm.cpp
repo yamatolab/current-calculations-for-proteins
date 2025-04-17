@@ -11,74 +11,91 @@ namespace py = pybind11;
 using namespace Eigen;
 
 class cal_fmm{
-
-
-    // public variables
-    public:
-        int natom;
-        int n_crit;
-        float theta;
-        std::vector<double> charges;
-        MatrixXd t_crd;
-
-        struct Gpair_table_fmm{
-            std::string group_i;
-            std::vector<std::string> group_js;
-            
-            Gpair_table_fmm():
-                group_i(""),
-                group_js(std::vector<std::string>())
-            {}
-        };
-
-        std::vector<Gpair_table_fmm> gpair_table_fmm;
-
-        struct Gname_iatoms_pairs{
-            std::string group;
-            std::vector<int> iatoms;
-
-            Gname_iatoms_pairs():
-                group(""),
-                iatoms(std::vector<int>())
-            {}
-        };
-
-        std::vector<Gname_iatoms_pairs> gname_iatoms_pairs;
-
-        struct Atomwise{
-            int i;
-            int j;
-            Vector3d f;
-            Vector3d r;
     
-            Atomwise():
-                i(0),
-                j(0),
-                f(Vector3d::Zero()),
-                r(Vector3d::Zero())
-            {}
-        };
+private:
+    // private variables
+    int natom;
+    int n_crit;
+    float theta;
+    std::vector<double> charges;
+    MatrixXd t_crd;
 
-        std::vector<Atomwise> atomwise;
-    
-        struct Cellwise{
-            int atom_i;         //atom number of the source(i)
-            VectorXi atoms_J;   //atom numbers of the target cell J
-            Vector3d f;         //force between atom i and Cell J
-            Vector3d r;         //distance between atom i and center of Cell J
-    
-            Cellwise():
-                atom_i(0),
-                atoms_J(VectorXi::Zero(0)),
-                f(Vector3d::Zero()),
-                r(Vector3d::Zero())
-            {}
-        };
+    struct Gpair_table_fmm{
+        std::string group_i;
+        std::vector<std::string> group_js;
+        
+        Gpair_table_fmm():
+            group_i(""),
+            group_js(std::vector<std::string>())
+        {}
+    };
 
-        std::vector<Cellwise> cellwise;
+    std::vector<Gpair_table_fmm> gpair_table_fmm;
 
-        int idx_cell;
-        int idx_atom;
+    struct Gname_iatoms_pairs{
+        std::string group;
+        std::vector<int> iatoms;
+
+        Gname_iatoms_pairs():
+            group(""),
+            iatoms(std::vector<int>())
+        {}
+    };
+
+    std::vector<Gname_iatoms_pairs> gname_iatoms_pairs;
+
+    struct Atomwise{
+        int i;
+        int j;
+        Vector3d f;
+        Vector3d r;
+
+        Atomwise():
+            i(0),
+            j(0),
+            f(Vector3d::Zero()),
+            r(Vector3d::Zero())
+        {}
+    };
+
+    std::vector<Atomwise> atomwise;
+
+    struct Cellwise{
+        int atom_i;         //atom number of the source(i)
+        VectorXi atoms_J;   //atom numbers of the target cell J
+        Vector3d f;         //force between atom i and Cell J
+        Vector3d r;         //distance between atom i and center of Cell J
+
+        Cellwise():
+            atom_i(0),
+            atoms_J(VectorXi::Zero(0)),
+            f(Vector3d::Zero()),
+            r(Vector3d::Zero())
+        {}
+    };
+
+    std::vector<Cellwise> cellwise;
+
+    int idx_cell;
+    int idx_atom;
+
+
+public:
+    // create instance
+    cal_fmm():
+        natom(0),
+        n_crit(0),
+        theta(0.0),
+        charges(std::vector<double>()),
+        t_crd(MatrixXd::Zero(natom, 3)),
+        gpair_table_fmm(std::vector<Gpair_table_fmm>()),
+        gname_iatoms_pairs(std::vector<Gname_iatoms_pairs>()),
+        atomwise(std::vector<Atomwise>()),
+        cellwise(std::vector<Cellwise>()),
+        idx_cell(0),
+        idx_atom(0)
+    {};
+
 
     void setup(const int input_natom, const int& input_n_crit, const double& input_theta, \
         const std::vector<double>& input_charges, std::vector<Gname_iatoms_pairs>& input_gname_iatoms_pairs, \
