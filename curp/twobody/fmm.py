@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from . import lib_fmm
+from curp.twobody import lib_fmm
 
 
 class FMMCalculatorBase:
@@ -13,9 +13,16 @@ class FMMCalculatorBase:
         self.__gpair_table = gpair_table
         self.__gnames = []
         
-        self.__mod_fmm = lib_fmm.cal_fmm
-        self.__mod_fmm.setup(natom, self.__n_crit, self.__theta, charges, self.__gname_iatoms_pairs, 
-                             self.__gpair_table)
+        # for debug
+        # from curp.twobody import test
+        # obj = test.test_class()
+        # x = obj.add_struct(9, 4)
+        # if x[0] == 13:
+        #     raise ImportError("x=5. Please check your installation.")
+        
+        self.__mod_fmm = lib_fmm.cal_fmm()
+        self.__mod_fmm.setup(int(natom), int(self.__n_crit), float(self.__theta),
+                            charges, self.__gname_iatoms_pairs, self.__gpair_table)
          
     def initialize(self, crd):
         self.__mod_fmm.initialize(crd)
