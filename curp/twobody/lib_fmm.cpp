@@ -166,7 +166,8 @@ class cal_fmm{
 
     void cal_multipole(VectorXd& multipole, Vector3d& rc, VectorXi& atoms){
         
-        for (int i = 0; i < std::size(atoms); i++){
+        int size_atoms = atoms.size();
+        for (int i = 0; i < size_atoms; i++){
 
             int index_atom = atoms(i) - 1;
 
