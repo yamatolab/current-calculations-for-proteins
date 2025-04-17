@@ -17,7 +17,7 @@ class cal_fmm{
     public:
         int natom;
         int n_crit;
-        double theta;
+        float theta;
         std::vector<double> charges;
         MatrixXd t_crd;
 
