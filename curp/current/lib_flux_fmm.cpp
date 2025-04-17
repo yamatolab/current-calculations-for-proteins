@@ -15,7 +15,7 @@ public:
     int natom;
     int ngrp;
     std::vector<int> target_atoms;
-    std::vector<int> iatoms_group;
+    VectorXf iatoms_group;
     MatrixXd t_vel;
     std::vector<std::vector<Vector3d>> hflux_ij;
     MatrixXd eflux_ij;
@@ -46,7 +46,7 @@ public:
         natom(0),
         ngrp(0),
         target_atoms(std::vector<int>()),
-        iatoms_group(std::vector<int>()),
+        iatoms_group(VectorXf::Zero(0)),
         t_vel(MatrixXd::Zero(natom, 3)),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0)),
@@ -55,7 +55,7 @@ public:
     {};
 
 
-    void initialize(std::vector<int>& target_atoms_input, std::vector<int>& iatoms_group_input){
+    void initialize(std::vector<int>& target_atoms_input, VectorXf& iatoms_group_input){
         target_atoms = target_atoms_input;
         iatoms_group = iatoms_group_input;
         natom = target_atoms.size();
@@ -110,8 +110,8 @@ public:
 
             Vector3d h_ij = r * (fij.dot(vij)) * 0.5;
 
-            int igrp = iatoms_group[idx_i];
-            int jgrp = iatoms_group[idx_j];
+            int igrp = iatoms_group(idx_i);
+            int jgrp = iatoms_group(idx_j);
 
             if (igrp == 0 or jgrp == 0){
                 continue;
@@ -142,8 +142,8 @@ public:
             Vector3d h_ij = r * (fij.dot(vi)) * 0.5;
 
             int atom_J = cellwise[i].atoms_J.coeff(0);
-            int igrp = iatoms_group[idx_i];
-            int Jgrp = iatoms_group[atom_J - 1];
+            int igrp = iatoms_group(idx_i);
+            int Jgrp = iatoms_group(atom_J - 1);
 
             if (igrp == 0 or Jgrp == 0){
                 continue;
@@ -179,8 +179,8 @@ public:
 
             double e_ij = fij.dot(vij);
 
-            int igrp = iatoms_group[idx_i];
-            int jgrp = iatoms_group[idx_j];
+            int igrp = iatoms_group(idx_i);
+            int jgrp = iatoms_group(idx_j);
 
             if (igrp == 0 or jgrp == 0){
                 continue;
@@ -211,8 +211,8 @@ public:
             double e_ij = fij.dot(vi);
 
             int atom_J = cellwise[i].atoms_J(0);
-            int igrp = iatoms_group[idx_i];
-            int Jgrp = iatoms_group[atom_J - 1];
+            int igrp = iatoms_group(idx_i);
+            int Jgrp = iatoms_group(atom_J - 1);
             
             if (igrp == 0 or Jgrp == 0){
                 continue;
