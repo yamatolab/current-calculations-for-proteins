@@ -126,6 +126,7 @@ public:
             cells()
         {}
     };
+    std::vector<All_cells> all_cells;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,6 +139,7 @@ public:
             r(0.0)
         {}
     };
+    rc_max_r result_root;
 
     // calculate the center and radius of the cell 
     void calculate_rc(std::vector<int> atoms){
