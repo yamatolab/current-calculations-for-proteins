@@ -201,10 +201,10 @@ class FMMCellCalculator(FMMCalculatorBase):
     def __init__(self, all_cells):
         self.__mod_fmm.get_all_cells(all_cells)
         
-    def cal_fmm(self, all_cells, crd):
+    def cal_fmm(self, all_cells):
         
         # get multipole arrays
-        multipole = [self.get_multipole(crd, 0, all_cells[i]) for i in range(len(all_cells))]
+        multipole = [self.get_multipole(0, all_cells[i]) for i in range(len(all_cells))]
         
         # upward sweep
         m2m = [self.cal_M2M(all_cells[i]) for i in range(len(all_cells))]
@@ -215,7 +215,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         return dict(atomwise=self.__mod_fmm.atomwise, cellwise=self.__mod_fmm.cellwise)
         
 
-    def get_multipole(self, crd, p, cells):
+    def get_multipole(self, p, cells):
     
         """Calculate multipole arrays for all leaf cells under cell p. If leaf
         number of cell p is equal or bigger than n_crit (non-leaf), traverse down
@@ -232,7 +232,7 @@ class FMMCellCalculator(FMMCalculatorBase):
         if cells[p].nleaf >= self.__n_crit:
             for c in range(8):
                 if cells[p].nchild & (1 << c):
-                    self.get_multipole(crd, cells[p].child[c], cells)
+                    self.get_multipole(cells[p].child[c], cells)
         
         # otherwise cell p is a leaf cell
         else:
