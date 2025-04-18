@@ -25,6 +25,7 @@ class FMMCalculatorBase:
                             charges, self.__gname_iatoms_pairs, self.__gpair_table)
          
     def initialize(self, crd):
+        self.__crd = crd
         self.__mod_fmm.initialize(crd)
     
 ####################################################################################################################   
