@@ -27,6 +27,24 @@ class FMMCalculatorBase:
     def initialize(self, crd):
         self.__crd = crd
         self.__mod_fmm.initialize(crd)
+        
+    def get_n_crit(self):
+        return self.__n_crit
+    
+    def get_theta(self):
+        return self.__theta
+    
+    def get_gname_iatoms_pairs(self):
+        return self.__gname_iatoms_pairs
+    
+    def get_gpair_table(self):
+        return self.__gpair_table
+    
+    def get_mod_fmm(self):
+        return self.__mod_fmm
+    
+    def get_crd(self):
+        return self.__crd
     
 ####################################################################################################################   
 
