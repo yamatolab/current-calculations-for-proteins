@@ -142,13 +142,13 @@ public:
     rc_max_r result_root;
 
     // calculate the center and radius of the cell 
-    void calculate_rc(std::vector<int> atoms){
+    void calculate_rc(std::vector<int>& atoms){
 
         Vector3d rc = Vector3d::Zero();
         Vector3d r = Vector3d::Zero();
-        int size_atoms = atoms.size();
-
-        MatrixXd crd_atom = VectorXd::Zero(size_atoms,3);
+        int size_atoms = distance(atoms.begin(), atoms.end());
+        
+        MatrixXd crd_atom = MatrixXd::Zero(size_atoms,3);
 
         for (int i = 0; i < size_atoms; i++){
 
@@ -165,9 +165,8 @@ public:
         }
         double max_r = r.maxCoeff();
 
-        rc_max_r result = rc_max_r();
-        result.rc = rc;
-        result.r = max_r;
+        result_root.rc = rc;
+        result_root.r = max_r;
     };
         
     
