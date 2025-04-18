@@ -196,7 +196,7 @@ class FMMCellMaker(FMMCalculatorBase):
 
 ###################################### Calculator ##########################################################################
 
-class FMMCellCalculator(FMMCalculatorBase):
+class FMMCellCalculator:
 
     def __init__(self, all_cells):
         self.__mod_fmm.get_all_cells(all_cells)
