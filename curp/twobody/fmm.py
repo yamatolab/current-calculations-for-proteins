@@ -56,7 +56,7 @@ class FMMCellMaker(FMMCalculatorBase):
     def make_cells(self):
         
         # build tree
-        all_cells = self.build_all_tree(self.__gname_iatoms_pairs, crd, self.__n_crit)
+        all_cells = self.build_all_tree(self.get_gname_iatoms_pairs(), self.get_crd(), self.get_n_crit())
         
         return all_cells
 
