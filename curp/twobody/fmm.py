@@ -77,18 +77,19 @@ class FMMCellMaker(FMMCalculatorBase):
         
         """
         
-        cell = []
-        cell.nleaf = 0                                                  # number of leaves
-        cell.leaf = np.zeros(self.__n_crit, dtype=np.int)               # array of leaf index
-        cell.nchild = 0                                                 # binary counter to keep track of empty cells
-        cell.child = np.zeros(8, dtype=np.int)                          # array of child index
-        cell.parent = 0                                                 # index of parent cell
-        cell.rc = np.zeros(3)                                           # center of the cell
-        cell.cx, cell.cy, cell.cz = cell.rc[0], cell.rc[1], cell.rc[2]  # center of the cell
-        cell.r = 0.                                                     # radius of the cell
-        cell.multipole = np.zeros((10), dtype=np.float)                 # multipole array
+        class Cell:
+            def __init__(self, n_crit):
+                self.nleaf = n_crit
+                self.leaf = np.zeros(n_crit, dtype=np.int)
+                self.nchild = 0
+                self.child = np.zeros(8, dtype=np.int)
+                self.parent = 0
+                self.rc = np.zeros(3)
+                self.cx, self.cy, self.cz = 0., 0., 0.
+                self.r = 0.
+                self.multipole = np.zeros((10), dtype=np.float)
 
-        return cell
+        return Cell(self.get_n_crit())
     
     def build_all_tree(self, group_atoms, crd, n_crit):
         all_cells = []
@@ -116,7 +117,7 @@ class FMMCellMaker(FMMCalculatorBase):
         
         """
         # set root cell
-        cells = root       # initialize the cells list
+        cells = [root]       # initialize the cells list
         self.__mod_fmm.calculate_rc(atoms)  # calculate the center of the root cell
         root.rc = self.__mod_fmm.rc_max_r.r 
         root.r =  self.__mod_fmm.rc_max_r.max_r
