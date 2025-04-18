@@ -74,7 +74,7 @@ class FMMCellMaker(FMMCalculatorBase):
     def build_all_tree(self, group_atoms, crd, n_crit):
         all_cells = []
         for gname, atoms in group_atoms:
-            root_cell = self.setup_cell(atoms)
+            root_cell = self.setup_cell()
             
             all_cells.append(gname, self._build_tree(atoms, crd, root_cell, n_crit))
             # self.__gnames.append(gname)
