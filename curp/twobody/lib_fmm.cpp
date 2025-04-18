@@ -129,6 +129,16 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    struct rc_max_r{
+        Vector3d rc;
+        double r;
+
+        rc_max_r():
+            rc(Vector3d::Zero()),
+            r(0.0)
+        {}
+    };
+
     // calculate the center and radius of the cell 
     void calculate_rc(std::vector<int> atoms){
 
@@ -152,6 +162,10 @@ public:
             rc(i) = min_r + 0.5 * r(i);
         }
         double max_r = r.maxCoeff();
+
+        rc_max_r result = rc_max_r();
+        result.rc = rc;
+        result.r = max_r;
     };
         
     
@@ -468,5 +482,11 @@ PYBIND11_MODULE(lib_fmm, m){
         .def(py::init<>())
         .def_readwrite("group", &cal_fmm::All_cells::group)
         .def_readwrite("cells", &cal_fmm::All_cells::cells)
+        ;
+
+    py::class_<cal_fmm::rc_max_r>(m, "rc_max_r")
+        .def(py::init<>())
+        .def_readwrite("rc", &cal_fmm::rc_max_r::rc)
+        .def_readwrite("r", &cal_fmm::rc_max_r::r)
         ;
 }
