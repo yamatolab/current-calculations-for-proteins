@@ -34,7 +34,7 @@ class FMMCellMaker(FMMCalculatorBase):
     def __init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table):
         FMMCalculatorBase.__init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table)
     
-    def make_cells(self, crd):
+    def make_cells(self):
         
         # build tree
         all_cells = self.build_all_tree(self.__gname_iatoms_pairs, crd, self.__n_crit)
