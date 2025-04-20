@@ -59,37 +59,6 @@ class FMMCellMaker(FMMCalculatorBase):
         all_cells = self.build_all_tree(self.get_gname_iatoms_pairs(), self.get_crd(), self.get_n_crit())
         
         return all_cells
-
-    
-    def setup_cell(self):
-        """The class for a cell.
-    
-        Attributes:
-            nleaf (int): number of leaves in the cell
-            leaf (array of int): array of leaf index
-            nchild (int):  an integer whose last 8 bits is used to keep track 
-            of the empty child cells
-            child (array of int): array of child index
-            parent (int): index of parent cell
-            cx, cy, cz (float): coordinates of the cell's center
-            r (float): radius of the cell (half of the side length for cubic cell)
-            multipole (array of float): multipole array of the cell
-        
-        """
-        
-        class Cell:
-            def __init__(self, n_crit):
-                self.nleaf = n_crit
-                self.leaf = np.zeros(n_crit, dtype=np.int)
-                self.nchild = 0
-                self.child = np.zeros(8, dtype=np.int)
-                self.parent = 0
-                self.rc = np.zeros(3)
-                self.cx, self.cy, self.cz = 0., 0., 0.
-                self.r = 0.
-                self.multipole = np.zeros((10), dtype=np.float)
-
-        return Cell(self.get_n_crit())
     
     def build_all_tree(self, group_atoms, crd, n_crit):
         all_cells = []
