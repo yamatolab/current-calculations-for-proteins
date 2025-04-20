@@ -88,8 +88,8 @@ public:
             Vector3d fij = atomwise_f[i];
             Vector3d r = atomwise_r[i];
 
-            Vector3d vi = t_vel.col(idx_i);
-            Vector3d vj = t_vel.col(idx_j);
+            Vector3d vi = t_vel.row(idx_i);
+            Vector3d vj = t_vel.row(idx_j);
             Vector3d vij = vi + vj;
 
             Vector3d h_ij = r * (fij.dot(vij)) * 0.5;
@@ -122,7 +122,7 @@ public:
             Vector3d fij = cellwise_f[i];
             Vector3d r = cellwise_r[i];
 
-            Vector3d vi = t_vel.col(idx_i);
+            Vector3d vi = t_vel.row(idx_i);
 
             Vector3d h_ij = r * (fij.dot(vi)) * 0.5;
 
@@ -159,8 +159,8 @@ public:
 
             Vector3d fij = atomwise_f[i];
 
-            Vector3d vi = t_vel.col(idx_i);
-            Vector3d vj = t_vel.col(idx_j);
+            Vector3d vi = t_vel.row(idx_i);
+            Vector3d vj = t_vel.row(idx_j);
             Vector3d vij = vi + vj;
 
             double e_ij = fij.dot(vij);
@@ -193,7 +193,7 @@ public:
 
             Vector3d fij = cellwise_f[i];
 
-            Vector3d vi = t_vel.col(idx_i);
+            Vector3d vi = t_vel.row(idx_i);
 
             double e_ij = fij.dot(vi);
 
