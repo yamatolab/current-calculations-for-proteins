@@ -213,10 +213,13 @@ class EnergyFlux:
         # calculate
         t_total = time.time() - t0
         
-        atomwise, cellwise = gen_tbfs
+        atomwise = gen_tbfs["atomwise"]
+        cellwise = gen_tbfs["cellwise"]
         t1 = time.time()
-        m_non_fmm.cal_eflux_atomwise(atomwise)
-        m_non_fmm.cal_eflux_cellwise(cellwise)
+        m_non_fmm.cal_eflux_atomwise(atomwise["atomwise_i"], atomwise["atomwise_j"],
+                                     atomwise["atomwise_f"])
+        m_non_fmm.cal_eflux_cellwise(cellwise["cellwise_i"], cellwise["cellwise_J"],
+                                     cellwise["cellwise_f"])
         
         flux_grp = m_non_fmm.eflux_ij
         flux_atm = None
@@ -445,12 +448,18 @@ class HeatFlux:
         # calculate
         t_total = time.time() - t0
         
-        atomwise, cellwise = gen_tbfs
+        atomwise = gen_tbfs["atomwise"]
+        cellwise = gen_tbfs["cellwise"]
         t1 = time.time()
-        m_non_fmm.cal_hflux_atomwise(atomwise.atomwise_i, atomwise.atomwise_j,
-                                     atomwise.atomwise_f, atomwise.atomwise_r)
-        m_non_fmm.cal_hflux_cellwise(cellwise.cellwise_i, cellwise.cellwise_J,
-                                     cellwise.cellwise_f, cellwise.cellwise_r)
+        
+        # raise ValueError("type atomwise_i: {}, atomwise_j: {}, atomwise_f: {}, atomwise_r: {}"
+        #                  .format(type(atomwise["atomwise_i"]), type(atomwise["atomwise_j"]),
+        #                          type(atomwise["atomwise_f"][0]), type(atomwise["atomwise_r"][0])))
+        
+        m_non_fmm.cal_hflux_atomwise(atomwise["atomwise_i"], atomwise["atomwise_j"],
+                                     atomwise["atomwise_f"], atomwise["atomwise_r"])
+        m_non_fmm.cal_hflux_cellwise(cellwise["cellwise_i"], cellwise["cellwise_J"],
+                                     cellwise["cellwise_f"], cellwise["cellwise_r"])
         
         hflux_grp = m_non_fmm.hflux_ij
         hflux_atm = None
