@@ -127,7 +127,7 @@ class TwoBodyForceBase:
         from . import fmm
         info = self.__tpl.get_coulomb_info()
         charges = info['charges']
-        self.__fmm_base = fmm.FMMCellMaker(self.__setting, self.__natom, charges, gname_iatoms_pairs, gpair_table)
+        self.__fmm_base = fmm.FMMCellCalculator(self.__setting, self.__natom, charges, gname_iatoms_pairs, gpair_table)
         
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
@@ -227,8 +227,7 @@ class TwoBodyForceBase:
     def cal_coulomb_fmm(self, table):
         from . import fmm
         all_cells = self.__fmm_base.make_cells()
-        CellCalculator = fmm.FMMCellCalculator(all_cells)
-        return CellCalculator.cal_fmm(all_cells)
+        return self.__fmm_base.cal_fmm(all_cells)
 
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
