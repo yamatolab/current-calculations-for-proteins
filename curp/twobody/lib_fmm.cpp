@@ -481,12 +481,15 @@ public:
     };
 
     std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
+
+        std::vector<int> atoms;
         for (const auto& pair : pairs) {
             if (pair.first == source) {
-                return pair.second;
+                atoms = pair.second;
+                break;
             }
         }
-        return std::vector<int>();
+        return atoms;
     };
 
     std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cells>& all_cells) {
