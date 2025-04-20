@@ -490,12 +490,15 @@ public:
     };
 
     std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cells>& all_cells) {
+        
+        std::vector<Cell> cells;
         for (const auto& all_cell : all_cells) {
             if (all_cell.group == source) {
-                return all_cell.cells;
+                cells =  all_cell.cells;
+                break;
             }
         }
-        return std::vector<Cell>();
+        return cells;
     };
 
     void cal_force(){
