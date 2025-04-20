@@ -447,8 +447,10 @@ class HeatFlux:
         
         atomwise, cellwise = gen_tbfs
         t1 = time.time()
-        m_non_fmm.cal_hflux_atomwise(atomwise)
-        m_non_fmm.cal_hflux_cellwise(cellwise)
+        m_non_fmm.cal_hflux_atomwise(atomwise.atomwise_i, atomwise.atomwise_j,
+                                     atomwise.atomwise_f, atomwise.atomwise_r)
+        m_non_fmm.cal_hflux_cellwise(cellwise.cellwise_i, cellwise.cellwise_J,
+                                     cellwise.cellwise_f, cellwise.cellwise_r)
         
         hflux_grp = m_non_fmm.hflux_ij
         hflux_atm = None
