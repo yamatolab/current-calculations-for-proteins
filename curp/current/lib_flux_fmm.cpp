@@ -205,7 +205,7 @@ public:
                 continue;
             }
 
-            if (igrp /= Jgrp){
+            if (igrp != Jgrp){
                 eflux_ij(igrp, Jgrp) += e_ij;
                 eflux_ij(Jgrp, igrp) += -e_ij;
             }
