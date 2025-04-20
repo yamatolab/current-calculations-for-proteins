@@ -273,6 +273,7 @@ public:
             multipole(9) = multipole(9) + qjdx * 2 * dx;
             
         }
+        return multipole;
     };
 
     void cal_M2M(std::vector<Cell> cells){
