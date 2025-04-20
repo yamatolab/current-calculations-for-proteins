@@ -16,7 +16,7 @@ public:
     int natom;
     int ngrp;
     std::vector<int> target_atoms;
-    VectorXf iatoms_group;
+    VectorXi iatoms_group;
     MatrixXd t_vel;
     std::vector<std::vector<Vector3d>> hflux_ij;
     MatrixXd eflux_ij;
@@ -28,7 +28,7 @@ public:
         natom(0),
         ngrp(0),
         target_atoms(std::vector<int>()),
-        iatoms_group(VectorXf::Zero(0)),
+        iatoms_group(VectorXi::Zero(0)),
         t_vel(MatrixXd::Zero(natom, 3)),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0)),
@@ -37,7 +37,7 @@ public:
     {};
 
 
-    void initialize(std::vector<int>& target_atoms_input, VectorXf& iatoms_group_input){
+    void initialize(std::vector<int>& target_atoms_input, VectorXi& iatoms_group_input){
         target_atoms = target_atoms_input;
         iatoms_group = iatoms_group_input;
         natom = target_atoms.size();
