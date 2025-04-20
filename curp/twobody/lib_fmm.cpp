@@ -42,11 +42,7 @@ public:
         charges(std::vector<double>()),
         t_crd(MatrixXd::Zero(natom, 3)),
         gpair_table_fmm(std::vector<std::pair<std::string, std::vector<std::string>>>()),
-        gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
-        atomwise(std::vector<Atomwise>()),
-        cellwise(std::vector<Cellwise>()),
-        idx_cell(0),
-        idx_atom(0)
+        gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>())
     {};
 
 
