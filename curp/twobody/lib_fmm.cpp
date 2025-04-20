@@ -238,8 +238,13 @@ public:
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void get_all_cells(std::vector<All_cells>& all_cells_input){
 
-    void cal_multipole(VectorXd& multipole, Vector3d& rc, VectorXi& atoms){
+        all_cells = all_cells_input;  
+    };    
+
+    // calculate multipole
+    VectorXd cal_multipole(VectorXd& multipole, Vector3d& rc, VectorXi& atoms){
         
         int size_atoms = atoms.size();
         for (int i = 0; i < size_atoms; i++){
