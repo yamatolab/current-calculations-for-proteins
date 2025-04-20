@@ -498,7 +498,7 @@ public:
         return std::vector<Cell>();
     };
 
-    void cal_force(const std::vector<All_cells>& all_cells){
+    void cal_force(){
 
         int idx_cell = 0;
         int idx_atom = 0;
