@@ -230,10 +230,7 @@ class FMMCellCalculator:
         else:
             # loop in leaf particles, do P2M
             cells[p].multipole += self.__mod_fmm.cal_multipole(cells[p].multipole, cells[p].rc, cells[p].leaf)
-
-
-    def cal_M2M(self, cells):
-        return self.__mod_fmm.M2M(cells)
+            
 
 ####################################################################################################################
 
