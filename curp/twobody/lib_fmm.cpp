@@ -276,26 +276,25 @@ public:
         return multipole;
     };
 
-    void cal_p(int parent_cell){
+    void cal_p(){
         int size_all_cells = all_cells.size();
         for (int i = 0; i < size_all_cells; i++){
-            std::vector<Cell> cells = all_cells[i].cells;
+            std::vector<Cell>& cells = all_cells[i].cells;
+            int size_cells = cells.size();
 
-            if (cells[parent_cell].nleaf >= n_crit){
+            for (int j = 0; j < size_cells; j++){
 
-                for (int j = 0; j < 8; j++){
-                    int child_cell = cells[j].nchild;
-                    if ((child_cell) & (1 << j)){
-                        cal_p(cells[parent_cell].child(child_cell));
-                    }
+                if (cells[j].nchild != 0){
+                    continue;
+                }
+                else {
+                    cells[j].multipole += cal_multipole(cells[j].multipole, cells[j].rc, cells[j].leaf);
+                
                 }
             }
-            else {
-                cells[parent_cell].multipole += cal_multipole(cells[parent_cell].multipole, cells[parent_cell].rc, cells[parent_cell].leaf);
-                std::cerr << "multipole: " << cells[parent_cell].multipole.transpose() << std::endl;
-            }
+            std::cerr << "multipole: " << cells[size_cells-1].multipole.transpose() << std::endl;
         }
-    }
+    };
 
     void cal_M2M(){
         int size_all_cells = all_cells.size();
