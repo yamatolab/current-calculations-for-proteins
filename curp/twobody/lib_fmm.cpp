@@ -333,8 +333,7 @@ public:
     };
 
 
-    void cal_fiJ(int num_source, int p, std::vector<Cell> cells, \
-            int idx_cell, int idx_atom){
+    void cal_fiJ(int num_source, int p, std::vector<Cell>& cells){
 
         int idx_source = num_source - 1;
 
@@ -354,7 +353,7 @@ public:
                     double r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
 
                     if (cells[c].r> theta * r){
-                        cal_fiJ(num_source, c, cells, idx_cell, idx_atom);
+                        cal_fiJ(num_source, c, cells);
                     }
                     else{
 
@@ -505,9 +504,6 @@ public:
 
     void cal_force(){
 
-        int idx_cell = 0;
-        int idx_atom = 0;
-
         int size_table = gpair_table_fmm.size();
         for (int i = 0; i < size_table; i++){
 
@@ -526,7 +522,7 @@ public:
 
                     std::string target = targets[k];
                     std::vector<Cell> cells = get_cells(target, all_cells);
-                    cal_fiJ(num_source, 0, cells, idx_cell, idx_atom);
+                    cal_fiJ(num_source, 0, cells);
                 }
             }
         }
