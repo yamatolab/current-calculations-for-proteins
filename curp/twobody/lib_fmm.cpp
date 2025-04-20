@@ -276,34 +276,59 @@ public:
         return multipole;
     };
 
-    void cal_M2M(std::vector<Cell> cells){
+    void cal_p(int parent_cell){
+        int size_all_cells = all_cells.size();
+        for (int i = 0; i < size_all_cells; i++){
+            std::vector<Cell> cells = all_cells[i].cells;
 
-        int cells_size = cells.size();
-        for (int i = 0; i < cells_size; i++){
-            int i_inv = cells.size() - 1 - i;
+            if (cells[parent_cell].nleaf >= n_crit){
 
-            int c = i_inv;
-            int p = cells[i_inv].parent;
-        
-            VectorXd p_potential = cells[p].multipole;
-            VectorXd c_potential = cells[c].multipole;
-            VectorXd c_rc = cells[c].rc;
-            VectorXd p_rc = cells[p].rc;
+                for (int j = 0; j < 8; j++){
+                    int child_cell = cells[j].nchild;
+                    if ((child_cell) & (1 << j)){
+                        cal_p(cells[parent_cell].child(child_cell));
+                    }
+                }
+            }
+            else {
+                cells[parent_cell].multipole += cal_multipole(cells[parent_cell].multipole, cells[parent_cell].rc, cells[parent_cell].leaf);
+                std::cerr << "multipole: " << cells[parent_cell].multipole.transpose() << std::endl;
+            }
+        }
+    }
+
+    void cal_M2M(){
+        int size_all_cells = all_cells.size();
+        for (int i = 0; i < size_all_cells; i++){
+            std::vector<Cell> cells = all_cells[i].cells;
             
-            double dx = p_rc(0) - c_rc(0);
-            double dy = p_rc(1) - c_rc(1);
-            double dz = p_rc(2) - c_rc(2);
+            int cells_size = cells.size();
+            for (int i = 0; i < cells_size; i++){
+                int i_inv = cells_size - 1 - i;
 
-            p_potential(0) = p_potential(0) + c_potential(0);
-            p_potential(1) = p_potential(1) + c_potential(0) * dx;
-            p_potential(2) = p_potential(2) + c_potential(0) * dy;
-            p_potential(3) = p_potential(3) + c_potential(0) * dz;
-            p_potential(4) = p_potential(4) + c_potential(1) * dx + 0.5 * c_potential(1) * dx * dx;
-            p_potential(5) = p_potential(5) + c_potential(2) * dy + 0.5 * c_potential(2) * dy * dy;
-            p_potential(6) = p_potential(6) + c_potential(3) * dz + 0.5 * c_potential(3) * dz * dz;
-            p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
-            p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
-            p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+                int c = i_inv;
+                int p = cells[i_inv].parent;
+            
+                VectorXd p_potential = cells[p].multipole;
+                VectorXd c_potential = cells[c].multipole;
+                VectorXd c_rc = cells[c].rc;
+                VectorXd p_rc = cells[p].rc;
+                
+                double dx = p_rc(0) - c_rc(0);
+                double dy = p_rc(1) - c_rc(1);
+                double dz = p_rc(2) - c_rc(2);
+
+                p_potential(0) = p_potential(0) + c_potential(0);
+                p_potential(1) = p_potential(1) + c_potential(0) * dx;
+                p_potential(2) = p_potential(2) + c_potential(0) * dy;
+                p_potential(3) = p_potential(3) + c_potential(0) * dz;
+                p_potential(4) = p_potential(4) + c_potential(1) * dx + 0.5 * c_potential(1) * dx * dx;
+                p_potential(5) = p_potential(5) + c_potential(2) * dy + 0.5 * c_potential(2) * dy * dy;
+                p_potential(6) = p_potential(6) + c_potential(3) * dz + 0.5 * c_potential(3) * dz * dz;
+                p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
+                p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
+                p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+            }
         }
     };
 
