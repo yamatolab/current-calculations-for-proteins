@@ -75,14 +75,16 @@ class FMMCellCalculator(FMMCellMaker):
         
         self.__mod_fmm.get_all_cells(all_cells)
         
-        # get multipole arrays
-        self.__mod_fmm.cal_p(0)
+        self.__mod_fmm.cal_force_fmm()
         
-        # upward sweep
-        self.__mod_fmm.cal_M2M()
+        # # get multipole arrays
+        # self.__mod_fmm.cal_p()
+        
+        # # upward sweep
+        # self.__mod_fmm.cal_M2M()
 
-        # evaluate potential
-        self.__mod_fmm.cal_force()
+        # # evaluate potential
+        # self.__mod_fmm.cal_force()
         
         atomwise = dict(atomwise_i = self.__mod_fmm.atomwise_i,
                         atomwise_j = self.__mod_fmm.atomwise_j, 
@@ -92,6 +94,12 @@ class FMMCellCalculator(FMMCellMaker):
                         cellwise_J = self.__mod_fmm.cellwise_J, 
                         cellwise_f = self.__mod_fmm.cellwise_f,
                         cellwise_r = self.__mod_fmm.cellwise_r)
+        # raise ValueError('type atomwise_i:{}, atomwise_j:{}, atomwise_f:{}, atomwise_r:{}\n'
+        #                  'type cellwise_i:{}, cellwise_J:{}, cellwise_f:{}, cellwise_r:{}'.format(
+        #     type(atomwise['atomwise_i']), type(atomwise['atomwise_j']),
+        #     type(atomwise['atomwise_f']), type(atomwise['atomwise_r']),
+        #     type(cellwise['cellwise_i']), type(cellwise['cellwise_J']),
+        #     type(cellwise['cellwise_f']), type(cellwise['cellwise_r'])))
         return dict(atomwise=atomwise, cellwise=cellwise)
         
 
