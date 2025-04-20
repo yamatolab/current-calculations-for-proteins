@@ -61,150 +61,38 @@ class FMMCellMaker(FMMCalculatorBase):
         return all_cells
     
     def build_all_tree(self, group_atoms, crd, n_crit):
-        all_cells = []
-        for gname, atoms in group_atoms:
-            root_cell = self.setup_cell()
-            
-            all_cells.append(gname, self._build_tree(atoms, crd, root_cell, n_crit))
-            # self.__gnames.append(gname)
-            
-        return all_cells
-    
-        
-    def _build_tree(self, atoms, crd, root, n_crit):
-    
-        """Construct a hierarchical octree to store the particles and return 
-        the tree (list) of cells.
-        
-        Arguments:
-            s: the list of particles.
-            root: the root cell.
-            n_crit: maximum number of particles in a single cell.
-        
-        Returns:
-            cells: the list of cells.
-        
-        """
-        # set root cell
-        cells = [root]       # initialize the cells list
-        self.__mod_fmm.calculate_rc(atoms)  # calculate the center of the root cell
-        root.rc = self.__mod_fmm.rc_max_r.r 
-        root.r =  self.__mod_fmm.rc_max_r.max_r
-        
-        # build tree
-        n = len(atoms)
-        
-        for i in range(n):
-            
-            # traverse from the root down to a leaf cell
-            curr = 0
-            np = atoms[i] - 1  # particle`s crd index
-            
-            while cells[curr].nleaf >= n_crit:
-                cells[curr].nleaf += 1
-                octant = (crd[np,0] > cells[curr].cx) + ((crd[np,1] > cells[curr].cy) << 1) \
-                    + ((crd[np,2] > cells[curr].cz) << 2)
-                
-                # if there is no child cell in the particles octant, then create one
-                if not cells[curr].nchild & (1 << octant):
-                    self.add_child(octant, curr, cells, n_crit)
-            
-                curr = cells[curr].child[octant]
-            
-            # allocate the particle in the leaf cell
-            cells[curr].leaf[cells[curr].nleaf] = i
-            cells[curr].nleaf += 1
-            
-            # check whether to split or not
-            if cells[curr].nleaf >= n_crit:
-                self.split_cell(crd, np, curr, cells, n_crit)
-        
-        return cells
-
-
-    def add_child(self, octant, p, cells, n_crit):
-        
-        """Add a cell to the end of cells list as a child of p, initialize the
-        center and radius of the child cell c, and establish mutual reference
-        between child c and parent p.
-        
-        Arguments:
-            octant: reference to one of the eight divisions in three dimensions.
-            p: parent cell index in cells list.
-            cells: the list of cells.
-            n_crit: maximum number of particles in a leaf cell.
-        """
-        
-        # create a new cell instance
-        cells.append(self.setup_cell(n_crit))
-        
-        # the last element of the cells list is the new child c
-        c = len(cells) - 1
-        
-        # geometry relationship between parent and child
-        cells[c].r  = cells[p].r / 2
-        cells[c].cx = cells[p].cx + cells[c].r * ((octant & 1) * 2 - 1)
-        cells[c].cy = cells[p].cy + cells[c].r * ((octant & 2) - 1    )
-        cells[c].cz = cells[p].cz + cells[c].r * ((octant & 4) / 2 - 1)
-        
-        # establish mutual reference in the cells list
-        cells[c].parent = p
-        cells[p].child[octant] = c
-        cells[p].nchild = (cells[p].nchild | (1 << octant))
-
-
-    def split_cell(self, crd, np, p, cells, n_crit):
-        
-        """Loop in parent p's leafs and reallocate the particles to subcells. 
-        If a subcell has not been created in that octant, create one using add_child. 
-        If the subcell c's leaf number exceeds n_crit, split the subcell c recursively.
-        
-        Arguments: 
-            particles: the list of particles.
-            p: parent cell index in cells list.
-            cells: the list of cells.
-            n_crit: maximum number of particles in a leaf cell.
-        """
-        
-        # loop in the particles stored in the parent cell that you want to split
-        for l in cells[p].leaf:
-            
-            octant = (crd[l,0] > cells[p].cx) + ((crd[l,1] > cells[p].cy) << 1) \
-                    + ((crd[l,2] > cells[p].cz) << 2)   # finds the particle's octant
-        
-            # if there is not a child cell in the particles octant, then create one
-            if not cells[p].nchild & (1 << octant):
-                self.add_child(octant, p, cells, n_crit)
-            
-            # reallocate the particle in the child cell
-            c = cells[p].child[octant]
-            cells[c].leaf[cells[c].nleaf] = l
-            cells[c].nleaf += 1
-            
-            # check if the child reach n_crit
-            if cells[c].nleaf >= n_crit:
-                self.split_cell(crd, c, cells, n_crit)
-
+        return self.get_mod_fmm().setup_all_cells()
 
 ###################################### Calculator ##########################################################################
 
-class FMMCellCalculator:
+class FMMCellCalculator(FMMCellMaker):
 
-    def __init__(self, all_cells):
-        self.__mod_fmm.get_all_cells(all_cells)
+    def __init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table):
+        FMMCellMaker.__init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table)
+        self.__mod_fmm = self.get_mod_fmm()
         
     def cal_fmm(self, all_cells):
         
+        self.__mod_fmm.get_all_cells(all_cells)
+        
         # get multipole arrays
-        multipole = [self.get_multipole(0, all_cells[i]) for i in range(len(all_cells))]
+        self.__mod_fmm.cal_p(0)
         
         # upward sweep
-        m2m = [self.cal_M2M(all_cells[i]) for i in range(len(all_cells))]
+        self.__mod_fmm.cal_M2M()
 
         # evaluate potential
-        self.__mod_fmm.cal_force(all_cells)
+        self.__mod_fmm.cal_force()
         
-        return dict(atomwise=self.__mod_fmm.atomwise, cellwise=self.__mod_fmm.cellwise)
+        atomwise = dict(atomwise_i = self.__mod_fmm.atomwise_i,
+                        atomwise_j = self.__mod_fmm.atomwise_j, 
+                        atomwise_f = self.__mod_fmm.atomwise_f,
+                        atomwise_r = self.__mod_fmm.atomwise_r)
+        cellwise = dict(cellwise_i = self.__mod_fmm.cellwise_i,
+                        cellwise_J = self.__mod_fmm.cellwise_J, 
+                        cellwise_f = self.__mod_fmm.cellwise_f,
+                        cellwise_r = self.__mod_fmm.cellwise_r)
+        return dict(atomwise=atomwise, cellwise=cellwise)
         
 
     def get_multipole(self, p, cells):
