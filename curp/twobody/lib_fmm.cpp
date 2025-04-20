@@ -60,8 +60,14 @@ public:
     // read trajectory
     void initialize(const MatrixXd& crd){
         t_crd = crd;
-        atomwise = std::vector<Atomwise>();
-        cellwise = std::vector<Cellwise>();
+        atomwise_i = std::vector<int>();
+        atomwise_j = std::vector<int>();
+        atomwise_f = std::vector<Vector3d>();
+        atomwise_r = std::vector<Vector3d>();
+        cellwise_i = std::vector<int>();
+        cellwise_J = std::vector<VectorXi>();
+        cellwise_f = std::vector<Vector3d>();
+        cellwise_r = std::vector<Vector3d>();
 
     };
 
