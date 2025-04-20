@@ -531,6 +531,12 @@ public:
         }
     };
 
+    void cal_force_fmm(){
+        cal_p();
+        cal_M2M();
+        cal_force();
+    };
+
 };
 
 PYBIND11_MODULE(lib_fmm, m){
@@ -542,6 +548,7 @@ PYBIND11_MODULE(lib_fmm, m){
         .def("calculate_rc", &cal_fmm::calculate_rc)
         .def("setup_all_cells", &cal_fmm::setup_all_cells)
         .def("get_all_cells", &cal_fmm::get_all_cells)
+        .def("cal_force_fmm", &cal_fmm::cal_force_fmm)
         .def("cal_p", &cal_fmm::cal_p)
         .def("cal_M2M", &cal_fmm::cal_M2M)
         .def("cal_force", &cal_fmm::cal_force)
