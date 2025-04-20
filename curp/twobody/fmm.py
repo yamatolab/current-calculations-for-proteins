@@ -95,31 +95,6 @@ class FMMCellCalculator(FMMCellMaker):
         return dict(atomwise=atomwise, cellwise=cellwise)
         
 
-    def get_multipole(self, p, cells):
-    
-        """Calculate multipole arrays for all leaf cells under cell p. If leaf
-        number of cell p is equal or bigger than n_crit (non-leaf), traverse down
-        recursively. Otherwise (leaf), calculate the multipole arrays for leaf cell p.
-        
-        Arguments:
-            p: current cell's index.
-            cells: the list of cells.
-            leaves: the array of all leaf cells.
-            n_crit: maximum number of particles in a leaf cell.     
-        """
-    
-        # if the current cell p is not a leaf cell, then recursively traverse down
-        if cells[p].nleaf >= self.__n_crit:
-            for c in range(8):
-                if cells[p].nchild & (1 << c):
-                    self.get_multipole(cells[p].child[c], cells)
-        
-        # otherwise cell p is a leaf cell
-        else:
-            # loop in leaf particles, do P2M
-            cells[p].multipole += self.__mod_fmm.cal_multipole(cells[p].multipole, cells[p].rc, cells[p].leaf)
-            
-
 ####################################################################################################################
 
 def check_setting(setting):
