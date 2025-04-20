@@ -23,40 +23,16 @@ public:
     std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table_fmm;
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;
 
-    struct Atomwise{
-        int i;
-        int j;
-        Vector3d f;
-        Vector3d r;
+    std::vector<int> atomwise_i;
+    std::vector<int> atomwise_j;
+    std::vector<Vector3d> atomwise_f;
+    std::vector<Vector3d> atomwise_r;
 
-        Atomwise():
-            i(0),
-            j(0),
-            f(Vector3d::Zero()),
-            r(Vector3d::Zero())
-        {}
-    };
+    std::vector<int> cellwise_i;
+    std::vector<VectorXi> cellwise_J;
+    std::vector<Vector3d> cellwise_f;
+    std::vector<Vector3d> cellwise_r;
 
-    std::vector<Atomwise> atomwise;
-
-    struct Cellwise{
-        int atom_i;         //atom number of the source(i)
-        VectorXi atoms_J;   //atom numbers of the target cell J
-        Vector3d f;         //force between atom i and Cell J
-        Vector3d r;         //distance between atom i and center of Cell J
-
-        Cellwise():
-            atom_i(0),
-            atoms_J(VectorXi::Zero(0)),
-            f(Vector3d::Zero()),
-            r(Vector3d::Zero())
-        {}
-    };
-
-    std::vector<Cellwise> cellwise;
-
-    int idx_cell;
-    int idx_atom;
 
     // create instance
     cal_fmm():
