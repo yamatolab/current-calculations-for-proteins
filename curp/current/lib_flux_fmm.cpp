@@ -23,25 +23,6 @@ public:
     bool flag_heat = false;
     bool flag_energy = false;
 
-    struct Atomwise{
-        int atom_i;
-        int atom_j;
-        Vector3d f;
-        Vector3d r;
-
-    };
-
-    struct Cellwise{
-        int atom_i;
-        VectorXi atoms_J;
-        Vector3d f;
-        Vector3d r;
-
-    };
-
-    std::vector<Atomwise> atomwise;
-    std::vector<Cellwise> cellwise;
-
     // create instance
     cal_flux_fmm():
         natom(0),
@@ -75,7 +56,8 @@ public:
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
         }
         else{
-            std::cout << "Invalid flux type" << std::endl;
+            std::cerr << "Invalid flux type" << std::endl;
+            std::exit(1);
         }
     };
 
@@ -93,17 +75,18 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //heat flux//
 
-    void cal_hflux_atomwise(const std::vector<Atomwise>& atomwise){
+    void cal_hflux_atomwise(const std::vector<int>& atomwise_i, const std::vector<int>& atomwise_j, \
+                            const std::vector<Vector3d>& atomwise_f, const std::vector<Vector3d>& atomwise_r){
 
-        int size_atomwise = atomwise.size();
+        int size_atomwise = atomwise_i.size();
         for (int i = 0; i < size_atomwise; i++){
-            int atom_i = atomwise[i].atom_i;
-            int atom_j = atomwise[i].atom_j;
+            int atom_i = atomwise_i[i];
+            int atom_j = atomwise_j[i];
             int idx_i = atom_i - 1;
             int idx_j = atom_j - 1;
 
-            Vector3d fij = atomwise[i].f;
-            Vector3d r = atomwise[i].r;
+            Vector3d fij = atomwise_f[i];
+            Vector3d r = atomwise_r[i];
 
             Vector3d vi = t_vel.col(idx_i);
             Vector3d vj = t_vel.col(idx_j);
@@ -128,21 +111,22 @@ public:
         }
     };
 
-    void cal_hflux_cellwise(std::vector<Cellwise> cellwise){
+    void cal_hflux_cellwise(const std::vector<int>& cellwise_i, const std::vector<std::vector<int>>& cellwise_J, \
+                            const std::vector<Vector3d>& cellwise_f, const std::vector<Vector3d>& cellwise_r){
 
-        int size_cellwise = cellwise.size();
+        int size_cellwise = cellwise_i.size();
         for (int i = 0; i < size_cellwise; i++){
-            int atom_i = cellwise[i].atom_i;
+            int atom_i = cellwise_i[i];
             int idx_i = atom_i - 1;
 
-            Vector3d fij = cellwise[i].f;
-            Vector3d r = cellwise[i].r;
+            Vector3d fij = cellwise_f[i];
+            Vector3d r = cellwise_r[i];
 
             Vector3d vi = t_vel.col(idx_i);
 
             Vector3d h_ij = r * (fij.dot(vi)) * 0.5;
 
-            int atom_J = cellwise[i].atoms_J.coeff(0);
+            int atom_J = cellwise_J[i][0];
             int igrp = iatoms_group(idx_i);
             int Jgrp = iatoms_group(atom_J - 1);
 
@@ -163,16 +147,17 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //energy flux//
 
-    void cal_eflux_atomwise(const std::vector<Atomwise>& atomwise){
+    void cal_eflux_atomwise(std::vector<int>& atomwise_i, std::vector<int>& atomwise_j, \
+                            std::vector<Vector3d>& atomwise_f){
 
-        int size_atomwise = atomwise.size();
+        int size_atomwise = atomwise_i.size();
         for (int i = 0; i < size_atomwise; i++){
-            int atom_i = atomwise[i].atom_i;
-            int atom_j = atomwise[i].atom_j;
+            int atom_i = atomwise_i[i];
+            int atom_j = atomwise_j[i];
             int idx_i = atom_i - 1;
             int idx_j = atom_j - 1;
 
-            Vector3d fij = atomwise[i].f;
+            Vector3d fij = atomwise_f[i];
 
             Vector3d vi = t_vel.col(idx_i);
             Vector3d vj = t_vel.col(idx_j);
@@ -198,20 +183,21 @@ public:
         }
     };
 
-    void cal_eflux_cellwise(std::vector<Cellwise> cellwise){
+    void cal_eflux_cellwise(std::vector<int>& cellwise_i, std::vector<std::vector<int>>& cellwise_J, \
+                            std::vector<Vector3d>& cellwise_f){
 
-        int size_cellwise = cellwise.size();
+        int size_cellwise = cellwise_i.size();
         for (int i = 0; i < size_cellwise; i++){
-            int atom_i = cellwise[i].atom_i;
+            int atom_i = cellwise_i[i];
             int idx_i = atom_i - 1;
 
-            Vector3d fij = cellwise[i].f;
+            Vector3d fij = cellwise_f[i];
 
             Vector3d vi = t_vel.col(idx_i);
 
             double e_ij = fij.dot(vi);
 
-            int atom_J = cellwise[i].atoms_J(0);
+            int atom_J = cellwise_J[i][0];
             int igrp = iatoms_group(idx_i);
             int Jgrp = iatoms_group(atom_J - 1);
             
@@ -250,17 +236,4 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("hflux_ij", &cal_flux_fmm::hflux_ij)
         .def_readwrite("eflux_ij", &cal_flux_fmm::eflux_ij);
 
-    py::class_<cal_flux_fmm::Atomwise>(m, "Atomwise")
-        .def(py::init<>())
-        .def_readwrite("atom_i", &cal_flux_fmm::Atomwise::atom_i)
-        .def_readwrite("atom_j", &cal_flux_fmm::Atomwise::atom_j)
-        .def_readwrite("f", &cal_flux_fmm::Atomwise::f)
-        .def_readwrite("r", &cal_flux_fmm::Atomwise::r);
-
-    py::class_<cal_flux_fmm::Cellwise>(m, "Cellwise")
-        .def(py::init<>())
-        .def_readwrite("atom_i", &cal_flux_fmm::Cellwise::atom_i)
-        .def_readwrite("atoms_J", &cal_flux_fmm::Cellwise::atoms_J)
-        .def_readwrite("f", &cal_flux_fmm::Cellwise::f)
-        .def_readwrite("r", &cal_flux_fmm::Cellwise::r);
 };
