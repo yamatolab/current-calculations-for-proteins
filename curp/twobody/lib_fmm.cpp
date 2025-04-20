@@ -146,8 +146,96 @@ public:
         result_root.rc = rc;
         result_root.r = max_r;
     };
+
+    void add_child(int octant, int current_cell, std::vector<Cell>& cells){
+
+        cells.push_back(Cell(n_crit));
+
+        int new_child = cells.size() - 1;
+
+        cells[new_child].r = cells[current_cell].r * 0.5;
+        cells[new_child].rc(0) = cells[current_cell].rc(0) + cells[new_child].r * ((octant & 1) * 2 - 1);
+        cells[new_child].rc(1) = cells[current_cell].rc(1) + cells[new_child].r * ((octant & 2) - 1);
+        cells[new_child].rc(2) = cells[current_cell].rc(2) + cells[new_child].r * ((octant & 4) / 2 - 1);
+
+        cells[new_child].parent = current_cell;
+        cells[current_cell].child(octant) = new_child;
+        cells[current_cell].nchild = (cells[current_cell].nchild | (1 << octant));
+    };
+
+    void split_cell(int index_atom, int current_cell, std::vector<Cell>& cells){
+
+        for (int i = 0; i < cells[current_cell].nleaf; i++){
+
+            int index_atom_current = cells[current_cell].leaf(i);
+            int octant = (t_crd(index_atom_current, 0) > cells[current_cell].rc(0)) + \
+                            ((t_crd(index_atom_current, 1) > cells[current_cell].rc(1)) << 1) + \
+                            ((t_crd(index_atom_current, 2) > cells[current_cell].rc(2)) << 2);
+
+            if  (!(cells[current_cell].nchild & (1 << octant))){
+                add_child(octant, current_cell, cells);
+
+            }
+            int child_cell = cells[current_cell].child(octant);
+            cells[child_cell].leaf(cells[child_cell].nleaf) = index_atom_current;
+            cells[child_cell].nleaf += 1;
+        }
+    };
         
-    
+    std::vector<All_cells> setup_all_cells(){
+
+        all_cells = std::vector<All_cells>();
+        int group_size = gname_iatoms_pairs.size();
+        for (int i = 0; i < group_size; i++){
+            std::string group = gname_iatoms_pairs[i].first;
+            std::vector<int> iatoms = gname_iatoms_pairs[i].second;
+
+            // set root cell
+            All_cells all_cell;
+            all_cell.group = group;
+            all_cell.cells = std::vector<Cell>();
+            all_cell.cells.push_back(Cell(n_crit));
+            calculate_rc(iatoms);
+            all_cell.cells[0].rc = result_root.rc;
+            all_cell.cells[0].r = result_root.r;
+
+            int num_iatoms = iatoms.size();
+
+            for (int j = 0; j < num_iatoms; j++){
+
+                int current_cell = 0;
+                int index_atom = iatoms[j] - 1;
+
+                while (all_cell.cells[current_cell].nleaf >= n_crit) {
+                    all_cell.cells[current_cell].nleaf += 1;
+                    int octant = (t_crd(index_atom, 0) > all_cell.cells[current_cell].rc(0)) + \
+                                 ((t_crd(index_atom, 1) > all_cell.cells[current_cell].rc(1)) << 1) + \
+                                 ((t_crd(index_atom, 2) > all_cell.cells[current_cell].rc(2)) << 2);
+
+                                 
+                    if (!(all_cell.cells[current_cell].nchild & (1 << octant))){
+                        add_child(octant, current_cell, all_cell.cells);
+                    }
+
+                    current_cell = all_cell.cells[current_cell].child(octant);
+
+                }
+            
+                all_cell.cells[current_cell].leaf(all_cell.cells[current_cell].nleaf) = iatoms[j];
+                all_cell.cells[current_cell].nleaf += 1;
+
+                if (all_cell.cells[current_cell].nleaf >= n_crit){
+                    split_cell(index_atom, current_cell, all_cell.cells);
+                }
+            }
+            all_cells.push_back(all_cell);
+        }
+        std::cerr << "number of all cells: " << all_cells[0].cells.size() << std::endl;
+        for (int i = 0; i < all_cells[0].cells.size(); i++){
+            std::cerr << "number of all cells: " << all_cells[0].cells[i].leaf.transpose() << std::endl;
+        }
+        return all_cells;
+    };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
