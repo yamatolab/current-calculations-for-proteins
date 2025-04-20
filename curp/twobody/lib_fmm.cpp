@@ -299,7 +299,7 @@ public:
     void cal_M2M(){
         int size_all_cells = all_cells.size();
         for (int i = 0; i < size_all_cells; i++){
-            std::vector<Cell> cells = all_cells[i].cells;
+            std::vector<Cell>& cells = all_cells[i].cells;
             
             int cells_size = cells.size();
             for (int i = 0; i < cells_size; i++){
