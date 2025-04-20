@@ -238,7 +238,7 @@ public:
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    void get_all_cells(std::vector<All_cells>& all_cells_input){
+    void get_all_cells(const std::vector<All_cells>& all_cells_input){
 
         all_cells = all_cells_input;  
     };    
