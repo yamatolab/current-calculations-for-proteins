@@ -433,14 +433,16 @@ public:
                         double fx = potential.dot(bJx);
                         double fy = potential.dot(bJy);
                         double fz = potential.dot(bJz);
+                        Vector3d f = Vector3d(fx, fy, fz);
+                        Vector3d rij = Vector3d(dx, dy, dz);
 
-                        int idx = idx_cell;
-                        cellwise[idx].atom_i = num_source;
-                        cellwise[idx].atoms_J = cells[c].leaf;
-                        cellwise[idx].f = Vector3d(fx, fy, fz);
-                        cellwise[idx].r = Vector3d(dx, dy, dz);
-
-                        idx_cell = idx_cell + 1;
+                        cellwise_i.push_back(num_source);
+                        cellwise_J.push_back(cells[c].leaf);
+                        cellwise_f.push_back(f);
+                        cellwise_r.push_back(rij);
+                        // std::cerr << "atomwise_i: " << num_source << " atomwise_j: " << cellwise_J[0] << std::endl;
+                        // std::cerr << "atomwise_f: " << f.transpose() << std::endl;
+        
                     }      
                 }
             }
@@ -469,13 +471,10 @@ public:
             
                 Vector3d Fij = rij * qij;
 
-                int idx = idx_atom;
-                atomwise[idx].i = num_source;
-                atomwise[idx].j = num_target;
-                atomwise[idx].f = Fij;
-                atomwise[idx].r = rij;
-
-                idx_atom = idx_atom + 1;
+                atomwise_i.push_back(num_source);
+                atomwise_j.push_back(num_target);
+                atomwise_f.push_back(Fij);
+                atomwise_r.push_back(rij);
             }
         }
     };
