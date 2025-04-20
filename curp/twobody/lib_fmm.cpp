@@ -512,14 +512,14 @@ public:
             std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
 
-            for (int i = 0; i < source_size; i++){
+            for (int j = 0; j < source_size; j++){
 
-                int num_source = source_atoms[i];
+                int num_source = source_atoms[j];
                 int size_targets = targets.size();
 
-                for (int j = 0; j < size_targets; j++){      
+                for (int k = 0; k < size_targets; k++){      
 
-                    std::string target = targets[j];
+                    std::string target = targets[k];
                     std::vector<Cell> cells = get_cells(target, all_cells);
                     cal_fiJ(num_source, 0, cells, idx_cell, idx_atom);
                 }
