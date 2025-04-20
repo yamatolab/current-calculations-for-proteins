@@ -230,10 +230,10 @@ public:
             }
             all_cells.push_back(all_cell);
         }
-        std::cerr << "number of all cells: " << all_cells[0].cells.size() << std::endl;
-        for (int i = 0; i < all_cells[0].cells.size(); i++){
-            std::cerr << "number of all cells: " << all_cells[0].cells[i].leaf.transpose() << std::endl;
-        }
+        // std::cerr << "number of all cells: " << all_cells[0].cells.size() << std::endl;
+        // for (int i = 0; i < all_cells[0].cells.size(); i++){
+        //     std::cerr << "number of all cells: " << all_cells[0].cells[i].leaf.transpose() << std::endl;
+        // }
         return all_cells;
     };
 
@@ -292,7 +292,7 @@ public:
                 
                 }
             }
-            std::cerr << "multipole: " << cells[size_cells-1].multipole.transpose() << std::endl;
+            // std::cerr << "multipole: " << cells[size_cells-1].multipole.transpose() << std::endl;
         }
     };
 
@@ -327,8 +327,12 @@ public:
                 p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
                 p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
                 p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+
+                // std::cerr << "p multipole: " << p_potential.transpose() << std::endl;
+                // std::cerr << "c multipole: " << c_potential.transpose() << std::endl;
             }
         }
+        // std::cerr << "multipole: " << all_cells[0].cells[0].multipole.transpose() << std::endl;
     };
 
 
