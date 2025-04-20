@@ -102,11 +102,11 @@ public:
             }
             
             if (igrp != jgrp){
-                hflux_ij[igrp][jgrp] += h_ij;
-                hflux_ij[jgrp][igrp] += h_ij;
+                hflux_ij[igrp-1][jgrp-1] += h_ij;
+                hflux_ij[jgrp-1][igrp-1] += h_ij;
             }
             else{
-                hflux_ij[igrp][jgrp] += 0.5 * h_ij;
+                hflux_ij[igrp-1][jgrp-1] += 0.5 * h_ij;
             }
         }
     };
@@ -135,11 +135,11 @@ public:
             }
 
             if (igrp != Jgrp){
-                hflux_ij[igrp][Jgrp] += h_ij;
-                hflux_ij[Jgrp][igrp] += h_ij;
+                hflux_ij[igrp-1][Jgrp-1] += h_ij;
+                hflux_ij[Jgrp-1][igrp-1] += h_ij;
             }
             else{
-                hflux_ij[igrp][Jgrp] += 0.5 * h_ij;
+                hflux_ij[igrp-1][Jgrp-1] += 0.5 * h_ij;
             }
         }
     };
@@ -173,11 +173,11 @@ public:
             }
 
             if (igrp != jgrp){
-                eflux_ij(igrp, jgrp) += e_ij;
-                eflux_ij(jgrp, igrp) += -e_ij;
+                eflux_ij(igrp-1, jgrp-1) += e_ij;
+                eflux_ij(jgrp-1, igrp-1) += -e_ij;
             }
             else{
-                eflux_ij(igrp, jgrp) += 0.5 * e_ij;
+                eflux_ij(igrp-1, jgrp-1) += 0.5 * e_ij;
             }
 
         }
@@ -206,11 +206,11 @@ public:
             }
 
             if (igrp != Jgrp){
-                eflux_ij(igrp, Jgrp) += e_ij;
-                eflux_ij(Jgrp, igrp) += -e_ij;
+                eflux_ij(igrp-1, Jgrp-1) += e_ij;
+                eflux_ij(Jgrp-1, igrp-1) += -e_ij;
             }
             else{
-                eflux_ij(igrp, Jgrp) += 0.5 * e_ij;
+                eflux_ij(igrp-1, Jgrp-1) += 0.5 * e_ij;
             }
         }
     };
