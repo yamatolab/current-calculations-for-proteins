@@ -461,7 +461,7 @@ class HeatFlux:
         m_non_fmm.cal_hflux_cellwise(cellwise["cellwise_i"], cellwise["cellwise_J"],
                                      cellwise["cellwise_f"], cellwise["cellwise_r"])
         
-        hflux_grp = m_non_fmm.hflux_ij
+        hflux_grp = lib_flux_fmm.hflux_to_numpy(m_non_fmm.hflux_ij) # convert to numpy array
         hflux_atm = None
         
         t_total += time.time() - t1
