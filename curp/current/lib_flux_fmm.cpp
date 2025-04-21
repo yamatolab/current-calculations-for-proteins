@@ -216,6 +216,46 @@ public:
     };
 };
 
+// Convert hflux_ij to numpy array
+py::array_t<double> hflux_to_numpy(const std::vector<std::vector<Vector3d>>& hflux_ij) {
+    size_t ngrp_i = hflux_ij.size();
+    size_t ngrp_j = hflux_ij.empty() ? 0 : hflux_ij[0].size();
+
+    // shape: (ngrp_i, ngrp_j, 3)
+    std::vector<ssize_t> shape = { static_cast<ssize_t>(ngrp_i),
+                                   static_cast<ssize_t>(ngrp_j),
+                                   3 };
+    std::vector<ssize_t> strides = {
+        static_cast<ssize_t>(ngrp_j * 3 * sizeof(double)),
+        static_cast<ssize_t>(3 * sizeof(double)),
+        static_cast<ssize_t>(sizeof(double))
+    };
+
+    // Prepare the data (flat array)
+    std::vector<double> buffer;
+    buffer.reserve(ngrp_i * ngrp_j * 3);
+
+    for (size_t i = 0; i < ngrp_i; ++i) {
+        for (size_t j = 0; j < ngrp_j; ++j) {
+            const Vector3d& v = hflux_ij[i][j];
+            buffer.push_back(v(0));
+            buffer.push_back(v(1));
+            buffer.push_back(v(2));
+        }
+    }
+
+    // Return as numpy array (make a copy to ensure safety)
+    return py::array(py::buffer_info(
+        buffer.data(),
+        sizeof(double),
+        py::format_descriptor<double>::format(),
+        3,
+        shape,
+        strides
+    )).attr("copy")();
+}
+
+
 PYBIND11_MODULE(lib_flux_fmm, m){
     py::class_<cal_flux_fmm>(m, "cal_flux_fmm")
         .def(py::init<>())
@@ -235,5 +275,7 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("flag_energy", &cal_flux_fmm::flag_energy)
         .def_readwrite("hflux_ij", &cal_flux_fmm::hflux_ij)
         .def_readwrite("eflux_ij", &cal_flux_fmm::eflux_ij);
+
+    m.def("hflux_to_numpy", &hflux_to_numpy, "Convert hflux_ij to numpy array");
 
 };
