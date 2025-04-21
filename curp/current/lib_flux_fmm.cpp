@@ -65,10 +65,10 @@ public:
 
         t_vel = vel;
         if (flag_heat == true){
-            hflux_ij.resize(natom, std::vector<Vector3d>(natom, Vector3d::Zero()));
+            hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
         }
         else if (flag_energy == true){
-            eflux_ij = MatrixXd::Zero(natom, natom);
+            eflux_ij = MatrixXd::Zero(ngrp, ngrp);
         }
     };
 
