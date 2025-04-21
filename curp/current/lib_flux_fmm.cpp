@@ -41,7 +41,7 @@ public:
         target_atoms = target_atoms_input;
         iatoms_group = iatoms_group_input;
         natom = target_atoms.size();
-        ngrp = iatoms_group.size();
+        ngrp = iatoms_group.maxCoeff();
 
     };
 
