@@ -34,7 +34,7 @@ public:
     std::vector<Vector3d> cellwise_r;
 
 
-    // create instance
+    // constructor
     cal_fmm():
         natom(0),
         n_crit(0),
