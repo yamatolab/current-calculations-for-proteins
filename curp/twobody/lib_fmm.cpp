@@ -138,8 +138,8 @@ public:
         for (int i = 0; i < 3; i++){
 
             double min_r = crd_atom.col(i).minCoeff();
-            r(i) = abs(crd_atom.col(i).maxCoeff() - min_r);
-            rc(i) = min_r + 0.5 * r(i);
+            r(i) = abs(crd_atom.col(i).maxCoeff() - min_r) * 0.5;
+            rc(i) = min_r + r(i);
         }
         double max_r = r.maxCoeff();
 
