@@ -179,6 +179,10 @@ public:
             int child_cell = cells[current_cell].child(octant);
             cells[child_cell].leaf(cells[child_cell].nleaf) = index_atom_current;
             cells[child_cell].nleaf += 1;
+
+            if (cells[child_cell].nleaf >= n_crit){
+                split_cell(child_cell, cells);
+            }
         }
     };
         
