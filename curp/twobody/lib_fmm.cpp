@@ -163,7 +163,7 @@ public:
         cells[current_cell].nchild = (cells[current_cell].nchild | (1 << octant));
     };
 
-    void split_cell(int index_atom, int current_cell, std::vector<Cell>& cells){
+    void split_cell(int current_cell, std::vector<Cell>& cells){
 
         for (int i = 0; i < cells[current_cell].nleaf; i++){
 
@@ -225,7 +225,7 @@ public:
                 all_cell.cells[current_cell].nleaf += 1;
 
                 if (all_cell.cells[current_cell].nleaf >= n_crit){
-                    split_cell(index_atom, current_cell, all_cell.cells);
+                    split_cell(current_cell, all_cell.cells);
                 }
             }
             all_cells.push_back(all_cell);
