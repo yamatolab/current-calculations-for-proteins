@@ -13,7 +13,7 @@ using namespace Eigen;
 class cal_fmm{
     
 public:
-    // private variables
+    // public variables
     int natom;
     int n_crit;
     float theta;
