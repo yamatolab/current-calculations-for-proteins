@@ -167,7 +167,8 @@ public:
 
         for (int i = 0; i < cells[current_cell].nleaf; i++){
 
-            int index_atom_current = cells[current_cell].leaf(i);
+            int atom_current = cells[current_cell].leaf(i);
+            int index_atom_current = atom_current - 1;
             int octant = (t_crd(index_atom_current, 0) > cells[current_cell].rc(0)) + \
                             ((t_crd(index_atom_current, 1) > cells[current_cell].rc(1)) << 1) + \
                             ((t_crd(index_atom_current, 2) > cells[current_cell].rc(2)) << 2);
@@ -177,7 +178,7 @@ public:
 
             }
             int child_cell = cells[current_cell].child(octant);
-            cells[child_cell].leaf(cells[child_cell].nleaf) = index_atom_current;
+            cells[child_cell].leaf(cells[child_cell].nleaf) = atom_current;
             cells[child_cell].nleaf += 1;
 
             if (cells[child_cell].nleaf >= n_crit){
