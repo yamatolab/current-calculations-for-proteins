@@ -90,7 +90,7 @@ public:
             child(VectorXi::Zero(8)),               // index of 8 child cells
             parent(0),                              // index of parent cell
             rc(Vector3d::Zero()),                   // center of the cell
-            r(0.0),
+            r(0.0),                                 // radius of the cell
             multipole(VectorXd::Zero(10))           // 10 multipoles
         {}
     };
