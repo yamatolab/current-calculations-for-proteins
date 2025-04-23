@@ -566,6 +566,163 @@ public:
         cal_force();
     };
 
+    // for debug
+    void check_cells(){
+
+        std::cerr << "start check cells" << std::endl;
+
+        int size_all_cells = all_cells.size();
+        for (int i = 0; i < size_all_cells; i++){
+            std::cerr << "group: " << all_cells[i].group << std::endl;
+            std::vector<int> atoms = get_atoms(all_cells[i].group, gname_iatoms_pairs);
+            int size_atoms = atoms.size();
+
+            std::vector<cal_fmm::Cell> cells = all_cells[i].cells;
+            int size_cells = cells.size();
+
+            // 1. check if atoms are in the cell
+            for (int j = 0; j < size_cells; j++){
+
+                if (cells[j].nchild != 0){
+                    continue;
+                }
+                else {
+                    Vector3d rc = cells[j].rc;                      // center of the cell
+                    double r = cells[j].r;                          // radius of the cell  
+                    Vector3d ra = Vector3d(r, r, r);
+                    Vector3d rmin = rc - ra;                        // minimum coordinate of the cell
+                    Vector3d rmax = rc + ra;                        // maximum coordinate of the cell
+
+                    for (int k = 0; k < cells[j].nleaf; k++){
+
+                        int atom = cells[j].leaf(k);
+                        if (atom <= 0){
+                            std::cerr << "atom=0 " << atom << std::endl;
+                            continue;
+                        }
+                        Vector3d crd_atom = t_crd.row(atom-1);
+
+                        // check if the atom is in the cell
+                        if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0) || \
+                            crd_atom(1) < rmin(1) || crd_atom(1) > rmax(1) || \
+                            crd_atom(2) < rmin(2) || crd_atom(2) > rmax(2)){
+
+                            
+                            std::cerr << "error: " << atom << " " << crd_atom.transpose() << std::endl;
+                            std::cerr << "cell_index: " << j << std::endl;
+                            std::cerr << "rmin: " << rmin.transpose() << std::endl;
+                            std::cerr << "rmax: " << rmax.transpose() << std::endl;
+                            if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0)){
+                                std::cerr << "atom x out of range" << std::endl;
+                            }
+                            if (crd_atom(1) < rmin(1) || crd_atom(1) > rmax(1)){
+                                std::cerr << "atom y out of range" << std::endl;
+                            }
+                            if (crd_atom(2) < rmin(2) || crd_atom(2) > rmax(2)){
+                                std::cerr << "atom z out of range" << std::endl;
+                            }
+                            std::cerr << "    " << std::endl;
+                        }
+                       
+                    }
+                    
+                }
+            }
+
+            for (int j = 0; j < size_cells; j++){
+
+                std::vector<int> atoms_inc = std::vector<int>();
+                Vector3d rc = cells[j].rc;                      // center of the cell
+                double r = cells[j].r;                          // radius of the cell  
+                Vector3d ra = Vector3d(r, r, r);
+                Vector3d rmin = rc - ra;                        // minimum coordinate of the cell
+                Vector3d rmax = rc + ra;                        // maximum coordinate of the cell
+
+                // check if the cell is split correctly
+                for (int k = 0; k < size_atoms; k++){
+                    int atom = atoms[k];
+                    if (atom <= 0){
+                        std::cerr << "atom=0 " << atom << std::endl;
+                        continue;
+                    }
+                    Vector3d crd_atom = t_crd.row(atom-1);
+                    if (crd_atom(0) >= rmin(0) && crd_atom(0) <= rmax(0) && \
+                        crd_atom(1) >= rmin(1) && crd_atom(1) <= rmax(1) && \
+                        crd_atom(2) >= rmin(2) && crd_atom(2) <= rmax(2)){
+                        atoms_inc.push_back(atom);
+                    }
+                }
+
+                // check if the number of atoms in the cell is correct
+                if (cells[j].nleaf != atoms_inc.size()){
+                    std::cerr << "error: cell " << j << std::endl;
+                    std::cerr << "num of leaves: " << cells[j].nleaf << std::endl;
+                    std::cerr << "atoms_included: " << atoms_inc.size() << std::endl;
+                }
+
+                // check if the atoms in the cell are correct
+                if (cells[j].nchild == 0){
+                    for (int k = 0; k < cells[j].nleaf; k++){
+
+                        int atom_k = cells[j].leaf(k);
+                        if (atom_k != atoms_inc[k]){
+                            std::cerr << "error: cell " << j << std::endl;
+                            std::cerr << "atom(in all_cells): " << atom_k << std::endl;
+                            std::cerr << "atoms_inc: " << atoms_inc[k] << std::endl;
+                            std::cerr << "atom_k: " << cells[j].leaf.transpose() << std::endl;
+                            std::cerr << "atoms_inc: " ;
+                            for (const auto& atom : atoms_inc) {
+                                std::cerr << atom << " ";
+                            }
+                            std::cerr << std::endl;
+                            std::cerr << "  " << std::endl;
+                        }
+                    }
+                }
+                else {
+                    for (int k = 0; k < n_crit; k++){
+                        int atom_k = cells[j].leaf(k);
+                        if (atom_k != atoms_inc[k]){
+                            std::cerr << "error: cell " << j << std::endl;
+                            std::cerr << "atom(in all_cells): " << atom_k << std::endl;
+                            std::cerr << "atoms_inc: " << atoms_inc[k] << std::endl;
+                            std::cerr << "atom_k: " << cells[j].leaf.transpose() << std::endl;
+                            std::cerr << "atoms_inc: " ;
+                            for (const auto& atom : atoms_inc) {
+                                std::cerr << atom << " ";
+                            }
+                            std::cerr << std::endl;
+                            std::cerr << "  " << std::endl;
+                        }
+                    }
+                }
+
+                // check if the parent and child are correct
+                if (cells[j].nchild != 0){
+                    for (int k = 0; k < 8; k++){
+                        if (cells[j].child(k) == 0){
+                            continue;
+                        }
+                        int child = cells[j].child(k);
+                        if (cells[child].parent != j){
+                            std::cerr << "error: cell " << j << std::endl;
+                            std::cerr << "child: " << child << std::endl;
+                            std::cerr << "parent: " << cells[child].parent << std::endl;
+                        }
+
+                        // check if the radius of the child is correct
+                        if (cells[j].r != cells[child].r * 2.0){
+                            std::cerr << "error: cell " << j << std::endl;
+                            std::cerr << "child: " << child << std::endl;
+                            std::cerr << "r: " << cells[j].r << std::endl;
+                            std::cerr << "r_child: " << cells[child].r * 2.0 << std::endl;
+                        }
+                        
+                    }
+                }
+            }
+        }
+    };
 };
 
 PYBIND11_MODULE(lib_fmm, m){
@@ -581,6 +738,7 @@ PYBIND11_MODULE(lib_fmm, m){
         .def("cal_p", &cal_fmm::cal_p)
         .def("cal_M2M", &cal_fmm::cal_M2M)
         .def("cal_force", &cal_fmm::cal_force)
+        .def("check_cells", &cal_fmm::check_cells)
         .def_readwrite("natom", &cal_fmm::natom)
         .def_readwrite("n_crit", &cal_fmm::n_crit)
         .def_readwrite("theta", &cal_fmm::theta)
