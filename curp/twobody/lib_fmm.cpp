@@ -299,7 +299,7 @@ public:
             multipole(6) = multipole(6) + qjdz * dz;
             multipole(7) = multipole(7) + qjdx * 2 * dy;
             multipole(8) = multipole(8) + qjdy * 2 * dz;
-            multipole(9) = multipole(9) + qjdx * 2 * dx;
+            multipole(9) = multipole(9) + qjdz * 2 * dx;
             
         }
         return multipole;
