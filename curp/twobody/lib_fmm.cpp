@@ -439,13 +439,13 @@ public:
                         bJy(0) = -dy * r3;                          // -dy/r^3
                         bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
                         bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
-                        bJy(3) =     dydz * r5;                     // 0       + 3dzdy/r^5
+                        bJy(3) = 3 * dydz * r5;                     // 0       + 3dzdy/r^5
                         bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
                         bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
                         bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
                         bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
                         bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydz^2/r^7
-                        bJy(9) =         - dxdydz;                  // 0       - 15dzdxdy/r^7
+                        bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
 
                         // calculate bJz
                         bJz(0) = -dz * r3;                          // -dz/r^3
@@ -455,7 +455,7 @@ public:
                         bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
                         bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
                         bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
-                        bJz(7) =          - dxdydz;                 // 0       - 15dxdydz/r^7
+                        bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
                         bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
                         bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
 
