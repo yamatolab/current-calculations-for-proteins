@@ -387,7 +387,7 @@ public:
                     double dz = crd_source(2) - rc(2);
                     double r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
 
-                    if (cells[c].r> theta * r){
+                    if (cells[c].r > theta * r){
                         cal_fiJ(num_source, c, cells);
                     }
                     else{
