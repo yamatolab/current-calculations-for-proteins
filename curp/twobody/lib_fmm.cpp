@@ -345,17 +345,20 @@ public:
                 double dx = p_rc(0) - c_rc(0);
                 double dy = p_rc(1) - c_rc(1);
                 double dz = p_rc(2) - c_rc(2);
+                double Mx = c_potential(0) * dx;
+                double My = c_potential(0) * dy;
+                double Mz = c_potential(0) * dz;
 
-                p_potential(0) = p_potential(0) + c_potential(0);
-                p_potential(1) = p_potential(1) + c_potential(0) * dx;
-                p_potential(2) = p_potential(2) + c_potential(0) * dy;
-                p_potential(3) = p_potential(3) + c_potential(0) * dz;
-                p_potential(4) = p_potential(4) + c_potential(1) * dx + 0.5 * c_potential(1) * dx * dx;
-                p_potential(5) = p_potential(5) + c_potential(2) * dy + 0.5 * c_potential(2) * dy * dy;
-                p_potential(6) = p_potential(6) + c_potential(3) * dz + 0.5 * c_potential(3) * dz * dz;
-                p_potential(7) = p_potential(7) + 0.5 * c_potential(2) * dx + 0.5 * c_potential(1) * dx + 0.5 * c_potential(0) * dx * dy;
-                p_potential(8) = p_potential(8) + 0.5 * c_potential(3) * dy + 0.5 * c_potential(2) * dy + 0.5 * c_potential(0) * dy * dz;
-                p_potential(9) = p_potential(9) + 0.5 * c_potential(1) * dz + 0.5 * c_potential(3) * dz + 0.5 * c_potential(0) * dz * dx;
+                p_potential(0) += c_potential(0);
+                p_potential(1) += c_potential(1) + Mx;
+                p_potential(2) += c_potential(2) + My;
+                p_potential(3) += c_potential(3) + Mz;
+                p_potential(4) += c_potential(4) + dx * c_potential(1) + 0.5 * Mx * dx;
+                p_potential(5) += c_potential(5) + dy * c_potential(2) + 0.5 * My * dy;
+                p_potential(6) += c_potential(6) + dz * c_potential(3) + 0.5 * Mz * dz;
+                p_potential(7) += c_potential(7) + dy * c_potential(1) + dx * c_potential(2) + Mx * dy;
+                p_potential(8) += c_potential(8) + dz * c_potential(2) + dy * c_potential(3) + My * dz;
+                p_potential(9) += c_potential(9) + dx * c_potential(3) + dz * c_potential(1) + Mz * dx;
 
                 // std::cerr << "p multipole: " << p_potential.transpose() << std::endl;
                 // std::cerr << "c multipole: " << c_potential.transpose() << std::endl;
