@@ -294,12 +294,12 @@ public:
             multipole(1) = multipole(1) + qjdx;
             multipole(2) = multipole(2) + qjdy;
             multipole(3) = multipole(3) + qjdz;
-            multipole(4) = multipole(4) + qjdx * dx;
-            multipole(5) = multipole(5) + qjdy * dy;
-            multipole(6) = multipole(6) + qjdz * dz;
-            multipole(7) = multipole(7) + qjdx * 2 * dy;
-            multipole(8) = multipole(8) + qjdy * 2 * dz;
-            multipole(9) = multipole(9) + qjdz * 2 * dx;
+            multipole(4) = multipole(4) + qjdx * dx * 0.5;
+            multipole(5) = multipole(5) + qjdy * dy * 0.5;
+            multipole(6) = multipole(6) + qjdz * dz * 0.5;
+            multipole(7) = multipole(7) + qjdx * dy;
+            multipole(8) = multipole(8) + qjdy * dz;
+            multipole(9) = multipole(9) + qjdz * dx;
             
         }
         return multipole;
