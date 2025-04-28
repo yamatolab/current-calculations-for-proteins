@@ -181,7 +181,7 @@ public:
             cells[child_cell].leaf(cells[child_cell].nleaf) = atom_current;
             cells[child_cell].nleaf += 1;
 
-            if (cells[child_cell].nleaf >= n_crit){
+            if (cells[child_cell].nleaf > n_crit){
                 split_cell(child_cell, cells);
             }
         }
@@ -211,7 +211,7 @@ public:
                 int current_cell = 0;
                 int index_atom = iatoms[j] - 1;
 
-                while (all_cell.cells[current_cell].nleaf >= n_crit) {
+                while (all_cell.cells[current_cell].nleaf > n_crit) {
                     all_cell.cells[current_cell].nleaf += 1;
                     int octant = (t_crd(index_atom, 0) > all_cell.cells[current_cell].rc(0)) + \
                                  ((t_crd(index_atom, 1) > all_cell.cells[current_cell].rc(1)) << 1) + \
@@ -229,7 +229,7 @@ public:
                 all_cell.cells[current_cell].leaf(all_cell.cells[current_cell].nleaf) = iatoms[j];
                 all_cell.cells[current_cell].nleaf += 1;
 
-                if (all_cell.cells[current_cell].nleaf >= n_crit){
+                if (all_cell.cells[current_cell].nleaf > n_crit){
                     split_cell(current_cell, all_cell.cells);
                 }
             }
