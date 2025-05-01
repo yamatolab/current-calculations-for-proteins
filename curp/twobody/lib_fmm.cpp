@@ -337,10 +337,10 @@ public:
                 int c = i_inv;
                 int p = cells[i_inv].parent;
             
-                VectorXd p_potential = cells[p].multipole;
-                VectorXd c_potential = cells[c].multipole;
-                VectorXd c_rc = cells[c].rc;
-                VectorXd p_rc = cells[p].rc;
+                VectorXd& p_potential = cells[p].multipole;
+                VectorXd& c_potential = cells[c].multipole;
+                Vector3d& c_rc = cells[c].rc;
+                Vector3d& p_rc = cells[p].rc;
                 
                 double dx = p_rc(0) - c_rc(0);
                 double dy = p_rc(1) - c_rc(1);
