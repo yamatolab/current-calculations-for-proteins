@@ -379,7 +379,7 @@ public:
                 if (cells[p].nchild & (1 << octant)) {
                     
                     int c = cells[p].child(octant);
-                    Vector3d rc = cells[c].rc;
+                    Vector3d& rc = cells[c].rc;
                     Vector3d crd_source = t_crd.row(idx_source);
                     
                     double dx = crd_source(0) - rc(0);
