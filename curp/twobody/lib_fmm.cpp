@@ -317,7 +317,7 @@ public:
                     continue;
                 }
                 else {
-                    cells[j].multipole += cal_multipole(cells[j].multipole, cells[j].rc, cells[j].leaf);
+                    cells[j].multipole = cal_multipole(cells[j].multipole, cells[j].rc, cells[j].leaf);
                 
                 }
             }
