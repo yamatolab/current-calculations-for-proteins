@@ -385,7 +385,7 @@ public:
                     double dx = crd_source(0) - rc(0);
                     double dy = crd_source(1) - rc(1);
                     double dz = crd_source(2) - rc(2);
-                    double r = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
+                    double r = sqrt(dx * dx + dy * dy + dz * dz);
 
                     if (cells[c].r > theta * r){
                         cal_fiJ(num_source, c, cells);
