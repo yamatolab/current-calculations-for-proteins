@@ -482,7 +482,7 @@ public:
             }
         }
         else {
-            for (int l; l < cells[p].nleaf; l++){
+            for (int l = 0; l < cells[p].nleaf; l++){
                 int num_target = cells[p].leaf(l);
                 int idx_target = num_target - 1;
 
