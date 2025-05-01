@@ -494,7 +494,7 @@ public:
                 Vector3d crd_target = t_crd.row(idx_target);
 
                 Vector3d rij = crd_source - crd_target;
-                double r = sqrt(pow(rij(0), 2) + pow(rij(1), 2) + pow(rij(2), 2));
+                double r = sqrt(rij.dot(rij));
                 double inv_r = 1.0 / r;
                 double coeff = 332.05221729;
 
