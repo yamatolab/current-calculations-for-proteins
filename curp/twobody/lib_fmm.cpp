@@ -197,15 +197,21 @@ public:
 
         all_cells = std::vector<All_cells>();
         int group_size = gname_iatoms_pairs.size();
+        all_cells.reserve(group_size);
+
         for (int i = 0; i < group_size; i++){
             std::string group = gname_iatoms_pairs[i].first;
             std::vector<int> iatoms = gname_iatoms_pairs[i].second;
+            int num_iatoms = iatoms.size();
 
             // set root cell
             All_cells all_cell;
             all_cell.group = group;
             all_cell.cells = std::vector<Cell>();
-            all_cell.cells.push_back(Cell(n_crit));
+            all_cell.cells.reserve(num_iatoms);
+
+            std::vector<Cell>& cells = all_cell.cells;
+            cells.push_back(Cell(n_crit));
             calculate_rc(iatoms);
             all_cell.cells[0].rc = result_root.rc;
             all_cell.cells[0].r = result_root.r;
