@@ -60,6 +60,7 @@ public:
 
     // read trajectory
     void initialize(const MatrixXd& crd){
+        t_crd = MatrixXd::Zero(natom, 3);
         t_crd = crd;
         atomwise_i = std::vector<int>();
         atomwise_j = std::vector<int>();
