@@ -213,36 +213,34 @@ public:
             std::vector<Cell>& cells = all_cell.cells;
             cells.push_back(Cell(n_crit));
             calculate_rc(iatoms);
-            all_cell.cells[0].rc = result_root.rc;
-            all_cell.cells[0].r = result_root.r;
-
-            int num_iatoms = iatoms.size();
+            cells[0].rc = result_root.rc;
+            cells[0].r = result_root.r;
 
             for (int j = 0; j < num_iatoms; j++){
 
                 int current_cell = 0;
                 int index_atom = iatoms[j] - 1;
 
-                while (all_cell.cells[current_cell].nleaf > n_crit) {
-                    all_cell.cells[current_cell].nleaf += 1;
-                    int octant = (t_crd(index_atom, 0) > all_cell.cells[current_cell].rc(0)) + \
-                                 ((t_crd(index_atom, 1) > all_cell.cells[current_cell].rc(1)) << 1) + \
-                                 ((t_crd(index_atom, 2) > all_cell.cells[current_cell].rc(2)) << 2);
+                while (cells[current_cell].nleaf > n_crit) {
+                    cells[current_cell].nleaf += 1;
+                    int octant = (t_crd(index_atom, 0) > cells[current_cell].rc(0)) + \
+                                 ((t_crd(index_atom, 1) > cells[current_cell].rc(1)) << 1) + \
+                                 ((t_crd(index_atom, 2) > cells[current_cell].rc(2)) << 2);
 
                                  
-                    if (!(all_cell.cells[current_cell].nchild & (1 << octant))){
-                        add_child(octant, current_cell, all_cell.cells);
+                    if (!(cells[current_cell].nchild & (1 << octant))){
+                        add_child(octant, current_cell, cells);
                     }
 
-                    current_cell = all_cell.cells[current_cell].child(octant);
+                    current_cell = cells[current_cell].child(octant);
 
                 }
-            
-                all_cell.cells[current_cell].leaf(all_cell.cells[current_cell].nleaf) = iatoms[j];
-                all_cell.cells[current_cell].nleaf += 1;
 
-                if (all_cell.cells[current_cell].nleaf > n_crit){
-                    split_cell(current_cell, all_cell.cells);
+                cells[current_cell].leaf(cells[current_cell].nleaf) = iatoms[j];
+                cells[current_cell].nleaf += 1;
+
+                if (cells[current_cell].nleaf > n_crit){
+                    split_cell(current_cell, cells);
                 }
             }
             all_cells.push_back(all_cell);
