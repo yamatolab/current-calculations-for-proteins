@@ -163,26 +163,32 @@ public:
         cells[current_cell].nchild = (cells[current_cell].nchild | (1 << octant));
     };
 
-    void split_cell(int current_cell, std::vector<Cell>& cells){
-
-        for (int i = 0; i < cells[current_cell].nleaf; i++){
-
-            int atom_current = cells[current_cell].leaf(i);
-            int index_atom_current = atom_current - 1;
-            int octant = (t_crd(index_atom_current, 0) > cells[current_cell].rc(0)) + \
-                            ((t_crd(index_atom_current, 1) > cells[current_cell].rc(1)) << 1) + \
-                            ((t_crd(index_atom_current, 2) > cells[current_cell].rc(2)) << 2);
-
-            if  (!(cells[current_cell].nchild & (1 << octant))){
-                add_child(octant, current_cell, cells);
-
-            }
-            int child_cell = cells[current_cell].child(octant);
-            cells[child_cell].leaf(cells[child_cell].nleaf) = atom_current;
-            cells[child_cell].nleaf += 1;
-
-            if (cells[child_cell].nleaf > n_crit){
-                split_cell(child_cell, cells);
+    void split_cell(int current_cell, std::vector<Cell>& cells) {
+        std::queue<int> cell_queue;
+        cell_queue.push(current_cell);
+    
+        while (!cell_queue.empty()) {
+            int cell_index = cell_queue.front();
+            cell_queue.pop();
+    
+            for (int i = 0; i < cells[cell_index].nleaf; i++) {
+                int atom_current = cells[cell_index].leaf(i);
+                int index_atom_current = atom_current - 1;
+                int octant = (t_crd(index_atom_current, 0) > cells[cell_index].rc(0)) +
+                             ((t_crd(index_atom_current, 1) > cells[cell_index].rc(1)) << 1) +
+                             ((t_crd(index_atom_current, 2) > cells[cell_index].rc(2)) << 2);
+    
+                if (!(cells[cell_index].nchild & (1 << octant))) {
+                    add_child(octant, cell_index, cells);
+                }
+    
+                int child_cell = cells[cell_index].child(octant);
+                cells[child_cell].leaf(cells[child_cell].nleaf) = atom_current;
+                cells[child_cell].nleaf += 1;
+    
+                if (cells[child_cell].nleaf > n_crit) {
+                    cell_queue.push(child_cell);
+                }
             }
         }
     };
