@@ -169,7 +169,7 @@ public:
         std::queue<int> cell_queue;
         cell_queue.push(current_cell);
     
-        while (!cell_queue.empty()) {
+        while (!(cell_queue.empty())) {
             int cell_index = cell_queue.front();
             cell_queue.pop();
     
