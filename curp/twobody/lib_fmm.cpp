@@ -569,6 +569,9 @@ public:
                 if (num_target == num_source){
                     continue;
                 }
+                if (is_nonbonded_pair(num_source, num_target) == false){
+                    continue;
+                }
 
                 Vector3d crd_source = t_crd.row(idx_source);
                 Vector3d crd_target = t_crd.row(idx_target);
@@ -591,6 +594,28 @@ public:
                 atomwise_r.push_back(rij);
             }
         }
+    };
+
+
+    // check if the pairs are in the interact table
+    bool is_nonbonded_pair(int source, int target){
+
+        bool is_nonbond = false;
+        if (source > target){
+            std::swap(source, target);
+        }
+        for (const auto& table : interact_table){
+            for (const auto& tuple : table){
+                int i = std::get<0>(tuple);
+                int j_beg = std::get<1>(tuple);
+                int j_end = std::get<2>(tuple);
+                if (i == source && (j_beg <= target && target <= j_end)){
+                    is_nonbond = true;
+                    break;
+                }
+            }
+        }
+        return is_nonbond;
     };
 
     std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
