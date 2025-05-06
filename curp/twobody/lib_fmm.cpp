@@ -263,8 +263,24 @@ public:
             std::vector<Cell>& cells = all_cells[i].cells;
             int size_cells = cells.size();
             for (int j = 0; j < size_cells; j++){
-                std::cerr << "cell: " << j << " nleaf: " << cells[j].nleaf << " leaves: " << cells[j].leaf.transpose() << std::endl;
-                std::cerr << "nchild: " << cells[j].nchild << " child: " << cells[j].child.transpose() << std::endl;
+                std::cerr << "cell: " << j << " nleaf: " << cells[j].nleaf << " leaves: [" ;
+
+                for (size_t k = 0; k < cells[j].leaf.size(); ++k) {
+                    std::cerr << cells[j].child[k];
+                    if (k < cells[j].child.size() - 1) {
+                        std::cerr << ", ";
+                    }
+                };
+                std::cerr << "]" << std::endl;
+
+                std::cerr << "nchild: " << cells[j].nchild << " child: [" ;
+                for (size_t k = 0; k < cells[j].child.size(); ++k) {
+                    std::cerr << cells[j].child[k];
+                    if (k < cells[j].child.size() - 1) {
+                        std::cerr << ", ";
+                    }
+                }
+                std::cerr << "]" << std::endl;
                 std::cerr << "parent: " << cells[j].parent << std::endl;
                 std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
                 std::cerr << "r: " << cells[j].r << std::endl;
@@ -272,7 +288,15 @@ public:
                     std::cerr << "multipole: " << cells[j].multipole.transpose() << std::endl;
                 }
                 if (cells[j].nchild != 0 && cells[j].multipole[0] != 0){
-                    std::cerr << "error: multipole exists: " << cells[j].child.transpose() << std::endl;
+                    std::cerr << "error: multipole exists: [";
+
+                    for (size_t k = 0; k < cells[j].leaf.size(); ++k) {
+                        std::cerr << cells[j].child[k];
+                        if (k < cells[j].child.size() - 1) {
+                            std::cerr << ", ";
+                        }
+                    };
+                    std::cerr << "]" << std::endl;
                 }
                 std::cerr << "   " << std::endl;
             }
