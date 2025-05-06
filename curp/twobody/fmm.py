@@ -56,11 +56,11 @@ class FMMCellMaker(FMMCalculatorBase):
     def make_cells(self):
         
         # build tree
-        all_cells = self.build_all_tree(self.get_gname_iatoms_pairs(), self.get_crd(), self.get_n_crit())
+        all_cells = self.build_all_tree()
         
         return all_cells
     
-    def build_all_tree(self, group_atoms, crd, n_crit):
+    def build_all_tree(self):
         return self.get_mod_fmm().setup_all_cells()
 
 ###################################### Calculator ##########################################################################
