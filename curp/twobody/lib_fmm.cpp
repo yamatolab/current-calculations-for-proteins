@@ -453,7 +453,7 @@ public:
                 
                 if (cells[p].nchild & (1 << octant)) {
                     
-                    int c = cells[p].child(octant);
+                    int c = cells[p].child[octant];
                     Vector3d& rc = cells[c].rc;
                     Vector3d crd_source = t_crd.row(idx_source);
                     
@@ -558,7 +558,7 @@ public:
         }
         else {
             for (int l = 0; l < cells[p].nleaf; l++){
-                int num_target = cells[p].leaf(l);
+                int num_target = cells[p].leaf[l];
                 int idx_target = num_target - 1;
 
                 if (num_target == num_source){
