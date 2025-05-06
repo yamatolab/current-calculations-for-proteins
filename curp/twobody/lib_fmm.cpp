@@ -404,6 +404,44 @@ public:
         // std::cerr << "multipole: " << all_cells[0].cells[0].multipole.transpose() << std::endl;
     };
 
+    // debug function(print multipoles)
+    void print_multipoles(){
+        int size_all_cells = all_cells.size();
+        for (int i = 0; i < size_all_cells; i++){
+            std::cerr << "group: " << all_cells[i].group << std::endl;
+            std::vector<Cell>& cells = all_cells[i].cells;
+            int size_cells = cells.size();
+            for (int j = 0; j < size_cells; j++){
+                std::cerr << "cell: " << j << " nleaf: " << cells[j].nleaf << " leaves: [" ;
+
+                for (size_t k = 0; k < cells[j].leaf.size(); ++k) {
+                    std::cerr << cells[j].child[k];
+                    if (k < cells[j].child.size() - 1) {
+                        std::cerr << ", ";
+                    }
+                };
+                std::cerr << "]" << std::endl;
+
+                std::cerr << "nchild: " << cells[j].nchild << " child: [" ;
+
+                for (size_t k = 0; k < cells[j].child.size(); ++k) {
+                    std::cerr << cells[j].child[k];
+                    if (k < cells[j].child.size() - 1) {
+                        std::cerr << ", ";
+                    }
+                };
+                std::cerr << "]" << std::endl;
+
+                std::cerr << "parent: " << cells[j].parent << std::endl;
+                std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
+                std::cerr << "r: " << cells[j].r << std::endl;
+                if (cells[j].multipole(0) != 0){
+                    std::cerr << "multipole: " << cells[j].multipole.transpose() << std::endl;
+                }
+                std::cerr << "   " << std::endl;
+            }
+        }
+    };
 
     void cal_fiJ(int num_source, int p, std::vector<Cell>& cells){
 
