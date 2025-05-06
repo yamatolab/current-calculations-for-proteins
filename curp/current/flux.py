@@ -456,10 +456,14 @@ class HeatFlux:
         #                  .format(type(atomwise["atomwise_i"]), type(atomwise["atomwise_j"]),
         #                          type(atomwise["atomwise_f"][0]), type(atomwise["atomwise_r"][0])))
         
-        m_non_fmm.cal_hflux_atomwise(atomwise["atomwise_i"], atomwise["atomwise_j"],
-                                     atomwise["atomwise_f"], atomwise["atomwise_r"])
-        m_non_fmm.cal_hflux_cellwise(cellwise["cellwise_i"], cellwise["cellwise_J"],
-                                     cellwise["cellwise_f"], cellwise["cellwise_r"])
+        # print(cellwise["cellwise_f"])
+        if len(atomwise["atomwise_f"]) != 0:
+            m_non_fmm.cal_hflux_atomwise(atomwise["atomwise_i"], atomwise["atomwise_j"],
+                                         atomwise["atomwise_f"], atomwise["atomwise_r"])
+        
+        if len(cellwise["cellwise_f"]) != 0:
+            m_non_fmm.cal_hflux_cellwise(cellwise["cellwise_i"], cellwise["cellwise_J"],
+                                         cellwise["cellwise_f"], cellwise["cellwise_r"])
         
         hflux_grp = lib_flux_fmm.hflux_to_numpy(m_non_fmm.hflux_ij) # convert to numpy array
         hflux_atm = None
