@@ -161,7 +161,7 @@ public:
         cells[new_child].rc(2) = cells[current_cell].rc(2) + cells[new_child].r * ((octant & 4) / 2 - 1);
 
         cells[new_child].parent = current_cell;
-        cells[current_cell].child(octant) = new_child;
+        cells[current_cell].child[octant] = new_child;
         cells[current_cell].nchild = (cells[current_cell].nchild | (1 << octant));
     };
 
