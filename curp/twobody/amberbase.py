@@ -52,7 +52,7 @@ class TwoBodyForceBase:
         # choose coulomb method
         if self.__setting.curp.coulomb_method == 'fmm':
             self.__coulomb_func = self.cal_coulomb_fmm
-            self._setup_coulomb_fmm(gname_iatoms_pairs, gpair_table)
+            self._setup_coulomb_fmm(self.__interact_table, gname_iatoms_pairs, gpair_table)
         else: 
             self.__coulomb_func = self.cal_coulomb
             self._setup_coulomb()
@@ -122,12 +122,13 @@ class TwoBodyForceBase:
         coulomb.charges = info['charges']
         coulomb.cutoff_length = self.__setting.curp.coulomb_cutoff_length
         
-    def _setup_coulomb_fmm(self, gname_iatoms_pairs, gpair_table):
+    def _setup_coulomb_fmm(self, interact_table, gname_iatoms_pairs, gpair_table):
         """Prepare the parameter for the coulomb calculation using FMM method."""
         from . import fmm
         info = self.__tpl.get_coulomb_info()
         charges = info['charges']
-        self.__fmm_base = fmm.FMMCellCalculator(self.__setting, self.__natom, charges, gname_iatoms_pairs, gpair_table)
+        self.__fmm_base = fmm.FMMCellCalculator(self.__setting, self.__natom, charges,
+                                                interact_table, gname_iatoms_pairs, gpair_table)
         
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
