@@ -673,7 +673,7 @@ public:
 
                     for (int k = 0; k < cells[j].nleaf; k++){
 
-                        int atom = cells[j].leaf(k);
+                        int atom = cells[j].leaf[k];
                         if (atom <= 0){
                             std::cerr << "atom=0 " << atom << std::endl;
                             continue;
@@ -732,7 +732,8 @@ public:
                 }
 
                 // check if the number of atoms in the cell is correct
-                if (cells[j].nleaf != atoms_inc.size()){
+                int atoms_inc_size = atoms_inc.size();
+                if (cells[j].nleaf != atoms_inc_size){
                     std::cerr << "error: cell " << j << std::endl;
                     std::cerr << "num of leaves: " << cells[j].nleaf << std::endl;
                     std::cerr << "atoms_included: " << atoms_inc.size() << std::endl;
@@ -742,12 +743,21 @@ public:
                 if (cells[j].nchild == 0){
                     for (int k = 0; k < cells[j].nleaf; k++){
 
-                        int atom_k = cells[j].leaf(k);
+                        int atom_k = cells[j].leaf[k];
                         if (atom_k != atoms_inc[k]){
                             std::cerr << "error: cell " << j << std::endl;
                             std::cerr << "atom(in all_cells): " << atom_k << std::endl;
                             std::cerr << "atoms_inc: " << atoms_inc[k] << std::endl;
-                            std::cerr << "atom_k: " << cells[j].leaf.transpose() << std::endl;
+                            std::cerr << "atom_k: [";
+
+                            for (size_t l = 0; l < cells[j].leaf.size(); ++l) {
+                                std::cerr << cells[j].leaf[l];
+                                if (l < cells[j].leaf.size() - 1) {
+                                    std::cerr << ", ";
+                                }
+                            };
+                            std::cerr << "]" << std::endl;
+
                             std::cerr << "atoms_inc: " ;
                             for (const auto& atom : atoms_inc) {
                                 std::cerr << atom << " ";
@@ -759,12 +769,21 @@ public:
                 }
                 else {
                     for (int k = 0; k < n_crit; k++){
-                        int atom_k = cells[j].leaf(k);
+                        int atom_k = cells[j].leaf[k];
                         if (atom_k != atoms_inc[k]){
                             std::cerr << "error: cell " << j << std::endl;
                             std::cerr << "atom(in all_cells): " << atom_k << std::endl;
                             std::cerr << "atoms_inc: " << atoms_inc[k] << std::endl;
-                            std::cerr << "atom_k: " << cells[j].leaf.transpose() << std::endl;
+                            std::cerr << "atom_k: [";
+
+                            for (size_t l = 0; l < cells[j].leaf.size(); ++l) {
+                                std::cerr << cells[j].leaf[l];
+                                if (l < cells[j].leaf.size() - 1) {
+                                    std::cerr << ", ";
+                                }
+                            };
+                            std::cerr << "]" << std::endl;
+
                             std::cerr << "atoms_inc: " ;
                             for (const auto& atom : atoms_inc) {
                                 std::cerr << atom << " ";
@@ -778,10 +797,10 @@ public:
                 // check if the parent and child are correct
                 if (cells[j].nchild != 0){
                     for (int k = 0; k < 8; k++){
-                        if (cells[j].child(k) == 0){
+                        if (cells[j].child[k] == 0){
                             continue;
                         }
-                        int child = cells[j].child(k);
+                        int child = cells[j].child[k];
                         if (cells[child].parent != j){
                             std::cerr << "error: cell " << j << std::endl;
                             std::cerr << "child: " << child << std::endl;
