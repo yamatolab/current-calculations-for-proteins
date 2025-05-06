@@ -235,11 +235,11 @@ public:
                         add_child(octant, current_cell, cells);
                     }
 
-                    current_cell = cells[current_cell].child(octant);
+                    current_cell = cells[current_cell].child[octant];
 
                 }
 
-                cells[current_cell].leaf(cells[current_cell].nleaf) = iatoms[j];
+                cells[current_cell].leaf[cells[current_cell].nleaf] = iatoms[j];
                 cells[current_cell].nleaf += 1;
 
                 if (cells[current_cell].nleaf > n_crit){
