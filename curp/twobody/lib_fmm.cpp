@@ -177,8 +177,8 @@ public:
             for (int i = 0; i < cells[cell_index].nleaf; i++) {
                 int atom_current = cells[cell_index].leaf[i];
                 int index_atom_current = atom_current - 1;
-                int octant = (t_crd(index_atom_current, 0) > cells[cell_index].rc(0)) +
-                             ((t_crd(index_atom_current, 1) > cells[cell_index].rc(1)) << 1) +
+                int octant = (t_crd(index_atom_current, 0) > cells[cell_index].rc(0)) + \
+                             ((t_crd(index_atom_current, 1) > cells[cell_index].rc(1)) << 1) + \
                              ((t_crd(index_atom_current, 2) > cells[cell_index].rc(2)) << 2);
     
                 if (!(cells[cell_index].nchild & (1 << octant))) {
