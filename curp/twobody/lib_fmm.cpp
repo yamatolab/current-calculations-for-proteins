@@ -310,12 +310,12 @@ public:
     };    
 
     // calculate multipole
-    VectorXd cal_multipole(VectorXd& multipole, Vector3d& rc, VectorXi& atoms){
+    VectorXd cal_multipole(VectorXd& multipole, Vector3d& rc, std::vector<int>& atoms){
         
         int size_atoms = atoms.size();
         for (int i = 0; i < size_atoms; i++){
 
-            int index_atom = atoms(i) - 1;
+            int index_atom = atoms[i] - 1;
 
             Vector3d crd_atom = t_crd.row(index_atom);
             double dx = rc(0) - crd_atom(0);
