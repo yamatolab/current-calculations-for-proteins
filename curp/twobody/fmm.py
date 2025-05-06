@@ -76,16 +76,7 @@ class FMMCellCalculator(FMMCellMaker):
         self.__mod_fmm.get_all_cells(all_cells)
         
         self.__mod_fmm.cal_force_fmm()
-        
-        # # get multipole arrays
-        # self.__mod_fmm.cal_p()
-        
-        # # upward sweep
-        # self.__mod_fmm.cal_M2M()
-
-        # # evaluate potential
-        # self.__mod_fmm.cal_force()
-        
+                
         atomwise = dict(atomwise_i = self.__mod_fmm.atomwise_i,
                         atomwise_j = self.__mod_fmm.atomwise_j, 
                         atomwise_f = self.__mod_fmm.atomwise_f,
