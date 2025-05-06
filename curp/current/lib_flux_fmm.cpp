@@ -62,9 +62,10 @@ public:
     };
 
     void init_cal(const MatrixXd& vel){
-
+        t_vel = MatrixXd::Zero(natom, 3);
         t_vel = vel;
         if (flag_heat == true){
+            hflux_ij.clear();
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
         }
         else if (flag_energy == true){
