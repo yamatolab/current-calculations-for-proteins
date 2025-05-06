@@ -6,7 +6,7 @@ from curp.twobody import lib_fmm
 
 class FMMCalculatorBase:
     
-    def __init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table):
+    def __init__(self, setting, natom, charges, interact_table, gname_iatoms_pairs, gpair_table):
         self.__n_crit = setting.curp.coulomb_fmm_cell_contains
         self.__theta = setting.curp.coulomb_fmm_direct_parm
         self.__gname_iatoms_pairs = gname_iatoms_pairs
@@ -22,7 +22,7 @@ class FMMCalculatorBase:
         
         self.__mod_fmm = lib_fmm.cal_fmm()
         self.__mod_fmm.setup(int(natom), int(self.__n_crit), float(self.__theta),
-                            charges, self.__gname_iatoms_pairs, self.__gpair_table)
+                            charges, interact_table, self.__gname_iatoms_pairs, self.__gpair_table)
          
     def initialize(self, crd):
         self.__crd = crd
@@ -50,8 +50,8 @@ class FMMCalculatorBase:
 
 class FMMCellMaker(FMMCalculatorBase):
     
-    def __init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table):
-        FMMCalculatorBase.__init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table)
+    def __init__(self, setting, natom, charges, interact_table, gname_iatoms_pairs, gpair_table):
+        FMMCalculatorBase.__init__(self, setting, natom, charges, interact_table, gname_iatoms_pairs, gpair_table)
     
     def make_cells(self):
         
@@ -67,8 +67,8 @@ class FMMCellMaker(FMMCalculatorBase):
 
 class FMMCellCalculator(FMMCellMaker):
 
-    def __init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table):
-        FMMCellMaker.__init__(self, setting, natom, charges, gname_iatoms_pairs, gpair_table)
+    def __init__(self, setting, natom, charges, interact_table, gname_iatoms_pairs, gpair_table):
+        FMMCellMaker.__init__(self, setting, natom, charges, interact_table, gname_iatoms_pairs, gpair_table)
         self.__mod_fmm = self.get_mod_fmm()
         
     def cal_fmm(self, all_cells):
