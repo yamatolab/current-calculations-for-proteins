@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <tuple>
 #include <cmath>
 #include <algorithm>
 #include <queue>
@@ -21,6 +22,7 @@ public:
     std::vector<double> charges;
     MatrixXd t_crd;
 
+    std::vector<std::vector<std::tuple<int, int, int>>> interact_table;
     std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table_fmm;
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;
 
@@ -42,18 +44,21 @@ public:
         theta(0.0),
         charges(std::vector<double>()),
         t_crd(MatrixXd::Zero(natom, 3)),
+        interact_table(std::vector<std::vector<std::tuple<int, int, int>>>()),
         gpair_table_fmm(std::vector<std::pair<std::string, std::vector<std::string>>>()),
         gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>())
     {};
 
 
     void setup(const int input_natom, const int& input_n_crit, const double& input_theta, const std::vector<double>& input_charges, \
+        const std::vector<std::vector<std::tuple<int, int, int>>>& input_interact_table, \
         const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
         const std::vector<std::pair<std::string, std::vector<std::string>>>& input_gpair_table_fmm){
         natom  = input_natom;
         n_crit = input_n_crit;
         theta  = input_theta;
         charges = input_charges;
+        interact_table = input_interact_table;
         gname_iatoms_pairs = input_gname_iatoms_pairs;
         gpair_table_fmm = input_gpair_table_fmm;
     };
