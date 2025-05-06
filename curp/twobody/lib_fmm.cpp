@@ -30,7 +30,7 @@ public:
     std::vector<Vector3d> atomwise_r;
 
     std::vector<int> cellwise_i;
-    std::vector<VectorXi> cellwise_J;
+    std::vector<std::vector<int>> cellwise_J;
     std::vector<Vector3d> cellwise_f;
     std::vector<Vector3d> cellwise_r;
 
@@ -67,7 +67,7 @@ public:
         atomwise_f = std::vector<Vector3d>();
         atomwise_r = std::vector<Vector3d>();
         cellwise_i = std::vector<int>();
-        cellwise_J = std::vector<VectorXi>();
+        cellwise_J = std::vector<std::vector<int>>();
         cellwise_f = std::vector<Vector3d>();
         cellwise_r = std::vector<Vector3d>();
 
@@ -76,20 +76,20 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     struct Cell {
-        int       nleaf;
-        VectorXi  leaf;
-        int       nchild;
-        VectorXi  child;
-        int       parent;
-        Vector3d  rc;
-        double    r;
-        VectorXd  multipole;
+        int               nleaf;
+        std::vector<int>  leaf;
+        int               nchild;
+        std::vector<int>  child;
+        int               parent;
+        Vector3d          rc;
+        double            r;
+        VectorXd          multipole;
 
         Cell(int n_crit):
             nleaf(0),                               // number of atoms(leaf) in the cell
-            leaf(VectorXi::Zero(n_crit)),           // index of atoms in the cell
+            leaf(std::vector<int>(n_crit, 0)),      // index of atoms in the cell
             nchild(0),                              // number of child cells
-            child(VectorXi::Zero(8)),               // index of 8 child cells
+            child(std::vector<int>(8, 0)),          // index of 8 child cells
             parent(0),                              // index of parent cell
             rc(Vector3d::Zero()),                   // center of the cell
             r(0.0),                                 // radius of the cell
