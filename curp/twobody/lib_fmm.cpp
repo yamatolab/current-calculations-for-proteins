@@ -871,6 +871,7 @@ PYBIND11_MODULE(lib_fmm, m){
         .def_readwrite("theta", &cal_fmm::theta)
         .def_readwrite("charges", &cal_fmm::charges)
         .def_readwrite("t_crd", &cal_fmm::t_crd)
+        .def_readwrite("interact_table", &cal_fmm::interact_table)
         .def_readwrite("gpair_table_fmm", &cal_fmm::gpair_table_fmm)
         .def_readwrite("gname_iatoms_pairs", &cal_fmm::gname_iatoms_pairs)
         .def_readwrite("atomwise_i", &cal_fmm::atomwise_i)
