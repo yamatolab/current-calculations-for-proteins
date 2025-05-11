@@ -41,6 +41,7 @@ class CalculatorBase(TimeStore):
         # for group
         self.__gname_iatoms_pairs = gname_iatoms_pairs
         self.__gnames = [gname for gname, iatoms in gname_iatoms_pairs]
+        self.__gpair_table = gpair_table
 
         # interaction table
         self.__interact_table = [ np.array(t) for t in interact_table]
@@ -70,6 +71,9 @@ class CalculatorBase(TimeStore):
     
     def get_groupnames(self):
         return self.__gnames
+    
+    def get_gpair_table(self):
+        return self.__gpair_table
 
     def get_iatm_to_igrp(self):
         return self.__iatm_to_igrp
