@@ -33,6 +33,8 @@ public:
 
     std::vector<std::vector<Vector3d>> hflux_ij;
     MatrixXd eflux_ij;
+    bool flag_heat;
+    bool flag_energy;
 
     std::function<void(Vector3d&, Vector3d&, Vector3d&, int, int)> cal_flux_atomwise;
     std::function<void(Vector3d&, Vector3d&, Vector3d&, int, int)> cal_flux_cellwise;
@@ -51,7 +53,9 @@ public:
         gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
         iatom_to_igroup(VectorXi::Zero(0)),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
-        eflux_ij(MatrixXd::Zero(0, 0))
+        eflux_ij(MatrixXd::Zero(0, 0)),
+        flag_heat(false),
+        flag_energy(false)
     {};
 
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
@@ -78,6 +82,7 @@ public:
     void set_flux(const std::string& flux_type){
 
         if (flux_type == "heat"){
+            flag_heat = true;
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             cal_flux_cellwise = [this](Vector3d& fiJ, Vector3d& vi, Vector3d& r, int igrp, int Jgrp) {
                 cal_hflux_cellwise(fiJ, vi, r, igrp, Jgrp);
@@ -87,6 +92,7 @@ public:
             };
         }
         else if (flux_type == "energy"){
+            flag_energy = true;
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
             cal_flux_cellwise = [this](Vector3d& fiJ, Vector3d& vi, Vector3d& r, int igrp, int Jgrp) {
                 cal_eflux_cellwise(fiJ, vi, r, igrp, Jgrp);
