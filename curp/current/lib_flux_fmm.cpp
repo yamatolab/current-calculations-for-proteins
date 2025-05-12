@@ -114,6 +114,13 @@ public:
         t_vel = MatrixXd::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
+        if (flag_heat=true){
+            hflux_ij.clear();
+            hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+        }
+        else if (flag_energy=true){
+            eflux_ij = MatrixXd::Zero(ngrp, ngrp);
+        }
         int t1 = time_now();
         std::cerr << "initialize time: " << t1 - t0 << " seconds" << std::endl;
 
