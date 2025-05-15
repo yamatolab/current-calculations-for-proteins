@@ -138,7 +138,7 @@ class EnergyFluxCalculator(base.FluxCalculator):
         all_cells = self.__lib_fmm.setup_all_cells()
         self.__lib_fmm.cal_coulomb_flux_fmm(all_cells)
         flux_atm = None
-        flux_grp = lib_flux_fmm.hflux_to_numpy(self.__lib_fmm.hflux_ij) # convert to numpy array
+        flux_grp = self.__lib_fmm.eflux_ij
 
         t1 = time.time()
 
@@ -287,6 +287,8 @@ class HeatFluxCalculator(base.FluxCalculator):
                     self.get_iatm_to_igrp()
                     )
             self.__lib_fmm.set_flux("heat")
+            logger.info("charges: ",charges[1:10])
+
         
     def check_fmm_setting(self, setting):
         """Check setting parameters for FMM calculation."""
@@ -360,6 +362,9 @@ class HeatFluxCalculator(base.FluxCalculator):
         t1 = time.time()
 
         self.store_time('coulomb flux(fmm)' , t1 - t0)
+        logger.info("crd: ", crd[0:10])
+        logger.info("vel: ", vel[0:10])
+
 
         return flux_atm, flux_grp
 
