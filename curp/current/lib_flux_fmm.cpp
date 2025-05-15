@@ -492,187 +492,236 @@ public:
         int t0 = time_now();
         int idx_source = num_source - 1;
         Vector3d vi = t_vel.row(idx_source);
-        // std::cerr << "start calculating fiJ" << std::endl;
-        // std::cerr << "num_source: " << num_source << std::endl;
-        // std::cerr << "p: " << p << std::endl;
-        // std::cerr << "nleaf: " << cells[p].nleaf << std::endl;
 
-        if (cells[p].nleaf > n_crit){
+        std::queue<int> cell_queue;
+        cell_queue.push(p);
 
-            for (int octant = 0; octant < 8; octant++){
-                
-                if (cells[p].nchild & (1 << octant)) {
+        while (!cell_queue.empty()){
+            int p = cell_queue.front();
+            cell_queue.pop();
+        
+            if (cells[p].nleaf > n_crit){
+
+                for (int octant = 0; octant < 8; octant++){
                     
-                    int t1 = time_now();
-                    int c = cells[p].child[octant];
-                    Vector3d& rc = cells[c].rc;
-                    Vector3d crd_source = t_crd.row(idx_source);
-                    
-                    double dx = crd_source(0) - rc(0);
-                    double dy = crd_source(1) - rc(1);
-                    double dz = crd_source(2) - rc(2);
-                    double r = sqrt(dx * dx + dy * dy + dz * dz);
-                    int t2 = time_now();
-                    // std::cerr << "num_source: "<< num_source << " cell: " << p << " child: " << c <<  std::endl;
-                    // std::cerr << "crd_source - rc cal time: " << t2-t1 << std::endl;
+                    if (cells[p].nchild & (1 << octant)) {
+                        
+                        int t1 = time_now();
+                        int c = cells[p].child[octant];
+                        Vector3d& rc = cells[c].rc;
+                        Vector3d crd_source = t_crd.row(idx_source);
+                        
+                        double dx = crd_source(0) - rc(0);
+                        double dy = crd_source(1) - rc(1);
+                        double dz = crd_source(2) - rc(2);
+                        double r = sqrt(dx * dx + dy * dy + dz * dz);
+                        int t2 = time_now();
+                        // std::cerr << "num_source: "<< num_source << " cell: " << p << " child: " << c <<  std::endl;
+                        // std::cerr << "crd_source - rc cal time: " << t2-t1 << std::endl;
 
-                    if (cells[c].r > theta * r){
-                        // std::cerr << "kaiki to " << c << std::endl;
-                        cal_fiJ(num_source, c, cells);
+                        if (cells[c].r > theta * r){
+                            // std::cerr << "kaiki to " << c << std::endl;
+                            cell_queue.push(c);
+                        }
+                        else{
+                            int t3 = time_now();
+                            // for (int l = 0; l < cells[c].nleaf; l++){
+                            //     int num_target = cells[c].leaf[l];
+                                
+                            //     if (is_nonbonded_pair(num_source, num_target) == false){
+                            //         std::cerr << "ValueError: Bonded pair in fmm" << std::endl;
+                            //         std::cerr << "num_source: " << num_source << "num_target: " << num_target << std::endl;
+                            //         std::cerr << "Please change the parameter of fmm." << std::endl;
+                            //         std::exit(1);
+                            //     }
+                            // }
+                            VectorXd bJx = VectorXd::Zero(10);
+                            VectorXd bJy = VectorXd::Zero(10);
+                            VectorXd bJz = VectorXd::Zero(10);
+
+                            double inv_r = 1.0 / r;
+                            double r2 = inv_r * inv_r;
+                            double r3 = r2 * inv_r;
+                            double r5 = r3 * r2;
+                            double r7 = r5 * r2;
+
+                            double dx2 = dx * dx;
+                            double dy2 = dy * dy;
+                            double dz2 = dz * dz;
+
+                            double dxdy = dx * dy;
+                            double dydz = dy * dz;
+                            double dzdx = dz * dx;
+
+                            double dxr5 = 3 * dx * r5;
+                            double dyr5 = 3 * dy * r5;
+                            double dzr5 = 3 * dz * r5;
+
+                            double dxdydz = 15 * dxdy * dz * r7;
+                            double dx2dy  = 15 * dx2 * dy * r7;
+                            double dy2dz  = 15 * dy2 * dz * r7;
+                            double dz2dx  = 15 * dz2 * dx * r7;
+                            double dy2dx  = 15 * dy2 * dx * r7;
+                            double dz2dy  = 15 * dz2 * dy * r7;
+                            double dx2dz  = 15 * dx2 * dz * r7;
+
+
+                            // calculate bJx
+                            bJx(0) = -dx * r3;                          // -dx/r^3
+                            bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
+                            bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
+                            bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
+                            bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
+                            bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
+                            bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
+                            bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dxdy/r^7
+                            bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
+                            bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+
+                            // calculate bJy
+                            bJy(0) = -dy * r3;                          // -dy/r^3
+                            bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
+                            bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
+                            bJy(3) = 3 * dydz * r5;                     // 0       + 3dzdy/r^5
+                            bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
+                            bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
+                            bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
+                            bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
+                            bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydzdy/r^7
+                            bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
+
+                            // calculate bJz
+                            bJz(0) = -dz * r3;                          // -dz/r^3
+                            bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
+                            bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
+                            bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
+                            bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+                            bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
+                            bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
+                            bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
+                            bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
+                            bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
+
+                            int t4 = time_now();
+
+                            // calculate potential
+                            VectorXd& potential = cells[c].multipole;
+                            double charge = charges[idx_source];
+                            double coeff = 332.05221729;
+                            VectorXd pot = potential * charge * coeff;
+
+                            double fx = pot.dot(bJx);
+                            double fy = pot.dot(bJy);
+                            double fz = pot.dot(bJz);
+                            Vector3d f = Vector3d(fx, fy, fz);
+                            Vector3d riJ = Vector3d(dx, dy, dz);
+
+                            int igrp = iatom_to_igroup(idx_source);
+                            int Jgrp = iatom_to_igroup(cells[c].leaf[0] - 1);
+                            // VectorXd vJ = VectorXd::Zero(3);
+                            // for (int l = 0; l < cells[c].nleaf; l++){
+                            //     int num_leaf = cells[c].leaf[l];
+                            //     if (num_leaf == num_source){
+                            //         continue;
+                            //     }
+                            //     vJ += t_vel.row(num_leaf - 1);
+
+                            // }
+                            // vi = vi + vJ;
+
+                            // std::cerr << "cellwise calculation " << std::endl;
+                            // std::cerr << "num_source: " << num_source << std::endl;
+                            // std::cerr << "num_target: [";
+                            // for (size_t l = 0; l < cells[c].leaf.size(); ++l) {
+                            //     std::cerr << cells[c].leaf[l];
+                            //     if (l < cells[c].leaf.size() - 1) {
+                            //         std::cerr << ", ";
+                            //     }
+                            // };
+
+                            // std::cerr << "]" << std::endl;
+                            // std::cerr << "crd_source: " << crd_source.transpose() << std::endl;
+                            // std::cerr << "crd_target: " << rc.transpose() << std::endl;
+                            // std::cerr << "riJ: " << riJ.transpose() << std::endl;
+                            // std::cerr << "r: " << r << std::endl;
+                            // std::cerr << "bJx: " << bJx.transpose() << std::endl;
+                            // std::cerr << "bJy: " << bJy.transpose() << std::endl;
+                            // std::cerr << "bJz: " << bJz.transpose() << std::endl;
+                            // std::cerr << "potential: " << potential.transpose() << std::endl;
+                            // std::cerr << "charge: " << charge << std::endl;
+                            // std::cerr << "pot: " << pot.transpose() << std::endl;
+                            // std::cerr << "f: " << f.transpose() << std::endl;
+                            // std::cerr << "vi: " << vi.transpose() << std::endl;
+                            // std::cerr << "riJ: " << riJ.transpose() << std::endl;
+                            // std::cerr << "igrp: " << igrp << std::endl;
+                            // std::cerr << "Jgrp: " << Jgrp << std::endl;
+                            // // std::cerr << "vJ: " << vJ.transpose() << std::endl;
+                            // std::cerr << "   " << std::endl;
+                            cal_flux_cellwise(f, vi, riJ, igrp, Jgrp);
+
+                            int t5 = time_now();
+                            // std::cerr << "cal_fiJ prep time: " << t4 - t3 << std::endl;
+                            // std::cerr << "cal_fiJ time: " << t5 - t4 << std::endl;
+                        }      
                     }
-                    else{
-                        int t3 = time_now();
-                        // for (int l = 0; l < cells[c].nleaf; l++){
-                        //     int num_target = cells[c].leaf[l];
-                            
-                        //     if (is_nonbonded_pair(num_source, num_target) == false){
-                        //         std::cerr << "ValueError: Bonded pair in fmm" << std::endl;
-                        //         std::cerr << "num_source: " << num_source << "num_target: " << num_target << std::endl;
-                        //         std::cerr << "Please change the parameter of fmm." << std::endl;
-                        //         std::exit(1);
-                        //     }
-                        // }
-                        VectorXd bJx = VectorXd::Zero(10);
-                        VectorXd bJy = VectorXd::Zero(10);
-                        VectorXd bJz = VectorXd::Zero(10);
-
-                        double inv_r = 1.0 / r;
-                        double r2 = inv_r * inv_r;
-                        double r3 = r2 * inv_r;
-                        double r5 = r3 * r2;
-                        double r7 = r5 * r2;
-
-                        double dx2 = dx * dx;
-                        double dy2 = dy * dy;
-                        double dz2 = dz * dz;
-
-                        double dxdy = dx * dy;
-                        double dydz = dy * dz;
-                        double dzdx = dz * dx;
-
-                        double dxr5 = 3 * dx * r5;
-                        double dyr5 = 3 * dy * r5;
-                        double dzr5 = 3 * dz * r5;
-
-                        double dxdydz = 15 * dxdy * dz * r7;
-                        double dx2dy  = 15 * dx2 * dy * r7;
-                        double dy2dz  = 15 * dy2 * dz * r7;
-                        double dz2dx  = 15 * dz2 * dx * r7;
-                        double dy2dx  = 15 * dy2 * dx * r7;
-                        double dz2dy  = 15 * dz2 * dy * r7;
-                        double dx2dz  = 15 * dx2 * dz * r7;
-
-
-                        // calculate bJx
-                        bJx(0) = -dx * r3;                          // -dx/r^3
-                        bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
-                        bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
-                        bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
-                        bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
-                        bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
-                        bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
-                        bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dxdy/r^7
-                        bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
-                        bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-
-                        // calculate bJy
-                        bJy(0) = -dy * r3;                          // -dy/r^3
-                        bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
-                        bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
-                        bJy(3) = 3 * dydz * r5;                     // 0       + 3dzdy/r^5
-                        bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
-                        bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
-                        bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
-                        bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
-                        bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydz^2/r^7
-                        bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
-
-                        // calculate bJz
-                        bJz(0) = -dz * r3;                          // -dz/r^3
-                        bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
-                        bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
-                        bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
-                        bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-                        bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
-                        bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
-                        bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
-                        bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
-                        bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
-
-                        int t4 = time_now();
-
-                        // calculate potential
-                        VectorXd potential = cells[c].multipole;
-                        double charge = charges[idx_source];
-                        potential = potential * charge;
-
-                        double fx = potential.dot(bJx);
-                        double fy = potential.dot(bJy);
-                        double fz = potential.dot(bJz);
-                        Vector3d f = Vector3d(fx, fy, fz);
-                        Vector3d rij = Vector3d(dx, dy, dz);
-
-                        int igrp = iatom_to_igroup(idx_source);
-                        int Jgrp = iatom_to_igroup(cells[c].leaf[0] - 1);
-                        cal_flux_cellwise(f, vi, rij, igrp, Jgrp);
-
-                        int t5 = time_now();
-                        // std::cerr << "cal_fiJ prep time: " << t4 - t3 << std::endl;
-                        // std::cerr << "cal_fiJ time: " << t5 - t4 << std::endl;
-                    }      
                 }
             }
-        }
-        else {
-            int t6 = time_now();
-            for (int l = 0; l < cells[p].nleaf; l++){
-                int num_target = cells[p].leaf[l];
-                int idx_target = num_target - 1;
+            else {
+                int t6 = time_now();
+                for (int l = 0; l < cells[p].nleaf; l++){
+                    int num_target = cells[p].leaf[l];
+                    int idx_target = num_target - 1;
 
-                if (num_target == num_source){
-                    continue;
-                }
-                if (is_nonbonded_pair(num_source, num_target) == false){
-                    continue;
-                }
+                    if (num_target == num_source){
+                        continue;
+                    }
+                    if (is_nonbonded_pair(num_source, num_target) == false){
+                        continue;
+                    }
 
-                Vector3d crd_source = t_crd.row(idx_source);
-                Vector3d crd_target = t_crd.row(idx_target);
-                Vector3d rij = crd_source - crd_target;
+                    Vector3d crd_source = t_crd.row(idx_source);
+                    Vector3d crd_target = t_crd.row(idx_target);
+                    Vector3d rij = crd_source - crd_target;
 
-                Vector3d vj = t_vel.row(idx_target);
-                Vector3d vij = vi + vj;
+                    Vector3d vj = t_vel.row(idx_target);
+                    Vector3d vij = vi + vj;
+                    
+                    double r = sqrt(rij.dot(rij));
+                    double inv_r = 1.0 / r;
+                    double coeff = 332.05221729;
+
+                    double charge_i = charges[idx_source];
+                    double charge_j = charges[idx_target];
+                    double qij = coeff * charge_i * charge_j;
+                    qij = qij * inv_r * inv_r * inv_r;
                 
-                double r = sqrt(rij.dot(rij));
-                double inv_r = 1.0 / r;
-                double coeff = 332.05221729;
+                    Vector3d fij = rij * qij;
 
-                double charge_i = charges[idx_source];
-                double charge_j = charges[idx_target];
-                double qij = coeff * charge_i * charge_j;
-                qij = qij * inv_r * inv_r * inv_r;
-            
-                Vector3d fij = rij * qij;
+                    int igrp = iatom_to_igroup(idx_source);
+                    int jgrp = iatom_to_igroup(idx_target);
 
-                int igrp = iatom_to_igroup(idx_source);
-                int jgrp = iatom_to_igroup(idx_target);
-                cal_flux_atomwise(fij, vij, rij, igrp, jgrp);
+                    // std::cerr << "atomwise calculation " << std::endl;
+                    // std::cerr << "num_source: " << num_source << std::endl;
+                    // std::cerr << "num_target: " << num_target << std::endl;
+                    // std::cerr << "crd_source: " << crd_source.transpose() << std::endl;
+                    // std::cerr << "crd_target: " << crd_target.transpose() << std::endl;
+                    // std::cerr << "rij: " << rij.transpose() << std::endl;
+                    // std::cerr << "vi: " << vi.transpose() << std::endl;
+                    // std::cerr << "vj: " << vj.transpose() << std::endl;
+                    // std::cerr << "vij: " << vij.transpose() << std::endl;
+                    // std::cerr << "r: " << r << std::endl;
+                    // std::cerr << "charge_i: " << charge_i << std::endl;
+                    // std::cerr << "charge_j: " << charge_j << std::endl;
+                    // std::cerr << "qij: " << qij << std::endl;
+                    // std::cerr << "fij: " << fij.transpose() << std::endl;
+                    // std::cerr << "" << std::endl;
 
-                std::cerr << "atomwise calculation " << std::endl;
-                std::cerr << "num_source: " << num_source << std::endl;
-                std::cerr << "num_target: " << num_target << std::endl;
-                std::cerr << "crd_source: " << crd_source.transpose() << std::endl;
-                std::cerr << "crd_target: " << crd_target.transpose() << std::endl;
-                std::cerr << "rij: " << rij.transpose() << std::endl;
-                std::cerr << "r: " << r << std::endl;
-                std::cerr << "charge_i: " << charge_i << std::endl;
-                std::cerr << "charge_j: " << charge_j << std::endl;
-                std::cerr << "qij: " << qij << std::endl;
-                std::cerr << "Fij: " << fij.transpose() << std::endl;
-                std::cerr << "" << std::endl;
+                    cal_flux_atomwise(fij, vij, rij, igrp, jgrp);
+
+                }
+                int t7 = time_now();
+                // std::cerr << "cal_fij time(/pair): " << (t7 - t6)/cells[p].nleaf << std::endl;  
             }
-            int t7 = time_now();
-            // std::cerr << "cal_fij time(/pair): " << (t7 - t6)/cells[p].nleaf << std::endl;  
         }
     };
 
