@@ -362,9 +362,6 @@ class HeatFluxCalculator(base.FluxCalculator):
         t1 = time.time()
 
         self.store_time('coulomb flux(fmm)' , t1 - t0)
-        logger.info("crd: ", crd[0:10])
-        logger.info("vel: ", vel[0:10])
-
 
         return flux_atm, flux_grp
 
