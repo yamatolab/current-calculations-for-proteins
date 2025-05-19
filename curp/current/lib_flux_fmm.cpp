@@ -1049,6 +1049,46 @@ public:
                     }
                 }
             }
+
+            // check if M2M is correct
+            for (int j = 0; j < size_cells; j++){
+
+                Cell cell = cells[j];
+                VectorXd multi_test = VectorXd::Zero(10);
+                Vector3d rcenter = cell.rc;
+                for (int k = 0; k < cell.nleaf; k++){
+
+                    int index_leaf = cell.leaf[k] - 1;
+                    Vector3d crd_leaf = t_crd.row(index_leaf);
+                    Vector3d r = rcenter - crd_leaf;
+                    double charge = charges[index_leaf];
+
+                    multi_test(0) += charge * 1.0;
+                    multi_test(1) += charge * r(0);
+                    multi_test(2) += charge * r(1);
+                    multi_test(3) += charge * r(2);
+                    multi_test(4) += charge * r(0) * r(0) * 0.5;
+                    multi_test(5) += charge * r(1) * r(1) * 0.5;
+                    multi_test(6) += charge * r(2) * r(2) * 0.5;
+                    multi_test(7) += charge * r(0) * r(1);
+                    multi_test(8) += charge * r(1) * r(2);
+                    multi_test(9) += charge * r(2) * r(0);
+                } 
+                VectorXd& multipole = cell.multipole;
+                VectorXd diff = multi_test - multipole;
+                int size_diff = diff.size();
+                VectorXd norm_diff = VectorXd::Zero(10);
+                for (int k = 0; k < diff.size(); k++){
+                    norm_diff(k) = diff(k) / multipole(k);
+                }
+                if (multi_test != multipole){
+                    std::cerr << "M2M is not equal in cell " << j << std::endl;
+                    std::cerr << "multipole: " << multipole.transpose() << std::endl;
+                    std::cerr << "multi_test: " << multi_test.transpose() << std::endl;
+                    std::cerr << "diff: " << diff.transpose() << std::endl;
+                    std::cerr << "normalized diff: " << norm_diff.transpose() << std::endl;
+                }
+            }
         }
     };
 };
