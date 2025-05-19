@@ -613,7 +613,7 @@ public:
                             double fx = pot.dot(bJx);
                             double fy = pot.dot(bJy);
                             double fz = pot.dot(bJz);
-                            Vector3d f = Vector3d(fx, fy, fz);
+                            Vector3d f = Vector3d(-fx, -fy, -fz);
                             Vector3d riJ = Vector3d(dx, dy, dz);
 
                             int igrp = iatom_to_igroup(idx_source);
@@ -727,7 +727,7 @@ public:
 
     void cal_hflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, int igrp, int Jgrp){
         
-        Vector3d h_ij = r * (fiJ.dot(vi)) * (-0.5);
+        Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5;
 
         if (igrp != Jgrp){
             hflux_ij[igrp-1][Jgrp-1] += h_ij;
