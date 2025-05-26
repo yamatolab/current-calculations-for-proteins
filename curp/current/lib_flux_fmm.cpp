@@ -846,6 +846,19 @@ public:
                     cal_fiJ(num_source, 0, cells);
                 }
             }
+
+            std::vector<Cell> cells_source = get_cells(source, all_cells);
+            for (int l = 0; l < size_targets; l++){
+
+                std::string target = targets[l];
+                std::vector<int> target_atoms = get_atoms(target, gname_iatoms_pairs);
+                int target_size = target_atoms.size();
+
+                for (int m = 0; m < target_size; m++){
+                    int num_target = target_atoms[m];
+                    cal_fiJ(num_target, 0, cells_source);
+                }
+            }
         }
     };
 
