@@ -767,7 +767,7 @@ public:
 
     void cal_eflux_atomwise(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
 
-        double e_ij = fij.dot(vij);
+        double e_ij = fij.dot(vij) * 0.5;
         
         if (igrp != jgrp){
             eflux_ij(igrp-1, jgrp-1) += e_ij;
