@@ -539,31 +539,31 @@ public:
                             VectorXd bJy = VectorXd::Zero(10);
                             VectorXd bJz = VectorXd::Zero(10);
 
-                            double inv_r = 1.0 / r;
-                            double r2 = inv_r * inv_r;
-                            double r3 = r2 * inv_r;
-                            double r5 = r3 * r2;
-                            double r7 = r5 * r2;
+                            double inv_r = 1.0 / r;                     // 1/r
+                            double r2 = inv_r * inv_r;                  // 1/r^2
+                            double r3 = r2 * inv_r;                     // 1/r^3
+                            double r5 = r3 * r2;                        // 1/r^5
+                            double r7 = r5 * r2;                        // 1/r^7
 
-                            double dx2 = dx * dx;
-                            double dy2 = dy * dy;
-                            double dz2 = dz * dz;
+                            double dx2 = dx * dx;                       // dx^2
+                            double dy2 = dy * dy;                       // dy^2
+                            double dz2 = dz * dz;                       // dz^2
 
-                            double dxdy = dx * dy;
-                            double dydz = dy * dz;
-                            double dzdx = dz * dx;
+                            double dxdy = dx * dy;                      // dxdy
+                            double dydz = dy * dz;                      // dydz
+                            double dzdx = dz * dx;                      // dzdx
 
-                            double dxr5 = 3 * dx * r5;
-                            double dyr5 = 3 * dy * r5;
-                            double dzr5 = 3 * dz * r5;
+                            double dxr5 = 3 * dx * r5;                  // 3dx/r^5
+                            double dyr5 = 3 * dy * r5;                  // 3dy/r^5
+                            double dzr5 = 3 * dz * r5;                  // 3dx/r^5
 
-                            double dxdydz = 15 * dxdy * dz * r7;
-                            double dx2dy  = 15 * dx2 * dy * r7;
-                            double dy2dz  = 15 * dy2 * dz * r7;
-                            double dz2dx  = 15 * dz2 * dx * r7;
-                            double dy2dx  = 15 * dy2 * dx * r7;
-                            double dz2dy  = 15 * dz2 * dy * r7;
-                            double dx2dz  = 15 * dx2 * dz * r7;
+                            double dxdydz = 15 * dxdy * dz * r7;        // 15dxdydz/r^7
+                            double dx2dy  = 15 * dx2 * dy * r7;         // 15dx^2dy/r^7
+                            double dy2dz  = 15 * dy2 * dz * r7;         // 15dy^2dz/r^7
+                            double dz2dx  = 15 * dz2 * dx * r7;         // 15dz^2dx/r^7
+                            double dy2dx  = 15 * dy2 * dx * r7;         // 15dy^2dx/r^7
+                            double dz2dy  = 15 * dz2 * dy * r7;         // 15dz^2dy/r^7
+                            double dx2dz  = 15 * dx2 * dz * r7;         // 15dx^2dz/r^7
 
 
                             // calculate bJx
