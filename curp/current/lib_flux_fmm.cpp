@@ -574,7 +574,7 @@ public:
                             bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
                             bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
                             bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
-                            bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dxdy/r^7
+                            bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
                             bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
                             bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
 
