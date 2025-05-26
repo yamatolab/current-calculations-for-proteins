@@ -891,50 +891,43 @@ public:
 
             // 1. check if atoms are in the cell
             for (int j = 0; j < size_cells; j++){
+                
+                Vector3d rc = cells[j].rc;                      // center of the cell
+                double r = cells[j].r;                          // radius of the cell  
+                Vector3d ra = Vector3d(r, r, r);
+                Vector3d rmin = rc - ra;                        // minimum coordinate of the cell
+                Vector3d rmax = rc + ra;                        // maximum coordinate of the cell
 
-                if (cells[j].nchild != 0){
-                    continue;
-                }
-                else {
-                    Vector3d rc = cells[j].rc;                      // center of the cell
-                    double r = cells[j].r;                          // radius of the cell  
-                    Vector3d ra = Vector3d(r, r, r);
-                    Vector3d rmin = rc - ra;                        // minimum coordinate of the cell
-                    Vector3d rmax = rc + ra;                        // maximum coordinate of the cell
+                for (int k = 0; k < cells[j].nleaf; k++){
 
-                    for (int k = 0; k < cells[j].nleaf; k++){
-
-                        int atom = cells[j].leaf[k];
-                        if (atom <= 0){
-                            std::cerr << "atom=0 " << atom << std::endl;
-                            continue;
-                        }
-                        Vector3d crd_atom = t_crd.row(atom-1);
-
-                        // check if the atom is in the cell
-                        if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0) || \
-                            crd_atom(1) < rmin(1) || crd_atom(1) > rmax(1) || \
-                            crd_atom(2) < rmin(2) || crd_atom(2) > rmax(2)){
-
-                            
-                            std::cerr << "error: " << atom << " " << crd_atom.transpose() << std::endl;
-                            std::cerr << "cell_index: " << j << std::endl;
-                            std::cerr << "rmin: " << rmin.transpose() << std::endl;
-                            std::cerr << "rmax: " << rmax.transpose() << std::endl;
-                            if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0)){
-                                std::cerr << "atom x out of range" << std::endl;
-                            }
-                            if (crd_atom(1) < rmin(1) || crd_atom(1) > rmax(1)){
-                                std::cerr << "atom y out of range" << std::endl;
-                            }
-                            if (crd_atom(2) < rmin(2) || crd_atom(2) > rmax(2)){
-                                std::cerr << "atom z out of range" << std::endl;
-                            }
-                            std::cerr << "    " << std::endl;
-                        }
-                       
+                    int atom = cells[j].leaf[k];
+                    if (atom <= 0){
+                        std::cerr << "atom=0 " << atom << std::endl;
+                        continue;
                     }
-                    
+                    Vector3d crd_atom = t_crd.row(atom-1);
+
+                    // check if the atom is in the cell
+                    if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0) || \
+                        crd_atom(1) < rmin(1) || crd_atom(1) > rmax(1) || \
+                        crd_atom(2) < rmin(2) || crd_atom(2) > rmax(2)){
+
+                        
+                        std::cerr << "error: " << atom << " " << crd_atom.transpose() << std::endl;
+                        std::cerr << "cell_index: " << j << std::endl;
+                        std::cerr << "rmin: " << rmin.transpose() << std::endl;
+                        std::cerr << "rmax: " << rmax.transpose() << std::endl;
+                        if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0)){
+                            std::cerr << "atom x out of range" << std::endl;
+                        }
+                        if (crd_atom(1) < rmin(1) || crd_atom(1) > rmax(1)){
+                            std::cerr << "atom y out of range" << std::endl;
+                        }
+                        if (crd_atom(2) < rmin(2) || crd_atom(2) > rmax(2)){
+                            std::cerr << "atom z out of range" << std::endl;
+                        }
+                        std::cerr << "    " << std::endl;
+                    }
                 }
             }
 
