@@ -444,7 +444,7 @@ public:
             std::vector<Cell>& cells = all_cells[i].cells;
             
             int cells_size = cells.size();
-            for (int i = 0; i < cells_size; i++){
+            for (int i = 0; i < cells_size - 1; i++){
                 int i_inv = cells_size - 1 - i;
 
                 int c = i_inv;
