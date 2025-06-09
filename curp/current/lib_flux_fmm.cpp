@@ -444,6 +444,7 @@ public:
             for (int j = 0; j < size_cells; j++){
                
                 Cell& cell = cells[j];
+                cell.rmc = cell.rmc / cell.nleaf;
                 if (cell.nchild != 0){
                     continue;
                 }
