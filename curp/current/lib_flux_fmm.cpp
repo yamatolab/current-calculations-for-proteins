@@ -37,7 +37,7 @@ public:
     bool flag_energy;
 
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise;
-    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_cellwise;
+    std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_cellwise;
 
     // constructor
     cal_fmm():
@@ -84,8 +84,8 @@ public:
         if (flux_type == "heat"){
             flag_heat = true;
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const int igrp, const int Jgrp) {
-                cal_hflux_cellwise(fiJ, vi, r, igrp, Jgrp);
+            cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
+                cal_hflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
             cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
                 cal_hflux_atomwise(fij, vij, rij, igrp, jgrp);
@@ -94,8 +94,8 @@ public:
         else if (flux_type == "energy"){
             flag_energy = true;
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
-            cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const int igrp, const int Jgrp) {
-                cal_eflux_cellwise(fiJ, vi, r, igrp, Jgrp);
+            cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
+                cal_eflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
             cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
                 cal_eflux_atomwise(fij, vij, rij, igrp, jgrp);
