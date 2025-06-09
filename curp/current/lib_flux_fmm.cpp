@@ -311,6 +311,7 @@ public:
 
                 cells[current_cell].leaf.push_back(iatoms[j]);
                 cells[current_cell].nleaf += 1;
+                cells[current_cell].rmc += t_crd.row(index_atom);
 
                 if (cells[current_cell].nleaf > n_crit){
                     split_cell(current_cell, cells);
