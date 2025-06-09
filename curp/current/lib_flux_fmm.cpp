@@ -781,7 +781,7 @@ public:
         }
     };
 
-    void cal_eflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, int igrp, int Jgrp){
+    void cal_eflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
         
         double e_ij = fiJ.dot(vi) * 0.5;
 
