@@ -768,9 +768,9 @@ public:
         }
     };
 
-    void cal_hflux_atomwise(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
+    void cal_hflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int igrp, int jgrp){
         
-        Vector3d h_ij = rij * (fij.dot(vij)) * 0.5;
+        Vector3d h_ij = rij * (fij.dot(vi)) * 0.5;
 
         if (igrp != jgrp){
             hflux_ij[igrp-1][jgrp-1] += h_ij;
