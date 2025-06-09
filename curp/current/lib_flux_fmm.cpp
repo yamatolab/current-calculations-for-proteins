@@ -755,9 +755,9 @@ public:
         }
     };
 
-    void cal_hflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, int igrp, int Jgrp){
+    void cal_hflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
         
-        Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5;
+        Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5 - pot_j * vi * 0.5;
 
         if (igrp != Jgrp){
             hflux_ij[igrp-1][Jgrp-1] += h_ij;
