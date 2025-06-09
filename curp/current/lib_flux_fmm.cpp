@@ -746,7 +746,7 @@ public:
                     // std::cerr << "fij: " << fij.transpose() << std::endl;
                     // std::cerr << "" << std::endl;
 
-                    cal_flux_atomwise(fij, vij, rij, igrp, jgrp);
+                    cal_flux_atomwise(fij, vi, rij, igrp, jgrp);
 
                 }
                 int t7 = time_now();
