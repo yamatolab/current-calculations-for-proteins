@@ -860,6 +860,7 @@ public:
 
             std::string source = gpair_table[i].first;
             std::vector<std::string> targets = gpair_table[i].second;
+            int size_targets = targets.size();
         
             std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
@@ -867,7 +868,6 @@ public:
             for (int j = 0; j < source_size; j++){
 
                 int num_source = source_atoms[j];
-                int size_targets = targets.size();
 
                 for (int k = 0; k < size_targets; k++){      
 
