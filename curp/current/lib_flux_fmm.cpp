@@ -143,7 +143,9 @@ public:
         int               parent;
         Vector3d          rc;
         double            r;
+        Vector3d          rmc;
         VectorXd          multipole;
+        MatrixXd          multipole_j;
 
         Cell(int n_crit):
             nleaf(0),                               // number of atoms(leaf) in the cell
@@ -153,7 +155,9 @@ public:
             parent(0),                              // index of parent cell
             rc(Vector3d::Zero()),                   // center of the cell
             r(0.0),                                 // radius of the cell
-            multipole(VectorXd::Zero(10))           // 10 multipoles
+            rmc(Vector3d::Zero()),                  // center of mass of the cell
+            multipole(VectorXd::Zero(10)),          // 10 multipoles
+            multipole_j(MatrixXd::Zero(3, 10))
         {}
     };
 
