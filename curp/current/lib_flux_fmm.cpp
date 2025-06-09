@@ -254,6 +254,7 @@ public:
                 int child_cell = cells[cell_index].child[octant];
                 cells[child_cell].leaf.push_back(atom_current);
                 cells[child_cell].nleaf += 1;
+                cells[child_cell].rmc += t_crd.row(index_atom_current);
 
                 if (cells[child_cell].nleaf > n_crit) {
                     cell_queue.push(child_cell);
