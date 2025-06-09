@@ -293,13 +293,14 @@ public:
                 int index_atom = iatoms[j] - 1;
 
                 while (cells[current_cell].nleaf > n_crit) {
-                    // cells[current_cell].leaf.push_back(iatoms[j]);
+                    cells[current_cell].leaf.push_back(iatoms[j]);
+                    Vector3d crd_atom = t_crd.row(index_atom);
                     cells[current_cell].nleaf += 1;
-                    int octant = (t_crd(index_atom, 0) > cells[current_cell].rc(0)) + \
-                                 ((t_crd(index_atom, 1) > cells[current_cell].rc(1)) << 1) + \
-                                 ((t_crd(index_atom, 2) > cells[current_cell].rc(2)) << 2);
-
-                                 
+                    cells[current_cell].rmc += crd_atom;
+                    int octant = (crd_atom(0) > cells[current_cell].rc(0)) + \
+                                 ((crd_atom(1) > cells[current_cell].rc(1)) << 1) + \
+                                 ((crd_atom(2) > cells[current_cell].rc(2)) << 2);
+             
                     if (!(cells[current_cell].nchild & (1 << octant))){
                         add_child(octant, current_cell, cells);
                     }
