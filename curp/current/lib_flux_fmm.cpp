@@ -479,6 +479,26 @@ public:
                 p_potential(8) += c_potential(8) + dz * c_potential(2) + dy * c_potential(3) + My * dz;
                 p_potential(9) += c_potential(9) + dx * c_potential(3) + dz * c_potential(1) + Mz * dx;
 
+                MatrixXd& p_potential_j = cells[p].multipole_j;
+                MatrixXd& c_potential_j = cells[c].multipole_j;
+
+                for (int j = 0; j < 3; j++){
+                    double Mjx = c_potential_j(j, 0) * dx;
+                    double Mjy = c_potential_j(j, 0) * dy;
+                    double Mjz = c_potential_j(j, 0) * dz;
+
+                    p_potential_j(j, 0) += c_potential_j(j, 0);
+                    p_potential_j(j, 1) += c_potential_j(j, 1) + Mjx;
+                    p_potential_j(j, 2) += c_potential_j(j, 2) + Mjy;
+                    p_potential_j(j, 3) += c_potential_j(j, 3) + Mjz;
+                    p_potential_j(j, 4) += c_potential_j(j, 4) + dx * c_potential_j(j, 1) + 0.5 * Mjx * dx;
+                    p_potential_j(j, 5) += c_potential_j(j, 5) + dy * c_potential_j(j, 2) + 0.5 * Mjy * dy;
+                    p_potential_j(j, 6) += c_potential_j(j, 6) + dz * c_potential_j(j, 3) + 0.5 * Mjz * dz;
+                    p_potential_j(j, 7) += c_potential_j(j, 7) + dy * c_potential_j(j, 1) + dx * c_potential_j(j, 2) + Mjx * dy;
+                    p_potential_j(j, 8) += c_potential_j(j, 8) + dz * c_potential_j(j, 2) + dy * c_potential_j(j, 3) + Mjy * dz;
+                    p_potential_j(j, 9) += c_potential_j(j, 9) + dx * c_potential_j(j, 3) + dz * c_potential_j(j, 1) + Mjz * dx;
+                }
+
                 // std::cerr << "calculatiing child " << i_inv << " to parent " << p << std::endl;
                 // std::cerr << "child multipole: " << c_potential.transpose() << std::endl;
                 // std::cerr << "p_rc: " << p_rc.transpose() << std::endl;
