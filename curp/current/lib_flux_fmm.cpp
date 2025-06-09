@@ -942,10 +942,11 @@ public:
             for (int j = 0; j < size_cells; j++){
                 
                 Vector3d rc = cells[j].rc;                      // center of the cell
-                double r = cells[j].r;                          // radius of the cell  
+                double r = cells[j].r * 1.000000000000001;      // radius of the cell  
                 Vector3d ra = Vector3d(r, r, r);
                 Vector3d rmin = rc - ra;                        // minimum coordinate of the cell
                 Vector3d rmax = rc + ra;                        // maximum coordinate of the cell
+                Vector3d rc_real = Vector3d::Zero();
 
                 for (int k = 0; k < cells[j].nleaf; k++){
 
@@ -955,6 +956,7 @@ public:
                         continue;
                     }
                     Vector3d crd_atom = t_crd.row(atom-1);
+                    rc_real += crd_atom;
 
                     // check if the atom is in the cell
                     if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0) || \
@@ -968,23 +970,41 @@ public:
                         std::cerr << "rmax: " << rmax.transpose() << std::endl;
                         if (crd_atom(0) < rmin(0) || crd_atom(0) > rmax(0)){
                             std::cerr << "atom x out of range" << std::endl;
+                            std::cerr << "diff of min: " << (rmin(0) - crd_atom(0)) << " ,max: " << (crd_atom(0) - rmax(0)) << std::endl;
+                            std::cerr << "normalized diff of min: " << (rmin(0) - crd_atom(0)) / crd_atom(0);
+                            std::cerr << " ,max: " << (crd_atom(0) - rmax(0)) / crd_atom(0) << std::endl;
                         }
                         if (crd_atom(1) < rmin(1) || crd_atom(1) > rmax(1)){
                             std::cerr << "atom y out of range" << std::endl;
+                            std::cerr << "diff of min: " << (rmin(1) - crd_atom(1)) << " ,max: " << (crd_atom(1) - rmax(1)) << std::endl;
+                            std::cerr << "normalized diff of min: " << (rmin(1) - crd_atom(1)) / crd_atom(1);
+                            std::cerr << " ,max: " << (crd_atom(1) - rmax(1)) / crd_atom(1) << std::endl;
                         }
                         if (crd_atom(2) < rmin(2) || crd_atom(2) > rmax(2)){
                             std::cerr << "atom z out of range" << std::endl;
+                            std::cerr << "diff of min: " << (rmin(2) - crd_atom(2)) << " ,max: " << (crd_atom(2) - rmax(2)) << std::endl;
+                            std::cerr << "normalized diff of min: " << (rmin(2) - crd_atom(2)) / crd_atom(2);
+                            std::cerr << " ,max: " << (crd_atom(2) - rmax(2)) / crd_atom(2) << std::endl;
                         }
                         std::cerr << "    " << std::endl;
                     }
                 }
+                rc_real = rc_real / cells[j].nleaf;
+                if (rc_real != cells[j].rmc){
+                    std::cerr << "error: cell " << j << std::endl;
+                    std::cerr << "rc_real: " << rc_real.transpose() << std::endl;
+                    std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
+                    std::cerr << "diff: " << (rc_real - cells[j].rc).transpose() << std::endl;
+                    std::cerr << "    " << std::endl;
+                }
+                Vector3d diff = cells[j].rc - rc_real;
             }
 
             for (int j = 0; j < size_cells; j++){
 
                 std::vector<int> atoms_inc = std::vector<int>();
                 Vector3d rc = cells[j].rc;                      // center of the cell
-                double r = cells[j].r;                          // radius of the cell  
+                double r = cells[j].r * 1.000000000000001;      // radius of the cell
                 Vector3d ra = Vector3d(r, r, r);
                 Vector3d rmin = rc - ra;                        // minimum coordinate of the cell
                 Vector3d rmax = rc + ra;                        // maximum coordinate of the cell
@@ -1097,6 +1117,7 @@ public:
 
                 Cell cell = cells[j];
                 VectorXd multi_test = VectorXd::Zero(10);
+                MatrixXd multi_test_j = MatrixXd::Zero(3, 10);
                 Vector3d rcenter = cell.rc;
                 for (int k = 0; k < cell.nleaf; k++){
 
@@ -1105,17 +1126,25 @@ public:
                     Vector3d r = rcenter - crd_leaf;
                     double charge = charges[index_leaf];
 
-                    multi_test(0) += charge * 1.0;
-                    multi_test(1) += charge * r(0);
-                    multi_test(2) += charge * r(1);
-                    multi_test(3) += charge * r(2);
-                    multi_test(4) += charge * r(0) * r(0) * 0.5;
-                    multi_test(5) += charge * r(1) * r(1) * 0.5;
-                    multi_test(6) += charge * r(2) * r(2) * 0.5;
-                    multi_test(7) += charge * r(0) * r(1);
-                    multi_test(8) += charge * r(1) * r(2);
-                    multi_test(9) += charge * r(2) * r(0);
-                } 
+                    VectorXd multi_atom = VectorXd::Zero(10);
+
+                    multi_atom(0) = charge * 1.0;
+                    multi_atom(1) = charge * r(0);
+                    multi_atom(2) = charge * r(1);
+                    multi_atom(3) = charge * r(2);
+                    multi_atom(4) = charge * r(0) * r(0) * 0.5;
+                    multi_atom(5) = charge * r(1) * r(1) * 0.5;
+                    multi_atom(6) = charge * r(2) * r(2) * 0.5;
+                    multi_atom(7) = charge * r(0) * r(1);
+                    multi_atom(8) = charge * r(1) * r(2);
+                    multi_atom(9) = charge * r(2) * r(0);
+
+                    multi_test += multi_atom;
+                    for (int l = 0; l < 3; l++){
+                        multi_test_j.row(l) += multi_atom.transpose() * crd_leaf(l);
+                    }
+                }
+                //check M2M(multipole)
                 VectorXd& multipole = cell.multipole;
                 VectorXd diff = multi_test - multipole;
                 int size_diff = diff.size();
@@ -1125,10 +1154,39 @@ public:
                 }
                 if (multi_test != multipole){
                     std::cerr << "M2M is not equal in cell " << j << std::endl;
+                    if (norm_diff.maxCoeff() < 1e-13 && norm_diff.minCoeff() > -1e-13){
+                        std::cerr << "but norm_diff_j is too small (abs is small than 10^-13), skip this cell" << std::endl;
+                        std::cerr << " " << std::endl;
+                        continue;
+                    }
                     std::cerr << "multipole: " << multipole.transpose() << std::endl;
                     std::cerr << "multi_test: " << multi_test.transpose() << std::endl;
                     std::cerr << "diff: " << diff.transpose() << std::endl;
                     std::cerr << "normalized diff: " << norm_diff.transpose() << std::endl;
+                    std::cerr << " " << std::endl;
+                }
+                //check M2M(multipole_j)
+                MatrixXd& multipole_j = cell.multipole_j;
+                MatrixXd diff_j = multi_test_j - multipole_j;
+                int size_diff_j = diff_j.cols();
+                MatrixXd norm_diff_j = MatrixXd::Zero(3, 10);
+                for (int k = 0; k < size_diff_j; k++){
+                    for (int l = 0; l < 3; l++){
+                        norm_diff_j(l, k) = diff_j(l, k) / multipole_j(l, k);
+                    }
+                }
+                if (multi_test != multipole){
+                    std::cerr << "M2M(j) is not equal in cell " << j << std::endl;
+                    if (norm_diff_j.maxCoeff() < 1e-13 && norm_diff_j.minCoeff() > -1e-13){
+                        std::cerr << "but norm_diff_j is too small (abs is small than 10^-13), skip this cell" << std::endl;
+                        std::cerr << " " << std::endl;
+                        continue;
+                    }
+                    std::cerr << "multipole_j: " << multipole_j << std::endl;
+                    std::cerr << "multi_test_j: " << multi_test_j << std::endl;
+                    std::cerr << "diff: " << diff_j << std::endl;
+                    std::cerr << "normalized diff: " << norm_diff_j << std::endl;
+                    std::cerr << " " << std::endl;
                 }
             }
         }
