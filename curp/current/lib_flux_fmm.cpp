@@ -361,6 +361,7 @@ public:
                 std::cerr << "parent: " << cells[j].parent << std::endl;
                 std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
                 std::cerr << "r: " << cells[j].r << std::endl;
+                std::cerr << "rmc: " << (cells[j].rmc / cells[j].nleaf).transpose() << std::endl;
                 if (cells[j].multipole(0) != 0){
                     std::cerr << "multipole: " << cells[j].multipole.transpose() << std::endl;
                 }
