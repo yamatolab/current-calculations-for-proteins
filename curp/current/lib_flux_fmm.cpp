@@ -666,16 +666,6 @@ public:
 
                             int igrp = iatom_to_igroup(idx_source);
                             int Jgrp = iatom_to_igroup(cells[c].leaf[0] - 1);
-                            // VectorXd vJ = VectorXd::Zero(3);
-                            // for (int l = 0; l < cells[c].nleaf; l++){
-                            //     int num_leaf = cells[c].leaf[l];
-                            //     if (num_leaf == num_source){
-                            //         continue;
-                            //     }
-                            //     vJ += t_vel.row(num_leaf - 1);
-
-                            // }
-                            // vi = vi + vJ;
 
                             // std::cerr << "cellwise calculation " << std::endl;
                             // std::cerr << "num_source: " << num_source << std::endl;
@@ -686,7 +676,6 @@ public:
                             //         std::cerr << ", ";
                             //     }
                             // };
-
                             // std::cerr << "]" << std::endl;
                             // std::cerr << "crd_source: " << crd_source.transpose() << std::endl;
                             // std::cerr << "crd_target: " << rc.transpose() << std::endl;
@@ -703,7 +692,6 @@ public:
                             // std::cerr << "riJ: " << riJ.transpose() << std::endl;
                             // std::cerr << "igrp: " << igrp << std::endl;
                             // std::cerr << "Jgrp: " << Jgrp << std::endl;
-                            // // std::cerr << "vJ: " << vJ.transpose() << std::endl;
                             // std::cerr << "   " << std::endl;
                             cal_flux_cellwise(f, vi, riJ, igrp, Jgrp);
 
