@@ -373,7 +373,7 @@ public:
     };    
 
     // calculate multipole
-    VectorXd cal_multipole(VectorXd& multipole, Vector3d& rc, std::vector<int>& atoms){
+    void cal_multipole(VectorXd& multipole, MatrixXd& multipole_j, Vector3d& rc, std::vector<int>& atoms){
         
         int size_atoms = atoms.size();
         for (int i = 0; i < size_atoms; i++){
@@ -390,18 +390,24 @@ public:
             double qjdy = qj * dy;
             double qjdz = qj * dz;
             
-            multipole(0) = multipole(0) + qj * 1.0;
-            multipole(1) = multipole(1) + qjdx;
-            multipole(2) = multipole(2) + qjdy;
-            multipole(3) = multipole(3) + qjdz;
-            multipole(4) = multipole(4) + qjdx * dx * 0.5;
-            multipole(5) = multipole(5) + qjdy * dy * 0.5;
-            multipole(6) = multipole(6) + qjdz * dz * 0.5;
-            multipole(7) = multipole(7) + qjdx * dy;
-            multipole(8) = multipole(8) + qjdy * dz;
-            multipole(9) = multipole(9) + qjdz * dx;
-            
+            VectorXd multipole_atom = VectorXd::Zero(10);
 
+            multipole_atom(0) = qj * 1.0;
+            multipole_atom(1) = qjdx;
+            multipole_atom(2) = qjdy;
+            multipole_atom(3) = qjdz;
+            multipole_atom(4) = qjdx * dx * 0.5;
+            multipole_atom(5) = qjdy * dy * 0.5;
+            multipole_atom(6) = qjdz * dz * 0.5;
+            multipole_atom(7) = qjdx * dy;
+            multipole_atom(8) = qjdy * dz;
+            multipole_atom(9) = qjdz * dx;
+            
+            multipole += multipole_atom;
+
+            for (int j = 0; j < 3; j++){
+                multipole_j.row(j) += multipole_atom.transpose() * crd_atom(j);
+            }
             // std::cerr << "atom: " << atoms[i] << std::endl;
             // std::cerr << "atom crd: " << crd_atom.transpose() << std::endl;
             // std::cerr << "atom rc: " << rc.transpose() << std::endl;
