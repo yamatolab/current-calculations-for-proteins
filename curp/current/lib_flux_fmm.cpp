@@ -87,8 +87,8 @@ public:
             cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
                 cal_hflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
-            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_hflux_atomwise(fij, vij, rij, igrp, jgrp);
+            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int igrp, const int jgrp) {
+                cal_hflux_atomwise(fij, vi, rij, igrp, jgrp);
             };
         }
         else if (flux_type == "energy"){
@@ -97,8 +97,8 @@ public:
             cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
                 cal_eflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
-            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_eflux_atomwise(fij, vij, rij, igrp, jgrp);
+            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int igrp, const int jgrp) {
+                cal_eflux_atomwise(fij, vi, rij, igrp, jgrp);
             };
         }
         else{
