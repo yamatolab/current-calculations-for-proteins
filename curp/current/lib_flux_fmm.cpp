@@ -428,15 +428,15 @@ public:
             int size_cells = cells.size();
 
             for (int j = 0; j < size_cells; j++){
-
-                if (cells[j].nchild != 0){
+               
+                Cell& cell = cells[j];
+                if (cell.nchild != 0){
                     continue;
                 }
                 else {
                     // std::cerr << "calculating multipole for cell: " << j << std::endl;
                     // std::cerr << "" << std::endl;
-                    cells[j].multipole = cal_multipole(cells[j].multipole, cells[j].rc, cells[j].leaf);
-                
+                    cal_multipole(cell.multipole, cell.multipole_j, cell.rc, cell.leaf);
                 }
             }
             // std::cerr << "multipole(cal_p): " << cells[size_cells-1].multipole.transpose() << std::endl;
