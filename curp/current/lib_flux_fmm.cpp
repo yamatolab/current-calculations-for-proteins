@@ -715,9 +715,6 @@ public:
                     Vector3d crd_source = t_crd.row(idx_source);
                     Vector3d crd_target = t_crd.row(idx_target);
                     Vector3d rij = crd_source - crd_target;
-
-                    Vector3d vj = t_vel.row(idx_target);
-                    Vector3d vij = vi + vj;
                     
                     double r = sqrt(rij.dot(rij));
                     double inv_r = 1.0 / r;
