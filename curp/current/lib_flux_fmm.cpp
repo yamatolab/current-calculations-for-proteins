@@ -693,7 +693,7 @@ public:
                             // std::cerr << "igrp: " << igrp << std::endl;
                             // std::cerr << "Jgrp: " << Jgrp << std::endl;
                             // std::cerr << "   " << std::endl;
-                            cal_flux_cellwise(f, vi, riJ, igrp, Jgrp);
+                            cal_flux_cellwise(f, vi, crd_source, pot_j, igrp, Jgrp);
 
                             int t5 = time_now();
                             // std::cerr << "cal_fiJ prep time: " << t4 - t3 << std::endl;
