@@ -179,7 +179,7 @@ public:
 
         Vector3d rc = Vector3d::Zero();
         Vector3d r = Vector3d::Zero();
-        int size_atoms = distance(atoms.begin(), atoms.end());
+        int size_atoms = atoms.size();
         
         MatrixXd crd_atom = MatrixXd::Zero(size_atoms,3);
 
