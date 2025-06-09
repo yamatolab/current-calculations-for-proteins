@@ -418,7 +418,6 @@ public:
             // std::cerr << "   " << std::endl;
         }
         // std::cerr << atoms.transpose() <<  multipole.transpose() << std::endl;
-        return multipole;
     };
 
     void cal_p(){
