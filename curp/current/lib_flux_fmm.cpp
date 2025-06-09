@@ -642,6 +642,13 @@ public:
                             Vector3d f = Vector3d(-fx, -fy, -fz);
                             Vector3d riJ = Vector3d(dx, dy, dz);
 
+                            MatrixXd& potential_j = cells[c].multipole_j;
+                            MatrixXd bJ = MatrixXd::Zero(10, 3);
+                            bJ.col(0) = bJx;
+                            bJ.col(1) = bJy;
+                            bJ.col(2) = bJz;
+                            Matrix3d pot_j = -potential_j * bJ * coeff * charge;
+
                             int igrp = iatom_to_igroup(idx_source);
                             int Jgrp = iatom_to_igroup(cells[c].leaf[0] - 1);
                             // VectorXd vJ = VectorXd::Zero(3);
