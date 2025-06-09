@@ -36,6 +36,9 @@ public:
     bool flag_heat;
     bool flag_energy;
 
+    int count_atom;
+    int count_cell;
+
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise;
     std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_cellwise;
 
@@ -55,7 +58,9 @@ public:
         hflux_ij(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0)),
         flag_heat(false),
-        flag_energy(false)
+        flag_energy(false),
+        count_atom(0),
+        count_cell(0)
     {};
 
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
@@ -114,6 +119,8 @@ public:
         t_vel = MatrixXd::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
+        count_atom = 0;
+        count_cell = 0;
         if (flag_heat == true){
             hflux_ij.clear();
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
@@ -765,6 +772,7 @@ public:
         else{
             hflux_ij[igrp-1][Jgrp-1] += 0.5 * h_ij;
         }
+        count_cell += 1;
     };
 
     void cal_hflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int igrp, int jgrp){
@@ -778,6 +786,7 @@ public:
         else{
             hflux_ij[igrp-1][jgrp-1] += 0.5 * h_ij;
         }
+        count_atom += 1;
     };
 
     void cal_eflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
@@ -791,7 +800,7 @@ public:
         else{
             eflux_ij(igrp-1, Jgrp-1) += 0.5 * e_ij;         // it is not correct
         }
-
+        count_cell += 1;
     };
 
     void cal_eflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int igrp, int jgrp){
@@ -805,6 +814,7 @@ public:
         else{
             eflux_ij(igrp-1, jgrp-1) += e_ij;
         }
+        count_atom += 1;
     };
 
     // check if the pairs are in the interact table
