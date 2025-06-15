@@ -66,12 +66,16 @@ class EnergyFluxCalculator(base.FluxCalculator):
             charges = info['charges']     
             self.__lib_fmm = lib_flux_fmm.cal_fmm()
             
+            bonded_pairs = self.get_bonded_pairs()
+            gname_iatoms_pairs = self.get_gname_iatoms_pairs()
+            gpair_table = self.get_gpair_table()
+            iatm_to_igrp = self.get_iatm_to_igrp()
+            
+            extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
+            
             self.__lib_fmm.setup( int(natom), int(n_crit), float(theta),
-                    charges,
-                    self.get_interact_table(),
-                    self.get_gname_iatoms_pairs(),          
-                    self.get_gpair_table(),
-                    self.get_iatm_to_igrp()
+                    charges, extracted_bonded_pairs, gname_iatoms_pairs,          
+                    gpair_table, iatm_to_igrp
                     )
             self.__lib_fmm.set_flux("energy")
         
@@ -279,15 +283,18 @@ class HeatFluxCalculator(base.FluxCalculator):
             charges = info['charges']     
             self.__lib_fmm = lib_flux_fmm.cal_fmm()
             
+            bonded_pairs = self.get_bonded_pairs()
+            gname_iatoms_pairs = self.get_gname_iatoms_pairs()
+            gpair_table = self.get_gpair_table()
+            iatm_to_igrp = self.get_iatm_to_igrp()
+            
+            extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
+            
             self.__lib_fmm.setup( int(natom), int(n_crit), float(theta),
-                    charges,
-                    self.get_interact_table(),
-                    self.get_gname_iatoms_pairs(),          
-                    self.get_gpair_table(),
-                    self.get_iatm_to_igrp()
+                    charges, extracted_bonded_pairs, gname_iatoms_pairs,          
+                    gpair_table, iatm_to_igrp
                     )
             self.__lib_fmm.set_flux("heat")
-            logger.info("charges: ",charges[1:10])
 
         
     def check_fmm_setting(self, setting):
