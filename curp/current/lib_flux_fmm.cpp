@@ -982,6 +982,7 @@ public:
         int t4 = time_now();
         cal_bonded_flux();
         int t5 = time_now();
+        std::cerr << "get_all_cells time: " << t1 - t0 << std::endl;
         std::cerr << "cal_p time: " << t2 - t1 << std::endl;
         std::cerr << "cal_M2M time: " << t3 - t2 << std::endl;
         std::cerr << "cal_force time: " << t4 - t3 << std::endl;
