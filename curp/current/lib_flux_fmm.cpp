@@ -40,6 +40,7 @@ public:
     int count_cell;
 
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise;
+    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise_bonded;
     std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_cellwise;
 
     // constructor
@@ -95,6 +96,10 @@ public:
             cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
                 cal_hflux_atomwise(fij, vi, rij, idx_source, idx_target);
             };
+            cal_flux_atomwise_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
+                cal_hflux_atomwise_bonded(fij, vij, rij, igrp, jgrp);
+            };
+
         }
         else if (flux_type == "energy"){
             flag_energy = true;
@@ -104,6 +109,9 @@ public:
             };
             cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
                 cal_eflux_atomwise(fij, vi, rij, idx_source, idx_target);
+            };
+            cal_flux_atomwise_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
+                cal_eflux_atomwise_bonded(fij, vij, rij, igrp, jgrp);
             };
         }
         else{
@@ -711,9 +719,6 @@ public:
                     if (num_target == num_source){
                         continue;
                     }
-                    if (is_nonbonded_pair(num_source, num_target) == false){
-                        continue;
-                    }
 
                     Vector3d crd_source = t_crd.row(idx_source);
                     Vector3d crd_target = t_crd.row(idx_target);
@@ -904,6 +909,69 @@ public:
         }
     };
 
+    void cal_bonded_flux(){
+        int size_bonded = bonded_pairs.size();
+        for (int i = 0; i < size_bonded; i++){
+            int num_source = bonded_pairs[i].first;
+            int num_target = bonded_pairs[i].second;
+            int idx_source = num_source - 1;
+            int idx_target = num_target - 1;
+
+            Vector3d crd_source = t_crd.row(idx_source);
+            Vector3d crd_target = t_crd.row(idx_target);
+            Vector3d rij = crd_source - crd_target;
+            Vector3d vi = t_vel.row(num_source - 1);
+            Vector3d vj = t_vel.row(num_target - 1);
+            Vector3d vij = vi + vj;
+
+            double r = sqrt(rij.dot(rij));
+            double inv_r = 1.0 / r;
+            double coeff = 332.05221729;
+
+            double charge_i = charges[num_source - 1];
+            double charge_j = charges[num_target - 1];
+            double qij = coeff * charge_i * charge_j;
+            qij = qij * inv_r * inv_r * inv_r;
+
+            Vector3d fij = rij * qij;
+
+            int igrp = iatom_to_igroup(num_source - 1);
+            int jgrp = iatom_to_igroup(num_target - 1);
+
+            cal_flux_atomwise_bonded(fij, vij, rij, igrp, jgrp);
+        }
+        std::cerr << "count_atom_bonded: " << size_bonded << std::endl;
+    };
+
+    void cal_hflux_atomwise_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
+        
+        Vector3d h_ij = rij * (fij.dot(vij)) * 0.5;
+
+        if (igrp != jgrp){
+            hflux_ij[igrp-1][jgrp-1] -= h_ij;
+            hflux_ij[jgrp-1][igrp-1] -= h_ij;
+        }
+        else{
+            hflux_ij[igrp-1][jgrp-1] -= h_ij;
+        }
+        // std::cerr << "hflux_ij(after): " << hflux_ij[igrp-1][jgrp-1].transpose() << std::endl;
+        // std::cerr << "" << std::endl;
+    };
+
+    void cal_eflux_atomwise_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
+
+        double e_ij = fij.dot(vij) * 0.5;
+        
+        if (igrp != jgrp){
+            eflux_ij(igrp-1, jgrp-1) -= e_ij;
+            eflux_ij(jgrp-1, igrp-1) += e_ij;
+        }
+        else{
+            eflux_ij(igrp-1, jgrp-1) -= e_ij;
+        }
+    };
+
+
     void cal_coulomb_flux_fmm(const std::vector<All_cells>& all_cells) {
         int t0 = time_now();
         get_all_cells(all_cells);
@@ -914,6 +982,8 @@ public:
         int t3 = time_now();
         cal_force();
         int t4 = time_now();
+        cal_bonded_flux();
+        int t5 = time_now();
         std::cerr << "cal_p time: " << t2 - t1 << std::endl;
         std::cerr << "cal_M2M time: " << t3 - t2 << std::endl;
         std::cerr << "cal_force time: " << t4 - t3 << std::endl;
