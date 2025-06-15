@@ -87,6 +87,15 @@ class CalculatorBase(TimeStore):
     def get_interact_table(self):
         return self.__interact_table
     
+    def extract_bonded_pairs(self, bonded_pairs, gname_iatoms_pairs, gpair_table):
+        """Extract bonded pairs from the group information."""
+        from curp.current import lib_table_fmm
+        lib_table = lib_table_fmm.get_table_fmm()
+        lib_table.setup(bonded_pairs, gname_iatoms_pairs, gpair_table)
+        extracted_bonded_pairs = lib_table.extract_bonded_pairs()
+        
+        return extracted_bonded_pairs
+    
 class CurrentCalculator(CalculatorBase):
 
     def __init__(self):
