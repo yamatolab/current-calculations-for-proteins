@@ -92,8 +92,8 @@ public:
             cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
                 cal_hflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
-            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_hflux_atomwise(fij, vi, rij, igrp, jgrp);
+            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
+                cal_hflux_atomwise(fij, vi, rij, idx_source, idx_target);
             };
         }
         else if (flux_type == "energy"){
@@ -102,8 +102,8 @@ public:
             cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
                 cal_eflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
-            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_eflux_atomwise(fij, vi, rij, igrp, jgrp);
+            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
+                cal_eflux_atomwise(fij, vi, rij, idx_source, idx_target);
             };
         }
         else{
@@ -749,7 +749,7 @@ public:
                     // std::cerr << "fij: " << fij.transpose() << std::endl;
                     // std::cerr << "" << std::endl;
 
-                    cal_flux_atomwise(fij, vi, rij, igrp, jgrp);
+                    cal_flux_atomwise(fij, vi, rij, idx_source, idx_target);
 
                 }
                 int t7 = time_now();
@@ -772,9 +772,12 @@ public:
         count_cell += 1;
     };
 
-    void cal_hflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int igrp, int jgrp){
+    void cal_hflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
         
         Vector3d h_ij = rij * (fij.dot(vi)) * 0.5;
+
+        int igrp = iatom_to_igroup(idx_source);
+        int jgrp = iatom_to_igroup(idx_target);
 
         if (igrp != jgrp){
             hflux_ij[igrp-1][jgrp-1] += h_ij;
@@ -800,9 +803,12 @@ public:
         count_cell += 1;
     };
 
-    void cal_eflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int igrp, int jgrp){
+    void cal_eflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
 
         double e_ij = fij.dot(vi) * 0.5;
+
+        int igrp = iatom_to_igroup(idx_source);
+        int jgrp = iatom_to_igroup(idx_target);
 
         if (igrp != jgrp){
             eflux_ij(igrp-1, jgrp-1) += e_ij;
