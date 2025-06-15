@@ -783,7 +783,7 @@ public:
             hflux_ij[igrp-1][jgrp-1] += h_ij;
             hflux_ij[jgrp-1][igrp-1] += h_ij;
         }
-        else{
+        else {
             hflux_ij[igrp-1][jgrp-1] += 0.5 * h_ij;
         }
         count_atom += 1;
