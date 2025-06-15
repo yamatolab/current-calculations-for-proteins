@@ -733,10 +733,6 @@ public:
                     qij = qij * inv_r * inv_r * inv_r;
                 
                     Vector3d fij = rij * qij;
-
-                    int igrp = iatom_to_igroup(idx_source);
-                    int jgrp = iatom_to_igroup(idx_target);
-
                     // std::cerr << "atomwise calculation " << std::endl;
                     // std::cerr << "num_source: " << num_source << std::endl;
                     // std::cerr << "num_target: " << num_target << std::endl;
