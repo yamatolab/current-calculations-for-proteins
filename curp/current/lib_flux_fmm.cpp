@@ -663,7 +663,6 @@ public:
                             double fy = pot.dot(bJy);
                             double fz = pot.dot(bJz);
                             Vector3d f = Vector3d(-fx, -fy, -fz);
-                            Vector3d riJ = Vector3d(dx, dy, dz);
 
                             MatrixXd& potential_j = cells[c].multipole_j;
                             MatrixXd bJ = MatrixXd::Zero(10, 3);
