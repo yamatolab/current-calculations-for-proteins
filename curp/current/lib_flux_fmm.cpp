@@ -51,7 +51,7 @@ public:
         charges(std::vector<double>()),
         t_crd(MatrixXd::Zero(natom, 3)),
         t_vel(MatrixXd::Zero(natom, 3)),
-        interact_table(std::vector<std::vector<std::tuple<int, int, int>>>()),
+        bonded_pairs(std::vector<std::pair<int, int>>()),
         gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
         gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
         iatom_to_igroup(VectorXi::Zero(0)),
@@ -64,7 +64,7 @@ public:
     {};
 
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
-        const std::vector<std::vector<std::tuple<int, int, int>>>& input_interact_table, \
+        const std::vector<std::pair<int, int>>& input_bonded_pairs, \
         const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
         const std::vector<std::pair<std::string, std::vector<std::string>>>& input_gpair_table, \
         const VectorXi& input_iatom_to_igroup){
@@ -73,7 +73,7 @@ public:
         n_crit = input_n_crit;
         theta  = input_theta;
         charges = input_charges;
-        interact_table = input_interact_table;
+        bonded_pairs = input_bonded_pairs;
         gname_iatoms_pairs = input_gname_iatoms_pairs;
         gpair_table = input_gpair_table;
         iatom_to_igroup = input_iatom_to_igroup;
@@ -1249,7 +1249,7 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("charges", &cal_fmm::charges)
         .def_readwrite("t_crd", &cal_fmm::t_crd)
         .def_readwrite("t_vel", &cal_fmm::t_vel)
-        .def_readwrite("interact_table", &cal_fmm::interact_table)
+        .def_readwrite("bonded_pairs", &cal_fmm::bonded_pairs)
         .def_readwrite("gpair_table", &cal_fmm::gpair_table)
         .def_readwrite("gname_iatoms_pairs", &cal_fmm::gname_iatoms_pairs)
         .def_readwrite("iatom_to_igroup", &cal_fmm::iatom_to_igroup)
