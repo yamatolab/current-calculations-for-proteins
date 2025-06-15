@@ -812,10 +812,13 @@ public:
 
         if (igrp != jgrp){
             eflux_ij(igrp-1, jgrp-1) += e_ij;
-            eflux_ij(jgrp-1, igrp-1) += -e_ij;
+            eflux_ij(jgrp-1, igrp-1) -= e_ij;
         }
-        else{
-            eflux_ij(igrp-1, jgrp-1) += e_ij;
+        else if (idx_source < idx_target) {
+            eflux_ij(igrp-1, jgrp-1) += 0.5 * e_ij;
+        }
+        else {
+            eflux_ij(igrp-1, jgrp-1) -= 0.5 * e_ij;
         }
         count_atom += 1;
     };
