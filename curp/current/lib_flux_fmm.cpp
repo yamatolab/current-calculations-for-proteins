@@ -26,7 +26,7 @@ public:
     MatrixXd t_crd;
     MatrixXd t_vel;
 
-    std::vector<std::vector<std::tuple<int, int, int>>> interact_table;
+    std::vector<std::pair<int, int>> bonded_pairs;
     std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;
     VectorXi iatom_to_igroup;
