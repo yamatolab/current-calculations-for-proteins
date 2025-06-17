@@ -574,16 +574,6 @@ public:
                         }
                         else{
                             int t3 = time_now();
-                            // for (int l = 0; l < cells[c].nleaf; l++){
-                            //     int num_target = cells[c].leaf[l];
-                                
-                            //     if (is_nonbonded_pair(num_source, num_target) == false){
-                            //         std::cerr << "ValueError: Bonded pair in fmm" << std::endl;
-                            //         std::cerr << "num_source: " << num_source << "num_target: " << num_target << std::endl;
-                            //         std::cerr << "Please change the parameter of fmm." << std::endl;
-                            //         std::exit(1);
-                            //     }
-                            // }
                             VectorXd bJx = VectorXd::Zero(10);
                             VectorXd bJy = VectorXd::Zero(10);
                             VectorXd bJz = VectorXd::Zero(10);
