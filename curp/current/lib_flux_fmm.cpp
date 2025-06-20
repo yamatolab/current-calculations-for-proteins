@@ -757,7 +757,7 @@ public:
             hflux_ij[Jgrp-1][igrp-1] += h_ij;
         }
         else{
-            hflux_ij[igrp-1][Jgrp-1] += 0.5 * h_ij;
+            hflux_ij[igrp-1][Jgrp-1] += h_ij;
         }
         count_cell += 1;
     };
