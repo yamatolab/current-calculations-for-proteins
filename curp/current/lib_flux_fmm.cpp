@@ -886,6 +886,9 @@ public:
             for (int l = 0; l < size_targets; l++){
 
                 std::string target = targets[l];
+                if (target == source){
+                    continue;
+                }
                 std::vector<int> target_atoms = get_atoms(target, gname_iatoms_pairs);
                 int target_size = target_atoms.size();
 
