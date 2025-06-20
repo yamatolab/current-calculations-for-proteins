@@ -788,7 +788,7 @@ public:
             eflux_ij(Jgrp-1, igrp-1) -= e_ij;
         }
         else{
-            eflux_ij(igrp-1, Jgrp-1) += 0.5 * e_ij;         // it is not correct
+            eflux_ij(igrp-1, Jgrp-1) += e_ij;         // it is not correct
         }
         count_cell += 1;
     };
