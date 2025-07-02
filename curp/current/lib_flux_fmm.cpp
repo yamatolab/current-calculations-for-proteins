@@ -31,6 +31,10 @@ public:
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;
     VectorXi iatom_to_igroup;
 
+    std::vector<int> atom_types;
+    MatrixXd c6s;
+    MatrixXd c12s;
+
     std::vector<std::vector<Vector3d>> hflux_ij;
     MatrixXd eflux_ij;
     bool flag_heat;
@@ -56,6 +60,9 @@ public:
         gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
         gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
         iatom_to_igroup(VectorXi::Zero(0)),
+        atom_types(std::vector<int>()),
+        c6s(MatrixXd::Zero(0, 0)),
+        c12s(MatrixXd::Zero(0, 0)),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0)),
         flag_heat(false),
@@ -68,7 +75,10 @@ public:
         const std::vector<std::pair<int, int>>& input_bonded_pairs, \
         const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
         const std::vector<std::pair<std::string, std::vector<std::string>>>& input_gpair_table, \
-        const VectorXi& input_iatom_to_igroup){
+        const VectorXi& input_iatom_to_igroup,
+        const std::vector<int>& input_atom_types,
+        const MatrixXd& input_c6s,
+        const MatrixXd& input_c12s){
         int t0 = time_now();
         natom  = input_natom;
         n_crit = input_n_crit;
@@ -78,6 +88,9 @@ public:
         gname_iatoms_pairs = input_gname_iatoms_pairs;
         gpair_table = input_gpair_table;
         iatom_to_igroup = input_iatom_to_igroup;
+        atom_types = input_atom_types;
+        c6s = input_c6s;
+        c12s = input_c12s;
 
         ngrp = iatom_to_igroup.maxCoeff();
         int t1 = time_now();
