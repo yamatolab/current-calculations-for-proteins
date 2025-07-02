@@ -796,11 +796,11 @@ public:
         Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5 - pot_j * vi * 0.5;
 
         if (igrp != Jgrp){
-            hflux_ij[igrp-1][Jgrp-1] += h_ij;
-            hflux_ij[Jgrp-1][igrp-1] += h_ij;
+            hflux_ij_cellwise[igrp-1][Jgrp-1] += h_ij;
+            hflux_ij_cellwise[Jgrp-1][igrp-1] += h_ij;
         }
         else{
-            hflux_ij[igrp-1][Jgrp-1] += h_ij;
+            hflux_ij_cellwise[igrp-1][Jgrp-1] += h_ij;
         }
         count_cell += 1;
     };
@@ -813,11 +813,11 @@ public:
         int jgrp = iatom_to_igroup(idx_target);
 
         if (igrp != jgrp){
-            hflux_ij[igrp-1][jgrp-1] += h_ij;
-            hflux_ij[jgrp-1][igrp-1] += h_ij;
+            hflux_ij_atomwise[igrp-1][jgrp-1] += h_ij;
+            hflux_ij_atomwise[jgrp-1][igrp-1] += h_ij;
         }
         else {
-            hflux_ij[igrp-1][jgrp-1] += h_ij;
+            hflux_ij_atomwise[igrp-1][jgrp-1] += h_ij;
         }
         count_atom += 1;
     };
@@ -827,11 +827,11 @@ public:
         double e_ij = fiJ.dot(vi) * 0.5;
 
         if (igrp != Jgrp){
-            eflux_ij(igrp-1, Jgrp-1) += e_ij;
-            eflux_ij(Jgrp-1, igrp-1) -= e_ij;
+            eflux_ij_cellwise(igrp-1, Jgrp-1) += e_ij;
+            eflux_ij_cellwise(Jgrp-1, igrp-1) -= e_ij;
         }
         else{
-            eflux_ij(igrp-1, Jgrp-1) += e_ij;         // it is not correct
+            eflux_ij_cellwise(igrp-1, Jgrp-1) += e_ij;         // it is not correct
         }
         count_cell += 1;
     };
@@ -844,14 +844,14 @@ public:
         int jgrp = iatom_to_igroup(idx_target);
 
         if (igrp != jgrp){
-            eflux_ij(igrp-1, jgrp-1) += e_ij;
-            eflux_ij(jgrp-1, igrp-1) -= e_ij;
+            eflux_ij_atomwise(igrp-1, jgrp-1) += e_ij;
+            eflux_ij_atomwise(jgrp-1, igrp-1) -= e_ij;
         }
         else if (idx_source < idx_target) {
-            eflux_ij(igrp-1, jgrp-1) += e_ij;
+            eflux_ij_atomwise(igrp-1, jgrp-1) += e_ij;
         }
         else {
-            eflux_ij(igrp-1, jgrp-1) -= e_ij;
+            eflux_ij_atomwise(igrp-1, jgrp-1) -= e_ij;
         }
         count_atom += 1;
     };
@@ -993,11 +993,11 @@ public:
         Vector3d h_ij = rij * (fij.dot(vij)) * 0.5;
 
         if (igrp != jgrp){
-            hflux_ij[igrp-1][jgrp-1] -= h_ij;
-            hflux_ij[jgrp-1][igrp-1] -= h_ij;
+            hflux_ij_atomwise[igrp-1][jgrp-1] -= h_ij;
+            hflux_ij_atomwise[jgrp-1][igrp-1] -= h_ij;
         }
         else{
-            hflux_ij[igrp-1][jgrp-1] -= h_ij;
+            hflux_ij_atomwise[igrp-1][jgrp-1] -= h_ij;
         }
         // std::cerr << "hflux_ij(after): " << hflux_ij[igrp-1][jgrp-1].transpose() << std::endl;
         // std::cerr << "" << std::endl;
@@ -1008,11 +1008,11 @@ public:
         double e_ij = fij.dot(vij) * 0.5;
         
         if (igrp != jgrp){
-            eflux_ij(igrp-1, jgrp-1) -= e_ij;
-            eflux_ij(jgrp-1, igrp-1) += e_ij;
+            eflux_ij_atomwise(igrp-1, jgrp-1) -= e_ij;
+            eflux_ij_atomwise(jgrp-1, igrp-1) += e_ij;
         }
         else{
-            eflux_ij(igrp-1, jgrp-1) -= e_ij;
+            eflux_ij_atomwise(igrp-1, jgrp-1) -= e_ij;
         }
     };
 
