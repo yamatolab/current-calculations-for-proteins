@@ -553,6 +553,7 @@ public:
 
         int t0 = time_now();
         int idx_source = num_source - 1;
+        Vector3d crd_source = t_crd.row(idx_source);
         Vector3d vi = t_vel.row(idx_source);
 
         std::queue<int> cell_queue;
@@ -571,7 +572,6 @@ public:
                         int t1 = time_now();
                         int c = cells[p].child[octant];
                         Vector3d& rc = cells[c].rc;
-                        Vector3d crd_source = t_crd.row(idx_source);
                         
                         double dx = crd_source(0) - rc(0);
                         double dy = crd_source(1) - rc(1);
@@ -722,7 +722,6 @@ public:
                         continue;
                     }
 
-                    Vector3d crd_source = t_crd.row(idx_source);
                     Vector3d crd_target = t_crd.row(idx_target);
                     Vector3d rij = crd_source - crd_target;
                     
