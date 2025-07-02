@@ -1399,6 +1399,7 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("parent", &cal_fmm::Cell::parent)
         .def_readwrite("rc", &cal_fmm::Cell::rc)
         .def_readwrite("r", &cal_fmm::Cell::r)
+        .def_readwrite("rmc", &cal_fmm::Cell::rmc)
         .def_readwrite("multipole", &cal_fmm::Cell::multipole)
         ;
     
