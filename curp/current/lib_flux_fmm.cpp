@@ -35,8 +35,16 @@ public:
     MatrixXd c6s;
     MatrixXd c12s;
 
+    // heat flux
     std::vector<std::vector<Vector3d>> hflux_ij;
+    std::vector<std::vector<Vector3d>> hflux_ij_atomwise;
+    std::vector<std::vector<Vector3d>> hflux_ij_cellwise;
+
+    // energy flux
     MatrixXd eflux_ij;
+    MatrixXd eflux_ij_atomwise;
+    MatrixXd eflux_ij_cellwise;
+
     bool flag_heat;
     bool flag_energy;
 
@@ -64,7 +72,11 @@ public:
         c6s(MatrixXd::Zero(0, 0)),
         c12s(MatrixXd::Zero(0, 0)),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
+        hflux_ij_atomwise(std::vector<std::vector<Vector3d>>()),
+        hflux_ij_cellwise(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0)),
+        eflux_ij_atomwise(MatrixXd::Zero(0, 0)),
+        eflux_ij_cellwise(MatrixXd::Zero(0, 0)),
         flag_heat(false),
         flag_energy(false),
         count_atom(0),
@@ -103,6 +115,8 @@ public:
         if (flux_type == "heat"){
             flag_heat = true;
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            hflux_ij_atomwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            hflux_ij_cellwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
                 cal_hflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
@@ -117,6 +131,8 @@ public:
         else if (flux_type == "energy"){
             flag_energy = true;
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_atomwise = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_cellwise = MatrixXd::Zero(ngrp, ngrp);
             cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
                 cal_eflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
@@ -144,10 +160,16 @@ public:
         count_cell = 0;
         if (flag_heat == true){
             hflux_ij.clear();
+            hflux_ij_atomwise.clear();
+            hflux_ij_cellwise.clear();
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            hflux_ij_atomwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            hflux_ij_cellwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
         }
         else if (flag_energy == true){
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_atomwise = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_cellwise = MatrixXd::Zero(ngrp, ngrp);
         }
         int t1 = time_now();
         std::cerr << "initialize time: " << t1 - t0 << " seconds" << std::endl;
