@@ -728,13 +728,22 @@ public:
                     double r = sqrt(rij.dot(rij));
                     double inv_r = 1.0 / r;
                     double coeff = 332.05221729;
+                    double inv_r3 = inv_r * inv_r * inv_r;              // 1/r^3
+                    double inv_r8 = inv_r3 * inv_r3 * inv_r * inv_r;    // 1/r^8
+                    double inv_r14 = inv_r8 * inv_r3 * inv_r3;          // 1/r^14
 
                     double charge_i = charges[idx_source];
                     double charge_j = charges[idx_target];
                     double qij = coeff * charge_i * charge_j;
-                    qij = qij * inv_r * inv_r * inv_r;
+                    qij = qij * inv_r3;
+                    int source_type = atom_types[idx_source] - 1;
+                    int target_type = atom_types[idx_target] - 1;
+
+                    double c6 = c6s(source_type, target_type);
+                    double c12 = c12s(source_type, target_type);
+                    double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
                 
-                    Vector3d fij = rij * qij;
+                    Vector3d fij = rij * (qij + vdw); // electrostatic + vdw force
                     // std::cerr << "atomwise calculation " << std::endl;
                     // std::cerr << "num_source: " << num_source << std::endl;
                     // std::cerr << "num_target: " << num_target << std::endl;
@@ -929,14 +938,25 @@ public:
 
             double r = sqrt(rij.dot(rij));
             double inv_r = 1.0 / r;
+            double inv_r3 = inv_r * inv_r * inv_r;              // 1/r^3
+            double inv_r8 = inv_r3 * inv_r3 * inv_r * inv_r;    // 1/r^8
+            double inv_r14 = inv_r8 * inv_r3 * inv_r3;          // 1/r^14
             double coeff = 332.05221729;
 
             double charge_i = charges[num_source - 1];
             double charge_j = charges[num_target - 1];
             double qij = coeff * charge_i * charge_j;
-            qij = qij * inv_r * inv_r * inv_r;
+            qij = qij * inv_r3;
 
-            Vector3d fij = rij * qij;
+            int source_type = atom_types[idx_source] - 1;
+            int target_type = atom_types[idx_target] - 1;
+
+
+            double c6 = c6s(source_type, target_type);
+            double c12 = c12s(source_type, target_type);
+            double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
+
+            Vector3d fij = rij * (qij + vdw);
 
             int igrp = iatom_to_igroup(num_source - 1);
             int jgrp = iatom_to_igroup(num_target - 1);
