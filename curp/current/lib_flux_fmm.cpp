@@ -1016,6 +1016,19 @@ public:
         }
     };
 
+    void add_flux(){
+
+        if (flag_heat == true){
+            for (int i = 0; i < ngrp; i++){
+                for (int j = 0; j < ngrp; j++){
+                    hflux_ij[i][j] = hflux_ij_cellwise[i][j] + hflux_ij_atomwise[i][j];
+                }
+            }
+        }
+        else if (flag_energy == true){
+            eflux_ij = eflux_ij_cellwise + eflux_ij_atomwise;
+        }
+    };
 
     void cal_coulomb_flux_fmm(const std::vector<All_cells>& all_cells) {
         int t0 = time_now();
@@ -1029,12 +1042,8 @@ public:
         int t4 = time_now();
         cal_bonded_flux();
         int t5 = time_now();
-        std::cerr << "get_all_cells time: " << t1 - t0 << std::endl;
-        std::cerr << "cal_p time: " << t2 - t1 << std::endl;
-        std::cerr << "cal_M2M time: " << t3 - t2 << std::endl;
-        std::cerr << "cal_force time: " << t4 - t3 << std::endl;
-        std::cerr << "total time(cal_p -> cal_force): " << t4 - t1 << std::endl;
-        std::cerr << "   " << std::endl;
+        add_flux();
+        int t6 = time_now();
     };
 
     int time_now(){
