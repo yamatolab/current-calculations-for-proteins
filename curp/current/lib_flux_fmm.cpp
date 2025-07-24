@@ -190,7 +190,7 @@ public:
         VectorXd          multipole;
         MatrixXd          multipole_j;
 
-        Cell(int n_crit):
+        Cell():
             nleaf(0),                               // number of atoms(leaf) in the cell
             leaf(std::vector<int>(0)),              // index of atoms in the cell
             nchild(0),                              // number of child cells
@@ -258,7 +258,7 @@ public:
 
     void add_child(int octant, int current_cell, std::vector<Cell>& cells){
 
-        cells.push_back(Cell(n_crit));
+        cells.push_back(Cell());
 
         int new_child = cells.size() - 1;
 
@@ -325,7 +325,7 @@ public:
             // all_cell.cells.reserve(num_iatoms);
 
             std::vector<Cell>& cells = all_cell.cells;
-            cells.push_back(Cell(n_crit));
+            cells.push_back(Cell());
             calculate_rc(iatoms);
             cells[0].rc = result_root.rc;
             cells[0].r = result_root.r;
