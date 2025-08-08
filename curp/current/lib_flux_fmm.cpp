@@ -55,7 +55,8 @@ public:
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise_bonded;
     std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_cellwise;
 
-    // constructor
+    std::vector<std::pair<int, std::vector<int>>> pairs_atomwise;
+    std::vector<std::pair<int, std::vector<int>>> pairs_cellwise;
     cal_fmm():
         natom(0),
         ngrp(0),
@@ -80,7 +81,9 @@ public:
         flag_heat(false),
         flag_energy(false),
         count_atom(0),
-        count_cell(0)
+        count_cell(0),
+        pairs_atomwise(std::vector<std::pair<int, std::vector<int>>>()),
+        pairs_cellwise(std::vector<std::pair<int, std::vector<int>>>())
     {};
 
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
@@ -576,7 +579,6 @@ public:
         int t0 = time_now();
         int idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
-        Vector3d vi = t_vel.row(idx_source);
 
         std::queue<int> cell_queue;
         cell_queue.push(p);
@@ -608,145 +610,46 @@ public:
                             cell_queue.push(c);
                         }
                         else{
-                            int t3 = time_now();
-                            VectorXd bJx = VectorXd::Zero(10);
-                            VectorXd bJy = VectorXd::Zero(10);
-                            VectorXd bJz = VectorXd::Zero(10);
-
-                            double inv_r = 1.0 / r;                     // 1/r
-                            double r2 = inv_r * inv_r;                  // 1/r^2
-                            double r3 = r2 * inv_r;                     // 1/r^3
-                            double r5 = r3 * r2;                        // 1/r^5
-                            double r7 = r5 * r2;                        // 1/r^7
-
-                            double dx2 = dx * dx;                       // dx^2
-                            double dy2 = dy * dy;                       // dy^2
-                            double dz2 = dz * dz;                       // dz^2
-
-                            double dxdy = dx * dy;                      // dxdy
-                            double dydz = dy * dz;                      // dydz
-                            double dzdx = dz * dx;                      // dzdx
-
-                            double dxr5 = 3 * dx * r5;                  // 3dx/r^5
-                            double dyr5 = 3 * dy * r5;                  // 3dy/r^5
-                            double dzr5 = 3 * dz * r5;                  // 3dx/r^5
-
-                            double dxdydz = 15 * dxdy * dz * r7;        // 15dxdydz/r^7
-                            double dx2dy  = 15 * dx2 * dy * r7;         // 15dx^2dy/r^7
-                            double dy2dz  = 15 * dy2 * dz * r7;         // 15dy^2dz/r^7
-                            double dz2dx  = 15 * dz2 * dx * r7;         // 15dz^2dx/r^7
-                            double dy2dx  = 15 * dy2 * dx * r7;         // 15dy^2dx/r^7
-                            double dz2dy  = 15 * dz2 * dy * r7;         // 15dz^2dy/r^7
-                            double dx2dz  = 15 * dx2 * dz * r7;         // 15dx^2dz/r^7
-
-
-                            // calculate bJx
-                            bJx(0) = -dx * r3;                          // -dx/r^3
-                            bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
-                            bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
-                            bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
-                            bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
-                            bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
-                            bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
-                            bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
-                            bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
-                            bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-
-                            // calculate bJy
-                            bJy(0) = -dy * r3;                          // -dy/r^3
-                            bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
-                            bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
-                            bJy(3) = 3 * dydz * r5;                     // 0       + 3dzdy/r^5
-                            bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
-                            bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
-                            bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
-                            bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
-                            bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydzdy/r^7
-                            bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
-
-                            // calculate bJz
-                            bJz(0) = -dz * r3;                          // -dz/r^3
-                            bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
-                            bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
-                            bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
-                            bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-                            bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
-                            bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
-                            bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
-                            bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
-                            bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
-
-                            int t4 = time_now();
-
-                            // calculate potential
-                            VectorXd& potential = cells[c].multipole;
-                            double charge = charges[idx_source];
-                            double coeff = 332.05221729;
-                            VectorXd pot = potential * charge * coeff;
-
-                            double fx = pot.dot(bJx);
-                            double fy = pot.dot(bJy);
-                            double fz = pot.dot(bJz);
-                            Vector3d f = Vector3d(-fx, -fy, -fz);
-
-                            MatrixXd& potential_j = cells[c].multipole_j;
-                            MatrixXd bJ = MatrixXd::Zero(10, 3);
-                            bJ.col(0) = bJx;
-                            bJ.col(1) = bJy;
-                            bJ.col(2) = bJz;
-                            Matrix3d pot_j = -potential_j * bJ * coeff * charge;
-
-                            int igrp = iatom_to_igroup(idx_source);
-                            int Jgrp = iatom_to_igroup(cells[c].leaf[0] - 1);
-
-                            // std::cerr << "cellwise calculation " << std::endl;
-                            // std::cerr << "num_source: " << num_source << std::endl;
-                            // std::cerr << "num_target: [";
-                            // for (size_t l = 0; l < cells[c].leaf.size(); ++l) {
-                            //     std::cerr << cells[c].leaf[l];
-                            //     if (l < cells[c].leaf.size() - 1) {
-                            //         std::cerr << ", ";
-                            //     }
-                            // };
-                            // std::cerr << "]" << std::endl;
-                            // std::cerr << "crd_source: " << crd_source.transpose() << std::endl;
-                            // std::cerr << "crd_target: " << rc.transpose() << std::endl;
-                            // std::cerr << "riJ: " << riJ.transpose() << std::endl;
-                            // std::cerr << "r: " << r << std::endl;
-                            // std::cerr << "bJx: " << bJx.transpose() << std::endl;
-                            // std::cerr << "bJy: " << bJy.transpose() << std::endl;
-                            // std::cerr << "bJz: " << bJz.transpose() << std::endl;
-                            // std::cerr << "potential: " << potential.transpose() << std::endl;
-                            // std::cerr << "charge: " << charge << std::endl;
-                            // std::cerr << "pot: " << pot.transpose() << std::endl;
-                            // std::cerr << "f: " << f.transpose() << std::endl;
-                            // std::cerr << "vi: " << vi.transpose() << std::endl;
-                            // std::cerr << "riJ: " << riJ.transpose() << std::endl;
-                            // std::cerr << "igrp: " << igrp << std::endl;
-                            // std::cerr << "Jgrp: " << Jgrp << std::endl;
-                            // std::cerr << "   " << std::endl;
-                            cal_flux_cellwise(f, vi, crd_source, pot_j, igrp, Jgrp);
-
-                            int t5 = time_now();
-                            // std::cerr << "cal_fiJ prep time: " << t4 - t3 << std::endl;
-                            // std::cerr << "cal_fiJ time: " << t5 - t4 << std::endl;
+                            pairs_cellwise[num_s].second.push_back(c);
                         }      
                     }
                 }
             }
             else {
-                int t6 = time_now();
-                for (int l = 0; l < cells[p].nleaf; l++){
-                    int num_target = cells[p].leaf[l];
-                    int idx_target = num_target - 1;
+                pairs_atomwise[num_s].second.push_back(p);
+            }
+        }
+        
+    };
 
-                    if (num_target == num_source){
+    void cal_force_atomwise(std::vector<Cell>& cells){
+        int t2 = time_now();
+        int size_source = pairs_atomwise.size();
+        for (int i = 0; i < size_source; i++){
+
+            int num_source = pairs_atomwise[i].first;
+            std::vector<int>& pairs = pairs_atomwise[i].second;
+
+            int idx_source = num_source - 1;
+            Vector3d crd_source = t_crd.row(idx_source);
+            Vector3d vi = t_vel.row(idx_source);
+
+            int size_pairs = pairs.size();
+            for (int j = 0; j < size_pairs; j++){
+                int idx_cell = pairs[j];
+                std::vector<int>& atom_pairs = cells[idx_cell].leaf;
+                int num_target = atom_pairs.size();
+                
+                for (int k = 0; k < num_target; k++){
+                    int idx_target = atom_pairs[k] - 1;
+
+                    if (idx_target == idx_source){
                         continue;
                     }
 
                     Vector3d crd_target = t_crd.row(idx_target);
                     Vector3d rij = crd_source - crd_target;
-                    
+                
                     double r = sqrt(rij.dot(rij));
                     double inv_r = 1.0 / r;
                     double coeff = 332.05221729;
@@ -766,29 +669,135 @@ public:
                     double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
                 
                     Vector3d fij = rij * (qij + vdw); // electrostatic + vdw force
-                    // std::cerr << "atomwise calculation " << std::endl;
-                    // std::cerr << "num_source: " << num_source << std::endl;
-                    // std::cerr << "num_target: " << num_target << std::endl;
-                    // std::cerr << "crd_source: " << crd_source.transpose() << std::endl;
-                    // std::cerr << "crd_target: " << crd_target.transpose() << std::endl;
-                    // std::cerr << "rij: " << rij.transpose() << std::endl;
-                    // std::cerr << "vi: " << vi.transpose() << std::endl;
-                    // std::cerr << "vj: " << vj.transpose() << std::endl;
-                    // std::cerr << "vij: " << vij.transpose() << std::endl;
-                    // std::cerr << "r: " << r << std::endl;
-                    // std::cerr << "charge_i: " << charge_i << std::endl;
-                    // std::cerr << "charge_j: " << charge_j << std::endl;
-                    // std::cerr << "qij: " << qij << std::endl;
-                    // std::cerr << "fij: " << fij.transpose() << std::endl;
-                    // std::cerr << "" << std::endl;
 
                     cal_flux_atomwise(fij, vi, rij, idx_source, idx_target);
-
                 }
-                int t7 = time_now();
-                // std::cerr << "cal_fij time(/pair): " << (t7 - t6)/cells[p].nleaf << std::endl;  
             }
         }
+        int t7 = time_now();
+        std::cerr << "cal_force_atomwise time: " << t7 - t2 << std::endl;
+    };
+
+    void cal_force_cellwise(std::vector<Cell>& cells){
+
+        int t3 = time_now();
+        int size_source = pairs_cellwise.size();
+
+        Matrix<double, 10, 1> bJx, bJy, bJz;
+        Matrix<double, 10, 3> bJ;
+
+        for (int i = 0; i < size_source; i++){
+            int num_source = pairs_cellwise[i].first;
+            int idx_source = num_source - 1;
+            Vector3d crd_source = t_crd.row(idx_source);
+            Vector3d vi = t_vel.row(idx_source);
+            int size_pairs = pairs_cellwise[i].second.size();
+
+            for (int j = 0; j < size_pairs; j++){
+                int p = pairs_cellwise[i].second[j];
+                Cell& cell = cells[p];
+
+                Vector3d rc = cell.rc;
+                double dx = crd_source(0) - rc(0);
+                double dy = crd_source(1) - rc(1);
+                double dz = crd_source(2) - rc(2);
+                double r = sqrt(dx * dx + dy * dy + dz * dz);
+
+                bJx.setZero();
+                bJy.setZero();
+                bJz.setZero();
+                bJ.setZero();
+
+                double inv_r = 1.0 / r;                     // 1/r
+                double r2 = inv_r * inv_r;                  // 1/r^2
+                double r3 = r2 * inv_r;                     // 1/r^3
+                double r5 = r3 * r2;                        // 1/r^5
+                double r7 = r5 * r2;                        // 1/r^7
+
+                double dx2 = dx * dx;                       // dx^2
+                double dy2 = dy * dy;                       // dy^2
+                double dz2 = dz * dz;                       // dz^2
+
+                double dxdy = dx * dy;                      // dxdy
+                double dydz = dy * dz;                      // dydz
+                double dzdx = dz * dx;                      // dzdx
+
+                double dxr5 = 3 * dx * r5;                  // 3dx/r^5
+                double dyr5 = 3 * dy * r5;                  // 3dy/r^5
+                double dzr5 = 3 * dz * r5;                  // 3dx/r^5
+
+                double dxdydz = 15 * dxdy * dz * r7;        // 15dxdydz/r^7
+                double dx2dy  = 15 * dx2 * dy * r7;         // 15dx^2dy/r^7
+                double dy2dz  = 15 * dy2 * dz * r7;         // 15dy^2dz/r^7
+                double dz2dx  = 15 * dz2 * dx * r7;         // 15dz^2dx/r^7
+                double dy2dx  = 15 * dy2 * dx * r7;         // 15dy^2dx/r^7
+                double dz2dy  = 15 * dz2 * dy * r7;         // 15dz^2dy/r^7
+                double dx2dz  = 15 * dx2 * dz * r7;         // 15dx^2dz/r^7
+
+                // calculate bJx
+                bJx(0) = -dx * r3;                          // -dx/r^3
+                bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
+                bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
+                bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
+                bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
+                bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
+                bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
+                bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
+                bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
+                bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+
+                // calculate bJy
+                bJy(0) = -dy * r3;                          // -dy/r^3
+                bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
+                bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
+                bJy(3) = 3 * dydz * r5;                     // 0       + 3dzdy/r^5
+                bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
+                bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
+                bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
+                bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
+                bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydzdy/r^7
+                bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
+
+                // calculate bJz
+                bJz(0) = -dz * r3;                          // -dz/r^3
+                bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
+                bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
+                bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
+                bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+                bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
+                bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
+                bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
+                bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
+                bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
+
+                int t4 = time_now();
+
+                // calculate potential
+                VectorXd& potential = cell.multipole;
+                double charge = charges[idx_source];
+                double coeff = 332.05221729;
+                VectorXd pot = coeff * potential * charge;
+
+                double fx = pot.dot(bJx);
+                double fy = pot.dot(bJy);
+                double fz = pot.dot(bJz);
+                Vector3d f = Vector3d(-fx, -fy, -fz);
+
+                MatrixXd& potential_j = cell.multipole_j;
+                bJ.col(0) = bJx;
+                bJ.col(1) = bJy;
+                bJ.col(2) = bJz;
+                Matrix3d pot_j = -potential_j * bJ * coeff * charge;
+
+                int igrp = iatom_to_igroup(idx_source);
+                int Jgrp = iatom_to_igroup(cell.leaf[0] - 1);
+                Vector3d vi = t_vel.row(idx_source);
+
+                cal_flux_cellwise(f, vi, crd_source, pot_j, igrp, Jgrp);
+            }
+        }
+        int t5 = time_now();
+        std::cerr << "cal_force_cellwise time: " << t5 - t3 << std::endl;
     };
 
     void cal_hflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
@@ -891,17 +900,32 @@ public:
         
             std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
+            int t1 = time_now();
 
-            for (int j = 0; j < source_size; j++){
+            for (int j = 0; j < size_targets; j++){
+                int t2 = time_now();
 
-                int num_source = source_atoms[j];
+                pairs_atomwise.clear();
+                pairs_cellwise.clear();
+                pairs_atomwise.resize(source_size);
+                pairs_cellwise.resize(source_size);
+                std::string target = targets[j];
+                std::vector<Cell> cells = get_cells(target, all_cells);
+                int t3 = time_now();
 
-                for (int k = 0; k < size_targets; k++){      
+                for (int k = 0; k < source_size; k++){
 
-                    std::string target = targets[k];
-                    std::vector<Cell> cells = get_cells(target, all_cells);
-                    cal_fiJ(num_source, 0, cells);
+                    int num_source = source_atoms[k];
+                    pairs_atomwise[k].first = num_source;
+                    pairs_cellwise[k].first = num_source;
+                    cal_fiJ(num_source, k, 0, cells);
+                    
                 }
+                int t4 = time_now();
+                cal_force_atomwise(cells);
+                int t5 = time_now();
+                cal_force_cellwise(cells);
+                int t6 = time_now();
             }
 
             std::vector<Cell> cells_source = get_cells(source, all_cells);
@@ -913,11 +937,17 @@ public:
                 }
                 std::vector<int> target_atoms = get_atoms(target, gname_iatoms_pairs);
                 int target_size = target_atoms.size();
+                pairs_atomwise.clear();
+                pairs_cellwise.clear();
+                pairs_atomwise.resize(target_size);
+                pairs_cellwise.resize(target_size);
 
                 for (int m = 0; m < target_size; m++){
                     int num_target = target_atoms[m];
-                    cal_fiJ(num_target, 0, cells_source);
+                    cal_fiJ(num_target, m, 0, cells_source);
                 }
+                cal_force_atomwise(cells_source);
+                cal_force_cellwise(cells_source);
             }
         }
     };
