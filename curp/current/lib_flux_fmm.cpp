@@ -579,7 +579,6 @@ public:
         int t0 = time_now();
         int idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
-        Vector3d vi = t_vel.row(idx_source);
 
         std::queue<int> cell_queue;
         cell_queue.push(p);
