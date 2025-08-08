@@ -921,17 +921,32 @@ public:
         
             std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
+            int t1 = time_now();
 
-            for (int j = 0; j < source_size; j++){
+            for (int j = 0; j < size_targets; j++){
+                int t2 = time_now();
 
-                int num_source = source_atoms[j];
+                pairs_atomwise.clear();
+                pairs_cellwise.clear();
+                pairs_atomwise.resize(source_size);
+                pairs_cellwise.resize(source_size);
+                std::string target = targets[j];
+                std::vector<Cell> cells = get_cells(target, all_cells);
+                int t3 = time_now();
 
-                for (int k = 0; k < size_targets; k++){      
+                for (int k = 0; k < source_size; k++){
 
-                    std::string target = targets[k];
-                    std::vector<Cell> cells = get_cells(target, all_cells);
-                    cal_fiJ(num_source, 0, cells);
+                    int num_source = source_atoms[k];
+                    pairs_atomwise[k].first = num_source;
+                    pairs_cellwise[k].first = num_source;
+                    cal_fiJ(num_source, k, 0, cells);
+                    
                 }
+                int t4 = time_now();
+                cal_force_atomwise(cells);
+                int t5 = time_now();
+                cal_force_cellwise(cells);
+                int t6 = time_now();
             }
 
             std::vector<Cell> cells_source = get_cells(source, all_cells);
@@ -943,11 +958,17 @@ public:
                 }
                 std::vector<int> target_atoms = get_atoms(target, gname_iatoms_pairs);
                 int target_size = target_atoms.size();
+                pairs_atomwise.clear();
+                pairs_cellwise.clear();
+                pairs_atomwise.resize(target_size);
+                pairs_cellwise.resize(target_size);
 
                 for (int m = 0; m < target_size; m++){
                     int num_target = target_atoms[m];
-                    cal_fiJ(num_target, 0, cells_source);
+                    cal_fiJ(num_target, m, 0, cells_source);
                 }
+                cal_force_atomwise(cells_source);
+                cal_force_cellwise(cells_source);
             }
         }
     };
