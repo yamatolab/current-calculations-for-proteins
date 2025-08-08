@@ -601,11 +601,13 @@ public:
                         double dy = crd_source(1) - rc(1);
                         double dz = crd_source(2) - rc(2);
                         double r = sqrt(dx * dx + dy * dy + dz * dz);
-                        int t2 = time_now();
+                        int t2 = time_now();                        
+                        double cutoff = 9.0;
+                        double min_len = r - 1.7320508 * cells[c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
                         // std::cerr << "num_source: "<< num_source << " cell: " << p << " child: " << c <<  std::endl;
                         // std::cerr << "crd_source - rc cal time: " << t2-t1 << std::endl;
 
-                        if (cells[c].r > theta * r){
+                        if (min_len < cutoff || cells[c].r > theta * r){
                             // std::cerr << "kaiki to " << c << std::endl;
                             cell_queue.push(c);
                         }
