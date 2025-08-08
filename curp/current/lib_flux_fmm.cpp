@@ -352,7 +352,6 @@ public:
                     }
 
                     current_cell = cells[current_cell].child[octant];
-                    // std::cerr << "current cell r: " << cells[current_cell].r << std::endl;
                 }
 
                 cells[current_cell].leaf.push_back(iatoms[j]);
@@ -364,14 +363,7 @@ public:
                 }
             }
             all_cells.push_back(all_cell);
-            // std::cerr << "root cell r: " << cells[0].r << std::endl;
-            // std::cerr << "group: " << group << std::endl;
-            // std::cerr << "" << std::endl;
         }
-        // std::cerr << "number of all cells: " << all_cells[0].cells.size() << std::endl;
-        // for (int i = 0; i < all_cells[0].cells.size(); i++){
-        //     std::cerr << "number of all cells: " << all_cells[0].cells[i].leaf << std::endl;
-        // }
         // print_all_cells();
         int t1 = time_now();
         std::cerr << "setup_all_cells time: " << t1 - t0 << " seconds" << std::endl;
