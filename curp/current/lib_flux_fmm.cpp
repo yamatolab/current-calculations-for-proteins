@@ -55,7 +55,8 @@ public:
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise_bonded;
     std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_cellwise;
 
-    // constructor
+    std::vector<std::pair<int, std::vector<int>>> pairs_atomwise;
+    std::vector<std::pair<int, std::vector<int>>> pairs_cellwise;
     cal_fmm():
         natom(0),
         ngrp(0),
@@ -80,7 +81,9 @@ public:
         flag_heat(false),
         flag_energy(false),
         count_atom(0),
-        count_cell(0)
+        count_cell(0),
+        pairs_atomwise(std::vector<std::pair<int, std::vector<int>>>()),
+        pairs_cellwise(std::vector<std::pair<int, std::vector<int>>>())
     {};
 
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
