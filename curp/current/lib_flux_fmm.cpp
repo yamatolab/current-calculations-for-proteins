@@ -37,26 +37,26 @@ public:
 
     // heat flux
     std::vector<std::vector<Vector3d>> hflux_ij;
-    std::vector<std::vector<Vector3d>> hflux_ij_atomwise;
-    std::vector<std::vector<Vector3d>> hflux_ij_cellwise;
+    std::vector<std::vector<Vector3d>> hflux_ij_near;
+    std::vector<std::vector<Vector3d>> hflux_ij_far;
 
     // energy flux
     MatrixXd eflux_ij;
-    MatrixXd eflux_ij_atomwise;
-    MatrixXd eflux_ij_cellwise;
+    MatrixXd eflux_ij_near;
+    MatrixXd eflux_ij_far;
 
     bool flag_heat;
     bool flag_energy;
 
-    int count_atom;
-    int count_cell;
+    int count_near;
+    int count_far;
 
-    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise;
-    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_atomwise_bonded;
-    std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_cellwise;
+    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near;
+    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near_bonded;
+    std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_far;
 
-    std::vector<std::pair<int, std::vector<int>>> pairs_atomwise;
-    std::vector<std::pair<int, std::vector<int>>> pairs_cellwise;
+    std::vector<std::pair<int, std::vector<int>>> pairs_near;
+    std::vector<std::pair<int, std::vector<int>>> pairs_far;
     cal_fmm():
         natom(0),
         ngrp(0),
@@ -73,17 +73,17 @@ public:
         c6s(MatrixXd::Zero(0, 0)),
         c12s(MatrixXd::Zero(0, 0)),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
-        hflux_ij_atomwise(std::vector<std::vector<Vector3d>>()),
-        hflux_ij_cellwise(std::vector<std::vector<Vector3d>>()),
+        hflux_ij_near(std::vector<std::vector<Vector3d>>()),
+        hflux_ij_far(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0)),
-        eflux_ij_atomwise(MatrixXd::Zero(0, 0)),
-        eflux_ij_cellwise(MatrixXd::Zero(0, 0)),
+        eflux_ij_near(MatrixXd::Zero(0, 0)),
+        eflux_ij_far(MatrixXd::Zero(0, 0)),
         flag_heat(false),
         flag_energy(false),
-        count_atom(0),
-        count_cell(0),
-        pairs_atomwise(std::vector<std::pair<int, std::vector<int>>>()),
-        pairs_cellwise(std::vector<std::pair<int, std::vector<int>>>())
+        count_near(0),
+        count_far(0),
+        pairs_near(std::vector<std::pair<int, std::vector<int>>>()),
+        pairs_far(std::vector<std::pair<int, std::vector<int>>>())
     {};
 
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
@@ -118,32 +118,32 @@ public:
         if (flux_type == "heat"){
             flag_heat = true;
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            hflux_ij_atomwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            hflux_ij_cellwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
-                cal_hflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
+            hflux_ij_near.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            hflux_ij_far.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
+                cal_hflux_far(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
-            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
-                cal_hflux_atomwise(fij, vi, rij, idx_source, idx_target);
+            cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
+                cal_hflux_near(fij, vi, rij, idx_source, idx_target);
             };
-            cal_flux_atomwise_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_hflux_atomwise_bonded(fij, vij, rij, igrp, jgrp);
+            cal_flux_near_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
+                cal_hflux_near_bonded(fij, vij, rij, igrp, jgrp);
             };
 
         }
         else if (flux_type == "energy"){
             flag_energy = true;
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
-            eflux_ij_atomwise = MatrixXd::Zero(ngrp, ngrp);
-            eflux_ij_cellwise = MatrixXd::Zero(ngrp, ngrp);
-            cal_flux_cellwise = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
-                cal_eflux_cellwise(fiJ, vi, r, pot_j, igrp, Jgrp);
+            eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_far = MatrixXd::Zero(ngrp, ngrp);
+            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
+                cal_eflux_far(fiJ, vi, r, pot_j, igrp, Jgrp);
             };
-            cal_flux_atomwise = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
-                cal_eflux_atomwise(fij, vi, rij, idx_source, idx_target);
+            cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
+                cal_eflux_near(fij, vi, rij, idx_source, idx_target);
             };
-            cal_flux_atomwise_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_eflux_atomwise_bonded(fij, vij, rij, igrp, jgrp);
+            cal_flux_near_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
+                cal_eflux_near_bonded(fij, vij, rij, igrp, jgrp);
             };
         }
         else{
@@ -159,20 +159,20 @@ public:
         t_vel = MatrixXd::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
-        count_atom = 0;
-        count_cell = 0;
+        count_near = 0;
+        count_far = 0;
         if (flag_heat == true){
             hflux_ij.clear();
-            hflux_ij_atomwise.clear();
-            hflux_ij_cellwise.clear();
+            hflux_ij_near.clear();
+            hflux_ij_far.clear();
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            hflux_ij_atomwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            hflux_ij_cellwise.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            hflux_ij_near.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
+            hflux_ij_far.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
         }
         else if (flag_energy == true){
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
-            eflux_ij_atomwise = MatrixXd::Zero(ngrp, ngrp);
-            eflux_ij_cellwise = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_far = MatrixXd::Zero(ngrp, ngrp);
         }
         int t1 = time_now();
         std::cerr << "initialize time: " << t1 - t0 << " seconds" << std::endl;
@@ -604,13 +604,13 @@ public:
                             cell_queue.push(c);
                         }
                         else{
-                            pairs_cellwise[num_s].second.push_back(c);
+                            pairs_far[num_s].second.push_back(c);
                         }      
                     }
                 }
             }
             else {
-                pairs_atomwise[num_s].second.push_back(p);
+                pairs_near[num_s].second.push_back(p);
             }
         }
         
@@ -618,11 +618,11 @@ public:
 
     void cal_force_atomwise(std::vector<Cell>& cells){
         int t2 = time_now();
-        int size_source = pairs_atomwise.size();
+        int size_source = pairs_near.size();
         for (int i = 0; i < size_source; i++){
 
-            int num_source = pairs_atomwise[i].first;
-            std::vector<int>& pairs = pairs_atomwise[i].second;
+            int num_source = pairs_near[i].first;
+            std::vector<int>& pairs = pairs_near[i].second;
 
             int idx_source = num_source - 1;
             Vector3d crd_source = t_crd.row(idx_source);
@@ -664,7 +664,7 @@ public:
                 
                     Vector3d fij = rij * (qij + vdw); // electrostatic + vdw force
 
-                    cal_flux_atomwise(fij, vi, rij, idx_source, idx_target);
+                    cal_flux_near(fij, vi, rij, idx_source, idx_target);
                 }
             }
         }
@@ -675,20 +675,20 @@ public:
     void cal_force_cellwise(std::vector<Cell>& cells){
 
         int t3 = time_now();
-        int size_source = pairs_cellwise.size();
+        int size_source = pairs_far.size();
 
         Matrix<double, 10, 1> bJx, bJy, bJz;
         Matrix<double, 10, 3> bJ;
 
         for (int i = 0; i < size_source; i++){
-            int num_source = pairs_cellwise[i].first;
+            int num_source = pairs_far[i].first;
             int idx_source = num_source - 1;
             Vector3d crd_source = t_crd.row(idx_source);
             Vector3d vi = t_vel.row(idx_source);
-            int size_pairs = pairs_cellwise[i].second.size();
+            int size_pairs = pairs_far[i].second.size();
 
             for (int j = 0; j < size_pairs; j++){
-                int p = pairs_cellwise[i].second[j];
+                int p = pairs_far[i].second[j];
                 Cell& cell = cells[p];
 
                 Vector3d rc = cell.rc;
@@ -787,28 +787,28 @@ public:
                 int Jgrp = iatom_to_igroup(cell.leaf[0] - 1);
                 Vector3d vi = t_vel.row(idx_source);
 
-                cal_flux_cellwise(f, vi, crd_source, pot_j, igrp, Jgrp);
+                cal_flux_far(f, vi, crd_source, pot_j, igrp, Jgrp);
             }
         }
         int t5 = time_now();
         std::cerr << "cal_force_cellwise time: " << t5 - t3 << std::endl;
     };
 
-    void cal_hflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
+    void cal_hflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
         
         Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5 - pot_j * vi * 0.5;
 
         if (igrp != Jgrp){
-            hflux_ij_cellwise[igrp-1][Jgrp-1] += h_ij;
-            hflux_ij_cellwise[Jgrp-1][igrp-1] += h_ij;
+            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
+            hflux_ij_far[Jgrp-1][igrp-1] += h_ij;
         }
         else{
-            hflux_ij_cellwise[igrp-1][Jgrp-1] += h_ij;
+            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
         }
-        count_cell += 1;
+        count_far += 1;
     };
 
-    void cal_hflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
+    void cal_hflux_near(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
         
         Vector3d h_ij = rij * (fij.dot(vi)) * 0.5;
 
@@ -816,30 +816,30 @@ public:
         int jgrp = iatom_to_igroup(idx_target);
 
         if (igrp != jgrp){
-            hflux_ij_atomwise[igrp-1][jgrp-1] += h_ij;
-            hflux_ij_atomwise[jgrp-1][igrp-1] += h_ij;
+            hflux_ij_near[igrp-1][jgrp-1] += h_ij;
+            hflux_ij_near[jgrp-1][igrp-1] += h_ij;
         }
         else {
-            hflux_ij_atomwise[igrp-1][jgrp-1] += h_ij;
+            hflux_ij_near[igrp-1][jgrp-1] += h_ij;
         }
-        count_atom += 1;
+        count_near += 1;
     };
 
-    void cal_eflux_cellwise(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
+    void cal_eflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
         
         double e_ij = fiJ.dot(vi) * 0.5;
 
         if (igrp != Jgrp){
-            eflux_ij_cellwise(igrp-1, Jgrp-1) += e_ij;
-            eflux_ij_cellwise(Jgrp-1, igrp-1) -= e_ij;
+            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
+            eflux_ij_far(Jgrp-1, igrp-1) -= e_ij;
         }
         else{
-            eflux_ij_cellwise(igrp-1, Jgrp-1) += e_ij;         // it is not correct
+            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;         // it is not correct
         }
-        count_cell += 1;
+        count_far += 1;
     };
 
-    void cal_eflux_atomwise(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
+    void cal_eflux_near(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
 
         double e_ij = fij.dot(vi) * 0.5;
 
@@ -847,16 +847,16 @@ public:
         int jgrp = iatom_to_igroup(idx_target);
 
         if (igrp != jgrp){
-            eflux_ij_atomwise(igrp-1, jgrp-1) += e_ij;
-            eflux_ij_atomwise(jgrp-1, igrp-1) -= e_ij;
+            eflux_ij_near(igrp-1, jgrp-1) += e_ij;
+            eflux_ij_near(jgrp-1, igrp-1) -= e_ij;
         }
         else if (idx_source < idx_target) {
-            eflux_ij_atomwise(igrp-1, jgrp-1) += e_ij;
+            eflux_ij_near(igrp-1, jgrp-1) += e_ij;
         }
         else {
-            eflux_ij_atomwise(igrp-1, jgrp-1) -= e_ij;
+            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
         }
-        count_atom += 1;
+        count_near += 1;
     };
 
     std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
@@ -899,10 +899,10 @@ public:
             for (int j = 0; j < size_targets; j++){
                 int t2 = time_now();
 
-                pairs_atomwise.clear();
-                pairs_cellwise.clear();
-                pairs_atomwise.resize(source_size);
-                pairs_cellwise.resize(source_size);
+                pairs_near.clear();
+                pairs_far.clear();
+                pairs_near.resize(source_size);
+                pairs_far.resize(source_size);
                 std::string target = targets[j];
                 std::vector<Cell> cells = get_cells(target, all_cells);
                 int t3 = time_now();
@@ -910,8 +910,8 @@ public:
                 for (int k = 0; k < source_size; k++){
 
                     int num_source = source_atoms[k];
-                    pairs_atomwise[k].first = num_source;
-                    pairs_cellwise[k].first = num_source;
+                    pairs_near[k].first = num_source;
+                    pairs_far[k].first = num_source;
                     cal_fiJ(num_source, k, 0, cells);
                     
                 }
@@ -931,10 +931,10 @@ public:
                 }
                 std::vector<int> target_atoms = get_atoms(target, gname_iatoms_pairs);
                 int target_size = target_atoms.size();
-                pairs_atomwise.clear();
-                pairs_cellwise.clear();
-                pairs_atomwise.resize(target_size);
-                pairs_cellwise.resize(target_size);
+                pairs_near.clear();
+                pairs_far.clear();
+                pairs_near.resize(target_size);
+                pairs_far.resize(target_size);
 
                 for (int m = 0; m < target_size; m++){
                     int num_target = target_atoms[m];
@@ -986,36 +986,36 @@ public:
             int igrp = iatom_to_igroup(num_source - 1);
             int jgrp = iatom_to_igroup(num_target - 1);
 
-            cal_flux_atomwise_bonded(fij, vij, rij, igrp, jgrp);
+            cal_flux_near_bonded(fij, vij, rij, igrp, jgrp);
         }
         std::cerr << "count_atom_bonded: " << size_bonded << std::endl;
     };
 
-    void cal_hflux_atomwise_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
+    void cal_hflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
         
         Vector3d h_ij = rij * (fij.dot(vij)) * 0.5;
 
         if (igrp != jgrp){
-            hflux_ij_atomwise[igrp-1][jgrp-1] -= h_ij;
-            hflux_ij_atomwise[jgrp-1][igrp-1] -= h_ij;
+            hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
+            hflux_ij_near[jgrp-1][igrp-1] -= h_ij;
         }
         else{
-            hflux_ij_atomwise[igrp-1][jgrp-1] -= h_ij;
+            hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
         }
         // std::cerr << "hflux_ij(after): " << hflux_ij[igrp-1][jgrp-1].transpose() << std::endl;
         // std::cerr << "" << std::endl;
     };
 
-    void cal_eflux_atomwise_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
+    void cal_eflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
 
         double e_ij = fij.dot(vij) * 0.5;
         
         if (igrp != jgrp){
-            eflux_ij_atomwise(igrp-1, jgrp-1) -= e_ij;
-            eflux_ij_atomwise(jgrp-1, igrp-1) += e_ij;
+            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
+            eflux_ij_near(jgrp-1, igrp-1) += e_ij;
         }
         else{
-            eflux_ij_atomwise(igrp-1, jgrp-1) -= e_ij;
+            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
         }
     };
 
@@ -1024,12 +1024,12 @@ public:
         if (flag_heat == true){
             for (int i = 0; i < ngrp; i++){
                 for (int j = 0; j < ngrp; j++){
-                    hflux_ij[i][j] = hflux_ij_cellwise[i][j] + hflux_ij_atomwise[i][j];
+                    hflux_ij[i][j] = hflux_ij_far[i][j] + hflux_ij_near[i][j];
                 }
             }
         }
         else if (flag_energy == true){
-            eflux_ij = eflux_ij_cellwise + eflux_ij_atomwise;
+            eflux_ij = eflux_ij_far + eflux_ij_near;
         }
     };
 
