@@ -53,7 +53,7 @@ class TwoBodyForceBase:
         if self.__setting.curp.coulomb_method == 'cutoff':            
             self._setup_coulomb()
             
-        self._setup_vdw()
+            self._setup_vdw()
 
     def cal_force(self, crd):
         # initialize
