@@ -146,9 +146,9 @@ public:
     };
     Root_r root_r;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    // setup parameters
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
         const std::vector<std::pair<int, int>>& input_bonded_pairs, \
         const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
@@ -157,20 +157,26 @@ public:
         const std::vector<int>& input_atom_types,
         const MatrixXd& input_c6s,
         const MatrixXd& input_c12s){
+
         int t0 = time_now();
-        natom  = input_natom;
-        n_crit = input_n_crit;
-        theta  = input_theta;
+
+        // set parameters
+        natom   = input_natom;
+        n_crit  = input_n_crit;
+        theta   = input_theta;
         charges = input_charges;
-        bonded_pairs = input_bonded_pairs;
+
+        bonded_pairs       = input_bonded_pairs;
         gname_iatoms_pairs = input_gname_iatoms_pairs;
-        gpair_table = input_gpair_table;
-        iatom_to_igroup = input_iatom_to_igroup;
+        gpair_table        = input_gpair_table;
+        iatom_to_igroup    = input_iatom_to_igroup;
+        
         atom_types = input_atom_types;
-        c6s = input_c6s;
-        c12s = input_c12s;
+        c6s        = input_c6s;
+        c12s       = input_c12s;
 
         ngrp = iatom_to_igroup.maxCoeff();
+
         int t1 = time_now();
         if (output_to_err_file == true){
             std::cerr << "setup time: " << t1 - t0 << " seconds" << std::endl;
@@ -180,6 +186,7 @@ public:
     // get flux type
     void set_flux(const std::string& flux_type){
 
+        // initialize flux variables and determine functions for flux calculation
         if (flux_type == "heat"){
             flag_heat = true;
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
@@ -217,15 +224,19 @@ public:
         }
     };
 
-    // read trajectory
+    // read trajectory, initialize variables for flux calculation
     void initialize(const MatrixXd& crd, const MatrixXd& vel){
         int t0 = time_now();
+
+        // initialize variables
         t_crd = MatrixXd::Zero(natom, 3);
         t_vel = MatrixXd::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
         count_near = 0;
         count_far = 0;
+
+        // initialize flux variables
         if (flag_heat == true){
             hflux_ij.clear();
             hflux_ij_near.clear();
@@ -239,13 +250,14 @@ public:
             eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_far = MatrixXd::Zero(ngrp, ngrp);
         }
+
         int t1 = time_now();
         if (output_to_err_file == true){
             std::cerr << "initialize time: " << t1 - t0 << " seconds" << std::endl;
         }
     };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // calculate the center and radius of the cell 
     void calculate_rc(std::vector<int>& atoms){
