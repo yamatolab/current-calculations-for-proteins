@@ -728,19 +728,6 @@ public:
         }
     };
 
-    void cal_hflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
-        
-        Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5 - pot_j * vi * 0.5;
-
-        if (igrp != Jgrp){
-            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
-            hflux_ij_far[Jgrp-1][igrp-1] += h_ij;
-        }
-        else{
-            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
-        }
-        count_far += 1;
-    };
 
     void cal_hflux_near(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
         
@@ -759,16 +746,16 @@ public:
         count_near += 1;
     };
 
-    void cal_eflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
+    void cal_hflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d multi_j, int igrp, int Jgrp){
         
-        double e_ij = fiJ.dot(vi) * 0.5;
+        Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5 - multi_j * vi * 0.5;
 
         if (igrp != Jgrp){
-            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
-            eflux_ij_far(Jgrp-1, igrp-1) -= e_ij;
+            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
+            hflux_ij_far[Jgrp-1][igrp-1] += h_ij;
         }
         else{
-            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
+            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
         }
         count_far += 1;
     };
@@ -791,6 +778,20 @@ public:
             eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
         }
         count_near += 1;
+    };
+
+    void cal_eflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d multi_j, int igrp, int Jgrp){
+        
+        double e_ij = fiJ.dot(vi) * 0.5;
+
+        if (igrp != Jgrp){
+            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
+            eflux_ij_far(Jgrp-1, igrp-1) -= e_ij;
+        }
+        else{
+            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
+        }
+        count_far += 1;
     };
 
     std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
