@@ -192,8 +192,8 @@ public:
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             hflux_ij_near.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             hflux_ij_far.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
-                cal_hflux_far(fiJ, vi, r, pot_j, igrp, Jgrp);
+            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
+                cal_hflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
             };
             cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
                 cal_hflux_near(fij, vi, rij, idx_source, idx_target);
@@ -208,8 +208,8 @@ public:
             eflux_ij = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_far = MatrixXd::Zero(ngrp, ngrp);
-            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d pot_j, const int igrp, const int Jgrp) {
-                cal_eflux_far(fiJ, vi, r, pot_j, igrp, Jgrp);
+            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
+                cal_eflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
             };
             cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
                 cal_eflux_near(fij, vi, rij, idx_source, idx_target);
@@ -472,47 +472,47 @@ public:
                 int c = i_inv;
                 int p = cells[i_inv].parent;
             
-                VectorXd& p_potential = cells[p].multipole;
-                VectorXd& c_potential = cells[c].multipole;
+                VectorXd& p_multipole = cells[p].multipole;
+                VectorXd& c_multipole = cells[c].multipole;
                 Vector3d& c_rc = cells[c].rc;
                 Vector3d& p_rc = cells[p].rc;
                 
                 double dx = p_rc(0) - c_rc(0);
                 double dy = p_rc(1) - c_rc(1);
                 double dz = p_rc(2) - c_rc(2);
-                double Mx = c_potential(0) * dx;
-                double My = c_potential(0) * dy;
-                double Mz = c_potential(0) * dz;
+                double Mx = c_multipole(0) * dx;
+                double My = c_multipole(0) * dy;
+                double Mz = c_multipole(0) * dz;
 
-                p_potential(0) += c_potential(0);
-                p_potential(1) += c_potential(1) + Mx;
-                p_potential(2) += c_potential(2) + My;
-                p_potential(3) += c_potential(3) + Mz;
-                p_potential(4) += c_potential(4) + dx * c_potential(1) + 0.5 * Mx * dx;
-                p_potential(5) += c_potential(5) + dy * c_potential(2) + 0.5 * My * dy;
-                p_potential(6) += c_potential(6) + dz * c_potential(3) + 0.5 * Mz * dz;
-                p_potential(7) += c_potential(7) + dy * c_potential(1) + dx * c_potential(2) + Mx * dy;
-                p_potential(8) += c_potential(8) + dz * c_potential(2) + dy * c_potential(3) + My * dz;
-                p_potential(9) += c_potential(9) + dx * c_potential(3) + dz * c_potential(1) + Mz * dx;
+                p_multipole(0) += c_multipole(0);
+                p_multipole(1) += c_multipole(1) + Mx;
+                p_multipole(2) += c_multipole(2) + My;
+                p_multipole(3) += c_multipole(3) + Mz;
+                p_multipole(4) += c_multipole(4) + dx * c_multipole(1) + 0.5 * Mx * dx;
+                p_multipole(5) += c_multipole(5) + dy * c_multipole(2) + 0.5 * My * dy;
+                p_multipole(6) += c_multipole(6) + dz * c_multipole(3) + 0.5 * Mz * dz;
+                p_multipole(7) += c_multipole(7) + dy * c_multipole(1) + dx * c_multipole(2) + Mx * dy;
+                p_multipole(8) += c_multipole(8) + dz * c_multipole(2) + dy * c_multipole(3) + My * dz;
+                p_multipole(9) += c_multipole(9) + dx * c_multipole(3) + dz * c_multipole(1) + Mz * dx;
 
-                MatrixXd& p_potential_j = cells[p].multipole_j;
-                MatrixXd& c_potential_j = cells[c].multipole_j;
+                MatrixXd& p_multipole_j = cells[p].multipole_j;
+                MatrixXd& c_multipole_j = cells[c].multipole_j;
 
                 for (int j = 0; j < 3; j++){
-                    double Mjx = c_potential_j(j, 0) * dx;
-                    double Mjy = c_potential_j(j, 0) * dy;
-                    double Mjz = c_potential_j(j, 0) * dz;
+                    double Mjx = c_multipole_j(j, 0) * dx;
+                    double Mjy = c_multipole_j(j, 0) * dy;
+                    double Mjz = c_multipole_j(j, 0) * dz;
 
-                    p_potential_j(j, 0) += c_potential_j(j, 0);
-                    p_potential_j(j, 1) += c_potential_j(j, 1) + Mjx;
-                    p_potential_j(j, 2) += c_potential_j(j, 2) + Mjy;
-                    p_potential_j(j, 3) += c_potential_j(j, 3) + Mjz;
-                    p_potential_j(j, 4) += c_potential_j(j, 4) + dx * c_potential_j(j, 1) + 0.5 * Mjx * dx;
-                    p_potential_j(j, 5) += c_potential_j(j, 5) + dy * c_potential_j(j, 2) + 0.5 * Mjy * dy;
-                    p_potential_j(j, 6) += c_potential_j(j, 6) + dz * c_potential_j(j, 3) + 0.5 * Mjz * dz;
-                    p_potential_j(j, 7) += c_potential_j(j, 7) + dy * c_potential_j(j, 1) + dx * c_potential_j(j, 2) + Mjx * dy;
-                    p_potential_j(j, 8) += c_potential_j(j, 8) + dz * c_potential_j(j, 2) + dy * c_potential_j(j, 3) + Mjy * dz;
-                    p_potential_j(j, 9) += c_potential_j(j, 9) + dx * c_potential_j(j, 3) + dz * c_potential_j(j, 1) + Mjz * dx;
+                    p_multipole_j(j, 0) += c_multipole_j(j, 0);
+                    p_multipole_j(j, 1) += c_multipole_j(j, 1) + Mjx;
+                    p_multipole_j(j, 2) += c_multipole_j(j, 2) + Mjy;
+                    p_multipole_j(j, 3) += c_multipole_j(j, 3) + Mjz;
+                    p_multipole_j(j, 4) += c_multipole_j(j, 4) + dx * c_multipole_j(j, 1) + 0.5 * Mjx * dx;
+                    p_multipole_j(j, 5) += c_multipole_j(j, 5) + dy * c_multipole_j(j, 2) + 0.5 * Mjy * dy;
+                    p_multipole_j(j, 6) += c_multipole_j(j, 6) + dz * c_multipole_j(j, 3) + 0.5 * Mjz * dz;
+                    p_multipole_j(j, 7) += c_multipole_j(j, 7) + dy * c_multipole_j(j, 1) + dx * c_multipole_j(j, 2) + Mjx * dy;
+                    p_multipole_j(j, 8) += c_multipole_j(j, 8) + dz * c_multipole_j(j, 2) + dy * c_multipole_j(j, 3) + Mjy * dz;
+                    p_multipole_j(j, 9) += c_multipole_j(j, 9) + dx * c_multipole_j(j, 3) + dz * c_multipole_j(j, 1) + Mjz * dx;
                 }
 
             }
@@ -716,30 +716,28 @@ public:
                 bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
                 bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
 
-                int t4 = time_now();
-
-                // calculate potential
-                VectorXd& potential = cell.multipole;
+                // calculate multipole
+                VectorXd& multipole = cell.multipole;
                 double charge = charges[idx_source];
                 double coeff = 332.05221729;
-                VectorXd pot = coeff * potential * charge;
+                VectorXd multi = coeff * multipole * charge;
 
-                double fx = pot.dot(bJx);
-                double fy = pot.dot(bJy);
-                double fz = pot.dot(bJz);
+                double fx = multi.dot(bJx);
+                double fy = multi.dot(bJy);
+                double fz = multi.dot(bJz);
                 Vector3d f = Vector3d(-fx, -fy, -fz);
 
-                MatrixXd& potential_j = cell.multipole_j;
+                MatrixXd& multipole_j = cell.multipole_j;
                 bJ.col(0) = bJx;
                 bJ.col(1) = bJy;
                 bJ.col(2) = bJz;
-                Matrix3d pot_j = -potential_j * bJ * coeff * charge;
+                Matrix3d multi_j = -multipole_j * bJ * coeff * charge;
 
                 int igrp = iatom_to_igroup(idx_source);
                 int Jgrp = iatom_to_igroup(cell.leaf[0] - 1);
                 Vector3d vi = t_vel.row(idx_source);
 
-                cal_flux_far(f, vi, crd_source, pot_j, igrp, Jgrp);
+                cal_flux_far(f, vi, crd_source, multi_j, igrp, Jgrp);
             }
         }
         int t1 = time_now();
