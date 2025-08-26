@@ -18,42 +18,48 @@ class cal_fmm{
         
 // public variables used for calculation
 public:
-    int natom;
-    int ngrp;
-    int n_crit;
-    float theta;
-    std::vector<double> charges;
-    MatrixXd t_crd;
-    MatrixXd t_vel;
 
-    std::vector<std::pair<int, int>> bonded_pairs;
-    std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;
-    std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;
-    VectorXi iatom_to_igroup;
+    int   natom;                    // number of atoms
+    int   ngrp;                     // number of group
+    int   n_crit;                   // n_crit (max number of atoms included in the smallest cell)
+    float theta;                    // theta  (parameter to decide whether to use multipole expansion or not)
 
+    std::vector<double> charges;    // charges of atoms
+    MatrixXd t_crd;                 // coordinates of atoms
+    MatrixXd t_vel;                 // velocities of atoms
+
+    std::vector<std::pair<int, int>> bonded_pairs;                              // list of bonded pairs
+    std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;  // table of target group pairs
+    std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;   // list of group name and its atom indices
+    VectorXi iatom_to_igroup;                                                   // mapping from atom index to group index
+
+    // vars for vdw
     std::vector<int> atom_types;
     MatrixXd c6s;
     MatrixXd c12s;
 
-    // heat flux
+    // vectors for heat flux
     std::vector<std::vector<Vector3d>> hflux_ij;
     std::vector<std::vector<Vector3d>> hflux_ij_near;
     std::vector<std::vector<Vector3d>> hflux_ij_far;
 
-    // energy flux
+    // Matrices for energy flux
     MatrixXd eflux_ij;
     MatrixXd eflux_ij_near;
     MatrixXd eflux_ij_far;
 
+    // flags for flux type
     bool flag_heat;
     bool flag_energy;
 
+    // function for calculating flux
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near;
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near_bonded;
     std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_far;
 
-    std::vector<std::pair<int, std::vector<int>>> pairs_near;
-    std::vector<std::pair<int, std::vector<int>>> pairs_far;
+    // near and far pairs for each source atom
+    std::vector<std::pair<int, std::vector<int>>> pairs_near;   // [[1, [atom1, atom2, ...]], [2, [atom1, atom2, ...]], ...]
+    std::vector<std::pair<int, std::vector<int>>> pairs_far;    // [[1, [cell1, cell2, ...]], [2, [cell1, cell2, ...]], ...]
 
     // constructor
     cal_fmm():
@@ -84,34 +90,34 @@ public:
     {};
 
     // for debugging
-    int count_near = 0;
-    int count_far  = 0;
+    int count_near = 0;     // counter of atom-atom pairs
+    int count_far  = 0;     // counter of atom-cell pairs
 
-    bool output_to_err_file = false;
+    bool output_to_err_file = false; // if true, output process time for each function to error file
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Structure of a cell
     struct Cell {
-        int               nleaf;
-        std::vector<int>  leaf;
-        int               nchild;
-        std::vector<int>  child;
-        int               parent;
-        Vector3d          rc;
-        double            r;
-        VectorXd          multipole;
-        MatrixXd          multipole_j;
+        int               nleaf;        // number of atoms(leaf) in the cell
+        std::vector<int>  leaf;         // index of atoms in the cell
+        int               nchild;       // number of child cells
+        std::vector<int>  child;        // index of 8 child cells
+        int               parent;       // index of parent cell
+        Vector3d          rc;           // center of the cell
+        double            r;            // radius of the cell
+        VectorXd          multipole;    // 10 multipoles
+        MatrixXd          multipole_j;  // 3x10 multipoles_j
 
         Cell():
-            nleaf(0),                               // number of atoms(leaf) in the cell
-            leaf(std::vector<int>(0)),              // index of atoms in the cell
-            nchild(0),                              // number of child cells
-            child(std::vector<int>(8, 0)),          // index of 8 child cells
-            parent(0),                              // index of parent cell
-            rc(Vector3d::Zero()),                   // center of the cell
-            r(0.0),                                 // radius of the cell
-            multipole(VectorXd::Zero(10)),          // 10 multipoles
+            nleaf(0),
+            leaf(std::vector<int>(0)),
+            nchild(0),
+            child(std::vector<int>(8, 0)),
+            parent(0),
+            rc(Vector3d::Zero()),
+            r(0.0),
+            multipole(VectorXd::Zero(10)),
             multipole_j(MatrixXd::Zero(3, 10))
         {}
     };
