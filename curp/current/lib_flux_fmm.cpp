@@ -394,7 +394,7 @@ public:
                     cells[idx_current].leaf.push_back(iatoms[j]);
                     Vector3d crd_atom = t_crd.row(idx_atom);
                     cells[idx_current].nleaf += 1;
-                    
+
                     int octant = (crd_atom(0) > cells[idx_current].rc(0)) + \
                                  ((crd_atom(1) > cells[idx_current].rc(1)) << 1) + \
                                  ((crd_atom(2) > cells[idx_current].rc(2)) << 2);  // determine octant
