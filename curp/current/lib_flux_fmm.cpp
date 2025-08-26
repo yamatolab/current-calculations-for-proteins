@@ -595,7 +595,7 @@ public:
         
     };
 
-    void cal_force_atomwise(std::vector<Cell>& cells){
+    void cal_force_near(std::vector<Cell>& cells){
         int t0 = time_now();
         int size_source = pairs_near.size();
         for (int i = 0; i < size_source; i++){
@@ -649,11 +649,11 @@ public:
         }
         int t1 = time_now();
         if (output_to_err_file == true){
-            std::cerr << "cal_force_atomwise time: " << t1 - t0 << std::endl;
+            std::cerr << "cal_force_near time: " << t1 - t0 << std::endl;
         }
     };
 
-    void cal_force_cellwise(std::vector<Cell>& cells){
+    void cal_force_far(std::vector<Cell>& cells){
 
         int t0 = time_now();
         int size_source = pairs_far.size();
@@ -773,7 +773,7 @@ public:
         }
         int t1 = time_now();
         if (output_to_err_file == true){
-            std::cerr << "cal_force_cellwise time: " << t1 - t0 << std::endl;
+            std::cerr << "cal_force_far time: " << t1 - t0 << std::endl;
         }
     };
 
@@ -899,9 +899,9 @@ public:
                     
                 }
                 int t4 = time_now();
-                cal_force_atomwise(cells);
+                cal_force_near(cells);
                 int t5 = time_now();
-                cal_force_cellwise(cells);
+                cal_force_far(cells);
                 int t6 = time_now();
             }
 
@@ -923,8 +923,8 @@ public:
                     int num_target = target_atoms[m];
                     determine_near_far(num_target, m, 0, cells_source);
                 }
-                cal_force_atomwise(cells_source);
-                cal_force_cellwise(cells_source);
+                cal_force_near(cells_source);
+                cal_force_far(cells_source);
             }
         }
     };
