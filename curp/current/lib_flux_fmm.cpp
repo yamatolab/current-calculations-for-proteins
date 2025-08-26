@@ -15,9 +15,9 @@ namespace py = pybind11;
 using namespace Eigen;
 
 class cal_fmm{
-    
+        
+// public variables used for calculation
 public:
-    // public variables
     int natom;
     int ngrp;
     int n_crit;
@@ -54,6 +54,8 @@ public:
 
     std::vector<std::pair<int, std::vector<int>>> pairs_near;
     std::vector<std::pair<int, std::vector<int>>> pairs_far;
+
+    // constructor
     cal_fmm():
         natom(0),
         ngrp(0),
