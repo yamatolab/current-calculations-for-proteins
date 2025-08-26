@@ -938,8 +938,6 @@ public:
         else{
             hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
         }
-        // std::cerr << "hflux_ij(after): " << hflux_ij[igrp-1][jgrp-1].transpose() << std::endl;
-        // std::cerr << "" << std::endl;
     };
 
     void cal_eflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
