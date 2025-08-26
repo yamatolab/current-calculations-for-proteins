@@ -579,7 +579,6 @@ public:
                         double min_len = r - 1.7320508 * cells[c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
 
                         if (min_len < cutoff || cells[c].r > theta * r){
-                            // std::cerr << "kaiki to " << c << std::endl;
                             cell_queue.push(c);
                         }
                         else{
