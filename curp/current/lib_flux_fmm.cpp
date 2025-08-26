@@ -144,7 +144,7 @@ public:
             r(0.0)
         {}
     };
-    Root_r Root_r;
+    Root_r root_r;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -271,8 +271,8 @@ public:
         }
         double max_r = r.maxCoeff();
 
-        Root_r.rc = rc;
-        Root_r.r = max_r;
+        root_r.rc = rc;
+        root_r.r = max_r;
     };
 
     void add_child(int octant, int current_cell, std::vector<Cell>& cells){
@@ -345,8 +345,8 @@ public:
             std::vector<Cell>& cells = all_cell.cells;
             cells.push_back(Cell());
             calculate_rc(iatoms);
-            cells[0].rc = Root_r.rc;
-            cells[0].r = Root_r.r;
+            cells[0].rc = root_r.rc;
+            cells[0].r = root_r.r;
 
             for (int j = 0; j < num_iatoms; j++){
 
