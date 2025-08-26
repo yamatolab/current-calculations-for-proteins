@@ -695,8 +695,8 @@ public:
 
             for (int j = 0; j < size_pairs; j++){
 
-                int p = pairs_far[i].second[j];
-                Cell& cell = cells[p];
+                int idx_cell = pairs_far[i].second[j];
+                Cell& cell = cells[idx_cell];
 
                 Vector3d rc = cell.rc;
                 double dx = crd_source(0) - rc(0);
