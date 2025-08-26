@@ -541,7 +541,7 @@ public:
         }
     };
 
-    void cal_fiJ(int num_source, int p, std::vector<Cell>& cells){
+    void determine_near_far(int num_source, int p, std::vector<Cell>& cells){
 
         int t0 = time_now();
         int idx_source = num_source - 1;
@@ -860,7 +860,7 @@ public:
         return cells;
     };
 
-    void cal_force(){
+    void cal_force_and_flux(){
 
         int size_table = gpair_table.size();
         for (int i = 0; i < size_table; i++){
@@ -889,7 +889,7 @@ public:
                     int num_source = source_atoms[k];
                     pairs_near[k].first = num_source;
                     pairs_far[k].first = num_source;
-                    cal_fiJ(num_source, k, 0, cells);
+                    determine_near_far(num_source, k, 0, cells);
                     
                 }
                 int t4 = time_now();
@@ -915,7 +915,7 @@ public:
 
                 for (int m = 0; m < target_size; m++){
                     int num_target = target_atoms[m];
-                    cal_fiJ(num_target, m, 0, cells_source);
+                    determine_near_far(num_target, m, 0, cells_source);
                 }
                 cal_force_atomwise(cells_source);
                 cal_force_cellwise(cells_source);
@@ -1020,7 +1020,7 @@ public:
         int t2 = time_now();
         cal_M2M();
         int t3 = time_now();
-        cal_force();
+        cal_force_and_flux();
         int t4 = time_now();
         cal_bonded_flux();
         int t5 = time_now();
