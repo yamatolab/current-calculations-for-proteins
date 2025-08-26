@@ -186,13 +186,16 @@ public:
     // get flux type
     void set_flux(const std::string& flux_type){
 
-        // initialize flux variables and determine functions for flux calculation
         if (flux_type == "heat"){
             flag_heat = true;
+
+            // initialize heat flux variables
             hflux_ij.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             hflux_ij_near.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             hflux_ij_far.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
-            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
+
+            // determine flux calculation function for heat flux
+            cal_flux_far  = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
                 cal_hflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
             };
             cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
@@ -205,10 +208,14 @@ public:
         }
         else if (flux_type == "energy"){
             flag_energy = true;
-            eflux_ij = MatrixXd::Zero(ngrp, ngrp);
+
+            // initialize energy flux variables
+            eflux_ij      = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
-            eflux_ij_far = MatrixXd::Zero(ngrp, ngrp);
-            cal_flux_far = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
+            eflux_ij_far  = MatrixXd::Zero(ngrp, ngrp);
+
+            // determine flux calculation function for energy flux
+            cal_flux_far  = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
                 cal_eflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
             };
             cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
