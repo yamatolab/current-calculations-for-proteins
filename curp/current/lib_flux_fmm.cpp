@@ -976,8 +976,8 @@ public:
             Vector3d crd_source = t_crd.row(idx_source);
             Vector3d crd_target = t_crd.row(idx_target);
             Vector3d rij = crd_source - crd_target;
-            Vector3d vi = t_vel.row(num_source - 1);
-            Vector3d vj = t_vel.row(num_target - 1);
+            Vector3d vi  = t_vel.row(idx_source);
+            Vector3d vj  = t_vel.row(idx_target);
             Vector3d vij = vi + vj;
 
             double r = sqrt(rij.dot(rij));
@@ -987,8 +987,8 @@ public:
             double inv_r14 = inv_r8 * inv_r3 * inv_r3;          // 1/r^14
             double coeff = 332.05221729;
 
-            double charge_i = charges[num_source - 1];
-            double charge_j = charges[num_target - 1];
+            double charge_i = charges[idx_source];
+            double charge_j = charges[idx_target];
             double coulomb  = coeff * charge_i * charge_j * inv_r3;
 
             int type_source = atom_types[idx_source] - 1;
@@ -1001,8 +1001,8 @@ public:
 
             Vector3d fij = rij * (coulomb + vdw);
 
-            int igrp = iatom_to_igroup(num_source - 1);
-            int jgrp = iatom_to_igroup(num_target - 1);
+            int igrp = iatom_to_igroup(idx_source);
+            int jgrp = iatom_to_igroup(idx_target);
 
             cal_flux_near_bonded(fij, vij, rij, igrp, jgrp);
         }
