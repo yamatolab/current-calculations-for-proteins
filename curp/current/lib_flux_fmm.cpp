@@ -85,6 +85,8 @@ public:
     int count_near = 0;
     int count_far  = 0;
 
+    bool output_to_err_file = false;
+
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
         const std::vector<std::pair<int, int>>& input_bonded_pairs, \
         const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
@@ -108,7 +110,9 @@ public:
 
         ngrp = iatom_to_igroup.maxCoeff();
         int t1 = time_now();
-        std::cerr << "setup time: " << t1 - t0 << " seconds" << std::endl;
+        if (output_to_err_file == true){
+            std::cerr << "setup time: " << t1 - t0 << " seconds" << std::endl;
+        }
     };
 
     // get flux type
@@ -174,8 +178,9 @@ public:
             eflux_ij_far = MatrixXd::Zero(ngrp, ngrp);
         }
         int t1 = time_now();
-        std::cerr << "initialize time: " << t1 - t0 << " seconds" << std::endl;
-
+        if (output_to_err_file == true){
+            std::cerr << "initialize time: " << t1 - t0 << " seconds" << std::endl;
+        }
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -365,7 +370,9 @@ public:
         }
         // print_all_cells();
         int t1 = time_now();
-        std::cerr << "setup_all_cells time: " << t1 - t0 << " seconds" << std::endl;
+        if (output_to_err_file == true){
+            std::cerr << "setup_all_cells time: " << t1 - t0 << " seconds" << std::endl;
+        }
         return all_cells;
     };
 
@@ -616,7 +623,7 @@ public:
     };
 
     void cal_force_atomwise(std::vector<Cell>& cells){
-        int t2 = time_now();
+        int t0 = time_now();
         int size_source = pairs_near.size();
         for (int i = 0; i < size_source; i++){
 
@@ -667,13 +674,15 @@ public:
                 }
             }
         }
-        int t7 = time_now();
-        std::cerr << "cal_force_atomwise time: " << t7 - t2 << std::endl;
+        int t1 = time_now();
+        if (output_to_err_file == true){
+            std::cerr << "cal_force_atomwise time: " << t1 - t0 << std::endl;
+        }
     };
 
     void cal_force_cellwise(std::vector<Cell>& cells){
 
-        int t3 = time_now();
+        int t0 = time_now();
         int size_source = pairs_far.size();
 
         Matrix<double, 10, 1> bJx, bJy, bJz;
@@ -789,8 +798,10 @@ public:
                 cal_flux_far(f, vi, crd_source, pot_j, igrp, Jgrp);
             }
         }
-        int t5 = time_now();
-        std::cerr << "cal_force_cellwise time: " << t5 - t3 << std::endl;
+        int t1 = time_now();
+        if (output_to_err_file == true){
+            std::cerr << "cal_force_cellwise time: " << t1 - t0 << std::endl;
+        }
     };
 
     void cal_hflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d pot_j, int igrp, int Jgrp){
@@ -987,7 +998,9 @@ public:
 
             cal_flux_near_bonded(fij, vij, rij, igrp, jgrp);
         }
-        std::cerr << "count_atom_bonded: " << size_bonded << std::endl;
+        if (output_to_err_file == true){
+            std::cerr << "count_atom_bonded: " << size_bonded << std::endl;
+        }
     };
 
     void cal_hflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
@@ -1046,6 +1059,20 @@ public:
         int t5 = time_now();
         add_flux();
         int t6 = time_now();
+        if (output_to_err_file == true){        
+            std::cerr << "get_all_cells time: " << t1 - t0 << std::endl;
+            std::cerr << "cal_p time: " << t2 - t1 << std::endl;
+            std::cerr << "cal_M2M time: " << t3 - t2 << std::endl;
+            std::cerr << "cal_force_and_flux time: " << t4 - t3 << std::endl;
+            std::cerr << "cal_bonded_flux time: " << t5 - t4 << std::endl;
+            std::cerr << "add_flux time: " << t6 - t5 << std::endl; 
+            std::cerr << "total time(cal_p -> add_flux): " << t6 - t1 << std::endl;
+            std::cerr << "count_far: " << count_far << std::endl;
+            std::cerr << "count_near: " << count_near << std::endl;
+            std::cerr << "ncrit: " << n_crit << std::endl;
+            std::cerr << "theta: " << theta << std::endl;
+            std::cerr << "   " << std::endl;
+        }
     };
 
     int time_now(){
