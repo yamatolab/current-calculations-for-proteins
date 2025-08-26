@@ -240,9 +240,9 @@ public:
         t_vel = MatrixXd::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
-        
+
         count_near = 0;
-        count_far = 0;
+        count_far  = 0;
 
         // initialize flux variables
         if (flag_heat == true){
@@ -566,8 +566,9 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // determine near and far cells for each source atom
     void determine_near_far(int num_source, int idx_p, std::vector<Cell>& cells){
-        int t0 = time_now();
+
         int idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
 
@@ -584,35 +585,37 @@ public:
                     
                     if (cells[idx_p].nchild & (1 << octant)) {
                         
-                        int idx_c = cells[idx_p].child[octant]; // index of current child cell
-                        Vector3d& rc = cells[idx_c].rc;
+                        int       idx_c = cells[idx_p].child[octant]; // index of current child cell
+                        Vector3d& rc    = cells[idx_c].rc;
                         
                         double dx = crd_source(0) - rc(0);
                         double dy = crd_source(1) - rc(1);
                         double dz = crd_source(2) - rc(2);
-                        double r = sqrt(dx * dx + dy * dy + dz * dz);
-                        int t2 = time_now();                        
-                        double cutoff = 9.0;
+                        double r  = sqrt(dx * dx + dy * dy + dz * dz);
+
+                        double cutoff  = 9.0;
                         double min_len = r - 1.7320508 * cells[idx_c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
 
                         if (min_len < cutoff || cells[idx_c].r > theta * r){
+                            
                             cell_queue.push(idx_c);
                         }
                         else{
-                            pairs_far[num_s].second.push_back(c);
+                            pairs_far[num_source].second.push_back(idx_c);
                         }      
                     }
                 }
             }
             else {
-                pairs_near[num_s].second.push_back(idx_p);
+                pairs_near[num_source].second.push_back(idx_p);
             }
         }
-        
     };
 
+    // calculate force and flux for near atom-atom pairs
     void cal_force_near(std::vector<Cell>& cells){
         int t0 = time_now();
+
         int size_source = pairs_near.size();
         for (int i = 0; i < size_source; i++){
 
@@ -625,11 +628,13 @@ public:
 
             int size_pairs = pairs.size();
             for (int j = 0; j < size_pairs; j++){
+
                 int idx_cell = pairs[j];
                 std::vector<int>& atom_pairs = cells[idx_cell].leaf;
                 int num_target = atom_pairs.size();
                 
                 for (int k = 0; k < num_target; k++){
+
                     int idx_target = atom_pairs[k] - 1;
 
                     if (idx_target == idx_source){
@@ -640,10 +645,11 @@ public:
                     Vector3d rij = crd_source - crd_target;
                 
                     double r = sqrt(rij.dot(rij));
-                    double inv_r = 1.0 / r;
-                    double coeff = 332.05221729;
-                    double inv_r3 = inv_r * inv_r * inv_r;              // 1/r^3
-                    double inv_r8 = inv_r3 * inv_r3 * inv_r * inv_r;    // 1/r^8
+
+                    double inv_r   = 1.0 / r;
+                    double coeff   = 332.05221729;
+                    double inv_r3  = inv_r * inv_r * inv_r;             // 1/r^3
+                    double inv_r8  = inv_r3 * inv_r3 * inv_r * inv_r;   // 1/r^8
                     double inv_r14 = inv_r8 * inv_r3 * inv_r3;          // 1/r^14
 
                     double charge_i = charges[idx_source];
@@ -653,7 +659,7 @@ public:
                     int type_source = atom_types[idx_source] - 1;
                     int type_target = atom_types[idx_target] - 1;
 
-                    double c6 = c6s(type_source, type_target);
+                    double c6  = c6s(type_source, type_target);
                     double c12 = c12s(type_source, type_target);
                     double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
                 
@@ -669,22 +675,26 @@ public:
         }
     };
 
+    // calculate force and flux for far atom-cell pairs
     void cal_force_far(std::vector<Cell>& cells){
 
         int t0 = time_now();
-        int size_source = pairs_far.size();
 
+        int size_source = pairs_far.size();
         Matrix<double, 10, 1> bJx, bJy, bJz;
         Matrix<double, 10, 3> bJ;
 
         for (int i = 0; i < size_source; i++){
+
             int num_source = pairs_far[i].first;
             int idx_source = num_source - 1;
+
             Vector3d crd_source = t_crd.row(idx_source);
-            Vector3d vi = t_vel.row(idx_source);
-            int size_pairs = pairs_far[i].second.size();
+            Vector3d vi         = t_vel.row(idx_source);
+            int size_pairs      = pairs_far[i].second.size();
 
             for (int j = 0; j < size_pairs; j++){
+
                 int p = pairs_far[i].second[j];
                 Cell& cell = cells[p];
 
@@ -764,7 +774,7 @@ public:
                 // calculate multipole
                 VectorXd& multipole = cell.multipole;
                 double charge = charges[idx_source];
-                double coeff = 332.05221729;
+                double coeff  = 332.05221729;
                 VectorXd multi = coeff * multipole * charge;
 
                 double fx = multi.dot(bJx);
@@ -791,7 +801,7 @@ public:
         }
     };
 
-
+    // calculate heat flux for near atom-atom pairs
     void cal_hflux_near(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
         
         Vector3d h_ij = rij * (fij.dot(vi)) * 0.5;
@@ -809,6 +819,7 @@ public:
         count_near += 1;
     };
 
+    // calculate heat flux for far atom-cell pairs
     void cal_hflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d multi_j, int igrp, int Jgrp){
         
         Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5 - multi_j * vi * 0.5;
@@ -823,6 +834,7 @@ public:
         count_far += 1;
     };
 
+    // calculate energy flux for near atom-atom pairs
     void cal_eflux_near(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
 
         double e_ij = fij.dot(vi) * 0.5;
@@ -843,6 +855,7 @@ public:
         count_near += 1;
     };
 
+    // calculate energy flux for far atom-cell pairs
     void cal_eflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d multi_j, int igrp, int Jgrp){
         
         double e_ij = fiJ.dot(vi) * 0.5;
@@ -857,10 +870,12 @@ public:
         count_far += 1;
     };
 
+    // get atoms vector of a group
     std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
 
         std::vector<int> atoms;
         for (const auto& pair : pairs) {
+
             if (pair.first == source) {
                 atoms = pair.second;
                 break;
@@ -869,10 +884,12 @@ public:
         return atoms;
     };
 
+    // get cells vector of a group
     std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cells>& all_cells) {
         
         std::vector<Cell> cells;
         for (const auto& all_cell : all_cells) {
+            
             if (all_cell.group == source) {
                 cells =  all_cell.cells;
                 break;
@@ -944,9 +961,13 @@ public:
         }
     };
 
+    // calculate forces and fluxes for bonded atom pairs (to exclude from calculation)
     void cal_bonded_flux(){
+
         int size_bonded = bonded_pairs.size();
+
         for (int i = 0; i < size_bonded; i++){
+
             int num_source = bonded_pairs[i].first;
             int num_target = bonded_pairs[i].second;
             int idx_source = num_source - 1;
@@ -991,6 +1012,7 @@ public:
         }
     };
 
+    // calculate heat flux for bonded atom pairs
     void cal_hflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
         
         Vector3d h_ij = rij * (fij.dot(vij)) * 0.5;
@@ -1004,6 +1026,7 @@ public:
         }
     };
 
+    // calculate energy flux for bonded atom pairs
     void cal_eflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
 
         double e_ij = fij.dot(vij) * 0.5;
@@ -1017,6 +1040,7 @@ public:
         }
     };
 
+    // add far and near flux
     void add_flux(){
 
         if (flag_heat == true){
