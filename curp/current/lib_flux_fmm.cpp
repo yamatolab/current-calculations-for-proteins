@@ -508,8 +508,8 @@ public:
 
                 int i_inv = cells_size - 1 - i;
 
-                int idx_p = cells[i_inv].parent;
-                int idx_c = i_inv;
+                int idx_p = cells[i_inv].parent;    // index of parent cell
+                int idx_c = i_inv;                  // index of child cell
             
                 VectorXd& p_multipole = cells[idx_p].multipole;
                 VectorXd& c_multipole = cells[idx_c].multipole;
