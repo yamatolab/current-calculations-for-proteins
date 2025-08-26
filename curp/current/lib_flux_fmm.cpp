@@ -87,6 +87,60 @@ public:
 
     bool output_to_err_file = false;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Structure of a cell
+    struct Cell {
+        int               nleaf;
+        std::vector<int>  leaf;
+        int               nchild;
+        std::vector<int>  child;
+        int               parent;
+        Vector3d          rc;
+        double            r;
+        VectorXd          multipole;
+        MatrixXd          multipole_j;
+
+        Cell():
+            nleaf(0),                               // number of atoms(leaf) in the cell
+            leaf(std::vector<int>(0)),              // index of atoms in the cell
+            nchild(0),                              // number of child cells
+            child(std::vector<int>(8, 0)),          // index of 8 child cells
+            parent(0),                              // index of parent cell
+            rc(Vector3d::Zero()),                   // center of the cell
+            r(0.0),                                 // radius of the cell
+            multipole(VectorXd::Zero(10)),          // 10 multipoles
+            multipole_j(MatrixXd::Zero(3, 10))
+        {}
+    };
+
+    // Structure of all cells for each group
+    struct All_cells {
+        std::string group;
+        std::vector<Cell> cells;
+
+        All_cells():
+            group(""),
+            cells()
+        {}
+    };
+    std::vector<All_cells> all_cells;
+
+    // Structure for calculating the radius and center of the root cell
+    struct Root_r{
+        Vector3d rc;
+        double r;
+
+        Root_r():
+            rc(Vector3d::Zero()),
+            r(0.0)
+        {}
+    };
+    Root_r Root_r;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
         const std::vector<std::pair<int, int>>& input_bonded_pairs, \
         const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
@@ -184,54 +238,6 @@ public:
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    struct Cell {
-        int               nleaf;
-        std::vector<int>  leaf;
-        int               nchild;
-        std::vector<int>  child;
-        int               parent;
-        Vector3d          rc;
-        double            r;
-        VectorXd          multipole;
-        MatrixXd          multipole_j;
-
-        Cell():
-            nleaf(0),                               // number of atoms(leaf) in the cell
-            leaf(std::vector<int>(0)),              // index of atoms in the cell
-            nchild(0),                              // number of child cells
-            child(std::vector<int>(8, 0)),          // index of 8 child cells
-            parent(0),                              // index of parent cell
-            rc(Vector3d::Zero()),                   // center of the cell
-            r(0.0),                                 // radius of the cell
-            multipole(VectorXd::Zero(10)),          // 10 multipoles
-            multipole_j(MatrixXd::Zero(3, 10))
-        {}
-    };
-
-    struct All_cells {
-        std::string group;
-        std::vector<Cell> cells;
-
-        All_cells():
-            group(""),
-            cells()
-        {}
-    };
-    std::vector<All_cells> all_cells;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    struct Root_r{
-        Vector3d rc;
-        double r;
-
-        Root_r():
-            rc(Vector3d::Zero()),
-            r(0.0)
-        {}
-    };
-    Root_r Root_r;
 
     // calculate the center and radius of the cell 
     void calculate_rc(std::vector<int>& atoms){
