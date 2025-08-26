@@ -566,26 +566,26 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    void determine_near_far(int num_source, int idx_p, std::vector<Cell>& cells){
         int t0 = time_now();
         int idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
 
         std::queue<int> cell_queue;
-        cell_queue.push(p);
+        cell_queue.push(idx_p);
 
         while (!cell_queue.empty()){
-            int p = cell_queue.front();
+            int idx_p = cell_queue.front();                     // index of current parent cell
             cell_queue.pop();
         
-            if (cells[p].nleaf > n_crit){
+            if (cells[idx_p].nleaf > n_crit){
 
                 for (int octant = 0; octant < 8; octant++){
                     
-                    if (cells[p].nchild & (1 << octant)) {
+                    if (cells[idx_p].nchild & (1 << octant)) {
                         
-                        int t1 = time_now();
-                        int c = cells[p].child[octant];
-                        Vector3d& rc = cells[c].rc;
+                        int idx_c = cells[idx_p].child[octant]; // index of current child cell
+                        Vector3d& rc = cells[idx_c].rc;
                         
                         double dx = crd_source(0) - rc(0);
                         double dy = crd_source(1) - rc(1);
@@ -593,10 +593,10 @@ public:
                         double r = sqrt(dx * dx + dy * dy + dz * dz);
                         int t2 = time_now();                        
                         double cutoff = 9.0;
-                        double min_len = r - 1.7320508 * cells[c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
+                        double min_len = r - 1.7320508 * cells[idx_c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
 
-                        if (min_len < cutoff || cells[c].r > theta * r){
-                            cell_queue.push(c);
+                        if (min_len < cutoff || cells[idx_c].r > theta * r){
+                            cell_queue.push(idx_c);
                         }
                         else{
                             pairs_far[num_s].second.push_back(c);
@@ -605,7 +605,7 @@ public:
                 }
             }
             else {
-                pairs_near[num_s].second.push_back(p);
+                pairs_near[num_s].second.push_back(idx_p);
             }
         }
         
