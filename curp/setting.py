@@ -290,10 +290,10 @@ class Setting(SettingBase):
         coulomb_cutoff_length = Float(default=99.9, require=False,
             desc='The cutoff length for the coulomb interaction.'),
 
-        coulomb_fmm_cell_contains = Int(default=10, require=False,
+        coulomb_fmm_cell_contains = Int(default=50, require=False,
             desc='The max number of atoms that the a cell contains.'),
         
-        coulomb_fmm_direct_parm = Float(default=1.0, require=False,
+        coulomb_fmm_direct_parm = Float(default=0.02, require=False,
             desc='The parameter that is used to decide  '
                 'wethert to perform direct coulomb calculation.'),
         
