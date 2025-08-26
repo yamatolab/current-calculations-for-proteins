@@ -363,7 +363,6 @@ public:
             }
             all_cells.push_back(all_cell);
         }
-        // print_all_cells();
         int t1 = time_now();
         if (output_to_err_file == true){
             std::cerr << "setup_all_cells time: " << t1 - t0 << " seconds" << std::endl;
@@ -461,16 +460,7 @@ public:
             for (int j = 0; j < 3; j++){
                 multipole_j.row(j) += multipole_atom.transpose() * crd_atom(j);
             }
-            // std::cerr << "atom: " << atoms[i] << std::endl;
-            // std::cerr << "atom crd: " << crd_atom.transpose() << std::endl;
-            // std::cerr << "atom rc: " << rc.transpose() << std::endl;
-            // std::cerr << "atom charge: " << qj << std::endl;
-            // std::cerr << "dx: " << dx << ", dy: " << dy << ", dz: " << dz << std::endl;
-            // std::cerr << "qjdx: " << qjdx << ", qjdy: " << qjdy << ", qjdz: " << qjdz << std::endl;
-            // std::cerr << "multipole: " << multipole.transpose() << std::endl;
-            // std::cerr << "   " << std::endl;
         }
-        // std::cerr << atoms.transpose() <<  multipole.transpose() << std::endl;
     };
 
     void cal_p(){
@@ -486,14 +476,10 @@ public:
                     continue;
                 }
                 else {
-                    // std::cerr << "calculating multipole for cell: " << j << std::endl;
-                    // std::cerr << "" << std::endl;
                     cal_multipole(cell.multipole, cell.multipole_j, cell.rc, cell.leaf);
                 }
             }
-            // std::cerr << "multipole(cal_p): " << cells[size_cells-1].multipole.transpose() << std::endl;
         }
-        // print_multipoles();
     };
 
     void cal_M2M(){
@@ -551,18 +537,8 @@ public:
                     p_potential_j(j, 9) += c_potential_j(j, 9) + dx * c_potential_j(j, 3) + dz * c_potential_j(j, 1) + Mjz * dx;
                 }
 
-                // std::cerr << "calculatiing child " << i_inv << " to parent " << p << std::endl;
-                // std::cerr << "child multipole: " << c_potential.transpose() << std::endl;
-                // std::cerr << "p_rc: " << p_rc.transpose() << std::endl;
-                // std::cerr << "c_rc: " << c_rc.transpose() << std::endl;
-                // std::cerr << "dx: " << dx << ", dy: " << dy << ", dz: " << dz << std::endl;
-                // std::cerr << "c_potential 0: " << c_potential(0) << std::endl;
-                // std::cerr << "Mx: " << Mx << ", My: " << My << ", Mz: " << Mz << std::endl;
-                // std::cerr << "cell " << p << " p multipole: " << p_potential.transpose() << std::endl;
-                // std::cerr << "   " << std::endl;
             }
         }
-        // std::cerr << "multipole: " << all_cells[0].cells[0].multipole.transpose() << std::endl;
     };
 
     void cal_fiJ(int num_source, int p, std::vector<Cell>& cells){
@@ -595,8 +571,6 @@ public:
                         int t2 = time_now();                        
                         double cutoff = 9.0;
                         double min_len = r - 1.7320508 * cells[c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
-                        // std::cerr << "num_source: "<< num_source << " cell: " << p << " child: " << c <<  std::endl;
-                        // std::cerr << "crd_source - rc cal time: " << t2-t1 << std::endl;
 
                         if (min_len < cutoff || cells[c].r > theta * r){
                             // std::cerr << "kaiki to " << c << std::endl;
@@ -837,7 +811,7 @@ public:
             eflux_ij_far(Jgrp-1, igrp-1) -= e_ij;
         }
         else{
-            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;         // it is not correct
+            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
         }
         count_far += 1;
     };
@@ -1071,7 +1045,6 @@ public:
     int time_now(){
  
         auto start = std::chrono::system_clock::now();
-        // Simulate some work
         auto now = std::chrono::duration_cast<std::chrono::microseconds>(start.time_since_epoch()).count();
         // float nnow = now * 0.000001;
         return now;
