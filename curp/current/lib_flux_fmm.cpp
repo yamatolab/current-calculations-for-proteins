@@ -654,8 +654,8 @@ public:
 
                     double charge_i = charges[idx_source];
                     double charge_j = charges[idx_target];
-                    double qij = coeff * charge_i * charge_j;
-                    qij = qij * inv_r3;
+                    double coulomb  = coeff * charge_i * charge_j * inv_r3;
+
                     int type_source = atom_types[idx_source] - 1;
                     int type_target = atom_types[idx_target] - 1;
 
@@ -663,7 +663,7 @@ public:
                     double c12 = c12s(type_source, type_target);
                     double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
                 
-                    Vector3d fij = rij * (qij + vdw); // electrostatic + vdw force
+                    Vector3d fij = rij * (coulomb + vdw); // electrostatic + vdw force
 
                     cal_flux_near(fij, vi, rij, idx_source, idx_target);
                 }
@@ -989,8 +989,7 @@ public:
 
             double charge_i = charges[num_source - 1];
             double charge_j = charges[num_target - 1];
-            double qij = coeff * charge_i * charge_j;
-            qij = qij * inv_r3;
+            double coulomb  = coeff * charge_i * charge_j * inv_r3;
 
             int type_source = atom_types[idx_source] - 1;
             int type_target = atom_types[idx_target] - 1;
@@ -1000,7 +999,7 @@ public:
             double c12 = c12s(type_source, type_target);
             double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
 
-            Vector3d fij = rij * (qij + vdw);
+            Vector3d fij = rij * (coulomb + vdw);
 
             int igrp = iatom_to_igroup(num_source - 1);
             int jgrp = iatom_to_igroup(num_target - 1);
