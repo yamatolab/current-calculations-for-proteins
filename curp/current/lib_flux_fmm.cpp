@@ -222,16 +222,16 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    struct rc_max_r{
+    struct Root_r{
         Vector3d rc;
         double r;
 
-        rc_max_r():
+        Root_r():
             rc(Vector3d::Zero()),
             r(0.0)
         {}
     };
-    rc_max_r result_root;
+    Root_r Root_r;
 
     // calculate the center and radius of the cell 
     void calculate_rc(std::vector<int>& atoms){
@@ -257,8 +257,8 @@ public:
         }
         double max_r = r.maxCoeff();
 
-        result_root.rc = rc;
-        result_root.r = max_r;
+        Root_r.rc = rc;
+        Root_r.r = max_r;
     };
 
     void add_child(int octant, int current_cell, std::vector<Cell>& cells){
@@ -331,8 +331,8 @@ public:
             std::vector<Cell>& cells = all_cell.cells;
             cells.push_back(Cell());
             calculate_rc(iatoms);
-            cells[0].rc = result_root.rc;
-            cells[0].r = result_root.r;
+            cells[0].rc = Root_r.rc;
+            cells[0].r = Root_r.r;
 
             for (int j = 0; j < num_iatoms; j++){
 
