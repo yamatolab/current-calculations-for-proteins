@@ -275,6 +275,7 @@ public:
         
         MatrixXd crd_atom = MatrixXd::Zero(size_atoms,3);
 
+        // add all atom coordinates to crd_atom
         for (int i = 0; i < size_atoms; i++){
 
             for (int j = 0; j < 3; j++){
@@ -282,56 +283,66 @@ public:
             }
         }
 
+        // calculate center and radius of the cell
         for (int i = 0; i < 3; i++){
 
             double min_r = crd_atom.col(i).minCoeff();
-            r(i) = abs(crd_atom.col(i).maxCoeff() - min_r) * 0.5;
-            rc(i) = min_r + r(i);
+            r(i) = abs(crd_atom.col(i).maxCoeff() - min_r) * 0.5;   // radius is half of abs(max - min)
+            rc(i) = min_r + r(i);                                   // median of max and min
         }
-        double max_r = r.maxCoeff();
+        double max_r = r.maxCoeff();    // maximum radius among x, y, z
 
+        // assign to structure Root_r
         root_r.rc = rc;
-        root_r.r = max_r;
+        root_r.r  = max_r;
     };
 
+    // put new child cell to cells
     void add_child(int octant, int current_cell, std::vector<Cell>& cells){
 
+        // insert new child cell to the end of cells
         cells.push_back(Cell());
 
         int new_child = cells.size() - 1;
 
-        // std::cerr << "new child: " << new_child << std::endl;
-
-        cells[new_child].r = cells[current_cell].r * 0.5;
+        // calculate center and radius of the new child cell
+        cells[new_child].r     = cells[current_cell].r * 0.5;
         cells[new_child].rc(0) = cells[current_cell].rc(0) + cells[new_child].r * ((octant & 1) * 2 - 1);
         cells[new_child].rc(1) = cells[current_cell].rc(1) + cells[new_child].r * ((octant & 2) - 1);
         cells[new_child].rc(2) = cells[current_cell].rc(2) + cells[new_child].r * ((octant & 4) / 2 - 1);
 
         cells[new_child].parent = current_cell;
+
+        // link new child cell to its parent cell
         cells[current_cell].child[octant] = new_child;
-        cells[current_cell].nchild = (cells[current_cell].nchild | (1 << octant));
+        cells[current_cell].nchild        = (cells[current_cell].nchild | (1 << octant));
     };
 
+    // split cell which has more than n_crit atoms (replace atoms in a cell to its child cells)
     void split_cell(int current_cell, std::vector<Cell>& cells) {
 
         std::queue<int> cell_queue;
         cell_queue.push(current_cell);
     
+        // split cells until all child cells have n_crit or less atoms
         while (!(cell_queue.empty())) {
             int cell_index = cell_queue.front();
             cell_queue.pop();
     
+            // reassign atoms in the cell to its child cells
             for (int i = 0; i < cells[cell_index].nleaf; i++) {
                 int atom_current = cells[cell_index].leaf[i];
                 int index_atom_current = atom_current - 1;
                 int octant = (t_crd(index_atom_current, 0) > cells[cell_index].rc(0)) + \
                              ((t_crd(index_atom_current, 1) > cells[cell_index].rc(1)) << 1) + \
-                             ((t_crd(index_atom_current, 2) > cells[cell_index].rc(2)) << 2);
+                             ((t_crd(index_atom_current, 2) > cells[cell_index].rc(2)) << 2);   // determine octant
     
+                // if the child cell does not exist, create it
                 if (!(cells[cell_index].nchild & (1 << octant))) {
                     add_child(octant, cell_index, cells);
                 }
-    
+                
+                // put atom to the child cell
                 int child_cell = cells[cell_index].child[octant];
                 cells[child_cell].leaf.push_back(atom_current);
                 cells[child_cell].nleaf += 1;
@@ -342,15 +353,17 @@ public:
             }
         }
     };
-        
+    
+    // create all_cells for all groups (main function to setup cells)
     std::vector<All_cells> setup_all_cells(){
         int t0 = time_now();
 
         all_cells = std::vector<All_cells>();
-        int group_size = gname_iatoms_pairs.size();
-        all_cells.reserve(group_size);
+        int size_group = gname_iatoms_pairs.size();
+        all_cells.reserve(size_group);
 
-        for (int i = 0; i < group_size; i++){
+        for (int i = 0; i < size_group; i++){
+
             std::string group = gname_iatoms_pairs[i].first;
             std::vector<int> iatoms = gname_iatoms_pairs[i].second;
             int num_iatoms = iatoms.size();
@@ -359,37 +372,41 @@ public:
             All_cells all_cell;
             all_cell.group = group;
             all_cell.cells = std::vector<Cell>();
-            // all_cell.cells.reserve(num_iatoms);
 
             std::vector<Cell>& cells = all_cell.cells;
             cells.push_back(Cell());
             calculate_rc(iatoms);
             cells[0].rc = root_r.rc;
-            cells[0].r = root_r.r;
+            cells[0].r  = root_r.r;
 
             for (int j = 0; j < num_iatoms; j++){
 
+                // start from the root cell
                 int current_cell = 0;
                 int index_atom = iatoms[j] - 1;
 
                 while (cells[current_cell].nleaf > n_crit) {
+
+                    // put atom to the current cell, then go to the child cell
                     cells[current_cell].leaf.push_back(iatoms[j]);
                     Vector3d crd_atom = t_crd.row(index_atom);
                     cells[current_cell].nleaf += 1;
                     int octant = (crd_atom(0) > cells[current_cell].rc(0)) + \
                                  ((crd_atom(1) > cells[current_cell].rc(1)) << 1) + \
-                                 ((crd_atom(2) > cells[current_cell].rc(2)) << 2);
+                                 ((crd_atom(2) > cells[current_cell].rc(2)) << 2);  // determine octant
              
+                    // if the child cell does not exist, create it
                     if (!(cells[current_cell].nchild & (1 << octant))){
                         add_child(octant, current_cell, cells);
                     }
-
+                    // go to the child cell
                     current_cell = cells[current_cell].child[octant];
                 }
-
+                // put atom to the current cell
                 cells[current_cell].leaf.push_back(iatoms[j]);
                 cells[current_cell].nleaf += 1;
 
+                // if the current cell has more than n_crit atoms, split it
                 if (cells[current_cell].nleaf > n_crit){
                     split_cell(current_cell, cells);
                 }
