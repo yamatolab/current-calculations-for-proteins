@@ -63,7 +63,11 @@ class EnergyFluxCalculator(base.FluxCalculator):
             n_crit = self.get_setting().curp.coulomb_fmm_cell_contains
             theta = self.get_setting().curp.coulomb_fmm_direct_parm
             info = self.get_topology().get_coulomb_info()
-            charges = info['charges']     
+            info_vdw = self.get_topology().get_vdw_info()
+            charges = info['charges']
+            atom_types = info_vdw['atom_types']
+            c6s = info_vdw['c6s']
+            c12s = info_vdw['c12s']
             self.__lib_fmm = lib_flux_fmm.cal_fmm()
             
             bonded_pairs = self.get_bonded_pairs()
@@ -75,7 +79,8 @@ class EnergyFluxCalculator(base.FluxCalculator):
             
             self.__lib_fmm.setup( int(natom), int(n_crit), float(theta),
                     charges, extracted_bonded_pairs, gname_iatoms_pairs,          
-                    gpair_table, iatm_to_igrp
+                    gpair_table, iatm_to_igrp,
+                    atom_types, c6s, c12s
                     )
             self.__lib_fmm.set_flux("energy")
         
@@ -280,7 +285,11 @@ class HeatFluxCalculator(base.FluxCalculator):
             n_crit = self.get_setting().curp.coulomb_fmm_cell_contains
             theta = self.get_setting().curp.coulomb_fmm_direct_parm
             info = self.get_topology().get_coulomb_info()
-            charges = info['charges']     
+            info_vdw = self.get_topology().get_vdw_info()
+            charges = info['charges']
+            atom_types = info_vdw['atom_types']
+            c6s = info_vdw['c6s']
+            c12s = info_vdw['c12s']
             self.__lib_fmm = lib_flux_fmm.cal_fmm()
             
             bonded_pairs = self.get_bonded_pairs()
@@ -292,7 +301,8 @@ class HeatFluxCalculator(base.FluxCalculator):
             
             self.__lib_fmm.setup( int(natom), int(n_crit), float(theta),
                     charges, extracted_bonded_pairs, gname_iatoms_pairs,          
-                    gpair_table, iatm_to_igrp
+                    gpair_table, iatm_to_igrp,
+                    atom_types, c6s, c12s
                     )
             self.__lib_fmm.set_flux("heat")
 
