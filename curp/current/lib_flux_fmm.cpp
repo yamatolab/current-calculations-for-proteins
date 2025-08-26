@@ -646,11 +646,11 @@ public:
                     double charge_j = charges[idx_target];
                     double qij = coeff * charge_i * charge_j;
                     qij = qij * inv_r3;
-                    int source_type = atom_types[idx_source] - 1;
-                    int target_type = atom_types[idx_target] - 1;
+                    int type_source = atom_types[idx_source] - 1;
+                    int type_target = atom_types[idx_target] - 1;
 
-                    double c6 = c6s(source_type, target_type);
-                    double c12 = c12s(source_type, target_type);
+                    double c6 = c6s(type_source, type_target);
+                    double c12 = c12s(type_source, type_target);
                     double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
                 
                     Vector3d fij = rij * (qij + vdw); // electrostatic + vdw force
