@@ -240,6 +240,7 @@ public:
         t_vel = MatrixXd::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
+        
         count_near = 0;
         count_far = 0;
 
@@ -253,9 +254,9 @@ public:
             hflux_ij_far.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
         }
         else if (flag_energy == true){
-            eflux_ij = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij      = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
-            eflux_ij_far = MatrixXd::Zero(ngrp, ngrp);
+            eflux_ij_far  = MatrixXd::Zero(ngrp, ngrp);
         }
 
         int t1 = time_now();
