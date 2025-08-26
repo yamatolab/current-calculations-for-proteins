@@ -193,7 +193,6 @@ public:
         int               parent;
         Vector3d          rc;
         double            r;
-        Vector3d          rmc;
         VectorXd          multipole;
         MatrixXd          multipole_j;
 
@@ -205,7 +204,6 @@ public:
             parent(0),                              // index of parent cell
             rc(Vector3d::Zero()),                   // center of the cell
             r(0.0),                                 // radius of the cell
-            rmc(Vector3d::Zero()),                  // center of mass of the cell
             multipole(VectorXd::Zero(10)),          // 10 multipoles
             multipole_j(MatrixXd::Zero(3, 10))
         {}
@@ -304,7 +302,6 @@ public:
                 int child_cell = cells[cell_index].child[octant];
                 cells[child_cell].leaf.push_back(atom_current);
                 cells[child_cell].nleaf += 1;
-                cells[child_cell].rmc += t_crd.row(index_atom_current);
 
                 if (cells[child_cell].nleaf > n_crit) {
                     cell_queue.push(child_cell);
@@ -346,7 +343,6 @@ public:
                     cells[current_cell].leaf.push_back(iatoms[j]);
                     Vector3d crd_atom = t_crd.row(index_atom);
                     cells[current_cell].nleaf += 1;
-                    cells[current_cell].rmc += crd_atom;
                     int octant = (crd_atom(0) > cells[current_cell].rc(0)) + \
                                  ((crd_atom(1) > cells[current_cell].rc(1)) << 1) + \
                                  ((crd_atom(2) > cells[current_cell].rc(2)) << 2);
@@ -360,7 +356,6 @@ public:
 
                 cells[current_cell].leaf.push_back(iatoms[j]);
                 cells[current_cell].nleaf += 1;
-                cells[current_cell].rmc += t_crd.row(index_atom);
 
                 if (cells[current_cell].nleaf > n_crit){
                     split_cell(current_cell, cells);
@@ -405,7 +400,6 @@ public:
                 std::cerr << "parent: " << cells[j].parent << std::endl;
                 std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
                 std::cerr << "r: " << cells[j].r << std::endl;
-                std::cerr << "rmc: " << (cells[j].rmc / cells[j].nleaf).transpose() << std::endl;
                 if (cells[j].multipole(0) != 0){
                     std::cerr << "multipole: " << cells[j].multipole.transpose() << std::endl;
                 }
@@ -488,7 +482,6 @@ public:
             for (int j = 0; j < size_cells; j++){
                
                 Cell& cell = cells[j];
-                cell.rmc = cell.rmc / cell.nleaf;
                 if (cell.nchild != 0){
                     continue;
                 }
@@ -1149,15 +1142,6 @@ public:
                         std::cerr << "    " << std::endl;
                     }
                 }
-                rc_real = rc_real / cells[j].nleaf;
-                if (rc_real != cells[j].rmc){
-                    std::cerr << "error: cell " << j << std::endl;
-                    std::cerr << "rc_real: " << rc_real.transpose() << std::endl;
-                    std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
-                    std::cerr << "diff: " << (rc_real - cells[j].rc).transpose() << std::endl;
-                    std::cerr << "    " << std::endl;
-                }
-                Vector3d diff = cells[j].rc - rc_real;
             }
 
             for (int j = 0; j < size_cells; j++){
@@ -1428,7 +1412,6 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("parent", &cal_fmm::Cell::parent)
         .def_readwrite("rc", &cal_fmm::Cell::rc)
         .def_readwrite("r", &cal_fmm::Cell::r)
-        .def_readwrite("rmc", &cal_fmm::Cell::rmc)
         .def_readwrite("multipole", &cal_fmm::Cell::multipole)
         ;
     
