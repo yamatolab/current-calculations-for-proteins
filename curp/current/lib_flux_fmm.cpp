@@ -298,57 +298,59 @@ public:
     };
 
     // put new child cell to cells
-    void add_child(int octant, int current_cell, std::vector<Cell>& cells){
+    void add_child(int octant, int idx_current, std::vector<Cell>& cells){
 
         // insert new child cell to the end of cells
         cells.push_back(Cell());
 
-        int new_child = cells.size() - 1;
+        int idx_child = cells.size() - 1;
 
         // calculate center and radius of the new child cell
-        cells[new_child].r     = cells[current_cell].r * 0.5;
-        cells[new_child].rc(0) = cells[current_cell].rc(0) + cells[new_child].r * ((octant & 1) * 2 - 1);
-        cells[new_child].rc(1) = cells[current_cell].rc(1) + cells[new_child].r * ((octant & 2) - 1);
-        cells[new_child].rc(2) = cells[current_cell].rc(2) + cells[new_child].r * ((octant & 4) / 2 - 1);
+        cells[idx_child].r     = cells[idx_current].r * 0.5;
+        cells[idx_child].rc(0) = cells[idx_current].rc(0) + cells[idx_child].r * ((octant & 1) * 2 - 1);
+        cells[idx_child].rc(1) = cells[idx_current].rc(1) + cells[idx_child].r * ((octant & 2) - 1);
+        cells[idx_child].rc(2) = cells[idx_current].rc(2) + cells[idx_child].r * ((octant & 4) / 2 - 1);
 
-        cells[new_child].parent = current_cell;
+        cells[idx_child].parent = idx_current;
 
         // link new child cell to its parent cell
-        cells[current_cell].child[octant] = new_child;
-        cells[current_cell].nchild        = (cells[current_cell].nchild | (1 << octant));
+        cells[idx_current].child[octant] = idx_child;
+        cells[idx_current].nchild        = (cells[idx_current].nchild | (1 << octant));
     };
 
     // split cell which has more than n_crit atoms (replace atoms in a cell to its child cells)
-    void split_cell(int current_cell, std::vector<Cell>& cells) {
+    void split_cell(int idx_current, std::vector<Cell>& cells) {
 
         std::queue<int> cell_queue;
-        cell_queue.push(current_cell);
+        cell_queue.push(idx_current);
     
         // split cells until all child cells have n_crit or less atoms
         while (!(cell_queue.empty())) {
-            int cell_index = cell_queue.front();
+            int idx_curr_cell = cell_queue.front();
             cell_queue.pop();
     
             // reassign atoms in the cell to its child cells
-            for (int i = 0; i < cells[cell_index].nleaf; i++) {
-                int atom_current = cells[cell_index].leaf[i];
-                int index_atom_current = atom_current - 1;
-                int octant = (t_crd(index_atom_current, 0) > cells[cell_index].rc(0)) + \
-                             ((t_crd(index_atom_current, 1) > cells[cell_index].rc(1)) << 1) + \
-                             ((t_crd(index_atom_current, 2) > cells[cell_index].rc(2)) << 2);   // determine octant
+            for (int i = 0; i < cells[idx_curr_cell].nleaf; i++) {
+
+                int atom_current     = cells[idx_curr_cell].leaf[i];
+                int idx_atom_current = atom_current - 1;
+
+                int octant = (t_crd(idx_atom_current, 0) > cells[idx_curr_cell].rc(0)) + \
+                             ((t_crd(idx_atom_current, 1) > cells[idx_curr_cell].rc(1)) << 1) + \
+                             ((t_crd(idx_atom_current, 2) > cells[idx_curr_cell].rc(2)) << 2);   // determine octant
     
                 // if the child cell does not exist, create it
-                if (!(cells[cell_index].nchild & (1 << octant))) {
-                    add_child(octant, cell_index, cells);
+                if (!(cells[idx_curr_cell].nchild & (1 << octant))) {
+                    add_child(octant, idx_curr_cell, cells);
                 }
                 
                 // put atom to the child cell
-                int child_cell = cells[cell_index].child[octant];
-                cells[child_cell].leaf.push_back(atom_current);
-                cells[child_cell].nleaf += 1;
+                int idx_child = cells[idx_curr_cell].child[octant];
+                cells[idx_child].leaf.push_back(atom_current);
+                cells[idx_child].nleaf += 1;
 
-                if (cells[child_cell].nleaf > n_crit) {
-                    cell_queue.push(child_cell);
+                if (cells[idx_child].nleaf > n_crit) {
+                    cell_queue.push(idx_child);
                 }
             }
         }
@@ -382,33 +384,34 @@ public:
             for (int j = 0; j < num_iatoms; j++){
 
                 // start from the root cell
-                int current_cell = 0;
-                int index_atom = iatoms[j] - 1;
+                int idx_current = 0;            // index of current cell
+                int idx_atom = iatoms[j] - 1;
 
-                while (cells[current_cell].nleaf > n_crit) {
+                while (cells[idx_current].nleaf > n_crit) {
 
                     // put atom to the current cell, then go to the child cell
-                    cells[current_cell].leaf.push_back(iatoms[j]);
-                    Vector3d crd_atom = t_crd.row(index_atom);
-                    cells[current_cell].nleaf += 1;
-                    int octant = (crd_atom(0) > cells[current_cell].rc(0)) + \
-                                 ((crd_atom(1) > cells[current_cell].rc(1)) << 1) + \
-                                 ((crd_atom(2) > cells[current_cell].rc(2)) << 2);  // determine octant
+                    cells[idx_current].leaf.push_back(iatoms[j]);
+                    Vector3d crd_atom = t_crd.row(idx_atom);
+                    cells[idx_current].nleaf += 1;
+                    
+                    int octant = (crd_atom(0) > cells[idx_current].rc(0)) + \
+                                 ((crd_atom(1) > cells[idx_current].rc(1)) << 1) + \
+                                 ((crd_atom(2) > cells[idx_current].rc(2)) << 2);  // determine octant
              
                     // if the child cell does not exist, create it
-                    if (!(cells[current_cell].nchild & (1 << octant))){
-                        add_child(octant, current_cell, cells);
+                    if (!(cells[idx_current].nchild & (1 << octant))){
+                        add_child(octant, idx_current, cells);
                     }
                     // go to the child cell
-                    current_cell = cells[current_cell].child[octant];
+                    idx_current = cells[idx_current].child[octant];
                 }
                 // put atom to the current cell
-                cells[current_cell].leaf.push_back(iatoms[j]);
-                cells[current_cell].nleaf += 1;
+                cells[idx_current].leaf.push_back(iatoms[j]);
+                cells[idx_current].nleaf += 1;
 
                 // if the current cell has more than n_crit atoms, split it
-                if (cells[current_cell].nleaf > n_crit){
-                    split_cell(current_cell, cells);
+                if (cells[idx_current].nleaf > n_crit){
+                    split_cell(idx_current, cells);
                 }
             }
             all_cells.push_back(all_cell);
@@ -435,13 +438,13 @@ public:
         
         for (int i = 0; i < size_atoms; i++){
 
-            int index_atom = atoms[i] - 1;
+            int idx_atom = atoms[i] - 1;
 
-            Vector3d crd_atom = t_crd.row(index_atom);
+            Vector3d crd_atom = t_crd.row(idx_atom);
             double dx = rc(0) - crd_atom(0);
             double dy = rc(1) - crd_atom(1);
             double dz = rc(2) - crd_atom(2);
-            double qj = charges[index_atom];
+            double qj = charges[idx_atom];
 
             double qjdx = qj * dx;
             double qjdy = qj * dy;
