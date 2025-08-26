@@ -508,13 +508,13 @@ public:
 
                 int i_inv = cells_size - 1 - i;
 
-                int c = i_inv;
-                int p = cells[i_inv].parent;
+                int idx_p = cells[i_inv].parent;
+                int idx_c = i_inv;
             
-                VectorXd& p_multipole = cells[p].multipole;
-                VectorXd& c_multipole = cells[c].multipole;
-                Vector3d& p_rc = cells[p].rc;
-                Vector3d& c_rc = cells[c].rc;
+                VectorXd& p_multipole = cells[idx_p].multipole;
+                VectorXd& c_multipole = cells[idx_c].multipole;
+                Vector3d& p_rc = cells[idx_p].rc;
+                Vector3d& c_rc = cells[idx_c].rc;
                 
                 double dx = p_rc(0) - c_rc(0);
                 double dy = p_rc(1) - c_rc(1);
@@ -535,8 +535,8 @@ public:
                 p_multipole(8) += c_multipole(8) + dz * c_multipole(2) + dy * c_multipole(3) + My * dz;
                 p_multipole(9) += c_multipole(9) + dx * c_multipole(3) + dz * c_multipole(1) + Mz * dx;
 
-                MatrixXd& p_multipole_j = cells[p].multipole_j;
-                MatrixXd& c_multipole_j = cells[c].multipole_j;
+                MatrixXd& p_multipole_j = cells[idx_p].multipole_j;
+                MatrixXd& c_multipole_j = cells[idx_c].multipole_j;
 
                 // calculate multipole_j of parent cell from child cell
                 for (int j = 0; j < 3; j++){
