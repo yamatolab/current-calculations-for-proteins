@@ -48,9 +48,6 @@ public:
     bool flag_heat;
     bool flag_energy;
 
-    int count_near;
-    int count_far;
-
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near;
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near_bonded;
     std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_far;
@@ -80,11 +77,13 @@ public:
         eflux_ij_far(MatrixXd::Zero(0, 0)),
         flag_heat(false),
         flag_energy(false),
-        count_near(0),
-        count_far(0),
         pairs_near(std::vector<std::pair<int, std::vector<int>>>()),
         pairs_far(std::vector<std::pair<int, std::vector<int>>>())
     {};
+
+    // for debugging
+    int count_near = 0;
+    int count_far  = 0;
 
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
         const std::vector<std::pair<int, int>>& input_bonded_pairs, \
