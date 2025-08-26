@@ -569,7 +569,7 @@ public:
     // determine near and far cells for each source atom
     void determine_near_far(int num_source, int idx_p, std::vector<Cell>& cells){
 
-        int idx_source = num_source - 1;
+        int      idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
 
         std::queue<int> cell_queue;
@@ -597,7 +597,7 @@ public:
                         double min_len = r - 1.7320508 * cells[idx_c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
 
                         if (min_len < cutoff || cells[idx_c].r > theta * r){
-                            
+
                             cell_queue.push(idx_c);
                         }
                         else{
@@ -622,9 +622,9 @@ public:
             int num_source = pairs_near[i].first;
             std::vector<int>& pairs = pairs_near[i].second;
 
-            int idx_source = num_source - 1;
+            int      idx_source = num_source - 1;
             Vector3d crd_source = t_crd.row(idx_source);
-            Vector3d vi = t_vel.row(idx_source);
+            Vector3d vi         = t_vel.row(idx_source);
 
             int size_pairs = pairs.size();
             for (int j = 0; j < size_pairs; j++){
@@ -695,14 +695,14 @@ public:
 
             for (int j = 0; j < size_pairs; j++){
 
-                int idx_cell = pairs_far[i].second[j];
-                Cell& cell = cells[idx_cell];
+                int   idx_cell = pairs_far[i].second[j];
+                Cell& cell     = cells[idx_cell];
 
                 Vector3d rc = cell.rc;
-                double dx = crd_source(0) - rc(0);
-                double dy = crd_source(1) - rc(1);
-                double dz = crd_source(2) - rc(2);
-                double r = sqrt(dx * dx + dy * dy + dz * dz);
+                double   dx = crd_source(0) - rc(0);
+                double   dy = crd_source(1) - rc(1);
+                double   dz = crd_source(2) - rc(2);
+                double   r  = sqrt(dx * dx + dy * dy + dz * dz);
 
                 bJx.setZero();
                 bJy.setZero();
@@ -777,10 +777,10 @@ public:
                 double coeff  = 332.05221729;
                 VectorXd multi = coeff * multipole * charge;
 
-                double fx = multi.dot(bJx);
-                double fy = multi.dot(bJy);
-                double fz = multi.dot(bJz);
-                Vector3d f = Vector3d(-fx, -fy, -fz);
+                double   fx = multi.dot(bJx);
+                double   fy = multi.dot(bJy);
+                double   fz = multi.dot(bJz);
+                Vector3d f  = Vector3d(-fx, -fy, -fz);
 
                 MatrixXd& multipole_j = cell.multipole_j;
                 bJ.col(0) = bJx;
@@ -889,7 +889,7 @@ public:
         
         std::vector<Cell> cells;
         for (const auto& all_cell : all_cells) {
-            
+
             if (all_cell.group == source) {
                 cells =  all_cell.cells;
                 break;
@@ -898,6 +898,7 @@ public:
         return cells;
     };
 
+    // calculate forces and fluxes for all required group pairs
     void cal_force_and_flux(){
 
         int size_table = gpair_table.size();
@@ -909,10 +910,8 @@ public:
         
             std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
-            int t1 = time_now();
 
             for (int j = 0; j < size_targets; j++){
-                int t2 = time_now();
 
                 pairs_near.clear();
                 pairs_far.clear();
@@ -928,13 +927,9 @@ public:
                     pairs_near[k].first = num_source;
                     pairs_far[k].first = num_source;
                     determine_near_far(num_source, k, 0, cells);
-                    
                 }
-                int t4 = time_now();
                 cal_force_near(cells);
-                int t5 = time_now();
                 cal_force_far(cells);
-                int t6 = time_now();
             }
 
             std::vector<Cell> cells_source = get_cells(source, all_cells);
@@ -975,18 +970,19 @@ public:
 
             Vector3d crd_source = t_crd.row(idx_source);
             Vector3d crd_target = t_crd.row(idx_target);
+
             Vector3d rij = crd_source - crd_target;
             Vector3d vi  = t_vel.row(idx_source);
             Vector3d vj  = t_vel.row(idx_target);
             Vector3d vij = vi + vj;
 
-            double r = sqrt(rij.dot(rij));
-            double inv_r = 1.0 / r;
-            double inv_r3 = inv_r * inv_r * inv_r;              // 1/r^3
-            double inv_r8 = inv_r3 * inv_r3 * inv_r * inv_r;    // 1/r^8
-            double inv_r14 = inv_r8 * inv_r3 * inv_r3;          // 1/r^14
-            double coeff = 332.05221729;
-
+            double r       = sqrt(rij.dot(rij));
+            double inv_r   = 1.0 / r;
+            double inv_r3  = inv_r * inv_r * inv_r;              // 1/r^3
+            double inv_r8  = inv_r3 * inv_r3 * inv_r * inv_r;    // 1/r^8
+            double inv_r14  = inv_r8 * inv_r3 * inv_r3;          // 1/r^14
+            
+            double coeff    = 332.05221729;
             double charge_i = charges[idx_source];
             double charge_j = charges[idx_target];
             double coulomb  = coeff * charge_i * charge_j * inv_r3;
@@ -1054,6 +1050,9 @@ public:
         }
     };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // main function to calculate coulomb flux using fmm
     void cal_coulomb_flux_fmm(const std::vector<All_cells>& all_cells) {
         int t0 = time_now();
         get_all_cells(all_cells);
@@ -1084,6 +1083,9 @@ public:
         }
     };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // get current time in microseconds
     int time_now(){
  
         auto start = std::chrono::system_clock::now();
