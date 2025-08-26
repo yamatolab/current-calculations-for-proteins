@@ -1046,7 +1046,6 @@ public:
  
         auto start = std::chrono::system_clock::now();
         auto now = std::chrono::duration_cast<std::chrono::microseconds>(start.time_since_epoch()).count();
-        // float nnow = now * 0.000001;
         return now;
     };
 
