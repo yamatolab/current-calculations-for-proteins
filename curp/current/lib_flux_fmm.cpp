@@ -420,16 +420,19 @@ public:
         return all_cells;
     };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // set all_cells
     void get_all_cells(const std::vector<All_cells>& all_cells_input){
 
         all_cells = all_cells_input;  
     };    
 
-    // calculate multipole
+    // calculate multipole/multipole_j of a cell
     void cal_multipole(VectorXd& multipole, MatrixXd& multipole_j, Vector3d& rc, std::vector<int>& atoms){
         
         int size_atoms = atoms.size();
+        
         for (int i = 0; i < size_atoms; i++){
 
             int index_atom = atoms[i] - 1;
@@ -446,6 +449,7 @@ public:
             
             VectorXd multipole_atom = VectorXd::Zero(10);
 
+            // calculate multipole
             multipole_atom(0) = qj * 1.0;
             multipole_atom(1) = qjdx;
             multipole_atom(2) = qjdy;
@@ -459,21 +463,27 @@ public:
             
             multipole += multipole_atom;
 
+            // calculate multipole_j
             for (int j = 0; j < 3; j++){
                 multipole_j.row(j) += multipole_atom.transpose() * crd_atom(j);
             }
         }
     };
 
+    // calculate multipoles for all cells (only which do not have child cells)
     void cal_p(){
         int size_all_cells = all_cells.size();
+
         for (int i = 0; i < size_all_cells; i++){
+
             std::vector<Cell>& cells = all_cells[i].cells;
             int size_cells = cells.size();
 
             for (int j = 0; j < size_cells; j++){
                
                 Cell& cell = cells[j];
+
+                // skip if the cell has child cells
                 if (cell.nchild != 0){
                     continue;
                 }
@@ -484,13 +494,18 @@ public:
         }
     };
 
+    // calculate multipoles of parent cells from child cells
     void cal_M2M(){
+
         int size_all_cells = all_cells.size();
+
         for (int i = 0; i < size_all_cells; i++){
+
             std::vector<Cell>& cells = all_cells[i].cells;
-            
             int cells_size = cells.size();
+
             for (int i = 0; i < cells_size - 1; i++){
+
                 int i_inv = cells_size - 1 - i;
 
                 int c = i_inv;
@@ -498,8 +513,8 @@ public:
             
                 VectorXd& p_multipole = cells[p].multipole;
                 VectorXd& c_multipole = cells[c].multipole;
-                Vector3d& c_rc = cells[c].rc;
                 Vector3d& p_rc = cells[p].rc;
+                Vector3d& c_rc = cells[c].rc;
                 
                 double dx = p_rc(0) - c_rc(0);
                 double dy = p_rc(1) - c_rc(1);
@@ -508,6 +523,7 @@ public:
                 double My = c_multipole(0) * dy;
                 double Mz = c_multipole(0) * dz;
 
+                // calculate multipole of parent cell from child cell
                 p_multipole(0) += c_multipole(0);
                 p_multipole(1) += c_multipole(1) + Mx;
                 p_multipole(2) += c_multipole(2) + My;
@@ -522,7 +538,9 @@ public:
                 MatrixXd& p_multipole_j = cells[p].multipole_j;
                 MatrixXd& c_multipole_j = cells[c].multipole_j;
 
+                // calculate multipole_j of parent cell from child cell
                 for (int j = 0; j < 3; j++){
+
                     double Mjx = c_multipole_j(j, 0) * dx;
                     double Mjy = c_multipole_j(j, 0) * dy;
                     double Mjz = c_multipole_j(j, 0) * dz;
@@ -538,12 +556,11 @@ public:
                     p_multipole_j(j, 8) += c_multipole_j(j, 8) + dz * c_multipole_j(j, 2) + dy * c_multipole_j(j, 3) + Mjy * dz;
                     p_multipole_j(j, 9) += c_multipole_j(j, 9) + dx * c_multipole_j(j, 3) + dz * c_multipole_j(j, 1) + Mjz * dx;
                 }
-
             }
         }
     };
 
-    void determine_near_far(int num_source, int p, std::vector<Cell>& cells){
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         int t0 = time_now();
         int idx_source = num_source - 1;
