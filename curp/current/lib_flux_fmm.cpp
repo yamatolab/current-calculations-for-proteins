@@ -919,7 +919,6 @@ public:
                 pairs_far.resize(source_size);
                 std::string target = targets[j];
                 std::vector<Cell> cells = get_cells(target, all_cells);
-                int t3 = time_now();
 
                 for (int k = 0; k < source_size; k++){
 
