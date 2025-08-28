@@ -690,7 +690,6 @@ public:
             int idx_source = num_source - 1;
 
             Vector3d crd_source = t_crd.row(idx_source);
-            Vector3d vi         = t_vel.row(idx_source);
             int size_pairs      = pairs_far[i].second.size();
 
             for (int j = 0; j < size_pairs; j++){
