@@ -1209,7 +1209,7 @@ PYBIND11_MODULE(lib_flux_fmm, m){
     
     
     py::class_<cal_fmm::Cell>(m, "Cell")
-        .def(py::init<int>())
+        .def(py::init<>())
         .def_readwrite("nleaf", &cal_fmm::Cell::nleaf)
         .def_readwrite("leaf", &cal_fmm::Cell::leaf)
         .def_readwrite("nchild", &cal_fmm::Cell::nchild)
