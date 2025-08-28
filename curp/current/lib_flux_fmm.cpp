@@ -1090,6 +1090,54 @@ public:
         auto now = std::chrono::duration_cast<std::chrono::microseconds>(start.time_since_epoch()).count();
         return now;
     };
+
+    // debug function(print all cells)
+    void print_all_cells(){
+        int size_all_cells = all_cells.size();
+        for (int i = 0; i < size_all_cells; i++){
+            std::cerr << "group: " << all_cells[i].group << std::endl;
+            std::vector<Cell>& cells = all_cells[i].cells;
+            int size_cells = cells.size();
+            for (int j = 0; j < size_cells; j++){
+                std::cerr << "cell: " << j << " nleaf: " << cells[j].nleaf << " leaves: [" ;
+
+                for (size_t k = 0; k < cells[j].leaf.size(); ++k) {
+                    std::cerr << cells[j].leaf[k];
+                    if (k < cells[j].leaf.size() - 1) {
+                        std::cerr << ", ";
+                    }
+                };
+                std::cerr << "]" << std::endl;
+
+                std::cerr << "nchild: " << cells[j].nchild << " child: [" ;
+                for (size_t k = 0; k < cells[j].child.size(); ++k) {
+                    std::cerr << cells[j].child[k];
+                    if (k < cells[j].child.size() - 1) {
+                        std::cerr << ", ";
+                    }
+                }
+                std::cerr << "]" << std::endl;
+                std::cerr << "parent: " << cells[j].parent << std::endl;
+                std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
+                std::cerr << "r: " << cells[j].r << std::endl;
+                if (cells[j].multipole(0) != 0){
+                    std::cerr << "multipole: " << cells[j].multipole.transpose() << std::endl;
+                }
+                if (cells[j].nchild != 0 && cells[j].multipole[0] != 0){
+                    std::cerr << "error: multipole exists: [";
+
+                    for (size_t k = 0; k < cells[j].leaf.size(); ++k) {
+                        std::cerr << cells[j].leaf[k];
+                        if (k < cells[j].leaf.size() - 1) {
+                            std::cerr << ", ";
+                        }
+                    };
+                    std::cerr << "]" << std::endl;
+                }
+                std::cerr << "   " << std::endl;
+            }
+        }
+    };
 };
 
 // Convert hflux_ij to numpy array
@@ -1131,54 +1179,6 @@ py::array_t<double> hflux_to_numpy(const std::vector<std::vector<Vector3d>>& hfl
     )).attr("copy")();
 };
 
-// debug function(print all cells)
-void print_all_cells(){
-    int size_all_cells = all_cells.size();
-    for (int i = 0; i < size_all_cells; i++){
-        std::cerr << "group: " << all_cells[i].group << std::endl;
-        std::vector<Cell>& cells = all_cells[i].cells;
-        int size_cells = cells.size();
-        for (int j = 0; j < size_cells; j++){
-            std::cerr << "cell: " << j << " nleaf: " << cells[j].nleaf << " leaves: [" ;
-
-            for (size_t k = 0; k < cells[j].leaf.size(); ++k) {
-                std::cerr << cells[j].leaf[k];
-                if (k < cells[j].leaf.size() - 1) {
-                    std::cerr << ", ";
-                }
-            };
-            std::cerr << "]" << std::endl;
-
-            std::cerr << "nchild: " << cells[j].nchild << " child: [" ;
-            for (size_t k = 0; k < cells[j].child.size(); ++k) {
-                std::cerr << cells[j].child[k];
-                if (k < cells[j].child.size() - 1) {
-                    std::cerr << ", ";
-                }
-            }
-            std::cerr << "]" << std::endl;
-            std::cerr << "parent: " << cells[j].parent << std::endl;
-            std::cerr << "rc: " << cells[j].rc.transpose() << std::endl;
-            std::cerr << "r: " << cells[j].r << std::endl;
-            if (cells[j].multipole(0) != 0){
-                std::cerr << "multipole: " << cells[j].multipole.transpose() << std::endl;
-            }
-            if (cells[j].nchild != 0 && cells[j].multipole[0] != 0){
-                std::cerr << "error: multipole exists: [";
-
-                for (size_t k = 0; k < cells[j].leaf.size(); ++k) {
-                    std::cerr << cells[j].leaf[k];
-                    if (k < cells[j].leaf.size() - 1) {
-                        std::cerr << ", ";
-                    }
-                };
-                std::cerr << "]" << std::endl;
-            }
-            std::cerr << "   " << std::endl;
-        }
-    }
-};
-
 
 PYBIND11_MODULE(lib_flux_fmm, m){
     
@@ -1189,7 +1189,7 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def("initialize", &cal_fmm::initialize)
         .def("setup_all_cells", &cal_fmm::setup_all_cells)
         .def("cal_coulomb_flux_fmm", &cal_fmm::cal_coulomb_flux_fmm)
-        .def("check_cells", &cal_fmm::check_cells)
+        .def("print_all_cells", &cal_fmm::print_all_cells)
         .def_readwrite("natom", &cal_fmm::natom)
         .def_readwrite("n_crit", &cal_fmm::n_crit)
         .def_readwrite("theta", &cal_fmm::theta)
@@ -1225,5 +1225,4 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         ;
 
     m.def("hflux_to_numpy", &hflux_to_numpy, "Convert hflux_ij to numpy array");
-    m.def("print_all_cells", &print_all_cells, "Print all cells for debug");
 }
