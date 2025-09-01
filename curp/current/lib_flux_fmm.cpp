@@ -923,7 +923,7 @@ public:
 
                     int num_source = source_atoms[k];
                     pairs_near[k].first = num_source;
-                    pairs_far[k].first = num_source;
+                    pairs_far[k].first  = num_source;
                     determine_near_far(num_source, 0, k, cells);
                 }
                 cal_force_near(cells);
@@ -946,6 +946,8 @@ public:
 
                 for (int m = 0; m < target_size; m++){
                     int num_target = target_atoms[m];
+                    pairs_near[m].first = num_target;
+                    pairs_far[m].first  = num_target;
                     determine_near_far(num_target, 0, m, cells_source);
                 }
                 cal_force_near(cells_source);
