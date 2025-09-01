@@ -567,7 +567,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // determine near and far cells for each source atom
-    void determine_near_far(int num_source, int idx_p, std::vector<Cell>& cells){
+    void determine_near_far(int num_source, int idx_p, int idx_pair, std::vector<Cell>& cells){
 
         int      idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
@@ -601,13 +601,13 @@ public:
                             cell_queue.push(idx_c);
                         }
                         else{
-                            pairs_far[num_source].second.push_back(idx_c);
+                            pairs_far[idx_pair].second.push_back(idx_c);
                         }      
                     }
                 }
             }
             else {
-                pairs_near[num_source].second.push_back(idx_p);
+                pairs_near[idx_pair].second.push_back(idx_p);
             }
         }
     };
