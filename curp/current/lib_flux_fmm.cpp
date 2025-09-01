@@ -144,7 +144,6 @@ public:
             r(0.0)
         {}
     };
-    Root_r root_r;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -268,7 +267,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // calculate the center and radius of the cell 
-    void calculate_rc(std::vector<int>& atoms){
+    Root_r calculate_rc(std::vector<int>& atoms){
 
         Vector3d rc = Vector3d::Zero();
         Vector3d r = Vector3d::Zero();
@@ -294,8 +293,10 @@ public:
         double max_r = r.maxCoeff();    // maximum radius among x, y, z
 
         // assign to structure Root_r
+        Root_r root_r;
         root_r.rc = rc;
         root_r.r  = max_r;
+        return root_r;
     };
 
     // put new child cell to cells
@@ -378,7 +379,7 @@ public:
 
             std::vector<Cell>& cells = all_cell.cells;
             cells.push_back(Cell());
-            calculate_rc(iatoms);
+            Root_r root_r = calculate_rc(iatoms);
             cells[0].rc = root_r.rc;
             cells[0].r  = root_r.r;
 
