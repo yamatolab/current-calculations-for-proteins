@@ -123,16 +123,16 @@ public:
     };
 
     // Structure of all cells for each group
-    struct All_cells {
+    struct All_cell {
         std::string group;
         std::vector<Cell> cells;
 
-        All_cells():
+        All_cell():
             group(""),
             cells()
         {}
     };
-    std::vector<All_cells> all_cells;
+    std::vector<All_cell> all_cells;
 
     // Structure for calculating the radius and center of the root cell
     struct Root_r{
@@ -358,10 +358,10 @@ public:
     };
     
     // create all_cells for all groups (main function to setup cells)
-    std::vector<All_cells> setup_all_cells(){
+    std::vector<All_cell> setup_all_cells(){
         int t0 = time_now();
 
-        all_cells = std::vector<All_cells>();
+        all_cells = std::vector<All_cell>();
         int size_group = gname_iatoms_pairs.size();
         all_cells.reserve(size_group);
 
@@ -372,7 +372,7 @@ public:
             int num_iatoms = iatoms.size();
 
             // set root cell
-            All_cells all_cell;
+            All_cell all_cell;
             all_cell.group = group;
             all_cell.cells = std::vector<Cell>();
 
@@ -427,7 +427,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // get all_cells
-    void get_all_cells(const std::vector<All_cells>& all_cells_input){
+    void get_all_cells(const std::vector<All_cell>& all_cells_input){
 
         all_cells = all_cells_input;  
     };    
@@ -884,7 +884,7 @@ public:
     };
 
     // get cells vector of a group
-    std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cells>& all_cells) {
+    std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cell>& all_cells) {
         
         std::vector<Cell> cells;
         for (const auto& all_cell : all_cells) {
@@ -1053,7 +1053,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // main function to calculate coulomb flux using fmm
-    void cal_coulomb_flux_fmm(const std::vector<All_cells>& all_cells) {
+    void cal_coulomb_flux_fmm(const std::vector<All_cell>& all_cells) {
         int t0 = time_now();
         get_all_cells(all_cells);
         int t1 = time_now();
@@ -1220,10 +1220,10 @@ PYBIND11_MODULE(lib_flux_fmm, m){
         .def_readwrite("multipole", &cal_fmm::Cell::multipole)
         ;
     
-    py::class_<cal_fmm::All_cells>(m, "All_cells")
+    py::class_<cal_fmm::All_cell>(m, "All_cell")
         .def(py::init<>())
-        .def_readwrite("group", &cal_fmm::All_cells::group)
-        .def_readwrite("cells", &cal_fmm::All_cells::cells)
+        .def_readwrite("group", &cal_fmm::All_cell::group)
+        .def_readwrite("cells", &cal_fmm::All_cell::cells)
         ;
 
     m.def("hflux_to_numpy", &hflux_to_numpy, "Convert hflux_ij to numpy array");
