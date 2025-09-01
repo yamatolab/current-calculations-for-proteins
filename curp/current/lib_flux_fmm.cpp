@@ -30,7 +30,7 @@ public:
 
     std::vector<std::pair<int, int>> bonded_pairs;                              // list of bonded pairs
     std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;  // table of target group pairs
-    std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;   // list of group name and its atom indices
+    std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;   // list of group name and number of atoms in the group
     VectorXi iatom_to_igroup;                                                   // mapping from atom index to group index
 
     // vars for vdw
@@ -183,7 +183,7 @@ public:
         }
     };
 
-    // get flux type
+    // set flux type
     void set_flux(const std::string& flux_type){
 
         if (flux_type == "heat"){
@@ -426,7 +426,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // set all_cells
+    // get all_cells
     void get_all_cells(const std::vector<All_cells>& all_cells_input){
 
         all_cells = all_cells_input;  
