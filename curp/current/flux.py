@@ -62,6 +62,7 @@ class EnergyFluxCalculator(base.FluxCalculator):
             natom = self.get_topology().get_natom()
             n_crit = self.get_setting().curp.coulomb_fmm_cell_contains
             theta = self.get_setting().curp.coulomb_fmm_direct_parm
+            cutoff = self.get_setting().curp.coulomb_fmm_cutoff_length
             info = self.get_topology().get_coulomb_info()
             info_vdw = self.get_topology().get_vdw_info()
             charges = info['charges']
@@ -77,7 +78,7 @@ class EnergyFluxCalculator(base.FluxCalculator):
             
             extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
             
-            self.__lib_fmm.setup( int(natom), int(n_crit), float(theta),
+            self.__lib_fmm.setup( int(natom), int(n_crit), float(theta), float(cutoff),
                     charges, extracted_bonded_pairs, gname_iatoms_pairs,          
                     gpair_table, iatm_to_igrp,
                     atom_types, c6s, c12s
@@ -284,6 +285,7 @@ class HeatFluxCalculator(base.FluxCalculator):
             natom = self.get_topology().get_natom()
             n_crit = self.get_setting().curp.coulomb_fmm_cell_contains
             theta = self.get_setting().curp.coulomb_fmm_direct_parm
+            cutoff = self.get_setting().curp.coulomb_fmm_cutoff_length
             info = self.get_topology().get_coulomb_info()
             info_vdw = self.get_topology().get_vdw_info()
             charges = info['charges']
@@ -299,7 +301,7 @@ class HeatFluxCalculator(base.FluxCalculator):
             
             extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
             
-            self.__lib_fmm.setup( int(natom), int(n_crit), float(theta),
+            self.__lib_fmm.setup( int(natom), int(n_crit), float(theta), float(cutoff),
                     charges, extracted_bonded_pairs, gname_iatoms_pairs,          
                     gpair_table, iatm_to_igrp,
                     atom_types, c6s, c12s
