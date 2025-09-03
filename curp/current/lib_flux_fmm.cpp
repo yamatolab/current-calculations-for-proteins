@@ -23,6 +23,7 @@ public:
     int   ngrp;                     // number of group
     int   n_crit;                   // n_crit (max number of atoms included in the smallest cell)
     float theta;                    // theta  (parameter to decide whether to use multipole expansion or not)
+    float cutoff;                   // cutoff length for near_field interaction
 
     std::vector<double> charges;    // charges of atoms
     MatrixXd t_crd;                 // coordinates of atoms
@@ -67,6 +68,7 @@ public:
         ngrp(0),
         n_crit(0),
         theta(0.0),
+        cutoff(0.0),
         charges(std::vector<double>()),
         t_crd(MatrixXd::Zero(natom, 3)),
         t_vel(MatrixXd::Zero(natom, 3)),
@@ -93,7 +95,7 @@ public:
     int count_near = 0;     // counter of atom-atom pairs
     int count_far  = 0;     // counter of atom-cell pairs
 
-    bool output_to_err_file = false; // if true, output process time for each function to error file
+    bool output_to_err_file = true; // if true, output process time for each function to error file
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -148,7 +150,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // setup parameters
-    void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const std::vector<double>& input_charges, \
+    void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const float& input_cutoff,
+        const std::vector<double>& input_charges, \
         const std::vector<std::pair<int, int>>& input_bonded_pairs, \
         const std::vector<std::pair<std::string, std::vector<int>>>& input_gname_iatoms_pairs, \
         const std::vector<std::pair<std::string, std::vector<std::string>>>& input_gpair_table, \
@@ -163,6 +166,7 @@ public:
         natom   = input_natom;
         n_crit  = input_n_crit;
         theta   = input_theta;
+        cutoff  = input_cutoff;
         charges = input_charges;
 
         bonded_pairs       = input_bonded_pairs;
@@ -594,7 +598,6 @@ public:
                         double dz = crd_source(2) - rc(2);
                         double r  = sqrt(dx * dx + dy * dy + dz * dz);
 
-                        double cutoff  = 9.0;
                         double min_len = r - 1.7320508 * cells[idx_c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
 
                         if (min_len < cutoff || cells[idx_c].r > theta * r){
@@ -1076,10 +1079,11 @@ public:
             std::cerr << "cal_bonded_flux time: " << t5 - t4 << std::endl;
             std::cerr << "add_flux time: " << t6 - t5 << std::endl; 
             std::cerr << "total time(cal_p -> add_flux): " << t6 - t1 << std::endl;
-            std::cerr << "count_far: " << count_far << std::endl;
+            std::cerr << "count_far: "  << count_far << std::endl;
             std::cerr << "count_near: " << count_near << std::endl;
-            std::cerr << "ncrit: " << n_crit << std::endl;
-            std::cerr << "theta: " << theta << std::endl;
+            std::cerr << "ncrit: "  << n_crit << std::endl;
+            std::cerr << "theta: "  << theta << std::endl;
+            std::cerr << "cutoff: " << cutoff << std::endl;
             std::cerr << "   " << std::endl;
         }
     };
