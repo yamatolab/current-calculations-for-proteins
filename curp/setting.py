@@ -297,6 +297,9 @@ class Setting(SettingBase):
             desc='The parameter that is used to decide  '
                 'wethert to perform direct coulomb calculation.'),
         
+        coulomb_fmm_cutoff_length = Float(default=12.0, require=False,
+            desc='The cutoff length for the fmm calculation.'),
+
         # vdw_method = Choice(default='cutoff', require=False,
         #     desc='The method to calculate van der Waals interaction.',
         #     values=['cutoff', 'multipole'], value_type=String)
