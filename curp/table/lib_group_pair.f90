@@ -7,7 +7,7 @@ module within_gpair
     integer, allocatable :: ends(:)   ! (natom)
 
     integer :: iatm, jatm
-    integer :: i, ipair
+    integer :: i, ipair, jpair
 
 contains
 
@@ -32,6 +32,7 @@ contains
         implicit none
         integer, intent(in) :: iatm, jatm
         integer :: jatm_beg, jatm_end
+        integer :: iatm_beg, iatm_end
 
         is_within_gpair = .false.
         do ipair=begins(iatm), ends(iatm)
@@ -43,6 +44,17 @@ contains
                 exit
             end if
         end do
+
+        do jpair=begins(jatm), ends(jatm)
+            iatm_beg = gpair_table(jpair, 2)
+            iatm_end = gpair_table(jpair, 3)
+
+            if ((iatm_beg<=iatm) .and. (iatm<=iatm_end)) then
+                is_within_gpair = .true.
+                exit
+            end if
+        end do
+
 
     end function
 
