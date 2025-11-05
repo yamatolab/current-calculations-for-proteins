@@ -20,7 +20,6 @@ class cal_fmm{
 public:
 
     int   natom;                    // number of atoms
-    int   ngrp;                     // number of group
     int   n_crit;                   // n_crit (max number of atoms included in the smallest cell)
     float theta;                    // theta  (parameter to decide whether to use multipole expansion or not)
     float cutoff;                   // cutoff length for near_field interaction
@@ -30,8 +29,8 @@ public:
     MatrixXd t_vel;                 // velocities of atoms
 
     std::vector<std::pair<int, int>> bonded_pairs;                              // list of bonded pairs
-    std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;  // table of target group pairs
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;   // list of group name and number of atoms in the group
+    std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;  // table of target group pairs
     VectorXi iatom_to_igroup;                                                   // mapping from atom index to group index
 
     // vars for vdw
@@ -41,17 +40,46 @@ public:
 
     // vectors for heat flux
     std::vector<std::vector<Vector3d>> hflux_ij;
-    std::vector<std::vector<Vector3d>> hflux_ij_near;
-    std::vector<std::vector<Vector3d>> hflux_ij_far;
 
     // Matrices for energy flux
     MatrixXd eflux_ij;
-    MatrixXd eflux_ij_near;
-    MatrixXd eflux_ij_far;
+
+    // constructor
+    cal_fmm():
+        natom(0),
+        n_crit(0),
+        theta(0.0),
+        cutoff(0.0),
+        charges(std::vector<double>()),
+        bonded_pairs(std::vector<std::pair<int, int>>()),
+        gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
+        gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
+        iatom_to_igroup(VectorXi::Zero(0)),
+        atom_types(std::vector<int>()),
+        c6s(MatrixXd::Zero(0, 0)),
+        c12s(MatrixXd::Zero(0, 0)),
+        hflux_ij(std::vector<std::vector<Vector3d>>()),
+        eflux_ij(MatrixXd::Zero(0, 0))
+    {};
+
+
+private:
+
+    // number of group
+    int ngrp = 0;
 
     // flags for flux type
-    bool flag_heat;
-    bool flag_energy;
+    bool flag_heat   = false;
+    bool flag_energy = false;
+
+    // vectors for heat flux
+    std::vector<std::vector<Vector3d>> hflux_ij_near = std::vector<std::vector<Vector3d>>();
+    std::vector<std::vector<Vector3d>> hflux_ij_far  = std::vector<std::vector<Vector3d>>();
+
+    // Matrices for energy flux
+    MatrixXd eflux_ij_near = MatrixXd::Zero(0, 0);
+    MatrixXd eflux_ij_far  = MatrixXd::Zero(0, 0);
+
 
     // function for calculating flux
     std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near;
@@ -62,35 +90,6 @@ public:
     std::vector<std::pair<int, std::vector<int>>> pairs_near;   // [[1, [atom1, atom2, ...]], [2, [atom1, atom2, ...]], ...]
     std::vector<std::pair<int, std::vector<int>>> pairs_far;    // [[1, [cell1, cell2, ...]], [2, [cell1, cell2, ...]], ...]
 
-    // constructor
-    cal_fmm():
-        natom(0),
-        ngrp(0),
-        n_crit(0),
-        theta(0.0),
-        cutoff(0.0),
-        charges(std::vector<double>()),
-        t_crd(MatrixXd::Zero(natom, 3)),
-        t_vel(MatrixXd::Zero(natom, 3)),
-        bonded_pairs(std::vector<std::pair<int, int>>()),
-        gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
-        gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
-        iatom_to_igroup(VectorXi::Zero(0)),
-        atom_types(std::vector<int>()),
-        c6s(MatrixXd::Zero(0, 0)),
-        c12s(MatrixXd::Zero(0, 0)),
-        hflux_ij(std::vector<std::vector<Vector3d>>()),
-        hflux_ij_near(std::vector<std::vector<Vector3d>>()),
-        hflux_ij_far(std::vector<std::vector<Vector3d>>()),
-        eflux_ij(MatrixXd::Zero(0, 0)),
-        eflux_ij_near(MatrixXd::Zero(0, 0)),
-        eflux_ij_far(MatrixXd::Zero(0, 0)),
-        flag_heat(false),
-        flag_energy(false),
-        pairs_near(std::vector<std::pair<int, std::vector<int>>>()),
-        pairs_far(std::vector<std::pair<int, std::vector<int>>>())
-    {};
-
     // for debugging
     int count_near = 0;     // counter of atom-atom pairs
     int count_far  = 0;     // counter of atom-cell pairs
@@ -99,6 +98,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+public:
     // Structure of a cell
     struct Cell {
         int               nleaf;        // number of atoms(leaf) in the cell
@@ -136,6 +136,7 @@ public:
     };
     std::vector<All_cell> all_cells;
 
+private:
     // Structure for calculating the radius and center of the root cell
     struct Root_r{
         Vector3d rc;
@@ -149,6 +150,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+public:
     // setup parameters
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const float& input_cutoff,
         const std::vector<double>& input_charges, \
@@ -270,6 +272,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+private:
     // calculate the center and radius of the cell 
     Root_r calculate_rc(std::vector<int>& atoms){
 
@@ -361,7 +364,8 @@ public:
             }
         }
     };
-    
+
+public:
     // create all_cells for all groups (main function to setup cells)
     std::vector<All_cell> setup_all_cells(){
         int t0 = time_now();
@@ -431,12 +435,14 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+public:
     // get all_cells
     void get_all_cells(const std::vector<All_cell>& all_cells_input){
 
         all_cells = all_cells_input;  
     };    
 
+private:
     // calculate multipole/multipole_j of a cell
     void cal_multipole(VectorXd& multipole, MatrixXd& multipole_j, Vector3d& rc, std::vector<int>& atoms){
         
@@ -1056,6 +1062,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+public:
     // main function to calculate coulomb flux using fmm
     void cal_coulomb_flux_fmm(const std::vector<All_cell>& all_cells) {
         int t0 = time_now();
