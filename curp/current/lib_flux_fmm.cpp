@@ -606,7 +606,7 @@ private:
 
                         double min_len = r - 1.7320508 * cells[idx_c].r;        // the minimum length of particle(source) - particle(target in cell[c]) 
 
-                        if (min_len < cutoff || cells[idx_c].r > theta * r){
+                        if (min_len < cutoff || cells[idx_c].r > 2.0 * theta * r){
 
                             cell_queue.push(idx_c);
                         }
