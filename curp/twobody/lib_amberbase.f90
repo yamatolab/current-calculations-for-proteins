@@ -9,11 +9,14 @@ module common_vars
     integer :: iatm_beg, iatm_end, jatm_beg, jatm_end
     real(8), dimension(3) :: r_ij, r_ji, r_ik, r_ki, r_il, r_li
     real(8), dimension(3) :: r_jk, r_kj, r_jl, r_lj, r_kl, r_lk
+    real(8), dimension(3) :: r_im, r_mi, r_jm, r_mj, r_km, r_mk, r_lm, r_ml
     real(8) :: l_ij, l_ji, l_ik, l_ki, l_il, l_li
     real(8) :: l_jk, l_kj, l_jl, l_lj, l_kl, l_lk
+    real(8) :: l_im, l_mi, l_jm, l_mj, l_km, l_mk, l_lm, l_ml
     real(8) :: l_ij_inv
-    real(8), dimension(3) :: f_ij, f_ik, f_il, f_jk, f_jl, f_kl
-    real(8), dimension(3) :: f_i, f_j, f_k, f_l
+    real(8), dimension(3) :: f_ij, f_ik, f_il, f_im, f_jk, f_jl, f_jm
+    real(8), dimension(3) :: f_kl, f_km, f_lm
+    real(8), dimension(3) :: f_i, f_j, f_k, f_l, f_m
     real(8) :: ene
 
 contains
