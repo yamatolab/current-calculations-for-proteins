@@ -2011,6 +2011,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     use angle     , ang_forces => forces, ang_tbforces => tbforces, ang_disp => displacement
     use torsion   , tor_forces => forces, tor_tbforces => tbforces, tor_disp => displacement
     use improper  , imp_forces => forces, imp_tbforces => tbforces, imp_disp => displacement
+    use cmap      , cmp_forces => forces, cmp_tbforces => tbforces, cmp_disp => displacement
     use coulomb   , cou_forces => forces, cou_tbforces => tbforces, cou_disp => displacement
     use vdw       , vdw_forces => forces, vdw_tbforces => tbforces, vdw_disp => displacement
     use coulomb14 , cou14_forces => forces, cou14_tbforces => tbforces, cou14_disp => displacement
@@ -2037,6 +2038,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(ang_forces(t_natom, 3))
     allocate(tor_forces(t_natom, 3))
     allocate(imp_forces(t_natom, 3))
+    allocate(cmp_forces(t_natom, 3))
     allocate(cou_forces(t_natom, 3))
     allocate(vdw_forces(t_natom, 3))
     allocate(cou14_forces(t_natom, 3))
@@ -2047,6 +2049,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(ang_tbforces(t_nbonded, 3))
     allocate(tor_tbforces(t_nbonded, 3))
     allocate(imp_tbforces(t_nbonded, 3))
+    allocate(cmp_tbforces(t_nbonded, 3))
     allocate(cou14_tbforces(t_nbonded, 3))
     allocate(vdw14_tbforces(t_nbonded, 3))
 
@@ -2059,6 +2062,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(ang_disp(t_nbonded, 3))
     allocate(tor_disp(t_nbonded, 3))
     allocate(imp_disp(t_nbonded, 3))
+    allocate(cmp_disp(t_nbonded, 3))
     allocate(cou_disp(max_tbf, 3))
     allocate(vdw_disp(max_tbf, 3))
     allocate(cou14_disp(t_nbonded, 3))
