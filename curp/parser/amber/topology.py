@@ -363,8 +363,12 @@ class Format2AmberBaseConverter(ConverterBase):
         self.__angle_info    = {}
         self.__torsion_info  = {}
         self.__improper_info = {}
+        self.__cmap_info     = {}
         self.__coulomb_info  = {}
         self.__vdw_info      = {}
+        
+        self.__is_cmap = False
+        self.is_cmap(topology)
 
         self.__use_atomtype = use_atomtype
 
@@ -376,6 +380,8 @@ class Format2AmberBaseConverter(ConverterBase):
         self._convert_angle()
         self._convert_torsion()
         self._convert_improper()
+        if self.__is_cmap == True:
+            self._convert_cmap()
         self._convert_coulomb()
         self._convert_vdw()
 
@@ -389,6 +395,8 @@ class Format2AmberBaseConverter(ConverterBase):
             self.print_angle()
             self.print_torsion()
             self.print_improper()
+            if self.__is_cmap == True:
+                self.print_cmap()
             self.print_coulomb()
             self.print_vdw()
             self.print_bonded14_pairs()
@@ -416,6 +424,12 @@ class Format2AmberBaseConverter(ConverterBase):
 
     def get_improper_info(self):
         return self.__improper_info
+    
+    def get_cmap_info(self):
+        if self.__is_cmap == True:
+            return self.__cmap_info
+        else:
+            return None
 
     def get_coulomb_info(self):
         return self.__coulomb_info
@@ -434,6 +448,10 @@ class Format2AmberBaseConverter(ConverterBase):
             natom = len(self.get_topology().get_atom_info(name)['names'])
             new_info = dict(name=name, nmol=nmol, natom=natom)
             self.__mol_info.append(new_info)
+            
+    def is_cmap(self,topology):
+        if topology.get_param_infos('CMAP_INDEX'):
+            self.__is_cmap = True
 
     def get_natom(self):
         tpl = self.get_topology()
