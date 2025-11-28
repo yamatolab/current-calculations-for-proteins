@@ -69,12 +69,38 @@ class TopologyParser:
             'AMBER_ATOM_TYPE'            : self._parse_name(20, 4)    ,
             'BOX_DIMENSIONS'             : self._parse_generic(float) ,
         }
+        fname_to_parsers_cmap = {
+            'CMAP_COUNT'                 : self._parse_generic(int)   ,
+            'CMAP_RESOLUTION'            : self._parse_generic(int)   ,
+            'CMAP_INDEX'                 : self._parse_generic(int)   ,
+        }
+        
         for fname, parser in list(fname_to_parsers.items()):
             if fname in fname_to_lines:
                 lines = fname_to_lines[fname]
                 self.__fname_to_info[fname] = list(parser(lines))
             else:
                 self.__fname_to_info[fname] = None
+
+        # get CMAP informations
+        if 'CMAP_COUNT' in fname_to_lines:
+            for fname, parser in list(fname_to_parsers_cmap.items()):
+                if fname in fname_to_lines:
+                    lines = fname_to_lines[fname]
+                    self.__fname_to_info[fname] = list(parser(lines))
+                else:
+                    self.__fname_to_info[fname] = None
+            
+            residue_types = self.__fname_to_info['CMAP_COUNT'][1]
+            print("cmap ntypes: ", residue_types)
+            for i in range(residue_types):
+                param_name = 'CMAP_PARAMETER_%02d' % (i+1)
+                parser = self._parse_generic(float)
+                if param_name in fname_to_lines:
+                    lines = fname_to_lines[param_name]
+                    self.__fname_to_info[param_name] = list(parser(lines))
+                else:
+                    self.__fname_to_info[param_name] = None
 
         for fname, info in list(self.__fname_to_info.items()):
             self.print_info(fname, info)
