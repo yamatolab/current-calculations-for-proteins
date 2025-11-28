@@ -1108,12 +1108,12 @@ module cmap
     integer, allocatable :: five_atoms(:, :)            ! (ncmap, 5)
     integer, allocatable :: cmap_types(:)               ! (ncmap)
     integer, allocatable :: cmap_grid_step_size(:)      ! (ntypes)
-    integer, allocatable :: cmap_resolution(:)          ! (ntypes)
+    integer, allocatable :: cmap_resolutions(:)          ! (ntypes)
     real(8), allocatable :: cmap_grid_energy(:, :, :)   ! (ntypes, ngrid_x(24), ngrid_y(24))
     real(8), allocatable :: cmap_grid_dphi(:, :, :)     ! (ntypes, ngrid_x(24), ngrid_y(24))
     real(8), allocatable :: cmap_grid_dpsi(:, :, :)     ! (ntypes, ngrid_x(24), ngrid_y(24))
     real(8), allocatable :: cmap_grid_dphi_dpsi(:, :, :)! (ntypes, ngrid_x(24), ngrid_y(24))
-    integer, allocatable :: icmap_to_itbf(:, :)         ! (ncmap, 10)
+    integer, allocatable :: icmp_to_itbf(:, :)         ! (ncmap, 10)
     ! output
     real(8) :: energy
     real(8), allocatable :: forces(:, :)            ! (natom, 3)
@@ -1161,16 +1161,16 @@ contains
         do icmap=1, ncmap
 
             ! get the index of bonded_pairs of each two atoms
-            itbf_ij = icmap_to_itbf(icmap, 1)
-            itbf_ik = icmap_to_itbf(icmap, 2)
-            itbf_il = icmap_to_itbf(icmap, 3)
-            itbf_im = icmap_to_itbf(icmap, 4)
-            itbf_jk = icmap_to_itbf(icmap, 5)
-            itbf_jl = icmap_to_itbf(icmap, 6)
-            itbf_jm = icmap_to_itbf(icmap, 7)
-            itbf_kl = icmap_to_itbf(icmap, 8)
-            itbf_km = icmap_to_itbf(icmap, 9)
-            itbf_lm = icmap_to_itbf(icmap, 10)
+            itbf_ij = icmp_to_itbf(icmap, 1)
+            itbf_ik = icmp_to_itbf(icmap, 2)
+            itbf_il = icmp_to_itbf(icmap, 3)
+            itbf_im = icmp_to_itbf(icmap, 4)
+            itbf_jk = icmp_to_itbf(icmap, 5)
+            itbf_jl = icmp_to_itbf(icmap, 6)
+            itbf_jm = icmp_to_itbf(icmap, 7)
+            itbf_kl = icmp_to_itbf(icmap, 8)
+            itbf_km = icmp_to_itbf(icmap, 9)
+            itbf_lm = icmp_to_itbf(icmap, 10)
 
             ! get the five atoms for this cmap
             iatm = five_atoms(icmap, 1)
@@ -1218,7 +1218,7 @@ contains
             if (cos_phi < -1.0d0) cos_phi = -1.0d0
 
             phi = acos(cos_phi)
-            judge_phi = -dot_product(-r_jk, outer_prod(n_1, n_2))
+            judge_phi = dot_product(-r_jk, outer_prod(n_1, n_2))
             if (judge_phi < 0.0d0) phi = 2.0d0 * PI - phi
             deg_phi = phi * RAD_TO_DEG
 
@@ -1228,7 +1228,7 @@ contains
             if (cos_psi < -1.0d0) cos_psi = -1.0d0
 
             psi = acos(cos_psi)
-            judge_psi = -dot_product(-r_kl, outer_prod(n_2, n_3))
+            judge_psi = dot_product(-r_kl, outer_prod(n_2, n_3))
             if (judge_psi < 0.0d0) psi = 2.0d0 * PI - psi
             deg_psi = psi * RAD_TO_DEG
 
@@ -1245,14 +1245,14 @@ contains
             ! get the 2x2 grid energies and derivatives
             do i=1,2
                 do j=1,2
-                    E_grid(i,j)        = cmap_grid_energy(cmap_type, calculate_cmap_grid(cmap_type, x+i-1), &
-                                                            calculate_cmap_grid (cmap_type, y+j-1) )
-                    dphi_grid(i,j)     = cmap_grid_dphi(cmap_type, calculate_cmap_grid(cmap_type, x+i-1), &
-                                                            calculate_cmap_grid (cmap_type, y+j-1) )
-                    dpsi_grid(i,j)     = cmap_grid_dpsi(cmap_type, calculate_cmap_grid(cmap_type, x+i-1), &
-                                                            calculate_cmap_grid (cmap_type, y+j-1) )
-                    dphidpsi_grid(i,j) = cmap_grid_dphi_dpsi(cmap_type, calculate_cmap_grid(cmap_type, x+i-1), &
-                                                            calculate_cmap_grid (cmap_type, y+j-1) )
+                    E_grid(i,j)        = cmap_grid_energy(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
+                    dphi_grid(i,j)     = cmap_grid_dphi(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
+                    dpsi_grid(i,j)     = cmap_grid_dpsi(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
+                    dphidpsi_grid(i,j) = cmap_grid_dphi_dpsi(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
                 end do
             end do
 
@@ -1475,7 +1475,7 @@ contains
         integer, intent(in) :: value
         integer :: resolution
 
-        resolution = cmap_resolution(cmap_type)
+        resolution = cmap_resolutions(cmap_type)
         calculate_cmap_grid = modulo(value-1, resolution) + 1
 
     end function calculate_cmap_grid
