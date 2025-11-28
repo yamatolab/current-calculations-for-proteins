@@ -21,8 +21,10 @@ class TwoBodyForceBase:
         self.__ptype_to_displacement = {}
 
     def get_pottypes(self):
-        return ['bond','angle','torsion','improper',
-                'coulomb14','vdw14','coulomb','vdw']
+        if self.__setting.curp.potential == "amber19SB":
+            return self.__tpl.get_decomp_list("all_19SB")
+        else:
+            return self.__tpl.get_decomp_list()
 
     def set_module(self, module):
         self.__mod = module
