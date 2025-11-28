@@ -665,6 +665,133 @@ class Format2AmberBaseConverter(ConverterBase):
                 initial_phases=initial_phases )
 
         return all_torsion_info
+    
+    def _convert_cmap(self):
+        
+        tpl = self.get_topology()
+        cmap_counts     = tpl.get_param_infos('CMAP_COUNT')
+        cmap_resolution = tpl.get_param_infos('CMAP_RESOLUTION')
+        cmap_indexes    = tpl.get_param_infos('CMAP_INDEX')
+
+        five_atoms          = []
+        cmap_types          = []
+        ncols = 6
+
+        # extract cmap atoms and types
+        ncmaps = cmap_counts[0]
+        for icmap in range(ncmaps):
+            iatoms = [ cmap_indexes[ncols*icmap+i] for i in range(ncols-1) ]
+            types   = cmap_indexes[ncols*(icmap+1) - 1]
+            five_atoms.append( iatoms )
+            cmap_types.append( types )
+            
+        # extract cmap parameters
+        types = cmap_counts[1]
+            
+        cmap_energy, cmap_dphi, cmap_dpsi, cmap_dphi_dpsi, cmap_grid_step_size \
+        = self._calculate_cmap_parameters(tpl, types, cmap_resolution)
+                    
+        self.__cmap_info = dict(
+                five_atoms=five_atoms,
+                cmap_types=cmap_types,
+                cmap_resolutions=cmap_resolution,
+                cmap_grid_step_size=cmap_grid_step_size,
+                cmap_grid_energy=cmap_energy,
+                cmap_grid_dphi=cmap_dphi,
+                cmap_grid_dpsi=cmap_dpsi,
+                cmap_grid_dphi_dpsi=cmap_dphi_dpsi
+        )  
+        
+    def _calculate_cmap_parameters(self, tpl, types, cmap_resolution):
+        max_rsl   = int(max(cmap_resolution))
+
+        cmap_matrix    = np.zeros((types, max_rsl, max_rsl))
+        cmap_dphi      = np.zeros((types, max_rsl, max_rsl))
+        cmap_dpsi      = np.zeros((types, max_rsl, max_rsl))
+        cmap_dphi_dpsi = np.zeros((types, max_rsl, max_rsl))
+        cmap_grid_step_size = []
+
+        for itype in range(types):
+            param = tpl.get_param_infos('CMAP_PARAMETER_%02d' % (itype+1))
+            rsl   = int(cmap_resolution[itype])
+            grid_step_size = int(360 / rsl)
+            
+            cmap_grid_step_size.append(grid_step_size)
+
+            half_rsl  = int(rsl / 2)
+            two_rsl   = int(rsl * 2)
+            
+            for j in range(rsl):
+                for i in range(rsl):
+                    index = j * rsl + i
+                    cmap_matrix[itype, i, j] = param[index]
+            
+            # calculate dphi
+            for i in range(rsl):
+                y1 = []
+                for j in range(two_rsl):
+                    
+                    j_index = (j-half_rsl)%rsl
+                    y1.append( cmap_matrix[itype, i, j_index] )
+                y2 = self._gen_cubic_spline(two_rsl, grid_step_size, y1)
+                for j in range(rsl):
+                    cmap_dphi[itype, i, j] = self._calc_cubic_spline_derivative(grid_step_size, 
+                                                                                y1, y2, j+12)
+            
+            # calculate dpsi
+            for j in range(rsl):
+                y1 = []
+                for i in range(two_rsl):
+                    
+                    i_index = (i-half_rsl)%rsl
+                    y1.append( cmap_matrix[itype, i_index, j] )
+                
+                y2 = self._gen_cubic_spline(two_rsl, grid_step_size, y1)
+                
+                for i in range(rsl):
+                    cmap_dpsi[itype, i, j] = self._calc_cubic_spline_derivative(grid_step_size, 
+                                                                                y1, y2, i+12)
+            
+            # calculate dphi_dpsi
+            for j in range(rsl):
+                y1 = []
+                for i in range(two_rsl):
+                    
+                    i_index = (i-half_rsl)%rsl
+                    y1.append( cmap_dphi[itype, i_index, j] )
+                
+                y2 = self._gen_cubic_spline(two_rsl, grid_step_size, y1)
+                
+                for i in range(rsl):
+                    cmap_dphi_dpsi[itype, i, j] = self._calc_cubic_spline_derivative(grid_step_size, 
+                                                                                     y1, y2, i+12)        
+        
+        return cmap_matrix, cmap_dphi, cmap_dpsi, cmap_dphi_dpsi, cmap_grid_step_size
+    
+    def _gen_cubic_spline(self, two_rsl, grid_step_size, y1):
+        
+        y2    = np.zeros(two_rsl)
+        y_tmp = np.zeros(two_rsl)
+
+        for i in range(1, two_rsl-1):
+            p = y2[i-1]/2.0 + 2.0
+            y2[i] = -1.0 / (p*2.0)
+            y_tmp[i] = ( y1[i+1] - 2*y1[i] + y1[i-1] ) / grid_step_size
+            y_tmp[i] = ( 3.0 * (y_tmp[i]/grid_step_size) - y_tmp[i-1]/2.0 ) / p
+        
+        for i in range(two_rsl-2, -1, -1):
+            y2[i] = y2[i] * y2[i+1] + y_tmp[i]
+        
+        return y2
+    
+    def _calc_cubic_spline_derivative(self, grid_step_size, y1, y2, n):
+        
+        a = 1.0
+        b = 0.0
+        derivative = ( y1[n+1] - y1[n] ) / grid_step_size \
+                    - ( ( 3.0 * a * a - 1.0 ) / 6.0 ) * grid_step_size * y2[n] \
+                    + ( ( 3.0 * b * b - 1.0 ) / 6.0 ) * grid_step_size * y2[n+1]
+        return derivative
 
     def _convert_coulomb(self):
 
