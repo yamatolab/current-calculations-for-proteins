@@ -1243,13 +1243,13 @@ contains
 
             ! determine grid indices for phi and psi
             grid_step_size = cmap_grid_step_size(cmap_type)
-            x = int( (deg_phi - gridstart) / grid_step_size ) + 1
-            y = int( (deg_psi - gridstart) / grid_step_size ) + 1
+            x = int( (phii - gridstart) / grid_step_size ) + 1
+            y = int( (psii - gridstart) / grid_step_size ) + 1
 
             ! compute fractional positions inside grid cell
-            dx = modulo(deg_phi - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
+            dx = modulo(phii - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
 
-            dy = modulo(deg_psi - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
+            dy = modulo(psii - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
 
             ! get the 2x2 grid energies and derivatives
             do i=1,2
