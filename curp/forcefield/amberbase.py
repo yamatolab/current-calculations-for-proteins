@@ -67,6 +67,41 @@ class ConverterPrintable(object):
                 itor_1+1, iatoms, ntor, freq, force, phase ))
         logger.info()
 
+    def print_cmap(self):
+        logger.info('*** cmap ***')
+        info = self.get_cmap_info()
+        cmap_lists = list(zip(info['five_atoms'], info['cmap_types']))
+        for icmap_1, (iatoms, cmap_type) in enumerate(cmap_lists):
+            logger.info('{:>5d} {} {:>5d}'.format(
+                icmap_1+1, iatoms, cmap_type ))
+        logger.info()
+        cmap_parms = list(zip(
+            info['cmap_resolutions'],
+            info['cmap_grid_step_size'],
+        ))
+        for itype_1, (resolution, grid_step_size) in enumerate(cmap_parms):
+            logger.info('cmap type {:>5d} : resolution {:>5d} , grid step size {:>5d}'.format(
+                itype_1+1, resolution, grid_step_size ))
+        logger.info()
+        cmap_parms = list(zip(
+            info['cmap_grid_energy'],
+            info['cmap_grid_dphi'],
+            info['cmap_grid_dpsi'],
+            info['cmap_grid_dphi_dpsi'],
+        ))
+        ntype, itype, jtype = info['cmap_grid_energy'].shape
+        for n_type in range(ntype):
+            for i_type in range(itype):
+                for j_type in range(jtype):
+                    logger.info('cmap type {:>5d} , grid point ({:>5d}, {:>5d}) : energy {:12.7f} , dphi {:12.7f} , dpsi {:12.7f} , dphi_dpsi {:12.7f}'.format(
+                        n_type+1, i_type+1, j_type+1,
+                        info['cmap_grid_energy'][n_type, i_type, j_type],
+                        info['cmap_grid_dphi'][n_type, i_type, j_type],
+                        info['cmap_grid_dpsi'][n_type, i_type, j_type],
+                        info['cmap_grid_dphi_dpsi'][n_type, i_type, j_type],
+                    ))
+        logger.info()
+
     def print_coulomb(self):
         logger.info('*** coulomb ***')
         info = self.get_coulomb_info()
