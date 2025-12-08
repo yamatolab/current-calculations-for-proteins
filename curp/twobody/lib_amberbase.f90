@@ -1143,6 +1143,7 @@ contains
         real(8) :: dx, dy
         real(8) :: E, dE_dphi, dE_dpsi
         real(8) :: f_phi, f_psi, f_a(3), f_b(3), f_c(3), f_d(3)
+        real(8) :: d_1, d_2, d_3, d_4, d_phi, d_psi
         real(8), dimension(4,4) :: aij
         real(8), parameter :: RAD_TO_DEG = 180.d0 / PI
         integer :: gridstart = -180
@@ -1301,21 +1302,33 @@ contains
             ! calculate forces
             sin_phi = sin(phi)
             sin_psi = sin(psi)
-            f_phi = -dE_dphi / sin_phi
-            f_psi = -dE_dpsi / sin_psi
-            f_a = (n_2/l_2 - cos(phi)*n_1/l_1) / l_1
-            f_b = (n_1/l_1 - cos(phi)*n_2/l_2) / l_2
-            f_c = (n_3/l_3 - cos(psi)*n_2/l_2) / l_ij
-            f_d = (n_2/l_2 - cos(psi)*n_3/l_3) / l_3
+            f_phi = -sign(1.0d0, sinphi) * dE_dphi/ sinphi
+            f_psi = -sign(1.0d0, sinpsi) * dE_dpsi/ sinpsi
 
-            f_i =   f_phi * outer_prod(f_a, r_jk)
-            f_j =   f_phi * ( outer_prod(f_b, r_kl) - outer_prod(f_a, r_ik) ) &
-                  + f_psi * outer_prod(f_c, r_kl)
-            f_k =   f_phi * ( outer_prod(f_a, r_ij) - outer_prod(f_b, r_jl) ) &
-                  + f_psi * ( outer_prod(f_d, r_lm) - outer_prod(f_c, r_jl) )
-            f_l =   f_phi * outer_prod(f_b, r_jk) &
-                  + f_psi * ( outer_prod(f_c, r_jk) - outer_prod(f_d, r_km) )
-            f_m =   f_psi * outer_prod(f_d, r_kl)
+            d_1   = sqrt( 4.0d0 * l_jk**2 * l_ij**2 - ( l_ij**2 + l_jk**2 - l_ik**2 )**2 )
+            d_2   = sqrt( 4.0d0 * l_jk**2 * l_kl**2 - ( l_kl**2 + l_jk**2 - l_jl**2 )**2 )
+            d_3   = sqrt( 4.0d0 * l_kl**2 * l_lm**2 - ( l_lm**2 + l_kl**2 - l_km**2 )**2 )
+
+            d_phi = 2.0d0 * l_jk**2 * ( l_jl**2 + l_ik**2 - l_il**2 - l_jk**2 ) &
+                     + ( l_ij**2 + l_jk**2 - l_ik**2 ) * ( l_jk**2 + l_kl**2 - l_jl**2 )
+            d_psi = 2.0d0 * l_kl**2 * ( l_km**2 + l_jl**2 - l_jm**2 - l_kl**2 ) &
+                     + ( l_jk**2 + l_kl**2 - l_jl**2 ) * ( l_kl**2 + l_lm**2 - l_km**2 )
+            f_phi = f_phi * 4.0d0 / (d_1 * d_2) * RAD_TO_DEG / grid_step_size
+            f_psi = f_psi * 4.0d0 / (d_2 * d_3) * RAD_TO_DEG / grid_step_size
+            
+            dphi_dra(:,:) = dphi_dra(:, :) * RAD_TO_DEG / grid_step_size
+            dpsi_dra(:,:) = dpsi_dra(:, :) * RAD_TO_DEG / grid_step_size
+
+
+            f_i =   -dE_dphi * dphi_dra(1, :)
+            f_j =   -dE_dphi * dphi_dra(2, :) &
+                  -  dE_dpsi * dpsi_dra(1, :)
+            f_k =   -dE_dphi * dphi_dra(3, :) &
+                  -  dE_dpsi * dpsi_dra(2, :)
+            f_l =   -dE_dphi * dphi_dra(4, :) &
+                  -  dE_dpsi * dpsi_dra(3, :)
+            f_m =   -dE_dpsi * dpsi_dra(4, :)
+
 
             forces(iatm, :) = forces(iatm, :) + f_i(:)
             forces(jatm, :) = forces(jatm, :) + f_j(:)
@@ -1366,7 +1379,43 @@ contains
             f_lm = f_psi/l_3 * ( dot_product(r_jk, -r_kl)/ l_2 &
                                - dot_product(r_kl, r_km)*cos_psi/l_3 ) * r_lm
 
+            f_ij = f_phi * ( dot_product(-r_jk, r_kl)  &
+                            - (d_phi / d_1**2) * dot_product(-r_jk, -r_ik) ) * r_ij
+
+            f_ik = f_phi * ( dot_product(-r_jk, -r_jl)  &
+                            - (d_phi / d_1**2) * dot_product(r_ij, -r_jk) ) * r_ik
+
+            f_il = -f_phi * dot_product(-r_jk, -r_jk) * r_il
+
+            f_im = 0.0d0
+
+            f_jk = ( f_phi * ( ( dot_product(-r_jl, r_ij) &
+                                + dot_product(r_ik, -r_kl) - dot_product(-r_jk, -r_jk) ) &
+                              - (d_phi / d_1**2) * dot_product(r_ij, r_ik) &
+                              - (d_phi / d_2**2) * dot_product(-r_kl, -r_jl) ) &
+                    + f_psi * ( dot_product(-r_kl, r_lm)  &
+                               - ( d_psi / d_2**2 ) * dot_product(-r_kl, -r_jl) ) ) * r_jk
             
+            f_jl = ( f_phi * ( dot_product(r_jk, r_ik)  &
+                              - ( d_phi / d_2**2 ) * dot_product(-r_kl, r_jk) ) &
+                    + f_psi * ( dot_product(-r_kl, -r_km)  &
+                            - ( d_psi / d_2**2 ) * dot_product(r_jk, -r_kl) ) ) * r_jl
+
+            f_jm = -f_psi * dot_product(-r_kl, -r_kl) * r_jm
+
+            f_kl = ( f_phi * ( dot_product(r_ij, -r_jk) &
+                              - ( d_phi / d_2**2 ) * dot_product(-r_jk, -r_jl) ) &
+                    + f_psi * ( ( dot_product(-r_km, r_jk) &
+                                + dot_product(r_jl, -r_lm) - dot_product(-r_kl, -r_kl) ) &
+                               - (d_psi / d_2**2) * dot_product(r_jk, r_jl) &
+                               - (d_psi / d_3**2) * dot_product(-r_lm, -r_km) ) ) * r_kl
+
+            f_km = f_psi * ( dot_product(r_kl, r_jl)  &
+                             - ( d_psi / d_3**2 ) * dot_product(-r_lm, r_kl) ) * r_km
+
+            f_lm = f_psi * ( dot_product(r_jk, -r_kl) &
+                             - ( d_psi / d_3**2 ) * dot_product(-r_kl, -r_km) ) * r_lm
+
             if (itbf_ij > 0) then
                 tbforces(itbf_ij, :) = tbforces(itbf_ij, :) + f_ij(:)
                 displacement(itbf_ij, :) = r_ij(:)
