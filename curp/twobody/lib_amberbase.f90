@@ -1136,6 +1136,8 @@ contains
         implicit none
         real(8) :: phi, psi, cos_phi, cos_psi, deg_phi, deg_psi
         real(8) :: sin_phi, sin_psi
+        real(8) :: cosphi, sinphi, cospsi, sinpsi, phii, psii
+        real(8) :: dphi_dra(4,3), dpsi_dra(4,3)
         real(8) :: n_1(3), n_2(3), n_3(3), l_1, l_2, l_3
         real(8) :: judge_phi, judge_psi
         real(8) :: dx, dy
@@ -1211,6 +1213,12 @@ contains
             l_1 = sqrt( dot_product(n_1, n_1) )
             l_2 = sqrt( dot_product(n_2, n_2) )
             l_3 = sqrt( dot_product(n_3, n_3) )
+
+            call cal_torsion(r_ij, -r_jk, -r_kl, dphi_dra, cosphi, sinphi)
+            call cal_torsion(r_jk, -r_kl, -r_lm, dpsi_dra, cospsi, sinpsi)
+
+            phii = sign(acos(cosphi), sinphi) * RAD_TO_DEG
+            psii = sign(acos(cospsi), sinpsi) * RAD_TO_DEG
 
             ! calculate dihedral angle phi
             cos_phi = dot_product(n_1, n_2) / (l_1 * l_2)
@@ -1468,6 +1476,51 @@ contains
         end do
 
     end subroutine
+
+    subroutine cal_torsion(rab, rcb, rdc, dphi_dra, cosphi, sinphi)
+
+        use common_vars
+
+        implicit none
+        real(8), intent(in)  :: rab(3), rcb(3), rdc(3)
+        real(8), intent(out) :: dphi_dra(4,3), cosphi, sinphi
+
+        real(8) :: e_cb(3), up_ab(3), up_dc(3), up_abc(3), up_bcd(3)
+        real(8) :: tmp(3)
+        real(8) :: d_cb, d_pab, d_pdc, dot_ab_cb, dot_dc_cb
+        real(8) :: cosphi_pre, sinphi_pre
+
+        d_cb = 1.0d0 / sqrt(dot_product(rcb, rcb))
+        e_cb(1:3) = rcb(1:3) * d_cb
+        
+        dot_ab_cb = dot_product(rab, e_cb)
+        up_ab(1:3) = rab(1:3) - dot_ab_cb * e_cb(1:3)
+        d_pab = 1.0d0 / sqrt(dot_product(up_ab, up_ab))
+        up_ab(1:3) = up_ab(1:3) * d_pab
+
+        dot_dc_cb = dot_product(rdc, e_cb)
+        up_dc(1:3) = rdc(1:3) - dot_dc_cb * e_cb(1:3)
+        d_pdc = 1.0d0 / sqrt(dot_product(up_dc, up_dc))
+        up_dc(1:3) = up_dc(1:3) * d_pdc
+
+        cosphi_pre = dot_product(up_ab, up_dc)
+        cosphi = min( max(cosphi_pre, -1.d0), 1.d0 )
+
+        sinphi_pre = dot_product( outer_prod(up_ab, up_dc), e_cb)
+        sinphi = min( max(sinphi_pre, -1.d0), 1.d0 )
+
+        up_abc = outer_prod(up_ab, e_cb)
+        up_bcd = outer_prod(e_cb, up_dc)
+
+        dphi_dra(1,1:3) = up_abc(1:3) * d_pab
+        dphi_dra(4,1:3) = up_bcd(1:3) * d_pdc
+
+        tmp(1:3) = (dot_ab_cb * d_cb) * dphi_dra(1,1:3) + &
+                   (dot_dc_cb * d_cb) * dphi_dra(4,1:3)
+        dphi_dra(2,1:3) = tmp(1:3) - dphi_dra(1,1:3)
+        dphi_dra(3,1:3) = -tmp(1:3) - dphi_dra(4,1:3)
+
+    end subroutine cal_torsion
 
     integer function calculate_cmap_grid(cmap_type, value)
         implicit none
