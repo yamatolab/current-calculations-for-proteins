@@ -1458,7 +1458,7 @@ contains
                 print*, 'TB_CHECK:',f_l
                 print*, 'TB_CHECK:',- f_il - f_jl - f_kl + f_lm
                 print*, 'TB_CHECK: f_m vs. f_mi + f_mj + f_mk + f_ml =>', &
-                    & check_tbforce(f_m, -f_il-f_jl-f_kl-f_lm)
+                    & check_tbforce(f_m, -f_im-f_jm-f_km-f_lm)
                 print*, 'TB_CHECK:',f_m
                 print*, 'TB_CHECK:',- f_im - f_jm - f_km - f_lm
 
