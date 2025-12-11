@@ -299,6 +299,9 @@ class TableMaker:
         three_atoms = self.get_angle_info()['three_atoms']
         four_atoms  = self.get_torsion_info()['four_atoms']
         four_atoms_imp  = self.get_improper_info()['four_atoms']
+        five_atoms = None
+        if ( self.get_cmap_info() is not None ):
+            five_atoms  = self.get_cmap_info()['five_atoms']
 
         import itertools as it
         pairs = [] # ipair => (iatm, jatm)
@@ -320,8 +323,19 @@ class TableMaker:
             for pair in it.combinations(four, 2):
                 iatm, jatm = min(pair), max(pair)
                 pairs += [(iatm, jatm)]
+       
+        if (five_atoms is not None):
+            pairs_15 = []
+            for five in five_atoms:
+                for pair in it.combinations(five, 2):
+                    iatm, jatm = min(pair), max(pair)
+                    pairs += [(iatm, jatm)]
+                
+                # extract 1-5 pair
+                i_atm, m_atm = min(five[0], five[4]), max(five[0], five[4])
+                pairs_15 += [(i_atm, m_atm)]
 
-        return sorted(set(pairs), key=lambda x:x[0])
+        return sorted((set(pairs)-set(pairs_15)), key=lambda x:x[0])
 
     def _make_bonded14_pairs(self):
 
