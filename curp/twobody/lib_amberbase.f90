@@ -1302,8 +1302,8 @@ contains
             ! calculate forces
             sin_phi = sin(phi)
             sin_psi = sin(psi)
-            f_phi = -sign(1.0d0, sinphi) * dE_dphi/ sinphi
-            f_psi = -sign(1.0d0, sinpsi) * dE_dpsi/ sinpsi
+            f_phi = dE_dphi/ sinphi
+            f_psi = dE_dpsi/ sinpsi
 
             d_1   = sqrt( 4.0d0 * l_jk**2 * l_ij**2 - ( l_ij**2 + l_jk**2 - l_ik**2 )**2 )
             d_2   = sqrt( 4.0d0 * l_jk**2 * l_kl**2 - ( l_kl**2 + l_jk**2 - l_jl**2 )**2 )
