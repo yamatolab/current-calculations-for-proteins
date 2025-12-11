@@ -1300,49 +1300,7 @@ contains
             forces(latm, :) = forces(latm, :) + f_l(:)
             forces(matm, :) = forces(matm, :) + f_m(:)
 
-            ! calculate two-body forces
-            f_ij = f_phi/l_1 * ( dot_product(-r_jk, r_kl)/ l_2 &
-                               - dot_product(r_ik, r_jk)*cos_phi/l_1 ) * r_ij
-            
-            f_ik = f_phi/l_1 * ( dot_product(r_jl, r_jk)/ l_2 &
-                               - dot_product(r_ij, -r_jk)/l_2 ) * r_ik
-
-            f_il = f_phi * -dot_product(r_jk, r_jk) / (l_1 * l_2) * r_il
-
-            f_im = 0.0d0
-
-            f_jk = ( f_phi * ( ( -dot_product(r_ik, r_jl) &
-                                 -dot_product(r_ij, r_kl) &
-                               )/(l_1*l_2) &
-                             - dot_product(r_ij, r_ik)*cos_phi/(l_1*l_1) &
-                             - dot_product(r_kl, r_jl)*cos_phi/(l_2*l_2) ) &
-
-                   + f_psi/l_2 * ( dot_product(-r_kl, r_lm)/ l_3 &
-                                 - dot_product(r_jk, -r_kl)*cos_psi/l_2 ) ) * r_jk
-
-            f_jl = ( f_phi/l_2 * ( dot_product(r_jk, r_ik)/l_1 &
-                                 - dot_product(r_jk, -r_kl)*cos_phi/l_2 ) &
-
-                   + f_psi/l_2 * ( dot_product(r_km, r_kl)/l_3 &
-                                 - dot_product(r_jk, -r_kl)*cos_psi/l_2 ) ) * r_jl
-
-            f_jm = f_psi * -dot_product(r_kl, r_kl) / (l_2 * l_3) * r_jm
-
-            f_kl = ( f_phi/l_2 * ( dot_product(r_ij, -r_jk)/l_1 &
-                                 - dot_product(r_jk, r_jl)*cos_phi/l_2 ) &
-                   
-                   + f_psi * ( -dot_product(r_lm, r_jk) &
-                               -dot_product(r_jl, r_km) &
-                             )/(l_2*l_3) &
-                             - dot_product(r_jk, r_jl)*cos_psi/(l_2*l_2) &
-                             - dot_product(-r_kl, r_lm)*cos_psi/(l_3*l_3) ) * r_kl
-
-            f_km = f_psi/l_3 * ( dot_product(r_kl, r_jl)/ l_2 &
-                               - dot_product(-r_kl, r_lm)*cos_psi/l_3 ) * r_km
-
-            f_lm = f_psi/l_3 * ( dot_product(r_jk, -r_kl)/ l_2 &
-                               - dot_product(r_kl, r_km)*cos_psi/l_3 ) * r_lm
-
+            ! calculate two-body-force
             f_ij = f_phi * ( dot_product(-r_jk, r_kl)  &
                             - (d_phi / d_1**2) * dot_product(-r_jk, -r_ik) ) * r_ij
 
