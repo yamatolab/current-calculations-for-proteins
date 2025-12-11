@@ -1264,8 +1264,6 @@ contains
 
 
             ! calculate forces
-            sin_phi = sin(phi)
-            sin_psi = sin(psi)
             f_phi = dE_dphi/ sin_phi
             f_psi = dE_dpsi/ sin_psi
 
