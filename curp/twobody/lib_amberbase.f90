@@ -1134,11 +1134,8 @@ contains
         use total
         use common_vars
         implicit none
-        real(8) :: phi, psi, cos_phi, cos_psi, deg_phi, deg_psi
-        real(8) :: sin_phi, sin_psi
-        real(8) :: cosphi, sinphi, cospsi, sinpsi, phii, psii
+        real(8) :: phi, psi, cos_phi, cos_psi, sin_phi, sin_psi
         real(8) :: dphi_dra(4,3), dpsi_dra(4,3)
-        real(8) :: n_1(3), n_2(3), n_3(3), l_1, l_2, l_3
         real(8) :: judge_phi, judge_psi
         real(8) :: dx, dy
         real(8) :: E, dE_dphi, dE_dpsi
@@ -1207,49 +1204,16 @@ contains
             l_km = sqrt( dot_product(r_km, r_km) )
             l_lm = sqrt( dot_product(r_lm, r_lm) )
 
-            ! make normal vectors
-            n_1 = outer_prod(r_ij, -r_jk)
-            n_2 = outer_prod(-r_jk, r_kl)
-            n_3 = outer_prod(-r_kl, r_lm)
-            l_1 = sqrt( dot_product(n_1, n_1) )
-            l_2 = sqrt( dot_product(n_2, n_2) )
-            l_3 = sqrt( dot_product(n_3, n_3) )
+            call cal_torsion(r_ij, -r_jk, -r_kl, dphi_dra, cos_phi, sin_phi)
+            call cal_torsion(r_jk, -r_kl, -r_lm, dpsi_dra, cos_psi, sin_psi)
 
-            call cal_torsion(r_ij, -r_jk, -r_kl, dphi_dra, cosphi, sinphi)
-            call cal_torsion(r_jk, -r_kl, -r_lm, dpsi_dra, cospsi, sinpsi)
-
-            phii = sign(acos(cosphi), sinphi) * RAD_TO_DEG
-            psii = sign(acos(cospsi), sinpsi) * RAD_TO_DEG
-
-            ! calculate dihedral angle phi
-            cos_phi = dot_product(n_1, n_2) / (l_1 * l_2)
-            if (cos_phi >  1.0d0) cos_phi =  1.0d0
-            if (cos_phi < -1.0d0) cos_phi = -1.0d0
-
-            phi = acos(cos_phi)
-            judge_phi = dot_product(-r_jk, outer_prod(n_1, n_2))
-            if (judge_phi < 0.0d0) phi = 2.0d0 * PI - phi
-            deg_phi = phi * RAD_TO_DEG
-
-            ! calculate dihedral angle psi
-            cos_psi = dot_product(n_2, n_3) / (l_2 * l_3)
-            if (cos_psi >  1.0d0) cos_psi =  1.0d0
-            if (cos_psi < -1.0d0) cos_psi = -1.0d0
-
-            psi = acos(cos_psi)
-            judge_psi = dot_product(-r_kl, outer_prod(n_2, n_3))
-            if (judge_psi < 0.0d0) psi = 2.0d0 * PI - psi
-            deg_psi = psi * RAD_TO_DEG
-
-            ! determine grid indices for phi and psi
-            grid_step_size = cmap_grid_step_size(cmap_type)
-            x = int( (phii - gridstart) / grid_step_size ) + 1
-            y = int( (psii - gridstart) / grid_step_size ) + 1
+            phi = sign(acos(cos_phi), sin_phi) * RAD_TO_DEG
+            psi = sign(acos(cos_psi), sin_psi) * RAD_TO_DEG
 
             ! compute fractional positions inside grid cell
-            dx = modulo(phii - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
+            dx = modulo(phi - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
 
-            dy = modulo(psii - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
+            dy = modulo(psi - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
 
             ! get the 2x2 grid energies and derivatives
             do i=1,2
@@ -1302,8 +1266,8 @@ contains
             ! calculate forces
             sin_phi = sin(phi)
             sin_psi = sin(psi)
-            f_phi = dE_dphi/ sinphi
-            f_psi = dE_dpsi/ sinpsi
+            f_phi = dE_dphi/ sin_phi
+            f_psi = dE_dpsi/ sin_psi
 
             d_1   = sqrt( 4.0d0 * l_jk**2 * l_ij**2 - ( l_ij**2 + l_jk**2 - l_ik**2 )**2 )
             d_2   = sqrt( 4.0d0 * l_jk**2 * l_kl**2 - ( l_kl**2 + l_jk**2 - l_jl**2 )**2 )
