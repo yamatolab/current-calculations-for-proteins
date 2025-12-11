@@ -1490,13 +1490,13 @@ contains
 
     end subroutine
 
-    subroutine cal_torsion(rab, rcb, rdc, dphi_dra, cosphi, sinphi)
+    subroutine cal_torsion(rab, rcb, rdc, dphi_dra, cos_phi, sin_phi)
 
         use common_vars
 
         implicit none
         real(8), intent(in)  :: rab(3), rcb(3), rdc(3)
-        real(8), intent(out) :: dphi_dra(4,3), cosphi, sinphi
+        real(8), intent(out) :: dphi_dra(4,3), cos_phi, sin_phi
 
         real(8) :: e_cb(3), up_ab(3), up_dc(3), up_abc(3), up_bcd(3)
         real(8) :: tmp(3)
@@ -1517,10 +1517,10 @@ contains
         up_dc(1:3) = up_dc(1:3) * d_pdc
 
         cosphi_pre = dot_product(up_ab, up_dc)
-        cosphi = min( max(cosphi_pre, -1.d0), 1.d0 )
+        cos_phi = min( max(cosphi_pre, -1.d0), 1.d0 )
 
         sinphi_pre = dot_product( outer_prod(up_ab, up_dc), e_cb)
-        sinphi = min( max(sinphi_pre, -1.d0), 1.d0 )
+        sin_phi = min( max(sinphi_pre, -1.d0), 1.d0 )
 
         up_abc = outer_prod(up_ab, e_cb)
         up_bcd = outer_prod(e_cb, up_dc)
