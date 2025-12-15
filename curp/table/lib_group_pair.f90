@@ -42,28 +42,21 @@ contains
 
                 if ((jatm_beg<=jatm) .and. (jatm<=jatm_end)) then
                     is_within_gpair = .true.
-                    print *, "search j(normal)"
-                    print *, "iatm, jatm", iatm, jatm
-                    print *, "jbeg, jend", jatm_beg, jatm_end
                     exit
                 end if
             end do
         end if
 
-        if (is_within_gpair .neqv. .true.) then
-            if (begins(jatm) /= 0) then
-                do jpair=begins(jatm), ends(jatm)
-                    iatm_beg = gpair_table(jpair, 2)
-                    iatm_end = gpair_table(jpair, 3)
+        if ((is_within_gpair .neqv. .true.) .and. (begins(jatm) /= 0)) then
+            do jpair=begins(jatm), ends(jatm)
+                iatm_beg = gpair_table(jpair, 2)
+                iatm_end = gpair_table(jpair, 3)
 
-                    if ((iatm_beg<=iatm) .and. (iatm<=iatm_end)) then
-                        is_within_gpair = .true.
-                        print *, "search i"
-                        print *, "iatm, jatm", iatm, jatm
-                        print *, "ibeg, iend", iatm_beg, iatm_end
-                        exit
-                    end if
-                end do
+                if ((iatm_beg<=iatm) .and. (iatm<=iatm_end)) then
+                    is_within_gpair = .true.
+                    exit
+                end if
+            end do
             end if
         end if
 
