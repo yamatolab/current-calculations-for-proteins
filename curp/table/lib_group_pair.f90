@@ -42,6 +42,9 @@ contains
 
                 if ((jatm_beg<=jatm) .and. (jatm<=jatm_end)) then
                     is_within_gpair = .true.
+                    print *, "search j(normal)"
+                    print *, "iatm, jatm", iatm, jatm
+                    print *, "jbeg, jend", jatm_beg, jatm_end
                     exit
                 end if
             end do
@@ -55,6 +58,9 @@ contains
 
                     if ((iatm_beg<=iatm) .and. (iatm<=iatm_end)) then
                         is_within_gpair = .true.
+                        print *, "search i"
+                        print *, "iatm, jatm", iatm, jatm
+                        print *, "ibeg, iend", iatm_beg, iatm_end
                         exit
                     end if
                 end do
@@ -153,11 +159,6 @@ contains
             else
                 ends(iatm) = begins(iatm) + nums(iatm) - 1
             end if
-        end do
-
-        print*, "iatm begins ends"
-        do iatm=1, natom
-            print*, iatm, begins(iatm), ends(iatm)
         end do
 
     end subroutine 
