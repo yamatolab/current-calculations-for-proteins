@@ -57,7 +57,6 @@ contains
                     exit
                 end if
             end do
-            end if
         end if
 
     end function
