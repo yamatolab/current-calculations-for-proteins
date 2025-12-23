@@ -112,6 +112,8 @@ class TopologyParser:
                 yield line
             elif line.startswith('%FORMAT'):
                 continue
+            elif line.startswith('%COMMENT'):
+                continue
             elif line != '':
                 yield line
             else:
