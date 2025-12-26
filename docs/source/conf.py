@@ -41,6 +41,7 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
     "sphinx.ext.coverage",
+    "sphinx_copybutton",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -362,3 +363,20 @@ src_path = os.path.abspath(os.path.join(curp_path, "src"))
 doctest_path = [src_path]
 
 html_css_files = ["base.css"]
+
+rst_epilog = """
+.. role:: raw-html(raw)
+   :format: html
+
+.. |latest-release-message| replace:: :raw-html:`<div class="release-message-container"><div class="latest-release-box"><p>CURP v.{version} released!</p></div><div class="release-history-link"><a href="release_history.html">View Release History</a></div></div>`
+
+.. |latest-version| replace:: {version}
+
+""".format(version=__version__)
+
+# rst_epilog = """
+# .. role:: raw-html(raw)
+#    :format: html
+
+# .. |support| replace:: :raw-html:`<a href="mailto:support@blabla.com">support team</a>`
+# """
