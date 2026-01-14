@@ -1210,6 +1210,11 @@ contains
             phi = sign(acos(cos_phi), sin_phi) * RAD_TO_DEG
             psi = sign(acos(cos_psi), sin_psi) * RAD_TO_DEG
 
+            ! determine grid indices for phi and psi
+            grid_step_size = cmap_grid_step_size(cmap_type)
+            x = int( (phi - gridstart) / grid_step_size ) + 1
+            y = int( (psi - gridstart) / grid_step_size ) + 1
+
             ! compute fractional positions inside grid cell
             dx = modulo(phi - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
 
