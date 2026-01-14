@@ -270,6 +270,12 @@ class TableMaker:
         iatoms_list = info['four_atoms']
         self._apply_target_to_bondtype(iatoms_list, info)
 
+        # cmap
+        if (self.get_cmap_info()):
+            info = self.get_cmap_info()
+            iatoms_list = info['five_atoms']
+            self._apply_target_to_bondtype(iatoms_list, info)
+
         # bonded14
         self._make_bonded14_pairs()
 
@@ -542,6 +548,13 @@ class ConverterBase(ConverterPrintable, TableMaker, metaclass=ABCMeta):
     def get_improper_info(self):
         """Get improper torsion dictionary of four_atoms, num_torsions,
         num_freqs, force_consts, and initial_phases."""
+        return
+    
+    @abstractmethod
+    def get_cmap_info(self):
+        """Get CMAP dictionary of five_atoms, cmap_types, cmap_resolutions,
+        cmap_grid_step_size, cmap_grid_energy, cmap_grid_dphi,
+        cmap_grid_dpsi, cmap_grid_dphi_dpsi"""
         return
 
     @abstractmethod
