@@ -193,6 +193,7 @@ class TableMaker:
         self._iang_to_ipair = None
         self._itor_to_ipair = None
         self._iimp_to_ipair = None
+        self._icmp_to_ipair = None
         self._i14_to_ipair  = None
 
         self._target_atoms = None
@@ -236,6 +237,7 @@ class TableMaker:
     def get_iang_to_ipair(self): return self._get_idx_to_ipair('ang')
     def get_itor_to_ipair(self): return self._get_idx_to_ipair('tor')
     def get_iimp_to_ipair(self): return self._get_idx_to_ipair('imp')
+    def get_icmp_to_ipair(self): return self._get_idx_to_ipair('cmp')
 
     def get_i14_to_ipair(self):
         return self._get_idx_to_ipair('14')
@@ -461,6 +463,19 @@ class TableMaker:
                     np.array(iatoms_list), np.array(bonded_pairs) )
 
         return iimp_to_ipair
+
+    def _make_icmp_to_ipair(self):
+        iatoms_list  = self.get_cmap_info()['five_atoms']
+        bonded_pairs = self.get_bonded_pairs()
+
+        # make table
+        if len(iatoms_list) == 0:
+            icmp_to_ipair = np.array([[]])
+        else:
+            icmp_to_ipair = lib_bonded_pair.get_icmp_to_ipair(
+                    np.array(iatoms_list), np.array(bonded_pairs) )
+
+        return icmp_to_ipair
 
     def _make_i14_to_ipair(self):
         iatoms_list  = self.get_bonded14_pairs()

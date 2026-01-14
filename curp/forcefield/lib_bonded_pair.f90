@@ -114,3 +114,58 @@ subroutine get_itor_to_ipair(itor_to_ipair, four_atoms, bonded_pairs, &
 
 end subroutine
 
+subroutine get_icmp_to_ipair(icmp_to_ipair, five_atoms, bonded_pairs, &
+                            & ncmap, npair)
+    implicit none
+
+    integer, intent(in) :: ncmap, npair
+    integer, intent(in) :: five_atoms(ncmap, 5), bonded_pairs(npair, 2)
+    integer, intent(out):: icmp_to_ipair(ncmap, 10)
+
+    integer :: icmp, ipair, iatm, jatm, katm, latm, matm
+
+    do icmp=1, ncmap
+        iatm = five_atoms(icmp, 1)
+        jatm = five_atoms(icmp, 2)
+        katm = five_atoms(icmp, 3)
+        latm = five_atoms(icmp, 4)
+        matm = five_atoms(icmp, 5)
+
+        ! iatm, jatm
+        call get_ipair(ipair, iatm, jatm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 1) = ipair
+        ! iatm, katm
+        call get_ipair(ipair, iatm, katm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 2) = ipair
+        ! iatm, latm
+        call get_ipair(ipair, iatm, latm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 3) = ipair
+        ! iatm, matm
+        call get_ipair(ipair, iatm, matm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 4) = ipair
+
+        ! jatm, katm
+        call get_ipair(ipair, jatm, katm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 5) = ipair
+        ! jatm, latm
+        call get_ipair(ipair, jatm, latm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 6) = ipair
+        ! jatm, matm
+        call get_ipair(ipair, jatm, matm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 7) = ipair
+
+        ! katm, latm
+        call get_ipair(ipair, katm, latm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 8) = ipair
+        ! katm, matm
+        call get_ipair(ipair, katm, matm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 9) = ipair
+        
+        ! latm, matm
+        call get_ipair(ipair, latm, matm, bonded_pairs, npair)
+        icmp_to_ipair(icmp, 10) = ipair
+
+    end do
+
+end subroutine
+
