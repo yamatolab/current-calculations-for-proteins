@@ -7,7 +7,7 @@ Heat current analysis
 The thermal conductivity, :math:`\lambda`, is expressed in terms of the heat current autocorrelation function (HCACF) as:
 
 .. math::
-   \lambda = \frac{1}{3Vk_BT^2} \int_0^\infty \left\langle \mathbf{h}_(0) \cdot \mathbf{h}(t) \right\rangle dt.
+   \lambda = \frac{1}{3Vk_BT^2} \int_0^\infty \left\langle \mathbf{h}(0) \cdot \mathbf{h}(t) \right\rangle dt.
 
 The heat current, :math:`\mathbf{h}`, is written as a summation of interatomic heat current, :math:`\mathbf{h}_{ij}`, as:
 
@@ -371,8 +371,9 @@ format = ascii | netcdf
    Format of the energy flow data. (netcdf format is highly recommended.)
 
 decomp = no | yes
-   During the calculations, choose whether the energy is decomposed into different
-   components.
+   Flag whether decompose and output the total current/flux,
+   autocorrelation function and heat conductivity
+   to bonded (bond, angle, torsion and improper), coulomb, and van der Waals interaction.
 
 output_energy = no | yes
    CURP is able to evaluate the energy using the atomic velocities and coordinates of the trajectory files. When set to "no", this energy value is not output. 
@@ -418,5 +419,5 @@ NOTE: `\--no-axes` option should not be used here.
 Format of :math:`\Lambda` data file
 -------------------------
 
- In each line of the data file, `Lambda.dat`, a pair of residues and the corresponding value of :math:`\Lambda_{AB}` is written as <residue_A> <residue_B> :math:`\Lambda_{AB}`. The unit of :math:`\Lambda_{AB}` is measured in :math:`(\AA \rm{\cdot kcal/mol)^2/fs}`.
+In each line of the data file, `Lambda.dat`, a pair of residues and the corresponding value of :math:`\Lambda_{AB}` is written as <residue_A> <residue_B> :math:`\Lambda_{AB}`. The unit of :math:`\Lambda_{AB}` is measured in :math:`(\AA \rm{\cdot kcal/mol)^2/fs}`.
 

@@ -15,7 +15,7 @@ TypeBase
 import os
 import glob
 
-from exception import CurpException
+from curp.exception import CurpException
 
 class SectionNotDefined(CurpException): pass
 class InvalidKeyword(CurpException): pass
@@ -72,7 +72,7 @@ class Section:
         self.__key_to_typeobj = kwds
         self.__name = None
         # initialize each of types
-        for key, type_obj in self.__key_to_typeobj.items():
+        for key, type_obj in list(self.__key_to_typeobj.items()):
             type_obj.set_name(key)
 
     def __str__(self):
@@ -80,7 +80,7 @@ class Section:
                 sname=self.__name, desc=self.__desc)
 
         return seclines + "\n\n".join(str(typeobj)
-                for typeobj in self.__key_to_typeobj.values())
+                for typeobj in list(self.__key_to_typeobj.values()))
 
     def __format__(self, fmt_type="rst"):
         if fmt_type == "rst":
@@ -89,7 +89,7 @@ class Section:
                     desc=self.__desc)
 
             return seclines + "\n\n".join(format(typeobj, fmt_type)
-                    for typeobj in self.__key_to_typeobj.values())
+                    for typeobj in list(self.__key_to_typeobj.values()))
         else:
             return ""
 
@@ -117,7 +117,7 @@ class Section:
                 self.check_require(key, kwds)
 
         # set value
-        for key, value in kwds.items():
+        for key, value in list(kwds.items()):
             try:
                 type_obj = self.__key_to_typeobj[key]
                 type_obj.set(value)
@@ -175,9 +175,7 @@ class Section:
 
 ################################################################################
 from abc import ABCMeta, abstractmethod, abstractproperty
-class TypeBase:
-
-    __metaclass__ = ABCMeta
+class TypeBase(metaclass=ABCMeta):
 
     def __init__(self, default, require, desc='', parser=None):
         self.__desc = desc

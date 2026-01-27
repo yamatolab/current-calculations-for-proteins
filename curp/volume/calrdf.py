@@ -1,17 +1,18 @@
 from __future__ import print_function
 
 import math
-import numpy
+import numpy as np
+
 
 def cal_rdf(crd, num_rs, rmax=5.0, dr=0.1, per_area=True):
     """Calclate a radial distribution function on each atom."""
     natom = len(crd)
-    rdfs = numpy.zeros((natom, num_rs)) # rdf on each atom.
-    
+    rdfs = np.zeros((natom, num_rs)) # rdf on each atom.
+
     for rdf_i, r_i in zip(rdfs, crd):
         for r_j in crd:
             r_ij = r_i - r_j
-            l_ij = math.sqrt(numpy.dot(r_ij, r_ij))
+            l_ij = math.sqrt(np.dot(r_ij, r_ij))
             if l_ij <= 0.1: continue
             if l_ij >= rmax: continue
             rindex = int(round(l_ij/dr)) - 1
@@ -21,12 +22,10 @@ def cal_rdf(crd, num_rs, rmax=5.0, dr=0.1, per_area=True):
         for rindex in range(num_rs):
             r = dr * (rindex + 1)
             rdfs[:, rindex] = rdfs[:, rindex] / (r*r)
-                
+
     return rdfs
 
-# replace the calrdf routine to fortran one
-import lib_calrdf
-cal_rdf = lib_calrdf.calrdf
+import curp.volume.lib_calrdf.calrdf as cal_rdf
 
 def average_rdf(parser, rmax=5.0, dr=0.1
         , interval=1, average=True, per_area=True):
@@ -38,7 +37,7 @@ def average_rdf(parser, rmax=5.0, dr=0.1
     i = 0
     for istep, (crd, box) in parser:
         i += 1
-        istep, (crd, box) = parser.next()
+        istep, (crd, box) = next(parser)
 
         if i == interval:
             ntraj += 1
@@ -101,7 +100,7 @@ if __name__ == '__main__':
 
         with bm('calculate average rdf'):
             rdfs = average_rdf(parser, rmax=rmax, dr=dr, interval=1,
-                    average=False, per_area=False) 
+                    average=False, per_area=False)
         with bm('printing average rdf'):
             for iatm_1, rdf in enumerate(rdfs):
                 print()

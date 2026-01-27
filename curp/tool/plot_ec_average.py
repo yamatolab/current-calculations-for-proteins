@@ -1,7 +1,8 @@
 #! /usr/bin/env python2
 from __future__ import print_function
-import os, sys
-import numpy
+import os
+import sys
+import numpy as np
 import pylab as pl
 
 def load_data(filename):
@@ -30,14 +31,14 @@ if __name__ == '__main__':
 
 
     base_lines, base_ecs = load_data(base_fn)
-    base_ecs = numpy.array(base_ecs)
+    base_ecs = np.array(base_ecs)
 
     markers = ['^', 'D', 'o']
     colors  = ['red', 'green', 'blue']
 
     for fn, color, marker in zip(rel_fns, colors, markers):
         rel_lines, rel_ecs = load_data(fn)
-        rel_ecs = numpy.array(rel_ecs)
+        rel_ecs = np.array(rel_ecs)
 
         xs = rel_ecs/base_ecs
 
@@ -58,5 +59,5 @@ if __name__ == '__main__':
     name = os.path.splitext(os.path.basename(rel_fn))[0]
 
     pl.savefig('avg-'+name+'.png', format='png', dpi=300)
-    
+
     # pl.show()

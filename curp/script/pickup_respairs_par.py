@@ -1,20 +1,16 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import os, sys
-import numpy
+import os
+import sys
+import numpy as np
 import argparse
 
 import curp
 
-curp_srcdir = os.path.join(os.environ['CURP_HOME'], 'src')
-if curp_srcdir not in sys.path:
-    sys.path.insert(0, curp_srcdir)
-from table.group import gen_residue_group
+from curp.table.group import gen_residue_group
 
 def main():
-    import os, sys
-
     # parse arguments
     args = get_arguments()
 
@@ -29,7 +25,7 @@ def main():
     # generate residue group
     res_info  = tpl.get_residue_info()
     atom_info = tpl.get_atom_info()
-    rname_iatoms_pairs = list( (rname, list(numpy.array(iatoms)-1))
+    rname_iatoms_pairs = list( (rname, list(np.array(iatoms)-1))
             for rname, iatoms in gen_residue_group(
                 res_info, atom_info, name_fmt=args.format))
 
@@ -41,13 +37,13 @@ def main():
     crds = ( crd for itraj, crd, box in crd_parser )
 
     # generate residue pair table
-    import lib_pickup
+    from curp.script.analyze import lib_pickup
     cutoff_method = dict(
             com      = lib_pickup.is_com,
             nearest  = lib_pickup.is_nearest,
             farthest = lib_pickup.is_farthest)[args.cutoff_method]
 
-    import parallel
+    from curp import parallel
     par = parallel.ParallelProcessor()
 
     method = gen_respair_table_par(
@@ -105,7 +101,7 @@ def get_arguments():
     parser.add_argument(
             '-p', '--input-prmtop-file', dest='prmtop_fn', required=True,
             help='specify the prmtop file to be amber format.')
-    
+
     parser.add_argument(
             '-i', '--interval', dest='interval', default=1, type=int,
             help=('specify interval step to perform the calculation for '
@@ -122,7 +118,7 @@ def get_arguments():
             help='specify the cutoff to pick up.')
 
     parser.add_argument(
-            '-t', '--trim-resnames', dest='trim_resnames', nargs='*', 
+            '-t', '--trim-resnames', dest='trim_resnames', nargs='*',
             required=False, default=[],
             help='residue names for trimming from the target residues.')
 
@@ -186,8 +182,8 @@ def gen_respair_table_par(resnames, rname_iatoms_pairs, cutoff_method, cutoff2):
 def is_com(cutoff2):
 
     def _judge(crd_i, crd_j):
-        com_i = numpy.sum(crd_i, 0)
-        com_j = numpy.sum(crd_j, 0)
+        com_i = np.sum(crd_i, 0)
+        com_j = np.sum(crd_j, 0)
         return cal_dist2(com_i, com_j) <= cutoff2
 
     return _judge
@@ -199,7 +195,7 @@ def is_nearest(cutoff2):
             for r_j in crd_j:
                 if cal_dist2(r_i, r_j) <= cutoff2:
                     return True
-            
+
         else:
             return False
 
@@ -212,7 +208,7 @@ def is_farthest(cutoff2):
             for r_j in crd_j:
                 if cal_dist2(r_i, r_j) >= cutoff2:
                     return False
-                
+
         else:
             return True
 

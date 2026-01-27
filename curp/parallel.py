@@ -18,7 +18,7 @@ except ImportError:
 
 ################################################################################
 class ParallelProcessor:
-
+    import numpy as np
     """
     The class to run in parallel from given method and dictionary list,
     using mpi4py library.
@@ -63,12 +63,17 @@ class ParallelProcessor:
     def _gen_kwds(self, kwds):
         """Generate each dictionary from listed dictionaries."""
 
-        ks = kwds.keys()    # kwd1, kwd2, ...
+        ks = list(kwds.keys())    # kwd1, kwd2, ...
         npair = len(ks)     # the number of kwds
 
         if self.is_root():
-            vs = kwds.values()  # val1_iter, val2_iter, ...
-            pair_vs_iter = it.izip(*vs)
+            vs = list(kwds.values())  # val1_iter, val2_iter, ...
+            try:
+                pair_vs_iter = it.izip(*vs)
+            except AttributeError:
+                pair_vs_iter= zip(*vs)
+            except:
+                raise
 
         else:
             def gen_none():
@@ -82,15 +87,15 @@ class ParallelProcessor:
             is_end = False
             if self.is_root():
                 try:
-                    pair_vs = pair_vs_iter.next()
+                    pair_vs = next(pair_vs_iter)
                 except StopIteration:
                     is_end = True
 
             else:
-                pair_vs = pair_vs_iter.next()
+                pair_vs = next(pair_vs_iter)
 
             is_end = self.__comm.bcast(is_end, root=0)
-            
+
             if is_end:
                 break
 
@@ -216,7 +221,6 @@ class ParallelProcessor:
 
     def get_time_info(self, nstep):
 
-        import numpy
         nproc = self.__nproc
         denom = 1.0/float(nproc*nstep)
 
@@ -275,10 +279,15 @@ class SequentialProcessor:
     def _gen_kwds(self, kwds):
         """Generate each dictionary from listed dictionaries."""
 
-        ks = kwds.keys()    # kwd1, kwd2, ...
+        ks = list(kwds.keys())    # kwd1, kwd2, ...
         npair = len(ks)     # the number of kwds
-        vs = kwds.values()  # val1_iter, val2_iter, ...
-        pair_vs_iter = it.izip(*vs)
+        vs = list(kwds.values())  # val1_iter, val2_iter, ...
+        try:
+            pair_vs_iter = it.izip(*vs)
+        except AttributeError:
+            pair_vs_iter =zip(*vs)
+        except:
+            raise
 
         for pair_vs in pair_vs_iter:
             # (val1, val2, ...)_1, (val1, val2, ...)_2, ...
@@ -369,11 +378,11 @@ def main_array(method, natom, ntraj):
 
     # initialization
     import copy
-    import numpy
-    crd = numpy.ones([natom,3])
+    import numpy as np
+    crd = np.ones([natom,3])
 
     crds = ( crd.copy() for itraj in range(ntraj) )
-    vel = numpy.ones([natom,3])
+    vel = np.ones([natom,3])
     vels = ( vel.copy() for itraj in range(ntraj) )
 
     run_bench(method, crds, vels, 'Array', t1)
@@ -381,7 +390,7 @@ def main_array(method, natom, ntraj):
 def main_arraygen(natom, ntraj):
     # initialization
     import copy
-    import numpy
+    import numpy as np
 
     par = ParallelProcessor()
     label = 'Array 2'
@@ -397,7 +406,7 @@ def main_arraygen(natom, ntraj):
 
     if par.is_root():
 
-        crdvel = numpy.ones([natom,3])
+        crdvel = np.ones([natom,3])
 
         def gen_data_iter(ntraj):
             for itraj in range(ntraj):
@@ -429,7 +438,7 @@ def main_arraygen(natom, ntraj):
 
     # if par.is_root():
     for r in gen_result:
-        # par.write(r) 
+        # par.write(r)
         # if par.is_root():
             print(r)
 
@@ -441,7 +450,7 @@ def main_arraygen(natom, ntraj):
 def main_arraygen(natom, ntraj):
     # initialization
     import copy
-    import numpy
+    import numpy as np
 
     par = ParallelProcessor()
     label = 'Array 2'
@@ -457,7 +466,7 @@ def main_arraygen(natom, ntraj):
 
     if par.is_root():
 
-        crdvel = numpy.ones([natom,3])
+        crdvel = np.ones([natom,3])
 
         def gen_data_iter(ntraj):
             for itraj in range(ntraj):
@@ -489,7 +498,7 @@ def main_arraygen(natom, ntraj):
 
     # if par.is_root():
     for r in gen_result:
-        # par.write(r) 
+        # par.write(r)
         # if par.is_root():
             print(r)
 

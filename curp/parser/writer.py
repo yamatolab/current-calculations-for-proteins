@@ -1,13 +1,10 @@
-
-import os, sys
+import os
+import sys
 import traceback
 import itertools as it
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
 
 ################################################################################
-from exception import CurpException
+from curp.exception import CurpException
 
 class FormatNotFoundError(CurpException): pass
 class WriterNotFoundError(CurpException): pass

@@ -1,12 +1,11 @@
 from __future__ import print_function
 
 # standard modules
-import os, sys
+import os
+import sys
 
 # curp modules
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path: sys.path.insert(0, topdir)
-from exception import CurpException
+from curp.exception import CurpException
 
 # exceptions
 class TrajectoryExistsError(CurpException): pass
@@ -25,15 +24,15 @@ class Writer:
         crds_range = (crd_freq, last, crd_freq)
         vels_range = (crd_freq, last, vel_freq)
 
-        import parser.writer as pw
+        import curp.parser.writer as pw
 
         # coordinate
         if dyn_sets.crds_frequency >= 1:
             self.__crds_writer = pw.Writer(
-                    trj_fp      = dyn_sets.crds_file[0] , 
-                    trj_fmt     = dyn_sets.trj_format   , 
-                    dt          = dyn_sets.dt           , 
-                    is_vel      = False                 , 
+                    trj_fp      = dyn_sets.crds_file[0] ,
+                    trj_fmt     = dyn_sets.trj_format   ,
+                    dt          = dyn_sets.dt           ,
+                    is_vel      = False                 ,
                     fst_lst_int = crds_range)
         else:
             self.__crds_writer = None
@@ -41,10 +40,10 @@ class Writer:
         # velocity
         if dyn_sets.crds_frequency >= 1:
             self.__vels_writer = pw.Writer(
-                    trj_fp      = dyn_sets.vels_file[0] , 
-                    trj_fmt     = dyn_sets.trj_format   , 
-                    dt          = dyn_sets.dt           , 
-                    is_vel      = True                  , 
+                    trj_fp      = dyn_sets.vels_file[0] ,
+                    trj_fmt     = dyn_sets.trj_format   ,
+                    dt          = dyn_sets.dt           ,
+                    is_vel      = True                  ,
                     fst_lst_int = vels_range)
 
         else:

@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import itertools
+import numpy as np
 
 ################################################################################
 class InteractionTableGenerator:
@@ -45,7 +46,7 @@ class InteractionTableGenerator:
 
     def filter(self, if_fun):
         self.__filters.append(if_fun)
-        return self 
+        return self
 
     def insert_filter(self, if_fun):
         self.__filters.insert(0, if_fun)
@@ -58,7 +59,7 @@ class InteractionTableGenerator:
         return self
 
     def next(self):
-        return self.__apply().next()
+        return next(self.__apply())
     __next__ = next # version 3.x
 
     def copy(self):
@@ -78,7 +79,7 @@ class InteractionTableGenerator:
 
             jatm_beg_new = 0
             jatm_end_new = jatm_beg
-            
+
             for jatm in range(jatm_beg, jatm_end+1):
                 print('jatm before', jatm, jatm_end)
 
@@ -116,7 +117,7 @@ class InteractionTableGenerator:
 
             jatm_beg_new = 0
             jatm_end_new = jatm_beg
-            
+
             for jatm in range(jatm_beg, jatm_end+1):
 
                 if if_function(iatm, jatm):
@@ -135,7 +136,7 @@ class InteractionTableGenerator:
         length2 = length**2
 
         def wrapper(iatm, jatm):
-            dist2 = numpy.dot(crd[iatm,:] - crd[jatm,:])
+            dist2 = np.dot(crd[iatm,:] - crd[jatm,:])
             return dist2 < length2
 
         return wrapper
@@ -193,7 +194,7 @@ class InteractionTableList:
     >>> table.map()
     """
 
-    _memory_limit = 10 # MB
+    _memory_limit = 1000 # MB
 
     def __init__(self, natom=None, base_table=None):
         self.__natom = natom
@@ -222,7 +223,7 @@ class InteractionTableList:
 
     def filter(self, if_fun):
         self.__filters.append(if_fun)
-        return self 
+        return self
 
     def filter_or(self, iatm_beg, iatm_end):
         self.__filters.append( ('or', iatm_beg, iatm_end) )
@@ -279,7 +280,7 @@ class InteractionTableList:
                     yield iatm, jatm_beg, jatm_end
 
                 elif i_end < iatm:
-                    break 
+                    break
 
                 else:
                     pass
@@ -294,7 +295,7 @@ class InteractionTableList:
                     yield iatm, jatm_beg, jatm_end
 
                 elif i_end-1 < iatm:
-                    break 
+                    break
 
                 else:
                     pass
@@ -302,10 +303,10 @@ class InteractionTableList:
         def gen_filter_fun(table, if_fun):
 
             for iatm, jatm_beg, jatm_end in table:
-                
+
                 jatm_beg_new = 0
                 jatm_end_new = jatm_beg
-                
+
                 for jatm in range(jatm_beg, jatm_end+1):
 
                     if not if_fun(iatm, jatm):
@@ -352,7 +353,7 @@ class InteractionTableList:
         length2 = length**2
 
         def wrapper(iatm, jatm):
-            dist2 = numpy.dot(crd[iatm,:] - crd[jatm,:])
+            dist2 = np.dot(crd[iatm,:] - crd[jatm,:])
             return dist2 < length2
 
         return wrapper
@@ -512,7 +513,7 @@ class InteractionTableList:
             iatm_max_p = iatm_max
             jatm_min_p = jatm_min
             jatm_max_p = jatm_max
-            
+
         else:
             memory = self.get_size(iatm_min, iatm_max, jatm_min, jatm_max)
             self.__memories.append( memory )
@@ -573,7 +574,7 @@ if __name__ == '__main__':
             t = table2.filter_and(10, 20)
             for a in t.gen_divided_table(40):
                 print(a)
-                
+
         # with bm('if_fun_or'):
         #     print()
         #     table3 = InteractionTable(natom)

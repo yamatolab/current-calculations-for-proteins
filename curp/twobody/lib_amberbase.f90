@@ -248,7 +248,7 @@ contains
         ! A = 2 K_a (theta - theta_eq) / sin(theta)
         ! F_ij = A/l_ij (1/l_kj - cos(theta)/l_ij) r_ij
         ! F_ik = -A/(l_ij l_kj) r_ik
-        ! F_jk = A/l_kj (1/l_ij - cos(theta)/l_kj) r_jk
+        ! F_jk = A/l_kj (1/l_ij - cos(theta)/l_kj) (-r_kj)
 
         ! initialization
         nangle   = size(force_consts)

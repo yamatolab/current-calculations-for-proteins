@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 import math
-import numpy
+import numpy as np
 
 
 class TensorParser:
@@ -44,10 +44,10 @@ class TensorParser:
                        [v[3], v[4], v[5]],
                        [v[6], v[7], v[8]] ]
             tensors.append(tensor)
-                
-        # array = numpy.array(v)
+
+        # array = np.array(v)
         # print(array.reshape(3,3,len(array)))
-        return names, numpy.array(tensors)
+        return names, np.array(tensors)
 
     def gen_optimized_lines(self, file):
         # first flag
@@ -103,7 +103,7 @@ def split_data(data, interval=100):
 
 def cal_average(tensors):
 
-    sum_tensor = numpy.zeros(tensors[0].shape)
+    sum_tensor = np.zeros(tensors[0].shape)
 
     for t in tensors:
         sum_tensor += t
@@ -113,7 +113,7 @@ def cal_average(tensors):
 
 def cal_rmsf(tensors, average_tensor):
 
-    rmsf_tensor = numpy.zeros(average_tensor.shape)
+    rmsf_tensor = np.zeros(average_tensor.shape)
 
     for t in tensors:
         diff_ten = average_tensor - t
@@ -121,7 +121,7 @@ def cal_rmsf(tensors, average_tensor):
 
     nten = len(tensors)
 
-    return numpy.sqrt(rmsf_tensor) / nten
+    return np.sqrt(rmsf_tensor) / nten
 
 def cal_contribution_ratio(vals):
     """Calculate the contribution ratio each component."""
@@ -132,7 +132,7 @@ def gen_eigens(tensors):
     """Generate the calculated eigen values for each tonsor."""
     # diagonal
     for tensor in tensors:
-        eigen, vec = numpy.linalg.eig(tensor)
+        eigen, vec = np.linalg.eig(tensor)
         yield math.sqrt(eigen[0]**2 + eigen[1]**2 + eigen[2]**2)
 
 
@@ -142,8 +142,8 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(
             'Show and make figure for stress ratio.')
-        print('simplify_tensor total_file "label1,label2,label3,label4,..."',
-                'label1_data,label2_data,...')
+    print('simplify_tensor total_file "label1,label2,label3,label4,..."',
+              'label1_data,label2_data,...')
 
     # add argument definitions
     parser.add_argument(
@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
     # for each component of stress tensor
     labels = [ label.strip() for label in label_line.split(',') ]
-    
+
     evalues = []
     for lebel, fn in zip(labels, fns):
         parser = TensorParser(fn)
@@ -188,9 +188,9 @@ if __name__ == '__main__':
         evalues.append( list(gen_eigens(average_tensors)) )
 
     # calculate for each interval
-    for tot_data in -w
+    for tot_data in -w:
         ave_tensors = cal_average(tot_data)
-        tot_evalues = list(gen_eigens(ave_tensors)
+        tot_evalues = list(gen_eigens(ave_tensors))
 
 
     # output the eigen value of stress tensor

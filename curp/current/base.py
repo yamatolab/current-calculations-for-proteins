@@ -2,13 +2,13 @@ from __future__ import print_function
 
 import os, sys
 import time
-import numpy
+import numpy as np
 
 # curp modules
 topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if topdir not in sys.path: sys.path.insert(0, topdir)
-from  utility import TimeStore
-import clog as logger
+from  curp.utility import TimeStore
+import curp.clog as logger
 
 ################################################################################
 class CalculatorBase(TimeStore):
@@ -27,7 +27,7 @@ class CalculatorBase(TimeStore):
         self.__setting = setting
 
         # decide two-body force calculator.
-        import twobody
+        from curp import twobody
         TwoBodyCalculator = twobody.get_calculator(setting.curp.potential)
         self.__tbf = TwoBodyCalculator(topology, setting)
         self.__tbf.setup(interact_table, check=False)
@@ -43,10 +43,10 @@ class CalculatorBase(TimeStore):
         self.__gnames = [gname for gname, iatoms in gname_iatoms_pairs]
 
         # interaction table
-        self.__interact_table = [ numpy.array(t) for t in interact_table]
+        self.__interact_table = [ np.array(t) for t in interact_table]
 
         # make a table to convert the atom index into the group index.
-        iatm_to_igrp = numpy.zeros([natom])
+        iatm_to_igrp = np.zeros([natom])
         for igrp_1, (gname, iatoms) in enumerate(self.__gname_iatoms_pairs):
             for iatm in iatoms:
                 iatm_to_igrp[iatm-1] = igrp_1+1
@@ -93,7 +93,7 @@ class CurrentCalculator(CalculatorBase):
     def prepare(self, *args, **kwds):
         CalculatorBase.prepare(self, *args, **kwds)
 
-        import volume
+        from curp import volume
         self.__volume_obj = volume.get_volume_calculator( self.get_topology(),
                 self.get_setting(), self.get_target_atoms(),
                 self.get_gname_iatoms_pairs() )
@@ -154,20 +154,20 @@ class CurrentCalculator(CalculatorBase):
 
         # group current = inside current + outside current
         key_to_gcurs = {}
-        for key in key_to_acurs.keys():
+        for key in list(key_to_acurs.keys()):
             key_to_gcurs[key] = key_to_icurs[key] + key_to_ocurs[key]
 
         return cstep, (key_to_acurs, key_to_gcurs, key_to_icurs, key_to_ocurs)
 
     def cal_volume(self, crd):
-        self.__volumes = self.get_volume_obj().get_volume(crd) 
+        self.__volumes = self.get_volume_obj().get_volume(crd)
         return self.__volumes
 
     def get_volume(self):
         return self.__volumes
 
     def cal_gvolume(self, ngroup):
-        self.__gvolumes = self.get_volume_obj().get_gvolume(ngroup) 
+        self.__gvolumes = self.get_volume_obj().get_gvolume(ngroup)
         return self.__gvolumes
 
     def get_gvolume(self):
@@ -212,9 +212,9 @@ class FluxCalculator(CalculatorBase):
         key_to_gflux['vdw'] = flux_grp
         # total for atom
         if flux_atm is not None:
-            total_atm = numpy.zeros( key_to_aflux['vdw'].shape )
+            total_atm = np.zeros( key_to_aflux['vdw'].shape )
 
-            for flux in key_to_aflux.values():
+            for flux in list(key_to_aflux.values()):
                 total_atm += flux
 
         else:
@@ -222,9 +222,9 @@ class FluxCalculator(CalculatorBase):
 
         # total for group
         if flux_grp is not None:
-            total_grp = numpy.zeros( key_to_gflux['vdw'].shape )
+            total_grp = np.zeros( key_to_gflux['vdw'].shape )
 
-            for flux in key_to_gflux.values():
+            for flux in list(key_to_gflux.values()):
                 total_grp += flux
 
         else:

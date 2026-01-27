@@ -2,7 +2,7 @@ from nose.tools import *
 import numpy.testing as npt
 
 import os, sys
-import numpy
+import numpy as np
 topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if topdir not in sys.path:
     sys.path.insert(0, topdir)
@@ -17,7 +17,7 @@ class TestVolume:
 
         # preparation
         natom = 33
-        target_atoms = range(7,26+1)
+        target_atoms = list(range(7,26+1))
         iatm_to_itars = group.get_iatm_to_itars(target_atoms, natom)
 
         res_info = dict(
@@ -32,7 +32,7 @@ class TestVolume:
                      'C','O','OXT'], )
 
         # answer value
-        answer1 = numpy.array(
+        answer1 = np.array(
                 [ 0,  0,  0,  0,  0,  0,  1,  2,  3,  4,
                   5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
                   15, 16, 17, 18, 19, 20,  0,  0,  0,  0,
@@ -106,7 +106,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['N','H','H','H','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',
@@ -149,7 +149,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['H','N','H','H','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',
@@ -191,7 +191,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['H','H','N','H','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',
@@ -233,7 +233,7 @@ class TestVolume:
                      'C','O','N','H','CA','HA','CB','HB1','HB2','HB3',
                      'C','O','OXT'],
 
-            ids   = range(1,33+1),
+            ids   = list(range(1,33+1)),
 
             elems = ['H','H','H','N','C','H','C','H','H','H',
                      'C','O','N','H','C','H','C','H','H','H',

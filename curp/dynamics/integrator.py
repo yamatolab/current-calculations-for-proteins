@@ -1,15 +1,14 @@
 from __future__ import print_function
 
 # standard modules
-import os, sys
+import os
+import sys
 import time
-import numpy
+import numpy as np
 
 # curp modules
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path: sys.path.insert(0, topdir)
-from utility import TimeStore
-import clog as logger
+from curp.utility import TimeStore
+import curp.clog as logger
 
 class NEVIntegrator(TimeStore):
 
@@ -27,12 +26,12 @@ class NEVIntegrator(TimeStore):
         self.__setting = setting
 
         # decide force calculator
-        import twobody
+        from curp import twobody
         TwoBodyCalculator = twobody.get_calculator(setting.curp.potential)
         self.__tbf = TwoBodyCalculator(topology, setting)
         self.__tbf.setup(interact_table, check=False)
 
-        self.__interact_table = [ numpy.array(t) for t in interact_table ] 
+        self.__interact_table = [ np.array(t) for t in interact_table ]
 
         # decide integrator
         params = setting.dynamics
@@ -66,7 +65,7 @@ class NEVIntegrator(TimeStore):
 
     def integrate(self, crd, frc, vel, masses):
         pass
-    
+
     def do_vverlet(self, crd, frc, vel, masses, params):
         """Integrate the coordinate and velocity according to
         velocity verlet algorithm.
@@ -81,7 +80,7 @@ class NEVIntegrator(TimeStore):
         # frc_next : next step's force
 
         # Preparation of the dynamcs on 0th step
-        ms    = numpy.array(masses)[:, None]
+        ms    = np.array(masses)[:, None]
         dt    = params.dt * 1000.0
         nstep = params.num_steps
         coef  = self.coef
@@ -110,7 +109,7 @@ class NEVIntegrator(TimeStore):
             # r(t+dt) = r(t) + dt*v(t) + dt^2/2m * F(t)
             # crd_next = crd + dt*vel + 0.5*dt*dt * frc / ms * coef
             crd_next = crd + dt*vel + 0.5*dt*dt * frc / ms * coef
-            
+
             # calculate next step's forces from coordinate
             frc_next = self.cal_force(crd_next)
 
@@ -148,7 +147,7 @@ class NEVIntegrator(TimeStore):
         # vel_dt = 0.5*(vel + vel_next)
 
         # Preparation of the dynamcs on 0th step
-        ms    = numpy.array(masses)[:, None]
+        ms    = np.array(masses)[:, None]
         # dt    = params.dt
         # dt    = params.dts
         dt = params.dt * 1000.0
@@ -184,7 +183,7 @@ class NEVIntegrator(TimeStore):
             # calculate next step's coordinate
             # r(t+dt) = r(t) + dt*v(t+dt/2)
             crd_next = crd + dt*vel_next
-            
+
             # calculate next step's forces from coordinate
             frc_next = self.cal_force(crd_next)
 
@@ -208,7 +207,7 @@ class NEVIntegrator(TimeStore):
         gas  = self.gas_const
         dof  = vel.size # defree of freedom
 
-        energy_tmp = numpy.sum( ms * vel**2)
+        energy_tmp = np.sum( ms * vel**2)
 
         energy = 0.5 * energy_tmp / self.coef
         temp   = 10.0**7 * energy_tmp / dof / gas

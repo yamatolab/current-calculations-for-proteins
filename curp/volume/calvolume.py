@@ -1,31 +1,26 @@
 from __future__ import print_function
 
-import os, sys
+import os
+import sys
 import math
-import numpy
+import numpy as np
 from math import sqrt, pi
-from abc import abstractmethod, abstractproperty, ABCMeta
-
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import utility
-
-curp_dir = os.environ['CURP_HOME']
-script_dir = os.path.abspath(os.path.join(curp_dir, 'script'))
-if script_dir not in sys.path:
-    sys.path.insert(0, script_dir)
-import pdb_ as PDB
+from abc import abstractmethod, ABCMeta
 
 # curp modules
-import clog as logger
-from exception import CurpException
+import curp.volume.pdb_ as PDB
+import curp.clog as logger
+from curp.exception import CurpException
+import curp.volume.lib_voronoi as lib_voro
+from curp.volume import lib_sink
+
 
 class NotFoundPropertyError(CurpException): pass
 class NumberOfTargetError(CurpException): pass
 class VolumeNotDefinedError(CurpException): pass
 class TestError(CurpException): pass
 class NumberOfGroupError(CurpException): pass
+
 
 def nproperty(function):
     """Decorator to easy use property.
@@ -68,7 +63,7 @@ def nproperty(function):
             locals = frame.f_locals
 
             prop_dict = {}
-            for name, method in locals.items():
+            for name, method in list(locals.items()):
                 if name.startswith('get'):
                     prop_dict['fget'] = method
                     get_method = method
@@ -100,29 +95,29 @@ class VolumeSetting:
         self.__gname_iatoms_pairs = gname_iatoms_pairs
 
         self.__props = dict(
-                natom               = 0  , 
-                names               = [] , 
-                elems               = [] , 
-                resnames            = [] , 
-                gname_iatoms_pairs  = [] , 
-                target_atoms        = [] , 
-                output_volume_file  = '' , 
-                output_gvolume_file = '' , 
+                natom               = 0  ,
+                names               = [] ,
+                elems               = [] ,
+                resnames            = [] ,
+                gname_iatoms_pairs  = [] ,
+                target_atoms        = [] ,
+                output_volume_file  = '' ,
+                output_gvolume_file = '' ,
 
-                vdw_radii = [] , 
+                vdw_radii = [] ,
 
-                smve_rmax      = 2.5  , 
-                smve_dr        = 0.01 , 
-                smve_interval  = 1    , 
-                smve_increment = 5    , 
+                smve_rmax      = 2.5  ,
+                smve_dr        = 0.01 ,
+                smve_interval  = 1    ,
+                smve_increment = 5    ,
 
-                atomic_trajectory_file = '' , 
-                group_trajectory_file  = '' , 
+                atomic_trajectory_file = '' ,
+                group_trajectory_file  = '' ,
 
-                voronoi_cutoff       = 6.0   , 
-                voronoi_no_hydrogen  = False , 
-                voronoi_solvation    = 'none' , 
-                voronoi_probe_length = 2.4   , 
+                voronoi_cutoff       = 6.0   ,
+                voronoi_no_hydrogen  = False ,
+                voronoi_solvation    = 'none' ,
+                voronoi_probe_length = 2.4   ,
                 voronoi_output_solvation_file = '',
 
                 group_method = 'none'
@@ -427,9 +422,7 @@ class VolumeSetting:
             if self.__setting is None:
                 self.__props['group_method'] = value
 
-class VolumeCalculatorBase:
-
-    __metaclass__ = ABCMeta
+class VolumeCalculatorBase(metaclass=ABCMeta):
 
     def __init__(self, volume_setting):
         self._setting = volume_setting
@@ -481,7 +474,7 @@ class VolumeCalculatorBase:
                     self._setting.gname_iatoms_pairs):
 
                 gvol = 0.0
-                
+
                 for iatm in atoms:
                     itar = iatm_to_itars[iatm-1]
                     if itar == 0: continue
@@ -497,7 +490,7 @@ class VolumeCalculatorBase:
 
     def get_iatm_to_itars(self):
         if self.__iatm_to_itars is None:
-            iatm_to_itars = numpy.zeros( [self._setting.natom], numpy.int)
+            iatm_to_itars = np.zeros( [self._setting.natom], np.int)
 
             for itar_1, iatm in enumerate(self._setting.target_atoms):
                 iatm_to_itars[iatm-1] = itar_1 + 1
@@ -579,14 +572,14 @@ class VDWVolumeCalculator(VolumeCalculatorBase):
             for iatm in self.__target_atoms:
                 radius = self.__vdw_radii[iatm-1]
                 volumes.append( 4*pi/3 * radius**3 )
-            self.__volumes = numpy.array(volumes)
+            self.__volumes = np.array(volumes)
 
         return self.__volumes
 
 class SMVEVolumeCalculator(VolumeCalculatorBase):
 
     """
-    Method to calculate the volume introduced by Srolovitz, Maeda, 
+    Method to calculate the volume introduced by Srolovitz, Maeda,
     Vitek and Egami.
     """
 
@@ -594,7 +587,7 @@ class SMVEVolumeCalculator(VolumeCalculatorBase):
         VolumeCalculatorBase.__init__(self, volume_setting)
 
     def prepare(self):
-        self.__well2s = numpy.array(list(self.gen_wells()))**2
+        self.__well2s = np.array(list(self.gen_wells()))**2
 
     def gen_wells(self):
         """Generate the well from radial distribution functions."""
@@ -607,12 +600,12 @@ class SMVEVolumeCalculator(VolumeCalculatorBase):
         incr     = self._setting.smve_increment
 
         # calculate radial distribution functions
-        from calrdf import average_rdf
+        from curp.volume.calrdf import average_rdf
         rdfs = average_rdf(traj_parser, rmax=rmax, dr=dr, interval=interval,
-                average=True, per_area=True) 
+                average=True, per_area=True)
 
         # search 1st wells
-        from search_well import gen_searched_wells
+        from curp.volume.search_well import gen_searched_wells
         for well_info in gen_searched_wells(rdfs, dr, increment=incr):
             tmp1, tmp2 ,well, tmp4 = well_info
             yield well
@@ -627,7 +620,7 @@ class SMVEVolumeCalculator(VolumeCalculatorBase):
 
     def get_volume_py(self, crd):
         """Calculate and get the volume by python code."""
-        radii = numpy.array( list(self.gen_radius(crd)) )
+        radii = np.array( list(self.gen_radius(crd)) )
         volumes = 4.0*math.pi*radii**3 / 3.0
         return radii, volumes
 
@@ -643,7 +636,7 @@ class SMVEVolumeCalculator(VolumeCalculatorBase):
             for jatm_1 in range(self._setting.natom.natom):
                 if iatm_1 == jatm_1: continue
                 r_ij = crd[iatm_1] - crd[jatm_1]
-                l_ij2 = numpy.dot(r_ij, r_ij)
+                l_ij2 = np.dot(r_ij, r_ij)
 
                 if l_ij2 > well2: continue
 
@@ -656,14 +649,12 @@ class SMVEVolumeCalculator(VolumeCalculatorBase):
 
     def get_volume_fort(self, crd):
         """Calculate and get the volume by fortran code."""
-        from lib_calvolume import calvolume
+        from curp.volume.lib_calvolume import calvolume
         radii, volumes = calvolume(crd, self.__well2s)
         return radii, volumes
 
-import lib_voronoi as lib_voro
-import lib_sink
 class VoronoiVolumeCalculatorBase(VolumeCalculatorBase):
-    
+
     """
     This class is the base class to use o calculate the volume obtained
     from voronoi polyhedra.
@@ -739,7 +730,7 @@ class VoronoiVolumeCalculatorBase(VolumeCalculatorBase):
 
         else:
             return VolumeCalculatorBase.get_gvolume(self, crd)
-    
+
     def cal_voronoi(self, crd):
         """Calculate and get the volume by fortran code."""
         # print(1)
@@ -795,11 +786,11 @@ class VoronoiVolumeCalculatorBase(VolumeCalculatorBase):
 
         self.write_summary(nnabs, nabs_list)
 
-        radii = lib_voro.cal_radii_sphere(numpy.array(volumes))
+        radii = lib_voro.cal_radii_sphere(np.array(volumes))
         return radii, volumes
 
     def write_informations(self, mod):
-        """Write out the information of one atom 
+        """Write out the information of one atom
         obtained by Voronoi analysis."""
 
         # write out results
@@ -908,7 +899,7 @@ class VoronoiVolumeCalculatorBase(VolumeCalculatorBase):
         logger.debug(' average coordination number = {:10.5f}'.format(coord))
 
 class VoronoiVolumeCalculator(VoronoiVolumeCalculatorBase):
-    
+
     """
     This class will be used if voronoi_solvation is 'none'.
     """
@@ -926,19 +917,19 @@ class VoronoiVolumeCalculator(VoronoiVolumeCalculatorBase):
     def get_enable_atoms(self, crd=[]):
         if self.__is_enable_atoms is None:
             if self._setting.voronoi_no_hydrogen:
-                is_enable_atoms = numpy.array(
+                is_enable_atoms = np.array(
                         [ elem!='H' for elem in self._setting.elems ] )
 
             else:
-                is_enable_atoms = numpy.ones(
-                        [self._setting.natom], numpy.bool )
+                is_enable_atoms = np.ones(
+                        [self._setting.natom], np.bool )
 
             self.__is_enable_atoms = is_enable_atoms
 
         return self.__is_enable_atoms
 
 class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
-    
+
     """
     This class will be used if voronoi_solvation is not 'none'.
     """
@@ -960,7 +951,7 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
         nohyd  = self._setting.voronoi_no_hydrogen
         stype  = self._setting.voronoi_solvation
 
-        # load the water molucules data from pdb file
+        # load the water molecules data from pdb file
         mod_dir = os.path.dirname(__file__)
         type_to_fns = {
                 'RANDOM20' : os.path.join(mod_dir, './random20.pdb.gz'),
@@ -972,12 +963,12 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
 
         # make is_enable_system_atoms
         if nohyd:
-            self.__is_enable_system_atoms = numpy.array(
+            self.__is_enable_system_atoms = np.array(
                     [ elem!='H' for elem in self._setting.elems ] )
 
         else:
-            self.__is_enable_system_atoms = numpy.ones(
-                    [self._setting.natom], numpy.bool)
+            self.__is_enable_system_atoms = np.ones(
+                    [self._setting.natom], np.bool)
 
         # output solvation coordinate
         filename = self._setting.voronoi_output_solvation_file
@@ -993,12 +984,12 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
 
     def get_enable_atoms(self, crd):
         if self._setting.voronoi_no_hydrogen:
-            is_enable_atoms = numpy.ones( [len(crd)], numpy.bool)
+            is_enable_atoms = np.ones( [len(crd)], np.bool)
             natom = len(self.__is_enable_system_atoms)
             is_enable_atoms[:natom] = self.__is_enable_system_atoms
 
         else:
-            is_enable_atoms = numpy.ones( [len(crd)], numpy.bool)
+            is_enable_atoms = np.ones( [len(crd)], np.bool)
 
         return is_enable_atoms
 
@@ -1018,7 +1009,7 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
             for atom in atoms:
                 water_crd.append( atom.pos )
 
-        return numpy.array( water_crd )
+        return np.array( water_crd )
 
     def solvate_crd(self, crd):
         """Return the coordinate that sunk the system into watar molecules."""
@@ -1067,7 +1058,7 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
         rid_end = rid
 
         if self._setting.voronoi_no_hydrogen:
-            natom_sol = len(crd) - len(names) 
+            natom_sol = len(crd) - len(names)
             nres_sol = natom_sol
 
             for index in range(nres_sol):
@@ -1083,7 +1074,7 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
                 pdblines.append( 'TER')
 
         else:
-            natom_sol = len(crd) - len(names) 
+            natom_sol = len(crd) - len(names)
             nres_sol = natom_sol/3
 
             for index in range(nres_sol):
@@ -1112,7 +1103,7 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
                 pdblines.append( pdbline )
 
                 pdblines.append( 'TER')
-    
+
         self.__count += 1
         filename = '{}{:05}{}'.format(
                 self.__fn_base, self.__count, self.__fn_ext )
@@ -1124,7 +1115,7 @@ class VoronoiVolumeCalculatorWithSolvation(VoronoiVolumeCalculatorBase):
 
 
 class Volume1(VolumeCalculatorBase):
-    
+
     """
     Method to use 1 as volume values for the group calculations.
     """
@@ -1133,8 +1124,8 @@ class Volume1(VolumeCalculatorBase):
         VolumeCalculatorBase.__init__(self, volume_setting)
 
     def prepare(self):
-        self.__volumes  = numpy.ones( [len(self._setting.target_atoms)] )
-        self.__gvolumes = numpy.ones( [len(self._setting.gname_iatoms_pairs)] )
+        self.__volumes  = np.ones( [len(self._setting.target_atoms)] )
+        self.__gvolumes = np.ones( [len(self._setting.gname_iatoms_pairs)] )
 
     def cal_volume(self, crd=[]):
         """Return 1.0."""
@@ -1146,7 +1137,7 @@ class Volume1(VolumeCalculatorBase):
         return self.__gvolumes
 
 class OuterVolumeFetcher(VolumeCalculatorBase):
-    
+
     """
     A class that performed the method to get outer volume trajectory file
     already calculeted by any methods.
@@ -1173,7 +1164,7 @@ class OuterVolumeFetcher(VolumeCalculatorBase):
 
     def cal_volume(self, crd):
         try:
-            ids, names, vols = self.parse_atomic().next()
+            ids, names, vols = next(self.parse_atomic())
 
             if len(vols) != self.__ntar:
                 msg = 'The number of target atoms: {}, but in volume trajectory: {}'
@@ -1189,7 +1180,7 @@ class OuterVolumeFetcher(VolumeCalculatorBase):
             return VolumeCalculatorBase.get_gvolume(self, crd)
         else:
             try:
-                ids, names, vols = self.parse_group().next()
+                ids, names, vols = next(self.parse_group())
 
                 if len(vols) != self.__ngrp:
                     msg = 'The number of groups: {}, but in volume trajectory: {}'
@@ -1224,9 +1215,9 @@ class OuterVolumeFetcher(VolumeCalculatorBase):
 
     def parse_snapshop(self, lines, other=False):
         natom = len(lines)
-        ids = numpy.zeros((natom),dtype=numpy.int)
-        names = numpy.zeros((natom), dtype=numpy.str)
-        vols = numpy.zeros((natom))
+        ids = np.zeros((natom),dtype=np.int)
+        names = np.zeros((natom), dtype=np.str)
+        vols = np.zeros((natom))
 
         for iatm, line in enumerate(lines):
             id, name, vol = line.split()

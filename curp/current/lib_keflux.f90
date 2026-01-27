@@ -1,12 +1,8 @@
-!
-! CURP 1.2: Yamato, 2021. Minor modification for intra-residue heat flux.
-!
-
 module utils
     implicit none
 
     integer :: iatm, jatm, igrp, jgrp, itar, jtar
-    real(8) :: f_ij(3), v_ij(3), d_ij(3), hflux_ij(3)
+    real(8) :: f_ij(3), v_i(3), keflux_ij
 
 end module
 
@@ -21,8 +17,8 @@ module bonded
     integer, allocatable :: bonded_pairs(:, :)  ! (ntbf, 2)
     logical :: flag_atom, flag_group
 
-    real(8), allocatable :: hflux_atm(:, :, :) ! (ntarget, ntarget, 3)
-    real(8), allocatable :: hflux_grp(:, :, :) ! (ngroup, ngroup, 3)
+    real(8), allocatable :: flux_atm(:, :) ! (ntarget, ntarget)
+    real(8), allocatable :: flux_grp(:, :) ! (ngroup, ngroup)
 
 contains
 
@@ -54,6 +50,7 @@ contains
         if (allocated(bonded_pairs)) deallocate(bonded_pairs)
         allocate(bonded_pairs(ntbf,2))
         bonded_pairs = bonded_pairs_in
+
         ! iatm_to_itar(iatm) => itar
         if (allocated(iatm_to_itar)) deallocate(iatm_to_itar)
         allocate(iatm_to_itar(natom))
@@ -70,23 +67,24 @@ contains
         allocate(iatm_to_igrp(natom))
         iatm_to_igrp = iatm_to_igrp_in
 
-        ! for hflux
+        ! for keflux
         ! atomic
         if ( flag_atom ) then
-            if (allocated(hflux_atm)) deallocate(hflux_atm)
-            allocate(hflux_atm(ntarget, ntarget, 3))
-            hflux_atm = 0.0d0
+            if (allocated(flux_atm)) deallocate(flux_atm)
+            allocate(flux_atm(ntarget, ntarget))
+            flux_atm = 0.0d0
         end if 
 
         ! group
         if ( flag_group ) then
-            if (allocated(hflux_grp)) deallocate(hflux_grp)
-            allocate(hflux_grp(ngroup, ngroup, 3))
-            hflux_grp = 0.0d0
+            if (allocated(flux_grp)) deallocate(flux_grp)
+            allocate(flux_grp(ngroup, ngroup))
+            flux_grp = 0.0d0
         end if
+
     end subroutine
 
-    subroutine cal_bonded(vel, tbforces, displacement, natom_in, ntbf)
+    subroutine cal_bonded(vel, tbforces, natom_in, ntbf)
 
         use utils
         implicit none
@@ -94,29 +92,29 @@ contains
         integer, intent(in) :: ntbf
         real(8), intent(in) :: vel(natom_in, 3)
         real(8), intent(in) :: tbforces(ntbf, 3)
-        real(8), intent(in) :: displacement(ntbf, 3)
 
         integer :: itbf
-        if ( flag_atom  ) hflux_atm = 0.0d0
-        if ( flag_group ) hflux_grp = 0.0d0
+
+        if ( flag_atom  ) flux_atm = 0.0d0
+        if ( flag_group ) flux_grp = 0.0d0
+
         do itbf=1, ntbf
             iatm = bonded_pairs(itbf, 1)
             jatm = bonded_pairs(itbf, 2)
+
             itar = iatm_to_itar(iatm)
             jtar = iatm_to_itar(jatm)
             if ( (itar==0) .or. (jtar==0) ) cycle
 
             f_ij(:) = tbforces(itbf, :)
+            v_i(:) = vel(iatm,:)
 
-            v_ij(:) = 0.5 * ( vel(iatm,:) + vel(jatm,:) )
-            d_ij(:) = displacement(itbf, :)
-
-            hflux_ij(:) = d_ij(:) * (f_ij(1)*v_ij(1) + f_ij(2)*v_ij(2) + f_ij(3)*v_ij(3))
+            keflux_ij = f_ij(1)*v_i(1) + f_ij(2)*v_i(2) + f_ij(3)*v_i(3)
 
             ! sum up for ith target and jth target
             if ( flag_atom ) then
-                hflux_atm(itar, jtar, :) = hflux_atm(itar, jtar, :) + hflux_ij(:)
-                hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) + hflux_ij(:)
+                flux_atm(itar, jtar) = flux_atm(itar, jtar) + keflux_ij
+                flux_atm(jtar, itar) = flux_atm(jtar, itar) - keflux_ij
             end if
 
             ! if group calculation is not applied
@@ -128,21 +126,15 @@ contains
                 jgrp = iatm_to_igrp(jatm)
 
                 if ( (igrp == 0) .or. (jgrp==0) ) cycle
-
-                if ( igrp /= jgrp ) then
-                    hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                    hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
-                else 
-                    hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                end if
-
+                flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + keflux_ij
+                flux_grp(jgrp, igrp) = flux_grp(jgrp, igrp) - keflux_ij
             end if
 
         end do
 
     end subroutine
 
-end module
+end module 
 
 
 module nonbonded
@@ -155,8 +147,8 @@ module nonbonded
     integer, allocatable :: iatm_to_igrp(:) ! (natom)
     logical :: flag_atom, flag_group
 
-    real(8), allocatable :: hflux_atm(:, :, :) ! (ntarget, ntarget)
-    real(8), allocatable :: hflux_grp(:, :, :) ! (ngroup, ngroup)
+    real(8), allocatable :: flux_atm(:, :) ! (ntarget, ntarget)
+    real(8), allocatable :: flux_grp(:, :) ! (ngroup, ngroup)
 
     real(8), allocatable :: vel(:, :) ! (natom, 3)
 
@@ -207,16 +199,16 @@ contains
         ! for current
         ! atomic
         if ( flag_atom ) then
-            if (allocated(hflux_atm)) deallocate(hflux_atm)
-            allocate(hflux_atm(ntarget, ntarget, 3))
-            hflux_atm = 0.0d0
+            if (allocated(flux_atm)) deallocate(flux_atm)
+            allocate(flux_atm(ntarget, ntarget))
+            flux_atm = 0.0d0
         end if 
 
         ! group inner
         if ( flag_group ) then
-            if (allocated(hflux_grp)) deallocate(hflux_grp)
-            allocate(hflux_grp(ngroup, ngroup, 3))
-            hflux_grp = 0.0d0
+            if (allocated(flux_grp)) deallocate(flux_grp)
+            allocate(flux_grp(ngroup, ngroup))
+            flux_grp = 0.0d0
         end if
 
     end subroutine
@@ -231,13 +223,13 @@ contains
         ! velocity
         vel = vel_in
 
-        ! initialize hflux values
-        if ( flag_atom )  hflux_atm = 0.0d0
-        if ( flag_group ) hflux_grp = 0.0d0
+        ! initialize flux values
+        if ( flag_atom )  flux_atm = 0.0d0
+        if ( flag_group ) flux_grp = 0.0d0
 
     end subroutine
 
-    subroutine cal_nonbonded(tbforces, interact_table, displacement, ninteract, ntbf)
+    subroutine cal_nonbonded(tbforces, interact_table, ninteract, ntbf)
 
         use utils
         implicit none
@@ -245,8 +237,7 @@ contains
         integer, intent(in) :: interact_table(ninteract, 3)
         ! (iatm_beg:iatm_end, iatm_beg:natom, :)
         real(8), intent(in) :: tbforces(ntbf, 3)
-        real(8), intent(in) :: displacement(ntbf, 3)
-        integer :: jatm_beg, jatm_end, jint, itbf
+        integer :: iatm_beg, iatm_end, jatm_beg, jatm_end, jint, itbf
 
         itbf = 0
         do jint=1, ninteract
@@ -263,15 +254,14 @@ contains
                 if ( jtar == 0 ) cycle
 
                 f_ij(:) = tbforces(itbf, :)
-                v_ij(:) = 0.5 * ( vel(iatm,:) + vel(jatm,:) )
-                d_ij(:) = displacement(itbf, :)
+                v_i(:) = vel(iatm,:)
 
-                hflux_ij = d_ij * (f_ij(1)*v_ij(1) + f_ij(2)*v_ij(2) + f_ij(3)*v_ij(3))
+                keflux_ij = f_ij(1)*v_i(1) + f_ij(2)*v_i(2) + f_ij(3)*v_i(3)
 
                 ! sum up for ith target and jth target
                 if ( flag_atom ) then
-                    hflux_atm(itar, jtar, :) = hflux_atm(itar, jtar, :) + hflux_ij(:)
-                    hflux_atm(jtar, itar, :) = hflux_atm(jtar, itar, :) + hflux_ij(:)
+                    flux_atm(itar, jtar) = flux_atm(itar, jtar) + keflux_ij
+                    flux_atm(jtar, itar) = flux_atm(jtar, itar) - keflux_ij
                 end if
 
                 ! if group calculation is not applied
@@ -283,14 +273,8 @@ contains
                     jgrp = iatm_to_igrp(jatm)
 
                     if ( (igrp == 0) .or. (jgrp==0) ) cycle
-
-                    if ( igrp /= jgrp ) then
-                        hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                        hflux_grp(jgrp, igrp, :) = hflux_grp(jgrp, igrp, :) + hflux_ij(:)
-                    else 
-                        hflux_grp(igrp, jgrp, :) = hflux_grp(igrp, jgrp, :) + hflux_ij(:)
-                    end if
-
+                    flux_grp(igrp, jgrp) = flux_grp(igrp, jgrp) + keflux_ij
+                    flux_grp(jgrp, igrp) = flux_grp(jgrp, igrp) - keflux_ij
                 end if
 
             end do
@@ -300,4 +284,5 @@ contains
     end subroutine
 
 end module
+
 

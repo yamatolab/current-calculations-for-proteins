@@ -1,8 +1,6 @@
 #! /usr/bin/env python
 from __future__ import print_function
-import os, sys
 import itertools as it
-import numpy
 import pygraphviz as pgv
 
 # FONTNAME = 'Helvetica Neue Bold'
@@ -189,14 +187,18 @@ class EnergyConductivityParser:
 
         lines = ( line for line in fd if line.startswith('#') )
 
-        for line, iline in it.izip(lines, range(100)):
+        try:
+            enum_line = it.izip(lines, range(100))
+        except AttributeError:
+            enum_line = zip(lines, range(100))
+        except:
+            raise
 
+        for line, iline in enum_line:
             if line.startswith('#title'):
                 title = line.replace('#title', '')
-
             elif line.startswith('#label'):
                 labels = line.split()[1:]
-
             else:
                 pass
 
@@ -253,8 +255,8 @@ class CommunicationChart:
             PRO='P', SER='S', THR='T', TRP='W', TYR='Y', VAL='V', HIP='H',
             HID='H', HIE='H', ASH='D', GLH='E', CYX='C',
             )
-    __res_3_to_1_main = {k+'M':v+'M' for k,v in _res_3_to_1.items()}
-    __res_3_to_1_side = {k+'S':v+'S' for k,v in _res_3_to_1.items()}
+    __res_3_to_1_main = {k+'M':v+'M' for k,v in list(_res_3_to_1.items())}
+    __res_3_to_1_side = {k+'S':v+'S' for k,v in list(_res_3_to_1.items())}
 
     _res_3_to_1.update(__res_3_to_1_main)
     _res_3_to_1.update(__res_3_to_1_side)
@@ -341,7 +343,7 @@ class CommunicationChart:
         """Apply givin attrifutes to nodes."""
 
         nnames_all = [ nname for nname in self.__graph.nodes() ]
-        rids_all = self._rid_to_nname.keys()
+        rids_all = list(self._rid_to_nname.keys())
 
         for rid in rids:
             if rid not in rids_all: continue
@@ -809,14 +811,14 @@ class ClusterParser(IniParser):
         else:
             pass
 
-        return range(igrp_beg, igrp_end+1)
+        return list(range(igrp_beg, igrp_end+1))
 
 # define NodeStyleParser from ClusterParser
 NodeStyleParser = ClusterParser
 
 
 if __name__ == '__main__':
-    from console import arg_graph_een, exec_command
+    from .console import arg_graph_een, exec_command
 
     parser = arg_graph_een()
     exec_command(parser)

@@ -30,7 +30,7 @@ class CurpException(Exception):
         return mes
 
     def log(self):
-        print self.__data
+        print(self.__data)
 
     def logerror(self):
         logfile = open(self.log_fn, 'a')

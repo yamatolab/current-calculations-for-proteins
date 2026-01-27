@@ -2,12 +2,12 @@
 from __future__ import print_function
 import sys
 import math
-import numpy
+import numpy as np
 
 
 class TensorParser:
 
-    section_end = '%end'
+    section_end = b'%end'
 
     def __init__(self, filename):
         self.__filename = filename
@@ -23,21 +23,27 @@ class TensorParser:
 
         gen_lines = self.gen_optimized_lines(file)
         sections = []
+        # print("DEBUG: gen_lines ", gen_lines)
         for line in gen_lines:
+            # print("DEBUQ: line ", line)
             if not self.is_section(line): continue
 
             flagname = line[1:].strip()
-            if flagname == 'data':
-                lines = list( self.gen_section_lines(gen_lines) )
+            # print("DEBUG: flagname ", flagname)
+            if flagname == b'data':
+                lines = list(self.gen_section_lines(gen_lines))
+                # print("DEBUG: ", lines)
                 names, tensor = self.parse_data(lines)
-                tensors.append( tensor )
+                tensors.append(tensor)
 
         return names, tensors
 
     def parse_data(self, lines):
         names = []
         tensors = []
+        # print("DEBUG: ", lines)
         for line in lines:
+            # print("DEBUG: ", line)
             cols = line.split()
             names.append(cols[0])
             v = [float(c) for c in cols[1:]]
@@ -46,9 +52,9 @@ class TensorParser:
                        [v[6], v[7], v[8]] ]
             tensors.append(tensor)
 
-        # array = numpy.array(v)
+        # array = np.array(v)
         # print(array.reshape(3,3,len(array)))
-        return names, numpy.array(tensors)
+        return names, np.array(tensors)
 
     def gen_optimized_lines(self, file):
         # first flag
@@ -70,13 +76,13 @@ class TensorParser:
     def split_content(self, gen):
         lines = []
         for line in gen:
-            if line.startswith('%'):
+            if line.startswith(b'%'):
                 pass
 
     def is_section(self, line):
         if line == self.section_end:
             return False
-        elif line.startswith('%'):
+        elif line.startswith(b'%'):
             return True
         else:
             return False
@@ -108,7 +114,7 @@ def cal_average_with_scalar(values_traj):
     natom = len(values_traj[0])
     ntraj = len(values_traj)
 
-    sum_values = numpy.zeros([natom])
+    sum_values = np.zeros([natom])
     for values in values_traj:
         sum_values += values
 
@@ -116,7 +122,7 @@ def cal_average_with_scalar(values_traj):
 
 def cal_average_with_tensor(tensors):
 
-    sum_tensor = numpy.zeros(tensors[0].shape)
+    sum_tensor = np.zeros(tensors[0].shape)
 
     for t in tensors:
         sum_tensor += t
@@ -126,7 +132,7 @@ def cal_average_with_tensor(tensors):
 
 def cal_rmsf(tensors, average_tensor):
 
-    rmsf_tensor = numpy.zeros(average_tensor.shape)
+    rmsf_tensor = np.zeros(average_tensor.shape)
 
     for t in tensors:
         diff_ten = average_tensor - t
@@ -134,13 +140,13 @@ def cal_rmsf(tensors, average_tensor):
 
     nten = len(tensors)
 
-    return numpy.sqrt(rmsf_tensor) / nten
+    return np.sqrt(rmsf_tensor) / nten
 
 def gen_eigens(tensors):
     """Generate the calculated eigen values for each tonsor."""
     # diagonal
     for tensor in tensors:
-        eigen, vec = numpy.linalg.eig(tensor)
+        eigen, vec = np.linalg.eig(tensor)
         try:
             val = math.sqrt(eigen[0]**2 + eigen[1]**2 + eigen[2]**2)
             yield val
@@ -150,7 +156,7 @@ def gen_eigens(tensors):
 def get_average_after_eigen(tensors_traj):
     evalues = []
     for itraj, tensors in enumerate(tensors_traj):
-        evalues.append( numpy.array(list(gen_eigens(tensors))) )
+        evalues.append( np.array(list(gen_eigens(tensors))) )
     return cal_average_with_scalar(evalues)
 
 def get_eigen_after_average(tensors_traj):
@@ -198,7 +204,7 @@ def simplify_tensor(filename, fns, labels='', snapshot=False, **kwds):
         for name, tot_evalue in zip(names, avetot_evalues):
 
             # name
-            atom_id, aname = name.split('_')
+            atom_id, aname = name.decode().split('_')
 
             # output one line data
             print(fmt.format(id=int(atom_id), name=aname, total=tot_evalue))
@@ -216,12 +222,12 @@ def simplify_tensor(filename, fns, labels='', snapshot=False, **kwds):
             name, tot, others = tuples[0], tuples[1], tuples[2:]
 
             # name
-            atom_id, aname = name.split('_')
+            atom_id, aname = name.decode().split('_')
 
             # each evalue
             if not isinstance(others, tuple):
                 others = [others]
-            label_to_evalues = dict(zip(labels, others))
+            label_to_evalues = dict(list(zip(labels, others)))
 
             # output one line data
             print(fmt.format(id=atom_id, name=aname,

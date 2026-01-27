@@ -1,12 +1,9 @@
 from __future__ import print_function
 
-import os, sys
+import os
+import sys
 from collections import OrderedDict as odict
 
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
-import exception
 
 class IniParser:
 
@@ -43,13 +40,13 @@ class IniParser:
 
     def get_filename(self):
         return self.__filename
-        
+
     # def __setitem__(self, secname, value):
     #     pass
 
     def get_secnames(self):
         """Get the section names in order."""
-        return self.__secname_to_vals.keys()
+        return list(self.__secname_to_vals.keys())
 
     def get_vals(self, secname):
         """Get values for section name."""

@@ -1,25 +1,24 @@
 """
-Gives functions to create topology and trajectory variables from files indicated in .cfg configuration file.
+Gives functions to create topology and trajectory variables from files
+indicated in .cfg configuration file.
 """
 
-import os, sys
-import traceback
+import imp
 import itertools as it
-topdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if topdir not in sys.path:
-    sys.path.insert(0, topdir)
+import os
+import traceback
 
-################################################################################
-from exception import CurpException
+from curp.exception import CurpException
+from . import trans_rot
+
+
 class FormatNotFoundError(CurpException): pass
 class ParserNotFoundError(CurpException): pass
 class ConverterNotFoundError(CurpException): pass
 class NotFoundDictionary(CurpException): pass
 class StepNumberInvalidError(CurpException): pass
 
-import trans_rot
 
-################################################################################
 def get_tplprm(file_format, format_setting, potential_type, use_atomtype):
 
     # decide topology parser
@@ -82,7 +81,7 @@ def gen_phase_trajectory(file_format, fmt_section,
         VelocityParser   = get_velocity_parser(vel_format)
 
         crd_pbcs = gen_trajectory(fmt_section.coordinate_file,
-                CoordinateParser, natom, logger, use_pbc, 
+                CoordinateParser, natom, logger, use_pbc,
                 first_last_interval=first_last_interval)
 
         vel_pbcs = gen_trajectory(fmt_section.velocity_file,
@@ -99,7 +98,15 @@ def gen_phase_trajectory(file_format, fmt_section,
     yield
 
     istep = 0
-    for (crd_data, vel_data) in it.izip(crd_pbcs, vel_pbcs):
+
+    try:
+        crd_vel_gen = it.izip(crd_pbcs, vel_pbcs)
+    except AttributeError:
+        crd_vel_gen = zip(crd_pbcs, vel_pbcs)
+    except:
+        raise
+
+    for (crd_data, vel_data) in crd_vel_gen:
         cstep_crd, crd, pbc_crd = crd_data
         cstep_vel, vel, pbc_vel = vel_data
         istep += 1
@@ -274,7 +281,6 @@ def get_parser(format, parser_name):
     return Parser
 
 
-import imp
 def load_module(modname,  basepath):
     f,n,d = imp.find_module(modname, [basepath])
     return imp.load_module(modname, f, n, d)

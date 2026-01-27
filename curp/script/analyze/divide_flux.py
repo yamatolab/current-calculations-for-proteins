@@ -2,7 +2,7 @@
 from __future__ import print_function
 import os
 import math
-import numpy
+import numpy as np
 
 
 import gzip
@@ -13,9 +13,9 @@ class FluxParser:
     def __init__(self, filename):
 
         if filename.endswith('.gz'):
-            file = gzip.open(filename, 'rb')
+            file = gzip.open(filename, 'r')
         else:
-            file = open(filename, 'rb')
+            file = open(filename, 'r')
 
         self.__file = file
 
@@ -24,13 +24,13 @@ class FluxParser:
 
     def __next__(self):
         try:
-            lines = self.__gen_snapshot_lines.next()
+            lines = next(self.__gen_snapshot_lines)
             don_acc_pairs, fluxes = self.parse_onesnap(lines)
         except StopIteration:
             self.__file.close()
             raise
 
-        return don_acc_pairs, numpy.array(fluxes)
+        return don_acc_pairs, np.array(fluxes)
 
     next = __next__ # for python 2.x
 
@@ -77,7 +77,7 @@ class FluxParser:
             values = [float(c) for c in cols[2:]]
             fluxes.append(values)
 
-        return don_acc_pairs, numpy.array(fluxes)
+        return don_acc_pairs, np.array(fluxes)
 
     def gen_optimized_lines(self, file):
         # first flag
@@ -133,21 +133,21 @@ class FluxWriter:
 
     def write_header(self, don_name, acc_name, labels, natom=None):
         file = self.open(self.__filepath)
-        file.write('#REMARK  Flux Data for Acceptor <== Donor\n')
-        file.write('#REMARK  Acceptor = {}'.format(acc_name) + '\n')
-        file.write('#REMARK  Donor    = {}'.format(don_name) + '\n')
+        file.write(b'#REMARK  Flux Data for Acceptor <== Donor\n')
+        file.write(bytes('#REMARK  Acceptor = {}'.format(acc_name) + '\n', 'utf-8'))
+        file.write(bytes('#REMARK  Donor    = {}'.format(don_name) + '\n', 'utf-8'))
         # file.write('#REMARK  The number of atoms = {}'.format(natom) +
         info_line = '#REMARK time'
         for l in labels:
             info_line += ' {label:>16}'.format(label=l)
 
-        file.write(info_line + '\n')
+        file.write(bytes(info_line + '\n', 'utf-8'))
         file.close()
 
     def write(self, istep, flux):
         time = istep * self.__dt
         file = self.open(self.__filepath)
-        file.write( self.__fmt.format(time, *flux) + '\n')
+        file.write(bytes(self.__fmt.format(time, *flux) + '\n', 'utf-8'))
         file.close()
 
     def open(self, filepath):
@@ -195,15 +195,15 @@ def write_summary(filename, don_acc_pairs, labels, fluxes, wtype):
     # write header
     with open_(filepath, 'wb') as file:
         print('writing the {} data into {}'.format(wtype, filepath))
-        file.write('%title {} flux\n'.format(wtype))
+        file.write(bytes('%title {} flux\n'.format(wtype), 'utf-8'))
         label_line = '% {:>10} {:>12}'.format('donor', 'acceptor')
         for l in labels:
             label_line += ' {:>12s}'.format(l)
-        file.write(label_line + '\n')
+        file.write(bytes(label_line + '\n', 'utf-8'))
 
         fmt = '{:>12} {:>12}' + ' {:12.7f}'*len(labels) + '\n'
         for (don, acc), flux in zip(don_acc_pairs, fluxes):
-            file.write( fmt.format(don, acc, *flux))
+            file.write(bytes(fmt.format(don, acc, *flux), 'utf-8'))
 
 def write_avg_rms(filename, don_acc_pairs, avg_fluxes, rms_fluxes):
 
@@ -215,14 +215,14 @@ def write_avg_rms(filename, don_acc_pairs, avg_fluxes, rms_fluxes):
     # write header
     with open_(filepath, 'wb') as file:
         print('writing the {} data into {}'.format('avg+rms', filepath))
-        file.write('%title average and rms of the flux\n')
+        file.write(b'%title average and rms of the flux\n')
         label_line = '% {:>10} {:>12} {:>12} {:>12}'.format(
                 'donor', 'acceptor', 'average', 'rms')
-        file.write(label_line + '\n')
+        file.write(bytes(label_line + '\n', 'utf-8'))
 
         fmt = '{:>12} {:>12} {:12.7f} {:12.7f}' + '\n'
         for (don, acc), avg, rms in zip(don_acc_pairs, avg_fluxes, rms_fluxes):
-            file.write( fmt.format(don, acc, avg[0], rms[0]))
+            file.write(bytes(fmt.format(don, acc, avg[0], rms[0]), 'utf-8'))
 
 
 def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
@@ -236,13 +236,13 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
     # prepare
     one_parser = FluxParser(flux_fns[0])
     all_labels = one_parser.parse_header()
-    don_acc_pairs, fluxes = one_parser.next()
+    don_acc_pairs, fluxes = next(one_parser)
     one_parser.close()
     nvalue = len(all_labels)
 
     # parse colums list. For example, '1,4,6,9'
     if column_line == '':
-        icolums = range(1, nvalue+1)
+        icolums = list(range(1, nvalue+1))
     else:
         icolums = [ int(col) for col in column_line.split(',') ]
 
@@ -258,8 +258,8 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
     # create average fluxes and fluxes**2 array
     npair = len(don_acc_pairs)
     print('npair', npair)
-    fluxes_sum  = numpy.zeros([npair, nvalue], numpy.float)
-    fluxes2_sum = numpy.zeros([npair, nvalue], numpy.float)
+    fluxes_sum  = np.zeros([npair, nvalue], np.float)
+    fluxes2_sum = np.zeros([npair, nvalue], np.float)
 
     # get target pairs
     target_pairs = list(gen_target_pairs(donor_line, acceptor_line,
@@ -293,7 +293,7 @@ def divide_flux(flux_fns, output_fn, dt=1.0, donor_line='', acceptor_line='',
 
     avg_fluxes = fluxes_sum / float(istep+1)
     avg_fluxes2 = fluxes2_sum / float(istep+1)
-    rms_fluxes = numpy.sqrt( avg_fluxes2 - avg_fluxes**2 )
+    rms_fluxes = np.sqrt( avg_fluxes2 - avg_fluxes**2 )
 
     if len(labels) == 1:
         write_avg_rms(output_fn, target_pairs, avg_fluxes, rms_fluxes)

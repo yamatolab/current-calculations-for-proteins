@@ -13,13 +13,13 @@ from __future__ import print_function
 
 WARN = 1
 INFO = 2
-DEBUG = 4 
+DEBUG = 4
 
 print_function = print
 log_level = INFO
 
-title_fmt = '\n' + 80*'-' + '\n' + 8*' '+ '{}' '\n' + 80*'-' + '\n'
-title_fmt_info = '\n' + 80*'-' + '\n' + '{:>6}. {}' '\n' + 80*'-' + '\n'
+title_fmt = "\n" + 80*"-" + "\n" + 8*" "+ "{}" "\n" + 80*"-" + "\n"
+title_fmt_info = "\n" + 80*"-" + "\n" + "{:>6}. {}" "\n" + 80*"-" + "\n"
 count = 0
 log_frequency = 1
 cur_istep = 0
@@ -29,7 +29,7 @@ def set_log_frequency(frequency):
     log_frequency = frequency
 
 def set_curstep(istp):
-    global cur_istep 
+    global cur_istep
     cur_istep = istp
 
 def print(*args, **kwds):

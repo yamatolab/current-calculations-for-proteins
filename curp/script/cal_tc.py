@@ -11,7 +11,7 @@ from __future__ import print_function
 import sys
 import time
 
-import numpy
+import numpy as np
 
 import netCDF4 as netcdf
 
@@ -24,7 +24,7 @@ from curp.script.lib_hfacf import cal_hfacf
 
 
 def get_stringnames(string_array):
-    return [''.join(string.tolist()).strip() for string in string_array]
+    return [b''.join(string.tolist()).strip() for string in string_array]
 
 
 def get_dt(flux_fn):
@@ -99,7 +99,7 @@ class TransportCoefficientCalculator:
                  nsample, coef, len_decomps, d_t=0.01):
         
         first, last, interval = frame_range
-        self.nframe_acf = (last - first)/interval + 1
+        self.nframe_acf = int((last - first)/interval + 1)
         self.__first = first
         self.__last = last
         self.__interval = interval
@@ -123,14 +123,14 @@ class TransportCoefficientCalculator:
                                       self.__shift, False, self.__nsample, 3)
 
         pico_in_femto = 1000
-        transport_coefficient = self.__coef * self.d_t * pico_in_femto * numpy.trapz(acf,axis=0)
+        transport_coefficient = self.__coef * self.d_t * pico_in_femto * np.trapz(acf,axis=0)
 
         print('    cal time: {:.3f} [s] for {} {}'
               .format(time.time()-t_0, donor, acceptor))
         return donor, acceptor, transport_coefficient, acf
 
     def get_times(self):
-        return numpy.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
+        return np.arange(0.0, self.nframe_acf*self.d_t, self.d_t)
 
     def print(self, *args, **kwds):
         print(*args, **kwds)
@@ -149,10 +149,14 @@ class TCWriter:
 
     def write(self, don, acc, tc):
         fd = self.open()
-        fd.write('{:>12} {:>12} '.format(don, acc))
+        # don: bytes
+        # acc: bytes
+        don = don.decode("utf-8")
+        acc = acc.decode("utf-8")
+        fd.write('{:>12} {:>12} '.format(don, acc).encode("utf-8"))
         for i in range(self.__decomps):
-            fd.write('{} '.format(numpy.nan_to_num(tc)[i]))
-        fd.write('{}'.format('\n'))
+            fd.write('{} '.format(np.nan_to_num(tc)[i]).encode("utf-8"))
+        fd.write('{}'.format('\n').encode("utf-8"))
         fd.flush()
 
     def open(self):
@@ -195,8 +199,8 @@ class WriterBase:
         ncfile.application = 'the CURP program'
         ncfile.program = 'cal-tc'
         ncfile.programVersion = str(0.7)
-        ncfile.Convetsions = 'CURP'
-        ncfile.ConvetsionVersion = str(self.version)
+        ncfile.Conversions = 'CURP'
+        ncfile.ConversionVersion = str(self.version)
 
         # create dimensions
         ncfile.createDimension('npair', None)
@@ -234,8 +238,8 @@ class WriterBase:
         nc_acc = ncfile.variables['acceptors']
         nc_data = ncfile.variables[self.name]
 
-        nc_don[ipair_1] = list(don.ljust(20))
-        nc_acc[ipair_1] = list(acc.ljust(20))
+        nc_don[ipair_1] = list(don.decode().ljust(20))
+        nc_acc[ipair_1] = list(acc.decode().ljust(20))
         nc_data[ipair_1] = data.ravel()
 
         self.close()
@@ -249,8 +253,8 @@ class WriterBase:
         nc_data = ncfile.variables[self.name]
 
         for ipair_1, (don, acc) in enumerate(zip(donors, acceptors)):
-            nc_don[ipair_1] = list(don.ljust(20))
-            nc_acc[ipair_1] = list(acc.ljust(20))
+            nc_don[ipair_1] = list(don.decode().ljust(20))
+            nc_acc[ipair_1] = list(acc.decode().ljust(20))
 
         nc_data[:] = datas
 
@@ -341,7 +345,7 @@ def cal_tc(flux_fn, tc_fn="", acf_fn="", acf_fmt="netcdf",
 
 
 if __name__ == '__main__':
-    from console import arg_cal_tc, exec_command
+    from curp.script.console import arg_cal_tc, exec_command
 
     parser = arg_cal_tc()
     exec_command(parser)
