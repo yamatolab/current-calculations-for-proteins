@@ -58,7 +58,6 @@ def gen_fluxdata(flux_fn):
         print("Warning: Unexpected error occured in loading flux data. Process continue.")
         no_axes = True
 
-    icom = 0
     donors = get_stringnames(ncfile.variables['donors'][:])
     acceptors = get_stringnames(ncfile.variables['acceptors'][:])
     npair = len(ncfile.dimensions['npair'])
@@ -77,7 +76,7 @@ def gen_fluxdata(flux_fn):
         ncfile = netcdf.Dataset(flux_fn, mode='r')
 
         if no_axes:
-            flux = ncfile.variables['flux'][:, ipair_1, icom]
+            flux = ncfile.variables['flux'][:, ipair_1, :]
         else:
             flux = ncfile.variables['flux'][:, :, ipair_1, :]
 
