@@ -134,7 +134,7 @@ class CurrentCalculator(CalculatorBase):
 
         # bonded
         if (self.get_setting().curp.potential == 'amber19SB'):
-            btypes = self.get_topology().get_decomp_list('bonded+_19')
+            btypes = self.get_topology().get_decomp_list('bonded19SB+')
         else:
             btypes = self.get_topology().get_decomp_list('bonded+')
 
