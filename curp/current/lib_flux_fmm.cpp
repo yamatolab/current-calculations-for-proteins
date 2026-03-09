@@ -94,7 +94,7 @@ private:
     int count_near = 0;     // counter of atom-atom pairs
     int count_far  = 0;     // counter of atom-cell pairs
 
-    bool output_to_err_file = true; // if true, output process time for each function to error file
+    bool output_to_err_file = false; // if true, output process time for each function to error file
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
