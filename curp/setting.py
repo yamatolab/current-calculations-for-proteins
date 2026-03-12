@@ -324,6 +324,10 @@ class Setting(SettingBase):
         log_frequency = Int(default=10, require=False,
             desc='Log informations will be written out every given steps.'),
 
+        table_length = Int(default=0, require=False,
+            desc=('The length of interaction table. '
+                  'If this value is not given, the length is determined by '
+                  '"10 * (the max atom number in the system)".')),
         # restraint
     )
 
