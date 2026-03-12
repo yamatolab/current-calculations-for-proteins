@@ -88,8 +88,6 @@ class GroupPair:
 
         # make interaction table
         new_table, ntable = lib_gpair.get_nonbonded_table(base_table, self.__len_table)
-        print("nonbonded interaction table size: {}".format(ntable))
-        print("len_table: {}".format(self.__len_table))
         new_table = new_table[:ntable].tolist()
         return it.InteractionTable(base_table=new_table)
 
