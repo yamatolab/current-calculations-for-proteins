@@ -62,15 +62,16 @@ contains
     end function
 
     subroutine get_nonbonded_table(nonbonded_table, ntable_new, &
-                            & base_table, ntable)
+                            & base_table, len_table, ntable)
 
         implicit none
 
+        integer, intent(in) :: len_table
         integer, intent(in) :: ntable
         integer, intent(in) :: base_table(ntable, 3)
 
         integer, intent(out) :: ntable_new
-        integer, intent(out) :: nonbonded_table(ntable*10, 3)
+        integer, intent(out) :: nonbonded_table(len_table, 3)
 
         integer :: itab, jatm_beg, jatm_end, jatm_beg_new, jatm_end_new
         integer :: itab_new
@@ -90,6 +91,11 @@ contains
 
                     if (jatm_beg_new > 0) then
                         itab_new = itab_new + 1
+                        if (itab_new > len_table) then
+                            write(0,*) "Error: The length of the interaction table is too short (len_table=", len_table, ")."
+                            error stop "Please set **table_length** in your config file to a larger value."
+                            exit
+                        end if
                         nonbonded_table(itab_new, 1) = iatm
                         nonbonded_table(itab_new, 2) = jatm_beg_new
                         nonbonded_table(itab_new, 3) = jatm_end_new
@@ -108,6 +114,12 @@ contains
 
             if (jatm_beg_new > 0) then
                 itab_new = itab_new + 1
+                if (itab_new > len_table) then
+                    write(0,*) "Error: The length of the interaction table is too short (len_table=", len_table, ")."
+                    error stop "Please set **table_length** in your config file to a larger value."
+                    exit
+                end if
+
                 nonbonded_table(itab_new, 1) = iatm
                 nonbonded_table(itab_new, 2) = jatm_beg_new
                 nonbonded_table(itab_new, 3) = jatm_end_new

@@ -44,11 +44,15 @@ class GroupPairParser(ini.IniParser):
 
 class GroupPair:
 
-    def __init__(self, gpair_table, gname_to_iatoms, natom):
+    def __init__(self, gpair_table, gname_to_iatoms, len_table, natom):
         self.__gpair_table = gpair_table
         self.__gname_to_iatoms = gname_to_iatoms
         self.__natom = natom
         self.__table_with_gpair = None
+        if len_table == 0:
+            self.__len_table = 10 * natom
+        else:
+            self.__len_table = len_table
 
     def gen_inttable(self):
         """Generate the object equivalent with interaction table
@@ -83,7 +87,7 @@ class GroupPair:
         lib_gpair.setup(table_with_gpair, self.__natom)
 
         # make interaction table
-        new_table, ntable = lib_gpair.get_nonbonded_table(base_table)
+        new_table, ntable = lib_gpair.get_nonbonded_table(base_table, self.__len_table)
         new_table = new_table[:ntable].tolist()
         return it.InteractionTable(base_table=new_table)
 

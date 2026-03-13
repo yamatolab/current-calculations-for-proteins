@@ -276,7 +276,8 @@ def init_current(setting, par):
 
     # Make table for group pair.
     if gpair_table:
-        gp = group_pair.GroupPair(gpair_table, gname_iatoms_pairs, natom)
+        gp = group_pair.GroupPair(gpair_table, gname_iatoms_pairs, 
+                                  setting.curp.table_length_limit, natom)
         inttable = gp.get_inttable_with_gpair(inttable)
 
     interact_table = gen_tables(inttable)
