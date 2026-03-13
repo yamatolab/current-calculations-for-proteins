@@ -1,5 +1,5 @@
 ======================================
-CURP: CURrent calculations in Proteins
+CURP: CURrent calculations for Proteins
 ======================================
 
 .. image:: https://pepy.tech/badge/curp
