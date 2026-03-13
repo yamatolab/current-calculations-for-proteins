@@ -325,7 +325,7 @@ class Setting(SettingBase):
             desc='Log informations will be written out every given steps.'),
 
         table_length_limit = Int(default=0, require=False,
-            desc=('The memory limit of nonbonded interaction table length. '
+            desc=('The limit of nonbonded interaction table length. '
                   'If this value is not given, the length is determined by '
                   '"10 * (the max atom number in the system)".')),
         # restraint
