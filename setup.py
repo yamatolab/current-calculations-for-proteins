@@ -79,7 +79,7 @@ def ext_modules(config, _dir):
                                      [cpp_file],
                                      include_dirs=include_dirs,
                                      libraries=["mpi", "netcdf"],
-                                     extra_compile_args=["-O3", "-Wall","-std=c++11", "-fopenmp",
+                                     extra_compile_args=["-O3", "-Wall","-std=c++14", "-fopenmp",
                                                          "-fPIC", pybind11_inc],
                                      extra_link_args=["-lgomp"],
                                     )
