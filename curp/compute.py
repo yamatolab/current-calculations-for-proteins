@@ -224,8 +224,12 @@ def init_current(setting, par):
     t_0 = time.time()
     topology, natom = do_topology(setting)
     # Get the list that decomposes all potential.
-    if setting.curp.coulomb_method == "fmm":
+    if setting.curp.coulomb_method == "fmm" and setting.curp.potential != 'amber19SB':
         decomp_list = topology.get_decomp_list('fmm')
+    elif setting.curp.coulomb_method != "fmm" and setting.curp.potential == 'amber19SB':
+        decomp_list = topology.get_decomp_list(dtype='all_19SB')
+    elif setting.curp.coulomb_method == "fmm" and setting.curp.potential == 'amber19SB':
+        decomp_list = topology.get_decomp_list(dtype='fmm_19SB')
     else:
         decomp_list = topology.get_decomp_list()
     label_time_pairs += [("Topology", time.time()-t_0)]

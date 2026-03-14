@@ -9,11 +9,14 @@ module common_vars
     integer :: iatm_beg, iatm_end, jatm_beg, jatm_end
     real(8), dimension(3) :: r_ij, r_ji, r_ik, r_ki, r_il, r_li
     real(8), dimension(3) :: r_jk, r_kj, r_jl, r_lj, r_kl, r_lk
+    real(8), dimension(3) :: r_im, r_mi, r_jm, r_mj, r_km, r_mk, r_lm, r_ml
     real(8) :: l_ij, l_ji, l_ik, l_ki, l_il, l_li
     real(8) :: l_jk, l_kj, l_jl, l_lj, l_kl, l_lk
+    real(8) :: l_im, l_mi, l_jm, l_mj, l_km, l_mk, l_lm, l_ml
     real(8) :: l_ij_inv
-    real(8), dimension(3) :: f_ij, f_ik, f_il, f_jk, f_jl, f_kl
-    real(8), dimension(3) :: f_i, f_j, f_k, f_l
+    real(8), dimension(3) :: f_ij, f_ik, f_il, f_im, f_jk, f_jl, f_jm
+    real(8), dimension(3) :: f_kl, f_km, f_lm
+    real(8), dimension(3) :: f_i, f_j, f_k, f_l, f_m
     real(8) :: ene
 
 contains
@@ -1099,6 +1102,488 @@ contains
 end module
 
 !###############################################################################
+module cmap
+    implicit none
+    ! input
+    integer, allocatable :: five_atoms(:, :)            ! (ncmap, 5)
+    integer, allocatable :: cmap_types(:)               ! (ncmap)
+    integer, allocatable :: cmap_grid_step_size(:)      ! (ntypes)
+    integer, allocatable :: cmap_resolutions(:)          ! (ntypes)
+    real(8), allocatable :: cmap_grid_energy(:, :, :)   ! (ntypes, ngrid_x(24), ngrid_y(24))
+    real(8), allocatable :: cmap_grid_dphi(:, :, :)     ! (ntypes, ngrid_x(24), ngrid_y(24))
+    real(8), allocatable :: cmap_grid_dpsi(:, :, :)     ! (ntypes, ngrid_x(24), ngrid_y(24))
+    real(8), allocatable :: cmap_grid_dphi_dpsi(:, :, :)! (ntypes, ngrid_x(24), ngrid_y(24))
+    integer, allocatable :: icmp_to_itbf(:, :)         ! (ncmap, 10)
+    ! output
+    real(8) :: energy
+    real(8), allocatable :: forces(:, :)            ! (natom, 3)
+    real(8), allocatable :: tbforces(:, :)          ! (ntfb, 3)
+    real(8), allocatable :: displacement(:, :)      ! (ntbf, 3)
+
+    ! main values
+    integer :: icmap, ncmap
+    integer :: iatm, jatm, katm, latm, matm, cmap_type
+    integer :: itbf_ij, itbf_ik, itbf_il, itbf_im
+    integer :: itbf_jk, itbf_jl, itbf_jm, itbf_kl, itbf_km, itbf_lm
+    real(8), dimension(2,2) :: E_grid, dphi_grid, dpsi_grid, dphidpsi_grid
+    real(8), dimension(4)   :: E_grid_1D, dphi_grid_1D, dpsi_grid_1D, dphidpsi_grid_1D
+
+contains
+    subroutine calculate()
+
+        use total
+        use common_vars
+        implicit none
+        real(8) :: phi, psi, cos_phi, cos_psi, sin_phi, sin_psi
+        real(8) :: dphi_dra(4,3), dpsi_dra(4,3)
+        real(8) :: judge_phi, judge_psi
+        real(8) :: dx, dy
+        real(8) :: E, dE_dphi, dE_dpsi
+        real(8) :: f_phi, f_psi, f_a(3), f_b(3), f_c(3), f_d(3)
+        real(8) :: d_1, d_2, d_3, d_4, d_phi, d_psi
+        real(8), dimension(4,4) :: aij
+        real(8), parameter :: RAD_TO_DEG = 180.d0 / PI
+        integer :: gridstart = -180
+        integer :: x, y, grid_step_size
+        integer :: i, j
+
+        ! Energy:
+        ! E_cmap = 
+
+        ! initialization
+        ncmap = size(cmap_types)
+        energy = 0.0d0
+        forces = 0.0d0
+        tbforces = 0.0d0
+        displacement = 0.0d0
+
+
+        do icmap=1, ncmap
+
+            ! get the index of bonded_pairs of each two atoms
+            itbf_ij = icmp_to_itbf(icmap, 1)
+            itbf_ik = icmp_to_itbf(icmap, 2)
+            itbf_il = icmp_to_itbf(icmap, 3)
+            itbf_im = icmp_to_itbf(icmap, 4)
+            itbf_jk = icmp_to_itbf(icmap, 5)
+            itbf_jl = icmp_to_itbf(icmap, 6)
+            itbf_jm = icmp_to_itbf(icmap, 7)
+            itbf_kl = icmp_to_itbf(icmap, 8)
+            itbf_km = icmp_to_itbf(icmap, 9)
+            itbf_lm = icmp_to_itbf(icmap, 10)
+
+            ! get the five atoms for this cmap
+            iatm = five_atoms(icmap, 1)
+            jatm = five_atoms(icmap, 2)
+            katm = five_atoms(icmap, 3)
+            latm = five_atoms(icmap, 4)
+            matm = five_atoms(icmap, 5)
+
+            ! get cmap type
+            cmap_type = cmap_types(icmap)
+
+            ! get the vectors and lengths between atoms
+            r_ij = crd(iatm, :) - crd(jatm, :)
+            r_ik = crd(iatm, :) - crd(katm, :)
+            r_il = crd(iatm, :) - crd(latm, :)
+            r_im = crd(iatm, :) - crd(matm, :)
+            r_jk = crd(jatm, :) - crd(katm, :)
+            r_jl = crd(jatm, :) - crd(latm, :)
+            r_jm = crd(jatm, :) - crd(matm, :)
+            r_kl = crd(katm, :) - crd(latm, :)
+            r_km = crd(katm, :) - crd(matm, :)
+            r_lm = crd(latm, :) - crd(matm, :)
+            l_ij = sqrt( dot_product(r_ij, r_ij) )
+            l_ik = sqrt( dot_product(r_ik, r_ik) )
+            l_il = sqrt( dot_product(r_il, r_il) )
+            l_im = sqrt( dot_product(r_im, r_im) )
+            l_jk = sqrt( dot_product(r_jk, r_jk) )
+            l_jl = sqrt( dot_product(r_jl, r_jl) )
+            l_jm = sqrt( dot_product(r_jm, r_jm) )
+            l_kl = sqrt( dot_product(r_kl, r_kl) )
+            l_km = sqrt( dot_product(r_km, r_km) )
+            l_lm = sqrt( dot_product(r_lm, r_lm) )
+
+            call cal_torsion(r_ij, -r_jk, -r_kl, dphi_dra, cos_phi, sin_phi)
+            call cal_torsion(r_jk, -r_kl, -r_lm, dpsi_dra, cos_psi, sin_psi)
+
+            phi = sign(acos(cos_phi), sin_phi) * RAD_TO_DEG
+            psi = sign(acos(cos_psi), sin_psi) * RAD_TO_DEG
+
+            ! determine grid indices for phi and psi
+            grid_step_size = cmap_grid_step_size(cmap_type)
+            x = int( (phi - gridstart) / grid_step_size ) + 1
+            y = int( (psi - gridstart) / grid_step_size ) + 1
+
+            ! compute fractional positions inside grid cell
+            dx = modulo(phi - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
+
+            dy = modulo(psi - dble(gridstart), dble(grid_step_size)) / dble(grid_step_size)
+
+            ! get the 2x2 grid energies and derivatives
+            do i=1,2
+                do j=1,2
+                    E_grid(i,j)        = cmap_grid_energy(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
+                    dphi_grid(i,j)     = cmap_grid_dphi(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
+                    dpsi_grid(i,j)     = cmap_grid_dpsi(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
+                    dphidpsi_grid(i,j) = cmap_grid_dphi_dpsi(cmap_type, calculate_cmap_grid(cmap_type, y+i-1), &
+                                                            calculate_cmap_grid (cmap_type, x+j-1) )
+                end do
+            end do
+
+            ! get 1d energy and derivatives
+            E_grid_1D(1) = E_grid(1,1)
+            E_grid_1D(2) = E_grid(1,2)
+            E_grid_1D(3) = E_grid(2,2)
+            E_grid_1D(4) = E_grid(2,1)
+
+            dphi_grid_1D(1) = dphi_grid(1,1)
+            dphi_grid_1D(2) = dphi_grid(1,2)
+            dphi_grid_1D(3) = dphi_grid(2,2)
+            dphi_grid_1D(4) = dphi_grid(2,1)
+
+            dpsi_grid_1D(1) = dpsi_grid(1,1)
+            dpsi_grid_1D(2) = dpsi_grid(1,2)
+            dpsi_grid_1D(3) = dpsi_grid(2,2)
+            dpsi_grid_1D(4) = dpsi_grid(2,1)
+
+            dphidpsi_grid_1D(1) = dphidpsi_grid(1,1)
+            dphidpsi_grid_1D(2) = dphidpsi_grid(1,2)
+            dphidpsi_grid_1D(3) = dphidpsi_grid(2,2)
+            dphidpsi_grid_1D(4) = dphidpsi_grid(2,1)
+
+            ! calculate cmap coefficients
+            call cmap_coeff(grid_step_size, &
+                            E_grid_1D, &
+                            dphi_grid_1D, &
+                            dpsi_grid_1D, &
+                            dphidpsi_grid_1D, &
+                            aij)
+
+            ! calculate energy and derivatives
+            call calculate_energy(dx, dy, aij, E, dE_dphi, dE_dpsi)
+            energy = energy + E
+
+
+            ! calculate forces
+            f_phi = dE_dphi/ sin_phi
+            f_psi = dE_dpsi/ sin_psi
+
+            d_1   = sqrt( 4.0d0 * l_jk**2 * l_ij**2 - ( l_ij**2 + l_jk**2 - l_ik**2 )**2 )
+            d_2   = sqrt( 4.0d0 * l_jk**2 * l_kl**2 - ( l_kl**2 + l_jk**2 - l_jl**2 )**2 )
+            d_3   = sqrt( 4.0d0 * l_kl**2 * l_lm**2 - ( l_lm**2 + l_kl**2 - l_km**2 )**2 )
+
+            d_phi = 2.0d0 * l_jk**2 * ( l_jl**2 + l_ik**2 - l_il**2 - l_jk**2 ) &
+                     + ( l_ij**2 + l_jk**2 - l_ik**2 ) * ( l_jk**2 + l_kl**2 - l_jl**2 )
+            d_psi = 2.0d0 * l_kl**2 * ( l_km**2 + l_jl**2 - l_jm**2 - l_kl**2 ) &
+                     + ( l_jk**2 + l_kl**2 - l_jl**2 ) * ( l_kl**2 + l_lm**2 - l_km**2 )
+            f_phi = f_phi * 4.0d0 / (d_1 * d_2) * RAD_TO_DEG / grid_step_size
+            f_psi = f_psi * 4.0d0 / (d_2 * d_3) * RAD_TO_DEG / grid_step_size
+            
+            dphi_dra(:,:) = dphi_dra(:, :) * RAD_TO_DEG / grid_step_size
+            dpsi_dra(:,:) = dpsi_dra(:, :) * RAD_TO_DEG / grid_step_size
+
+
+            f_i =   -dE_dphi * dphi_dra(1, :)
+            f_j =   -dE_dphi * dphi_dra(2, :) &
+                  -  dE_dpsi * dpsi_dra(1, :)
+            f_k =   -dE_dphi * dphi_dra(3, :) &
+                  -  dE_dpsi * dpsi_dra(2, :)
+            f_l =   -dE_dphi * dphi_dra(4, :) &
+                  -  dE_dpsi * dpsi_dra(3, :)
+            f_m =   -dE_dpsi * dpsi_dra(4, :)
+
+
+            forces(iatm, :) = forces(iatm, :) + f_i(:)
+            forces(jatm, :) = forces(jatm, :) + f_j(:)
+            forces(katm, :) = forces(katm, :) + f_k(:)
+            forces(latm, :) = forces(latm, :) + f_l(:)
+            forces(matm, :) = forces(matm, :) + f_m(:)
+
+            ! calculate two-body-force
+            f_ij = f_phi * ( dot_product(-r_jk, r_kl)  &
+                            - (d_phi / d_1**2) * dot_product(-r_jk, -r_ik) ) * r_ij
+
+            f_ik = f_phi * ( dot_product(-r_jk, -r_jl)  &
+                            - (d_phi / d_1**2) * dot_product(r_ij, -r_jk) ) * r_ik
+
+            f_il = -f_phi * dot_product(-r_jk, -r_jk) * r_il
+
+            f_im = 0.0d0
+
+            f_jk = ( f_phi * ( ( dot_product(-r_jl, r_ij) &
+                                + dot_product(r_ik, -r_kl) - dot_product(-r_jk, -r_jk) ) &
+                              - (d_phi / d_1**2) * dot_product(r_ij, r_ik) &
+                              - (d_phi / d_2**2) * dot_product(-r_kl, -r_jl) ) &
+                    + f_psi * ( dot_product(-r_kl, r_lm)  &
+                               - ( d_psi / d_2**2 ) * dot_product(-r_kl, -r_jl) ) ) * r_jk
+            
+            f_jl = ( f_phi * ( dot_product(r_jk, r_ik)  &
+                              - ( d_phi / d_2**2 ) * dot_product(-r_kl, r_jk) ) &
+                    + f_psi * ( dot_product(-r_kl, -r_km)  &
+                            - ( d_psi / d_2**2 ) * dot_product(r_jk, -r_kl) ) ) * r_jl
+
+            f_jm = -f_psi * dot_product(-r_kl, -r_kl) * r_jm
+
+            f_kl = ( f_phi * ( dot_product(r_ij, -r_jk) &
+                              - ( d_phi / d_2**2 ) * dot_product(-r_jk, -r_jl) ) &
+                    + f_psi * ( ( dot_product(-r_km, r_jk) &
+                                + dot_product(r_jl, -r_lm) - dot_product(-r_kl, -r_kl) ) &
+                               - (d_psi / d_2**2) * dot_product(r_jk, r_jl) &
+                               - (d_psi / d_3**2) * dot_product(-r_lm, -r_km) ) ) * r_kl
+
+            f_km = f_psi * ( dot_product(r_kl, r_jl)  &
+                             - ( d_psi / d_3**2 ) * dot_product(-r_lm, r_kl) ) * r_km
+
+            f_lm = f_psi * ( dot_product(r_jk, -r_kl) &
+                             - ( d_psi / d_3**2 ) * dot_product(-r_kl, -r_km) ) * r_lm
+
+            if (itbf_ij > 0) then
+                tbforces(itbf_ij, :) = tbforces(itbf_ij, :) + f_ij(:)
+                displacement(itbf_ij, :) = r_ij(:)
+            else
+                tbforces(-itbf_ij, :) = tbforces(-itbf_ij, :) - f_ij(:)
+                displacement(-itbf_ij, :) = -r_ij(:)
+            end if
+
+            if (itbf_ik > 0) then
+                tbforces(itbf_ik, :) = tbforces(itbf_ik, :) + f_ik(:)
+                displacement(itbf_ik, :) = r_ik(:)
+            else
+                tbforces(-itbf_ik, :) = tbforces(-itbf_ik, :) - f_ik(:)
+                displacement(-itbf_ik, :) = -r_ik(:)
+            end if
+
+            if (itbf_il > 0) then
+                tbforces(itbf_il, :) = tbforces(itbf_il, :) + f_il(:)
+                displacement(itbf_il, :) = r_il(:)
+            else
+                tbforces(-itbf_il, :) = tbforces(-itbf_il, :) - f_il(:)
+                displacement(-itbf_il, :) = -r_il(:)
+            end if
+
+            if (itbf_im > 0) then
+                tbforces(itbf_im,:) = tbforces(itbf_im,:) + f_im(:)
+                displacement(itbf_im,:) = r_im(:)
+            else
+                tbforces(-itbf_im,:) = tbforces(-itbf_im,:) - f_im(:)
+                displacement(-itbf_im,:) = -r_im(:)
+            end if
+            
+            if (itbf_jk > 0) then
+                tbforces(itbf_jk,:) = tbforces(itbf_jk,:) + f_jk(:)
+                displacement(itbf_jk,:) = r_jk(:)
+            else
+                tbforces(-itbf_jk,:) = tbforces(-itbf_jk,:) - f_jk(:)
+                displacement(-itbf_jk,:) = -r_jk(:)
+            end if
+
+            if (itbf_jl > 0) then
+                tbforces(itbf_jl,:) = tbforces(itbf_jl,:) + f_jl(:)
+                displacement(itbf_jl,:) = r_jl(:)
+            else
+                tbforces(-itbf_jl,:) = tbforces(-itbf_jl,:) - f_jl(:)
+                displacement(-itbf_jl,:) = -r_jl(:)
+            end if
+
+            if (itbf_jm > 0) then
+                tbforces(itbf_jm,:) = tbforces(itbf_jm,:) + f_jm(:)
+                displacement(itbf_jm,:) = r_jm(:)
+            else
+                tbforces(-itbf_jm,:) = tbforces(-itbf_jm,:) - f_jm(:)
+                displacement(-itbf_jm,:) = -r_jm(:)
+            end if
+
+            if (itbf_kl > 0) then
+                tbforces(itbf_kl,:) = tbforces(itbf_kl,:) + f_kl(:)
+                displacement(itbf_kl,:) = r_kl(:)
+            else
+                tbforces(-itbf_kl,:) = tbforces(-itbf_kl,:) - f_kl(:)
+                displacement(-itbf_kl,:) = -r_kl(:)
+            end if
+
+            if (itbf_km > 0) then
+                tbforces(itbf_km,:) = tbforces(itbf_km,:) + f_km(:)
+                displacement(itbf_km,:) = r_km(:)
+            else
+                tbforces(-itbf_km,:) = tbforces(-itbf_km,:) - f_km(:)
+                displacement(-itbf_km,:) = -r_km(:)
+            end if
+
+            if (itbf_lm > 0) then
+                tbforces(itbf_lm,:) = tbforces(itbf_lm,:) + f_lm(:)
+                displacement(itbf_lm,:) = r_lm(:)
+            else
+                tbforces(-itbf_lm,:) = tbforces(-itbf_lm,:) - f_lm(:)
+                displacement(-itbf_lm,:) = -r_lm(:)
+            end if
+
+            if (check) then
+                print*, 'TB_CHECK: i, j, k, l, m=', iatm, jatm, katm, latm, matm
+                print*, 'TB_CHECK: f_i vs. f_ij + f_ik + f_il + f_im =>', &
+                    & check_tbforce(f_i, f_ij+f_ik+f_il+f_im)
+                print*, 'TB_CHECK:',f_i
+                print*, 'TB_CHECK:',f_ij + f_ik + f_il + f_im
+                print*, 'TB_CHECK: f_j vs. f_ji + f_jk + f_jl + f_jm =>', & 
+                    & check_tbforce(f_j, -f_ij+f_jk+f_jl+f_jm)
+                print*, 'TB_CHECK:',f_j
+                print*, 'TB_CHECK:',- f_ij + f_jk + f_jl + f_jm
+                print*, 'TB_CHECK: f_k vs. f_ki + f_kj + f_kl + f_km =>', &
+                    & check_tbforce(f_k, -f_ik-f_jk+f_kl+f_km)
+                print*, 'TB_CHECK:',f_k
+                print*, 'TB_CHECK:',- f_ik - f_jk + f_kl + f_km
+                print*, 'TB_CHECK: f_l vs. f_li + f_lj + f_lk + f_lm =>', &
+                    & check_tbforce(f_l, -f_il-f_jl-f_kl+f_lm)
+                print*, 'TB_CHECK:',f_l
+                print*, 'TB_CHECK:',- f_il - f_jl - f_kl + f_lm
+                print*, 'TB_CHECK: f_m vs. f_mi + f_mj + f_mk + f_ml =>', &
+                    & check_tbforce(f_m, -f_im-f_jm-f_km-f_lm)
+                print*, 'TB_CHECK:',f_m
+                print*, 'TB_CHECK:',- f_im - f_jm - f_km - f_lm
+
+            end if
+
+
+        end do
+
+    end subroutine
+
+    subroutine cal_torsion(rab, rcb, rdc, dphi_dra, cos_phi, sin_phi)
+
+        use common_vars
+
+        implicit none
+        real(8), intent(in)  :: rab(3), rcb(3), rdc(3)
+        real(8), intent(out) :: dphi_dra(4,3), cos_phi, sin_phi
+
+        real(8) :: e_cb(3), up_ab(3), up_dc(3), up_abc(3), up_bcd(3)
+        real(8) :: tmp(3)
+        real(8) :: d_cb, d_pab, d_pdc, dot_ab_cb, dot_dc_cb
+        real(8) :: cosphi_pre, sinphi_pre
+
+        d_cb = 1.0d0 / sqrt(dot_product(rcb, rcb))
+        e_cb(1:3) = rcb(1:3) * d_cb
+        
+        dot_ab_cb = dot_product(rab, e_cb)
+        up_ab(1:3) = rab(1:3) - dot_ab_cb * e_cb(1:3)
+        d_pab = 1.0d0 / sqrt(dot_product(up_ab, up_ab))
+        up_ab(1:3) = up_ab(1:3) * d_pab
+
+        dot_dc_cb = dot_product(rdc, e_cb)
+        up_dc(1:3) = rdc(1:3) - dot_dc_cb * e_cb(1:3)
+        d_pdc = 1.0d0 / sqrt(dot_product(up_dc, up_dc))
+        up_dc(1:3) = up_dc(1:3) * d_pdc
+
+        cosphi_pre = dot_product(up_ab, up_dc)
+        cos_phi = min( max(cosphi_pre, -1.d0), 1.d0 )
+
+        sinphi_pre = dot_product( outer_prod(up_ab, up_dc), e_cb)
+        sin_phi = min( max(sinphi_pre, -1.d0), 1.d0 )
+
+        up_abc = outer_prod(up_ab, e_cb)
+        up_bcd = outer_prod(e_cb, up_dc)
+
+        dphi_dra(1,1:3) = up_abc(1:3) * d_pab
+        dphi_dra(4,1:3) = up_bcd(1:3) * d_pdc
+
+        tmp(1:3) = (dot_ab_cb * d_cb) * dphi_dra(1,1:3) + &
+                   (dot_dc_cb * d_cb) * dphi_dra(4,1:3)
+        dphi_dra(2,1:3) = tmp(1:3) - dphi_dra(1,1:3)
+        dphi_dra(3,1:3) = -tmp(1:3) - dphi_dra(4,1:3)
+
+    end subroutine cal_torsion
+
+    integer function calculate_cmap_grid(cmap_type, value)
+        implicit none
+        integer, intent(in) :: cmap_type
+        integer, intent(in) :: value
+        integer :: resolution
+
+        resolution = cmap_resolutions(cmap_type)
+        calculate_cmap_grid = modulo(value-1, resolution) + 1
+
+    end function calculate_cmap_grid
+
+    subroutine cmap_coeff(grid_step_size, &
+                          E_grid_1D, &
+                          dphi_grid_1D, &
+                          dpsi_grid_1D, &
+                          dphidpsi_grid_1D, &
+                          aij)
+        implicit none
+        integer, intent(in) :: grid_step_size
+        !inputs
+        real(8), dimension(4), intent(in)    :: E_grid_1D
+        real(8), dimension(4), intent(in)    :: dphi_grid_1D
+        real(8), dimension(4), intent(in)    :: dpsi_grid_1D
+        real(8), dimension(4), intent(in)    :: dphidpsi_grid_1D
+        !outputs
+        real(8), dimension(4,4), intent(out) :: aij
+
+        real(8), dimension(16)    :: a_tmp
+        real(8), dimension(16)    :: E_grids
+        real(8), dimension(16,16) :: weight
+        integer, dimension(1:2)   :: shapes = (/4, 4/)
+        integer, dimension(1:2)   :: orders = (/2, 1/)
+
+        weight(1 ,1:16) =   (/ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0/)
+        weight(2 ,1:16) =   (/ 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0/)
+        weight(3 ,1:16) =   (/-3, 0, 0, 3, 0, 0, 0, 0,-2, 0, 0,-1, 0, 0, 0, 0/)
+        weight(4 ,1:16) =   (/ 2, 0, 0,-2, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0/)
+        weight(5 ,1:16) =   (/ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0/)
+        weight(6 ,1:16) =   (/ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0/)
+        weight(7 ,1:16) =   (/ 0, 0, 0, 0,-3, 0, 0, 3, 0, 0, 0, 0,-2, 0, 0,-1/)
+        weight(8 ,1:16) =   (/ 0, 0, 0, 0, 2, 0, 0,-2, 0, 0, 0, 0, 1, 0, 0, 1/)
+        weight(9 ,1:16) =   (/-3, 3, 0, 0,-2,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0/)
+        weight(10,1:16) =   (/ 0, 0, 0, 0, 0, 0, 0, 0,-3, 3, 0, 0,-2,-1, 0, 0/)
+        weight(11,1:16) =   (/ 9,-9, 9,-9, 6, 3,-3,-6, 6,-6,-3, 3, 4, 2, 1, 2/)
+        weight(12,1:16) =   (/-6, 6,-6, 6,-4,-2, 2, 4,-3, 3, 3,-3,-2,-1,-1,-2/)
+        weight(13,1:16) =   (/ 2,-2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0/)
+        weight(14,1:16) =   (/ 0, 0, 0, 0, 0, 0, 0, 0, 2,-2, 0, 0, 1, 1, 0, 0/)
+        weight(15,1:16) =   (/-6, 6,-6, 6,-3,-3, 3, 3,-4, 4, 2,-2,-2,-2,-1,-1/)
+        weight(16,1:16) =   (/ 4,-4, 4,-4, 2, 2,-2,-2, 2,-2,-2, 2, 1, 1, 1, 1/)
+
+        E_grids(1:4) = E_grid_1D(1:4)
+        E_grids(5:8) = dphi_grid_1D(1:4) * grid_step_size
+        E_grids(9:12) = dpsi_grid_1D(1:4) * grid_step_size
+        E_grids(13:16) = dphidpsi_grid_1D(1:4) * grid_step_size * grid_step_size
+
+        a_tmp = matmul(weight, E_grids)
+        aij = reshape(a_tmp, shapes, order=orders)
+
+    end subroutine cmap_coeff
+
+    subroutine calculate_energy(dx, dy, aij, E, dE_dphi, dE_dpsi)
+        implicit none
+        real(8), intent(in)                 :: dx, dy
+        real(8), dimension(4,4), intent(in) :: aij
+        real(8), intent(out) :: E
+        real(8), intent(out) :: dE_dphi
+        real(8), intent(out) :: dE_dpsi
+
+        integer :: i
+        E       = 0.0d0
+        dE_dphi  = 0.0d0
+        dE_dpsi  = 0.0d0
+
+        do i=4, 1, -1
+
+            E       = E*dx + ( ( aij(i,4)*dy + aij(i,3) )*dy + aij(i,2) )* dy + aij(i,1)
+            dE_dphi = dE_dphi*dy + ( 3.0d0*aij(4,i)*dx + 2.0d0*aij(3,i) )*dx + aij(2,i)
+            dE_dpsi = dE_dpsi*dx + ( 3.0d0*aij(i,4)*dy + 2.0d0*aij(i,3) )*dy + aij(i,2)
+
+        end do
+
+    end subroutine calculate_energy
+
+
+end module cmap
+
+
+!###############################################################################
 module coulomb
     implicit none
     ! input
@@ -1553,6 +2038,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     use angle     , ang_forces => forces, ang_tbforces => tbforces, ang_disp => displacement
     use torsion   , tor_forces => forces, tor_tbforces => tbforces, tor_disp => displacement
     use improper  , imp_forces => forces, imp_tbforces => tbforces, imp_disp => displacement
+    use cmap      , cmp_forces => forces, cmp_tbforces => tbforces, cmp_disp => displacement
     use coulomb   , cou_forces => forces, cou_tbforces => tbforces, cou_disp => displacement
     use vdw       , vdw_forces => forces, vdw_tbforces => tbforces, vdw_disp => displacement
     use coulomb14 , cou14_forces => forces, cou14_tbforces => tbforces, cou14_disp => displacement
@@ -1579,6 +2065,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(ang_forces(t_natom, 3))
     allocate(tor_forces(t_natom, 3))
     allocate(imp_forces(t_natom, 3))
+    allocate(cmp_forces(t_natom, 3))
     allocate(cou_forces(t_natom, 3))
     allocate(vdw_forces(t_natom, 3))
     allocate(cou14_forces(t_natom, 3))
@@ -1589,6 +2076,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(ang_tbforces(t_nbonded, 3))
     allocate(tor_tbforces(t_nbonded, 3))
     allocate(imp_tbforces(t_nbonded, 3))
+    allocate(cmp_tbforces(t_nbonded, 3))
     allocate(cou14_tbforces(t_nbonded, 3))
     allocate(vdw14_tbforces(t_nbonded, 3))
 
@@ -1601,6 +2089,7 @@ subroutine setup(natom, check, bonded_pairs, nbonded, max_tbf)
     allocate(ang_disp(t_nbonded, 3))
     allocate(tor_disp(t_nbonded, 3))
     allocate(imp_disp(t_nbonded, 3))
+    allocate(cmp_disp(t_nbonded, 3))
     allocate(cou_disp(max_tbf, 3))
     allocate(vdw_disp(max_tbf, 3))
     allocate(cou14_disp(t_nbonded, 3))

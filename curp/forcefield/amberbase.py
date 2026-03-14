@@ -67,6 +67,41 @@ class ConverterPrintable(object):
                 itor_1+1, iatoms, ntor, freq, force, phase ))
         logger.info()
 
+    def print_cmap(self):
+        logger.info('*** cmap ***')
+        info = self.get_cmap_info()
+        cmap_lists = list(zip(info['five_atoms'], info['cmap_types']))
+        for icmap_1, (iatoms, cmap_type) in enumerate(cmap_lists):
+            logger.info('{:>5d} {} {:>5d}'.format(
+                icmap_1+1, iatoms, cmap_type ))
+        logger.info()
+        cmap_parms = list(zip(
+            info['cmap_resolutions'],
+            info['cmap_grid_step_size'],
+        ))
+        for itype_1, (resolution, grid_step_size) in enumerate(cmap_parms):
+            logger.info('cmap type {:>5d} : resolution {:>5d} , grid step size {:>5d}'.format(
+                itype_1+1, resolution, grid_step_size ))
+        logger.info()
+        cmap_parms = list(zip(
+            info['cmap_grid_energy'],
+            info['cmap_grid_dphi'],
+            info['cmap_grid_dpsi'],
+            info['cmap_grid_dphi_dpsi'],
+        ))
+        ntype, itype, jtype = info['cmap_grid_energy'].shape
+        for n_type in range(ntype):
+            for i_type in range(itype):
+                for j_type in range(jtype):
+                    logger.info('cmap type {:>5d} , grid point ({:>5d}, {:>5d}) : energy {:12.7f} , dphi {:12.7f} , dpsi {:12.7f} , dphi_dpsi {:12.7f}'.format(
+                        n_type+1, i_type+1, j_type+1,
+                        info['cmap_grid_energy'][n_type, i_type, j_type],
+                        info['cmap_grid_dphi'][n_type, i_type, j_type],
+                        info['cmap_grid_dpsi'][n_type, i_type, j_type],
+                        info['cmap_grid_dphi_dpsi'][n_type, i_type, j_type],
+                    ))
+        logger.info()
+
     def print_coulomb(self):
         logger.info('*** coulomb ***')
         info = self.get_coulomb_info()
@@ -158,27 +193,35 @@ class TableMaker:
         self._iang_to_ipair = None
         self._itor_to_ipair = None
         self._iimp_to_ipair = None
+        self._icmp_to_ipair = None
         self._i14_to_ipair  = None
 
         self._target_atoms = None
 
     def get_decomp_list(self, dtype='all'):
         """Get the list that decompose all potential.
-        dtype = 'all'(defaulst), 'bonded', 'bonded14', 'bonded+',
-        'nonbonded, 'nonbonded+(nonbonded+14), 'nonbonded_only' or 'fmm'
+        dtype = 'all'(default), 'bonded', 'bonded14', 'bonded+',
+        'nonbonded, 'nonbonded+(nonbonded+14), 'nonbonded_only',
+        'all_19SB', 'fmm' or 'fmm_19SB'
         """
         bonded_list    = ['bond', 'angle', 'torsion', 'improper']
+        bonded_list_19SB = ['bond', 'angle', 'torsion', 'improper', 'cmap']
         bonded14_list  = ['coulomb14', 'vdw14']
         nonbonded_list = ['coulomb', 'vdw']
         nonbonded_only = ['nonbonded']
 
-        if   dtype == 'bonded':     return bonded_list
-        elif dtype == 'bonded14':   return bonded14_list
-        elif dtype == 'bonded+':    return bonded_list + bonded14_list
-        elif dtype == 'nonbonded':  return nonbonded_list
-        elif dtype == 'nonbonded+': return nonbonded_list + bonded14_list
+        if   dtype == 'bonded':         return bonded_list
+        elif dtype == 'bonded19SB':     return bonded_list_19SB
+        elif dtype == 'bonded14':       return bonded14_list
+        elif dtype == 'bonded+':        return bonded_list + bonded14_list
+        elif dtype == 'bonded19SB+':    return bonded_list_19SB + bonded14_list
+        elif dtype == 'nonbonded':      return nonbonded_list
+        elif dtype == 'nonbonded+':     return nonbonded_list + bonded14_list
         elif dtype == 'nonbonded_only': return nonbonded_only
-        elif dtype == 'fmm':        return bonded_list + bonded14_list + nonbonded_only
+        elif dtype == 'all_19SB':       return bonded_list_19SB + bonded14_list + nonbonded_list
+        elif dtype == 'fmm':            return bonded_list + bonded14_list + nonbonded_only
+        elif dtype == 'fmm_19SB':       return bonded_list_19SB + bonded14_list + nonbonded_only
+        
         else: return bonded_list + bonded14_list + nonbonded_list
 
     def get_bonded_pairs(self):
@@ -200,6 +243,7 @@ class TableMaker:
     def get_iang_to_ipair(self): return self._get_idx_to_ipair('ang')
     def get_itor_to_ipair(self): return self._get_idx_to_ipair('tor')
     def get_iimp_to_ipair(self): return self._get_idx_to_ipair('imp')
+    def get_icmp_to_ipair(self): return self._get_idx_to_ipair('cmp')
 
     def get_i14_to_ipair(self):
         return self._get_idx_to_ipair('14')
@@ -232,6 +276,12 @@ class TableMaker:
         iatoms_list = info['four_atoms']
         self._apply_target_to_bondtype(iatoms_list, info)
 
+        # cmap
+        if (self.get_cmap_info()):
+            info = self.get_cmap_info()
+            iatoms_list = info['five_atoms']
+            self._apply_target_to_bondtype(iatoms_list, info)
+
         # bonded14
         self._make_bonded14_pairs()
 
@@ -263,6 +313,9 @@ class TableMaker:
         three_atoms = self.get_angle_info()['three_atoms']
         four_atoms  = self.get_torsion_info()['four_atoms']
         four_atoms_imp  = self.get_improper_info()['four_atoms']
+        five_atoms = None
+        if ( self.get_cmap_info() is not None ):
+            five_atoms  = self.get_cmap_info()['five_atoms']
 
         import itertools as it
         pairs = [] # ipair => (iatm, jatm)
@@ -284,8 +337,19 @@ class TableMaker:
             for pair in it.combinations(four, 2):
                 iatm, jatm = min(pair), max(pair)
                 pairs += [(iatm, jatm)]
+       
+        if (five_atoms is not None):
+            pairs_15 = []
+            for five in five_atoms:
+                for pair in it.combinations(five, 2):
+                    iatm, jatm = min(pair), max(pair)
+                    pairs += [(iatm, jatm)]
+                
+                # extract 1-5 pair
+                i_atm, m_atm = min(five[0], five[4]), max(five[0], five[4])
+                pairs_15 += [(i_atm, m_atm)]
 
-        return sorted(set(pairs), key=lambda x:x[0])
+        return sorted((set(pairs)-set(pairs_15)), key=lambda x:x[0])
 
     def _make_bonded14_pairs(self):
 
@@ -412,6 +476,19 @@ class TableMaker:
 
         return iimp_to_ipair
 
+    def _make_icmp_to_ipair(self):
+        iatoms_list  = self.get_cmap_info()['five_atoms']
+        bonded_pairs = self.get_bonded_pairs()
+
+        # make table
+        if len(iatoms_list) == 0:
+            icmp_to_ipair = np.array([[]])
+        else:
+            icmp_to_ipair = lib_bonded_pair.get_icmp_to_ipair(
+                    np.array(iatoms_list), np.array(bonded_pairs) )
+
+        return icmp_to_ipair
+
     def _make_i14_to_ipair(self):
         iatoms_list  = self.get_bonded14_pairs()
         bonded_pairs = self.get_bonded_pairs()
@@ -477,6 +554,13 @@ class ConverterBase(ConverterPrintable, TableMaker, metaclass=ABCMeta):
     def get_improper_info(self):
         """Get improper torsion dictionary of four_atoms, num_torsions,
         num_freqs, force_consts, and initial_phases."""
+        return
+    
+    @abstractmethod
+    def get_cmap_info(self):
+        """Get CMAP dictionary of five_atoms, cmap_types, cmap_resolutions,
+        cmap_grid_step_size, cmap_grid_energy, cmap_grid_dphi,
+        cmap_grid_dpsi, cmap_grid_dphi_dpsi"""
         return
 
     @abstractmethod
