@@ -133,7 +133,11 @@ class CurrentCalculator(CalculatorBase):
         key_to_ocurs['kinetic'] = cur_out
 
         # bonded
-        btypes = self.get_topology().get_decomp_list('bonded+')
+        if (self.get_setting().curp.potential == 'amber19SB'):
+            btypes = self.get_topology().get_decomp_list('bonded19SB+')
+        else:
+            btypes = self.get_topology().get_decomp_list('bonded+')
+
         for btype in btypes:
             # bond type
             cur_atm, cur_inn, cur_out = self.cal_bonded(crd, btype)
@@ -194,7 +198,11 @@ class FluxCalculator(CalculatorBase):
         key_to_aflux = {} # flux for atoms
         key_to_gflux = {} # flux for group
 
-        btypes = self.get_topology().get_decomp_list('bonded+')
+        if (self.get_setting().curp.potential == 'amber19SB'):
+            btypes = self.get_topology().get_decomp_list('bonded19SB+')
+        else:
+            btypes = self.get_topology().get_decomp_list('bonded+')
+
         for btype in btypes:
             # check for the amount of improper torsion and torsion.
             # if btype in ['improper','torsion']: continue

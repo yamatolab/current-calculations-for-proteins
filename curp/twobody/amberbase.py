@@ -21,8 +21,10 @@ class TwoBodyForceBase:
         self.__ptype_to_displacement = {}
 
     def get_pottypes(self):
-        return ['bond','angle','torsion','improper',
-                'coulomb14','vdw14','coulomb','vdw']
+        if self.__setting.curp.potential == "amber19SB":
+            return self.__tpl.get_decomp_list("all_19SB")
+        else:
+            return self.__tpl.get_decomp_list()
 
     def set_module(self, module):
         self.__mod = module
@@ -42,6 +44,8 @@ class TwoBodyForceBase:
         self._setup_angle()
         self._setup_torsion()
         self._setup_improper()
+        if self.__setting.curp.potential == 'amber19SB':
+            self._setup_cmap()
 
         self._setup_coulomb14()
         self._setup_vdw14()
@@ -86,6 +90,11 @@ class TwoBodyForceBase:
         """Prepare the parameter for the improper torsion calculation."""
         mod = self.__setup_bondtype('improper')
         mod.itor_to_itbf = self.__tpl.get_iimp_to_ipair()
+        
+    def _setup_cmap(self):
+        """Prepare the parameter for the CMAP calculation."""
+        mod = self.__setup_bondtype('cmap')
+        mod.icmp_to_itbf = self.__tpl.get_icmp_to_ipair()
 
     def __setup_bondtype(self, btype_name):
         """Prepare the parameter for the calculations without coulomb and vdw.

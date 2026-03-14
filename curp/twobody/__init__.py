@@ -6,7 +6,8 @@ class PotentialNotFoundError(CurpException): pass
 
 def get_calculator(forcefield):
     if forcefield in ('amber-base', 'amber94', 'amber96', 'amber99',
-                      'amber99SB', 'amber03', 'amber10', 'amber12SB'):
+                      'amber99SB', 'amber03', 'amber10', 'amber12SB',
+                      'amber19SB'):
         from curp.twobody import amberbase
         return amberbase.TwoBodyForce
 
