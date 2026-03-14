@@ -165,17 +165,20 @@ class TableMaker:
     def get_decomp_list(self, dtype='all'):
         """Get the list that decompose all potential.
         dtype = 'all'(defaulst), 'bonded', 'bonded14', 'bonded+',
-        'nonbonded or 'nonbonded+(nonbonded+14)'
+        'nonbonded, 'nonbonded+(nonbonded+14), 'nonbonded_only' or 'fmm'
         """
         bonded_list    = ['bond', 'angle', 'torsion', 'improper']
         bonded14_list  = ['coulomb14', 'vdw14']
         nonbonded_list = ['coulomb', 'vdw']
+        nonbonded_only = ['nonbonded']
 
         if   dtype == 'bonded':     return bonded_list
         elif dtype == 'bonded14':   return bonded14_list
         elif dtype == 'bonded+':    return bonded_list + bonded14_list
         elif dtype == 'nonbonded':  return nonbonded_list
         elif dtype == 'nonbonded+': return nonbonded_list + bonded14_list
+        elif dtype == 'nonbonded_only': return nonbonded_only
+        elif dtype == 'fmm':        return bonded_list + bonded14_list + nonbonded_only
         else: return bonded_list + bonded14_list + nonbonded_list
 
     def get_bonded_pairs(self):
