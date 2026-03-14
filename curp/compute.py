@@ -224,7 +224,10 @@ def init_current(setting, par):
     t_0 = time.time()
     topology, natom = do_topology(setting)
     # Get the list that decomposes all potential.
-    decomp_list = topology.get_decomp_list()
+    if setting.curp.potential == 'amber19SB':
+        decomp_list = topology.get_decomp_list(dtype='all_19SB')
+    else:
+        decomp_list = topology.get_decomp_list()
     label_time_pairs += [("Topology", time.time()-t_0)]
 
     # Determine target atoms.

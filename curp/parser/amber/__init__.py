@@ -13,7 +13,7 @@ topology_dict  = {'amber'  : topology.TopologyParser}
 
 converter_dict = {}
 available_pottypes = ['amber-base', 'amber',  'amber94', 'amber96', 'amber99',
-                      'amber99SB', 'amber03', 'amber10', 'amber12SB' ]
+                      'amber99SB', 'amber03', 'amber10', 'amber12SB', 'amber19SB' ]
 converter_dict = { ('amber', pot_type):topology.Format2AmberBaseConverter
                    for pot_type in available_pottypes }
 

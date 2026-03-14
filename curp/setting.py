@@ -230,7 +230,7 @@ class Setting(SettingBase):
         potential = Choice(default='amberbase', require=True,
             desc='The potential function to calculate the pairwise forces.',
             values=['amberbase', 'amber94', 'amber96', 'amber99', 'amber99SB',
-                'amber03', 'amber12SB'], # 'amber-polar'],
+                'amber03', 'amber12SB', 'amber19SB'], # 'amber-polar'],
             value_type=String),
 
         target_atoms = List(default=['1-'], require=False, value_type=String,
