@@ -200,22 +200,28 @@ class TableMaker:
 
     def get_decomp_list(self, dtype='all'):
         """Get the list that decompose all potential.
-        dtype = 'all'(defaulst), 'bonded', 'bonded19SB', 'bonded14', 'bonded+',
-        'bonded19SB+', 'nonbonded or 'nonbonded+(nonbonded+14), 'all_19SB'
+        dtype = 'all'(default), 'bonded', 'bonded14', 'bonded+',
+        'nonbonded, 'nonbonded+(nonbonded+14), 'nonbonded_only',
+        'all_19SB', 'fmm' or 'fmm_19SB'
         """
-        bonded_list      = ['bond', 'angle', 'torsion', 'improper']
+        bonded_list    = ['bond', 'angle', 'torsion', 'improper']
         bonded_list_19SB = ['bond', 'angle', 'torsion', 'improper', 'cmap']
-        bonded14_list    = ['coulomb14', 'vdw14']
-        nonbonded_list   = ['coulomb', 'vdw']
+        bonded14_list  = ['coulomb14', 'vdw14']
+        nonbonded_list = ['coulomb', 'vdw']
+        nonbonded_only = ['nonbonded']
 
-        if   dtype == 'bonded':      return bonded_list
-        elif dtype == 'bonded19SB':  return bonded_list_19SB
-        elif dtype == 'bonded14':    return bonded14_list
-        elif dtype == 'bonded+':     return bonded_list + bonded14_list
-        elif dtype == 'bonded19SB+': return bonded_list_19SB + bonded14_list
-        elif dtype == 'nonbonded':   return nonbonded_list
-        elif dtype == 'nonbonded+':  return nonbonded_list + bonded14_list
-        elif dtype == 'all_19SB':    return bonded_list_19SB + bonded14_list + nonbonded_list
+        if   dtype == 'bonded':         return bonded_list
+        elif dtype == 'bonded19SB':     return bonded_list_19SB
+        elif dtype == 'bonded14':       return bonded14_list
+        elif dtype == 'bonded+':        return bonded_list + bonded14_list
+        elif dtype == 'bonded19SB+':    return bonded_list_19SB + bonded14_list
+        elif dtype == 'nonbonded':      return nonbonded_list
+        elif dtype == 'nonbonded+':     return nonbonded_list + bonded14_list
+        elif dtype == 'nonbonded_only': return nonbonded_only
+        elif dtype == 'all_19SB':       return bonded_list_19SB + bonded14_list + nonbonded_list
+        elif dtype == 'fmm':            return bonded_list + bonded14_list + nonbonded_only
+        elif dtype == 'fmm_19SB':       return bonded_list_19SB + bonded14_list + nonbonded_only
+        
         else: return bonded_list + bonded14_list + nonbonded_list
 
     def get_bonded_pairs(self):

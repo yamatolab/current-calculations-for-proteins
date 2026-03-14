@@ -21,7 +21,7 @@ class CalculatorBase(TimeStore):
         pass
 
     def prepare(self, topology, setting, target_atoms,
-            gname_iatoms_pairs, interact_table):
+            gname_iatoms_pairs, gpair_table, interact_table):
 
         self.__tpl = topology
         self.__setting = setting
@@ -30,7 +30,7 @@ class CalculatorBase(TimeStore):
         from curp import twobody
         TwoBodyCalculator = twobody.get_calculator(setting.curp.potential)
         self.__tbf = TwoBodyCalculator(topology, setting)
-        self.__tbf.setup(interact_table, check=False)
+        self.__tbf.setup(interact_table, gname_iatoms_pairs, gpair_table, check=False)
 
         # get the number of atoms
         natom = self.get_tbforce().get_natom()
@@ -41,6 +41,7 @@ class CalculatorBase(TimeStore):
         # for group
         self.__gname_iatoms_pairs = gname_iatoms_pairs
         self.__gnames = [gname for gname, iatoms in gname_iatoms_pairs]
+        self.__gpair_table = gpair_table
 
         # interaction table
         self.__interact_table = [ np.array(t) for t in interact_table]
@@ -67,9 +68,12 @@ class CalculatorBase(TimeStore):
 
     def get_gname_iatoms_pairs(self):
         return self.__gname_iatoms_pairs
-
+    
     def get_groupnames(self):
         return self.__gnames
+    
+    def get_gpair_table(self):
+        return self.__gpair_table
 
     def get_iatm_to_igrp(self):
         return self.__iatm_to_igrp
@@ -82,7 +86,16 @@ class CalculatorBase(TimeStore):
 
     def get_interact_table(self):
         return self.__interact_table
-
+    
+    def extract_bonded_pairs(self, bonded_pairs, gname_iatoms_pairs, gpair_table):
+        """Extract bonded pairs from the group information."""
+        from curp.current import lib_table_fmm
+        lib_table = lib_table_fmm.get_table_fmm()
+        lib_table.setup(bonded_pairs, gname_iatoms_pairs, gpair_table)
+        extracted_bonded_pairs = lib_table.extract_bonded_pairs()
+        
+        return extracted_bonded_pairs
+    
 class CurrentCalculator(CalculatorBase):
 
     def __init__(self):
@@ -212,12 +225,16 @@ class FluxCalculator(CalculatorBase):
             key_to_gflux[btype] = flux_grp
 
         # non-bonded
-        flux_atm, flux_grp = self.cal_coulomb(crd, vel)
-        key_to_aflux['coulomb'] = flux_atm
-        key_to_gflux['coulomb'] = flux_grp
-        flux_atm, flux_grp = self.cal_vdw(crd, vel)
-        key_to_aflux['vdw'] = flux_atm
-        key_to_gflux['vdw'] = flux_grp
+        flux_atm, flux_grp = self.get_coulomb_func(crd, vel)
+        if self.get_setting().curp.coulomb_method == 'fmm':
+            key_to_aflux['nonbonded'] = flux_atm
+            key_to_gflux['nonbonded'] = flux_grp
+        else:
+            key_to_aflux['coulomb'] = flux_atm
+            key_to_gflux['coulomb'] = flux_grp
+            flux_atm, flux_grp = self.cal_vdw(crd, vel)
+            key_to_aflux['vdw'] = flux_atm
+            key_to_gflux['vdw'] = flux_grp
         # total for atom
         if flux_atm is not None:
             total_atm = np.zeros( key_to_aflux['vdw'].shape )
@@ -230,7 +247,10 @@ class FluxCalculator(CalculatorBase):
 
         # total for group
         if flux_grp is not None:
-            total_grp = np.zeros( key_to_gflux['vdw'].shape )
+            if self.get_setting().curp.coulomb_method == 'fmm':
+                total_grp = np.zeros( key_to_gflux['nonbonded'].shape ) 
+            else:
+                total_grp = np.zeros( key_to_gflux['vdw'].shape )
 
             for flux in list(key_to_gflux.values()):
                 total_grp += flux
@@ -249,4 +269,3 @@ class FluxCalculator(CalculatorBase):
             self.get_tbforce().output_force()
 
         return cstep, (key_to_aflux, key_to_gflux)
-
