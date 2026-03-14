@@ -218,11 +218,15 @@ class FluxCalculator(CalculatorBase):
 
         # non-bonded
         flux_atm, flux_grp = self.get_coulomb_func(crd, vel)
-        key_to_aflux['coulomb'] = flux_atm
-        key_to_gflux['coulomb'] = flux_grp
-        flux_atm, flux_grp = self.cal_vdw(crd, vel)
-        key_to_aflux['vdw'] = flux_atm
-        key_to_gflux['vdw'] = flux_grp
+        if self.get_setting().curp.coulomb_method == 'fmm':
+            key_to_aflux['nonbonded'] = flux_atm
+            key_to_gflux['nonbonded'] = flux_grp
+        else:
+            key_to_aflux['coulomb'] = flux_atm
+            key_to_gflux['coulomb'] = flux_grp
+            flux_atm, flux_grp = self.cal_vdw(crd, vel)
+            key_to_aflux['vdw'] = flux_atm
+            key_to_gflux['vdw'] = flux_grp
         # total for atom
         if flux_atm is not None:
             total_atm = np.zeros( key_to_aflux['vdw'].shape )
@@ -235,7 +239,10 @@ class FluxCalculator(CalculatorBase):
 
         # total for group
         if flux_grp is not None:
-            total_grp = np.zeros( key_to_gflux['vdw'].shape )
+            if self.get_setting().curp.coulomb_method == 'fmm':
+                total_grp = np.zeros( key_to_gflux['nonbonded'].shape ) 
+            else:
+                total_grp = np.zeros( key_to_gflux['vdw'].shape )
 
             for flux in list(key_to_gflux.values()):
                 total_grp += flux
