@@ -349,7 +349,9 @@ class TableMaker:
                 i_atm, m_atm = min(five[0], five[4]), max(five[0], five[4])
                 pairs_15 += [(i_atm, m_atm)]
 
-        return sorted((set(pairs)-set(pairs_15)), key=lambda x:x[0])
+            return sorted((set(pairs)-set(pairs_15)), key=lambda x:x[0])
+        else:
+            return sorted(set(pairs), key=lambda x:x[0])
 
     def _make_bonded14_pairs(self):
 

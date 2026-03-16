@@ -452,7 +452,11 @@ class Format2AmberBaseConverter(ConverterBase):
             self.__mol_info.append(new_info)
             
     def is_cmap(self,topology):
-        if topology.get_param_infos('CMAP_INDEX'):
+        try:
+            topology.get_param_infos('CMAP_INDEX')
+        except KeyError:
+            self.__is_cmap = False
+        else:
             self.__is_cmap = True
 
     def get_natom(self):
