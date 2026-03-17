@@ -38,6 +38,8 @@ def get_group_iatoms_pairs(setting, target_atoms, res_info, atom_info):
     else:
         raise Exception
 
+    check_iatoms(gname_iatoms_pairs)
+
     logger.info_title('Group information')
     for gname, iatoms in gname_iatoms_pairs:
         logger.info('[',gname,']')
@@ -241,3 +243,21 @@ def get_iatm_to_itars(target_atoms, natom):
         iatm_to_itars[iatm-1] = itar_1 + 1
     return iatm_to_itars
 
+
+def check_iatoms(gname_iatoms_pairs):
+    iatoms = [iatm for gname, iatoms in gname_iatoms_pairs for iatm in iatoms]    
+    iatoms_set = set(iatoms)
+    
+    # check iatoms
+    if len(iatoms) != len(iatoms_set):
+        atom_duplicate = []
+        for iatm in iatoms_set:
+            if iatoms.count(iatm) > 1:
+                atom_duplicate.append(iatm)
+        if len(atom_duplicate) > 0:
+            raise ValueError('Atom index {} is included in multiple groups. '.format(atom_duplicate)
+                             + 'Please check the atomgroup file.')
+        else:
+            raise ValueError('Some atoms are included in multiple groups. '
+                             'Please check the atomgroup file.')
+    
