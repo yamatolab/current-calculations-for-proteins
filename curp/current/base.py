@@ -89,8 +89,8 @@ class CalculatorBase(TimeStore):
     
     def extract_bonded_pairs(self, bonded_pairs, gname_iatoms_pairs, gpair_table):
         """Extract bonded pairs from the group information."""
-        from curp.current import lib_table_fmm
-        lib_table = lib_table_fmm.get_table_fmm()
+        from curp.current import lib_table_treecode
+        lib_table = lib_table_treecode.get_table_treecode()
         lib_table.setup(bonded_pairs, gname_iatoms_pairs, gpair_table)
         extracted_bonded_pairs = lib_table.extract_bonded_pairs()
         
@@ -226,7 +226,7 @@ class FluxCalculator(CalculatorBase):
 
         # non-bonded
         flux_atm, flux_grp = self.get_coulomb_func(crd, vel)
-        if self.get_setting().curp.coulomb_method == 'fmm':
+        if self.get_setting().curp.nonbonded_method == 'treecode':
             key_to_aflux['nonbonded'] = flux_atm
             key_to_gflux['nonbonded'] = flux_grp
         else:
@@ -247,7 +247,7 @@ class FluxCalculator(CalculatorBase):
 
         # total for group
         if flux_grp is not None:
-            if self.get_setting().curp.coulomb_method == 'fmm':
+            if self.get_setting().curp.nonbonded_method == 'treecode':
                 total_grp = np.zeros( key_to_gflux['nonbonded'].shape ) 
             else:
                 total_grp = np.zeros( key_to_gflux['vdw'].shape )

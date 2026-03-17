@@ -9,7 +9,7 @@
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
-class get_table_fmm {
+class get_table_treecode {
 
 public:
     // public variables
@@ -19,7 +19,7 @@ public:
 
     std::vector<std::pair<int, int>> extracted_bonded_pairs;
 
-    get_table_fmm() :
+    get_table_treecode() :
         bonded_pairs(std::vector<std::pair<int, int>>()),
         gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
         gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
@@ -94,14 +94,14 @@ public:
     
 };
 
-PYBIND11_MODULE(lib_table_fmm, m) {
-    py::class_<get_table_fmm>(m, "get_table_fmm")
+PYBIND11_MODULE(lib_table_treecode, m) {
+    py::class_<get_table_treecode>(m, "get_table_treecode")
         .def(py::init<>())
-        .def("setup", &get_table_fmm::setup)
-        .def("extract_bonded_pairs", &get_table_fmm::extract_bonded_pairs)
-        .def_readwrite("bonded_pairs", &get_table_fmm::bonded_pairs)
-        .def_readwrite("gpair_table", &get_table_fmm::gpair_table)
-        .def_readwrite("gname_iatoms_pairs", &get_table_fmm::gname_iatoms_pairs)
-        .def_readwrite("extracted_bonded_pairs", &get_table_fmm::extracted_bonded_pairs)
+        .def("setup", &get_table_treecode::setup)
+        .def("extract_bonded_pairs", &get_table_treecode::extract_bonded_pairs)
+        .def_readwrite("bonded_pairs", &get_table_treecode::bonded_pairs)
+        .def_readwrite("gpair_table", &get_table_treecode::gpair_table)
+        .def_readwrite("gname_iatoms_pairs", &get_table_treecode::gname_iatoms_pairs)
+        .def_readwrite("extracted_bonded_pairs", &get_table_treecode::extracted_bonded_pairs)
         ;
 }

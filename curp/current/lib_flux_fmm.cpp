@@ -14,7 +14,7 @@
 namespace py = pybind11;
 using namespace Eigen;
 
-class cal_fmm{
+class cal_treecode{
         
 // public variables used for calculation
 public:
@@ -45,7 +45,7 @@ public:
     MatrixXd eflux_ij;
 
     // constructor
-    cal_fmm():
+    cal_treecode():
         natom(0),
         n_crit(0),
         theta(0.0),
@@ -1063,8 +1063,8 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public:
-    // main function to calculate coulomb flux using fmm
-    void cal_coulomb_flux_fmm(const std::vector<All_cell>& all_cells) {
+    // main function to calculate coulomb flux using treecode
+    void cal_coulomb_flux_treecode(const std::vector<All_cell>& all_cells) {
         int t0 = time_now();
         get_all_cells(all_cells);
         int t1 = time_now();
@@ -1194,48 +1194,48 @@ py::array_t<double> hflux_to_numpy(const std::vector<std::vector<Vector3d>>& hfl
 };
 
 
-PYBIND11_MODULE(lib_flux_fmm, m){
+PYBIND11_MODULE(lib_flux_treecode, m){
     
-    py::class_<cal_fmm>(m, "cal_fmm")
+    py::class_<cal_treecode>(m, "cal_treecode")
         .def(py::init<>())
-        .def("setup", &cal_fmm::setup)
-        .def("set_flux", &cal_fmm::set_flux)
-        .def("initialize", &cal_fmm::initialize)
-        .def("setup_all_cells", &cal_fmm::setup_all_cells)
-        .def("cal_coulomb_flux_fmm", &cal_fmm::cal_coulomb_flux_fmm)
-        .def("print_all_cells", &cal_fmm::print_all_cells)
-        .def_readwrite("natom", &cal_fmm::natom)
-        .def_readwrite("n_crit", &cal_fmm::n_crit)
-        .def_readwrite("theta", &cal_fmm::theta)
-        .def_readwrite("charges", &cal_fmm::charges)
-        .def_readwrite("t_crd", &cal_fmm::t_crd)
-        .def_readwrite("t_vel", &cal_fmm::t_vel)
-        .def_readwrite("bonded_pairs", &cal_fmm::bonded_pairs)
-        .def_readwrite("gpair_table", &cal_fmm::gpair_table)
-        .def_readwrite("gname_iatoms_pairs", &cal_fmm::gname_iatoms_pairs)
-        .def_readwrite("iatom_to_igroup", &cal_fmm::iatom_to_igroup)
-        .def_readwrite("all_cells", &cal_fmm::all_cells)
-        .def_readwrite("hflux_ij", &cal_fmm::hflux_ij)
-        .def_readwrite("eflux_ij", &cal_fmm::eflux_ij)
+        .def("setup", &cal_treecode::setup)
+        .def("set_flux", &cal_treecode::set_flux)
+        .def("initialize", &cal_treecode::initialize)
+        .def("setup_all_cells", &cal_treecode::setup_all_cells)
+        .def("cal_coulomb_flux_treecode", &cal_treecode::cal_coulomb_flux_treecode)
+        .def("print_all_cells", &cal_treecode::print_all_cells)
+        .def_readwrite("natom", &cal_treecode::natom)
+        .def_readwrite("n_crit", &cal_treecode::n_crit)
+        .def_readwrite("theta", &cal_treecode::theta)
+        .def_readwrite("charges", &cal_treecode::charges)
+        .def_readwrite("t_crd", &cal_treecode::t_crd)
+        .def_readwrite("t_vel", &cal_treecode::t_vel)
+        .def_readwrite("bonded_pairs", &cal_treecode::bonded_pairs)
+        .def_readwrite("gpair_table", &cal_treecode::gpair_table)
+        .def_readwrite("gname_iatoms_pairs", &cal_treecode::gname_iatoms_pairs)
+        .def_readwrite("iatom_to_igroup", &cal_treecode::iatom_to_igroup)
+        .def_readwrite("all_cells", &cal_treecode::all_cells)
+        .def_readwrite("hflux_ij", &cal_treecode::hflux_ij)
+        .def_readwrite("eflux_ij", &cal_treecode::eflux_ij)
         ;
     
     
-    py::class_<cal_fmm::Cell>(m, "Cell")
+    py::class_<cal_treecode::Cell>(m, "Cell")
         .def(py::init<>())
-        .def_readwrite("nleaf", &cal_fmm::Cell::nleaf)
-        .def_readwrite("leaf", &cal_fmm::Cell::leaf)
-        .def_readwrite("nchild", &cal_fmm::Cell::nchild)
-        .def_readwrite("child", &cal_fmm::Cell::child)
-        .def_readwrite("parent", &cal_fmm::Cell::parent)
-        .def_readwrite("rc", &cal_fmm::Cell::rc)
-        .def_readwrite("r", &cal_fmm::Cell::r)
-        .def_readwrite("multipole", &cal_fmm::Cell::multipole)
+        .def_readwrite("nleaf", &cal_treecode::Cell::nleaf)
+        .def_readwrite("leaf", &cal_treecode::Cell::leaf)
+        .def_readwrite("nchild", &cal_treecode::Cell::nchild)
+        .def_readwrite("child", &cal_treecode::Cell::child)
+        .def_readwrite("parent", &cal_treecode::Cell::parent)
+        .def_readwrite("rc", &cal_treecode::Cell::rc)
+        .def_readwrite("r", &cal_treecode::Cell::r)
+        .def_readwrite("multipole", &cal_treecode::Cell::multipole)
         ;
     
-    py::class_<cal_fmm::All_cell>(m, "All_cell")
+    py::class_<cal_treecode::All_cell>(m, "All_cell")
         .def(py::init<>())
-        .def_readwrite("group", &cal_fmm::All_cell::group)
-        .def_readwrite("cells", &cal_fmm::All_cell::cells)
+        .def_readwrite("group", &cal_treecode::All_cell::group)
+        .def_readwrite("cells", &cal_treecode::All_cell::cells)
         ;
 
     m.def("hflux_to_numpy", &hflux_to_numpy, "Convert hflux_ij to numpy array");
