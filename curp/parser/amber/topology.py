@@ -92,7 +92,6 @@ class TopologyParser:
                     self.__fname_to_info[fname] = None
             
             residue_types = self.__fname_to_info['CMAP_COUNT'][1]
-            print("cmap ntypes: ", residue_types)
             for i in range(residue_types):
                 param_name = 'CMAP_PARAMETER_%02d' % (i+1)
                 parser = self._parse_generic(float)
