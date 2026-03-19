@@ -49,10 +49,22 @@ class GroupPair:
         self.__gname_to_iatoms = gname_to_iatoms
         self.__natom = natom
         self.__table_with_gpair = None
+        self.check_gpair_table(gpair_table, gname_to_iatoms)
         if len_table == 0:
             self.__len_table = 10 * natom
         else:
             self.__len_table = len_table
+            
+    def check_gpair_table(self, gpair_table, gname_to_iatoms):
+        gnames = [ gname for gname, iatoms in gname_to_iatoms ]
+        for gname_i, jgnames in gpair_table:
+            idx_i = gnames.index(gname_i)
+            for gname_j in jgnames:
+                idx_j = gnames.index(gname_j)
+                if idx_i > idx_j:
+                    raise ValueError("Group pair table should be in order with atomgroup "
+                            "but {} is before {}".format(gname_i, gname_j))
+                
 
     def gen_inttable(self):
         """Generate the object equivalent with interaction table

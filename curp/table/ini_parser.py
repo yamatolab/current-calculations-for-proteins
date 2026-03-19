@@ -61,7 +61,10 @@ class IniParser:
 
         with open(self.__filename, 'r') as file:
             secname_lines_pairs = self._parse_secname_lines_pairs(file)
-
+        
+        # check if there are duplicated section names
+        self._check_secname(secname_lines_pairs)
+        
         # parse vals
         self.__secname_to_vals = odict()
         for secname, lines in secname_lines_pairs:
@@ -77,6 +80,19 @@ class IniParser:
         """Generate section_name: columns pair."""
         for secname in self.get_secnames():
             yield secname, self[secname]
+
+    def _check_secname(self, secname_lines_pairs):
+        secnames = [secname for secname, lines in secname_lines_pairs]
+        secnames_set = set(secnames)
+        if len(secnames) != len(secnames_set):
+            secname_duplicate = []
+            for secname in secnames_set:
+                if secnames.count(secname) > 1:
+                    secname_duplicate.append(secname)
+            if len(secname_duplicate) > 0:
+                raise ValueError('Section name {} is duplicated. Please check the atomgroup file.'.format(secname_duplicate))
+            else:
+                raise ValueError('Some section names are duplicated. Please check the atomgroup file.')
 
     def _gen_col(self, lines):
         for line in lines:
