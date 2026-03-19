@@ -224,12 +224,12 @@ def init_current(setting, par):
     t_0 = time.time()
     topology, natom = do_topology(setting)
     # Get the list that decomposes all potential.
-    if setting.curp.coulomb_method == "fmm" and setting.curp.potential != 'amber19SB':
-        decomp_list = topology.get_decomp_list('fmm')
-    elif setting.curp.coulomb_method != "fmm" and setting.curp.potential == 'amber19SB':
+    if setting.curp.nonbonded_method == "treecode" and setting.curp.potential != 'amber19SB':
+        decomp_list = topology.get_decomp_list('treecode')
+    elif setting.curp.nonbonded_method != "treecode" and setting.curp.potential == 'amber19SB':
         decomp_list = topology.get_decomp_list(dtype='all_19SB')
-    elif setting.curp.coulomb_method == "fmm" and setting.curp.potential == 'amber19SB':
-        decomp_list = topology.get_decomp_list(dtype='fmm_19SB')
+    elif setting.curp.nonbonded_method == "treecode" and setting.curp.potential == 'amber19SB':
+        decomp_list = topology.get_decomp_list(dtype='treecode_19SB')
     else:
         decomp_list = topology.get_decomp_list()
     label_time_pairs += [("Topology", time.time()-t_0)]
@@ -612,8 +612,6 @@ def curp(input_="run.cfg", use_serial=False, vervose=False,
                                          "heat-flux",
                                          "kinetic-flux")
     do_dynamics = setting.curp.method == "microcanonical"
-    
-    use_fmm = setting.curp.coulomb_method == "fmm"
 
     if do_init and do_current:
         # log

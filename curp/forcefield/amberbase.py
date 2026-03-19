@@ -202,7 +202,7 @@ class TableMaker:
         """Get the list that decompose all potential.
         dtype = 'all'(default), 'bonded', 'bonded14', 'bonded+',
         'nonbonded, 'nonbonded+(nonbonded+14), 'nonbonded_only',
-        'all_19SB', 'fmm' or 'fmm_19SB'
+        'all_19SB', 'treecode' or 'treecode_19SB'
         """
         bonded_list    = ['bond', 'angle', 'torsion', 'improper']
         bonded_list_19SB = ['bond', 'angle', 'torsion', 'improper', 'cmap']
@@ -219,8 +219,8 @@ class TableMaker:
         elif dtype == 'nonbonded+':     return nonbonded_list + bonded14_list
         elif dtype == 'nonbonded_only': return nonbonded_only
         elif dtype == 'all_19SB':       return bonded_list_19SB + bonded14_list + nonbonded_list
-        elif dtype == 'fmm':            return bonded_list + bonded14_list + nonbonded_only
-        elif dtype == 'fmm_19SB':       return bonded_list_19SB + bonded14_list + nonbonded_only
+        elif dtype == 'treecode':       return bonded_list + bonded14_list + nonbonded_only
+        elif dtype == 'treecode_19SB':  return bonded_list_19SB + bonded14_list + nonbonded_only
         
         else: return bonded_list + bonded14_list + nonbonded_list
 

@@ -8,7 +8,7 @@ import numpy as np
 from curp import utility
 import curp.clog as logger
 
-from curp.current import base, lib_flux, lib_hflux, lib_keflux, lib_flux_fmm
+from curp.current import base, lib_flux, lib_hflux, lib_keflux, lib_flux_treecode
 ################################################################################
 class EnergyFluxCalculator(base.FluxCalculator):
 
@@ -44,10 +44,10 @@ class EnergyFluxCalculator(base.FluxCalculator):
         else: 
             pass
         
-        self.__coulomb_method = self.get_setting().curp.coulomb_method
-        if self.__coulomb_method == 'fmm':
-            self.__coulomb_func = self.cal_coulomb_fmm
-            self.setup_coulomb_fmm()
+        self.__coulomb_method = self.get_setting().curp.nonbonded_method
+        if self.__coulomb_method == 'treecode':
+            self.__coulomb_func = self.cal_coulomb_treecode
+            self.setup_coulomb_treecode()
         else:
             self.__coulomb_func = self.cal_coulomb
 
@@ -55,21 +55,21 @@ class EnergyFluxCalculator(base.FluxCalculator):
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
                 self.__coulomb_method, lib, flag_atom, flag_group)
         
-    def setup_coulomb_fmm(self):
-        """Setup the FMM method for the coulomb calculation."""
+    def setup_coulomb_treecode(self):
+        """Setup the treecode method for the coulomb calculation."""
         
-        if self.check_fmm_setting(self.get_setting()):
+        if self.check_treecode_setting(self.get_setting()):
             natom = self.get_topology().get_natom()
-            n_crit = self.get_setting().curp.coulomb_fmm_cell_contains
-            theta = self.get_setting().curp.coulomb_fmm_direct_parm
-            cutoff = self.get_setting().curp.coulomb_fmm_cutoff_length
+            n_crit = self.get_setting().curp.treecode_cell_contains
+            theta = self.get_setting().curp.treecode_direct_parm
+            cutoff = self.get_setting().curp.treecode_cutoff_length
             info = self.get_topology().get_coulomb_info()
             info_vdw = self.get_topology().get_vdw_info()
             charges = info['charges']
             atom_types = info_vdw['atom_types']
             c6s = info_vdw['c6s']
             c12s = info_vdw['c12s']
-            self.__lib_fmm = lib_flux_fmm.cal_fmm()
+            self.__lib_treecode = lib_flux_treecode.cal_treecode()
             
             bonded_pairs = self.get_bonded_pairs()
             gname_iatoms_pairs = self.get_gname_iatoms_pairs()
@@ -78,15 +78,15 @@ class EnergyFluxCalculator(base.FluxCalculator):
             
             extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
             
-            self.__lib_fmm.setup( int(natom), int(n_crit), float(theta), float(cutoff),
+            self.__lib_treecode.setup( int(natom), int(n_crit), float(theta), float(cutoff),
                     charges, extracted_bonded_pairs, gname_iatoms_pairs,          
                     gpair_table, iatm_to_igrp,
                     atom_types, c6s, c12s
                     )
-            self.__lib_fmm.set_flux("energy")
+            self.__lib_treecode.set_flux("energy")
         
-    def check_fmm_setting(self, setting):
-        """Check setting parameters for FMM calculation."""
+    def check_treecode_setting(self, setting):
+        """Check setting parameters for treecode calculation."""
 
         if setting.curp.flux_grain != 'group':
             raise ValueError('The flux grain should be "group"')
@@ -139,20 +139,20 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
         return flux_atm, flux_grp
 
-    def cal_coulomb_fmm(self, crd, vel):
-        """Calculate the energy flux for the coulomb term using FMM method."""
+    def cal_coulomb_treecode(self, crd, vel):
+        """Calculate the energy flux for the coulomb term using treecode method."""
 
         t0 = time.time()
-        self.__lib_fmm.initialize(crd, vel)
+        self.__lib_treecode.initialize(crd, vel)
         
-        all_cells = self.__lib_fmm.setup_all_cells()
-        self.__lib_fmm.cal_coulomb_flux_fmm(all_cells)
+        all_cells = self.__lib_treecode.setup_all_cells()
+        self.__lib_treecode.cal_coulomb_flux_treecode(all_cells)
         flux_atm = None
-        flux_grp = self.__lib_fmm.eflux_ij
+        flux_grp = self.__lib_treecode.eflux_ij
 
         t1 = time.time()
 
-        self.store_time('coulomb flux(fmm)' , t1 - t0)
+        self.store_time('coulomb flux(treecode)' , t1 - t0)
 
         return flux_atm, flux_grp
 
@@ -267,10 +267,10 @@ class HeatFluxCalculator(base.FluxCalculator):
             pass
         
         # choose the coulomb calculation method
-        self.__coulomb_method = self.get_setting().curp.coulomb_method
-        if self.__coulomb_method == 'fmm':
-            self.__coulomb_func = self.cal_coulomb_fmm
-            self.setup_coulomb_fmm()
+        self.__coulomb_method = self.get_setting().curp.nonbonded_method
+        if self.__coulomb_method == 'treecode':
+            self.__coulomb_func = self.cal_coulomb_treecode
+            self.setup_coulomb_treecode()
         else:
             self.__coulomb_func = self.cal_coulomb
         
@@ -278,21 +278,21 @@ class HeatFluxCalculator(base.FluxCalculator):
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
                 self.__coulomb_method, flag_atom, flag_group)
         
-    def setup_coulomb_fmm(self):
-        """Setup the FMM method for the coulomb calculation."""
+    def setup_coulomb_treecode(self):
+        """Setup the treecode method for the coulomb calculation."""
         
-        if self.check_fmm_setting(self.get_setting()):
+        if self.check_treecode_setting(self.get_setting()):
             natom = self.get_topology().get_natom()
-            n_crit = self.get_setting().curp.coulomb_fmm_cell_contains
-            theta = self.get_setting().curp.coulomb_fmm_direct_parm
-            cutoff = self.get_setting().curp.coulomb_fmm_cutoff_length
+            n_crit = self.get_setting().curp.treecode_cell_contains
+            theta = self.get_setting().curp.treecode_direct_parm
+            cutoff = self.get_setting().curp.treecode_cutoff_length
             info = self.get_topology().get_coulomb_info()
             info_vdw = self.get_topology().get_vdw_info()
             charges = info['charges']
             atom_types = info_vdw['atom_types']
             c6s = info_vdw['c6s']
             c12s = info_vdw['c12s']
-            self.__lib_fmm = lib_flux_fmm.cal_fmm()
+            self.__lib_treecode = lib_flux_treecode.cal_treecode()
             
             bonded_pairs = self.get_bonded_pairs()
             gname_iatoms_pairs = self.get_gname_iatoms_pairs()
@@ -301,16 +301,16 @@ class HeatFluxCalculator(base.FluxCalculator):
             
             extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
             
-            self.__lib_fmm.setup( int(natom), int(n_crit), float(theta), float(cutoff),
+            self.__lib_treecode.setup( int(natom), int(n_crit), float(theta), float(cutoff),
                     charges, extracted_bonded_pairs, gname_iatoms_pairs,          
                     gpair_table, iatm_to_igrp,
                     atom_types, c6s, c12s
                     )
-            self.__lib_fmm.set_flux("heat")
+            self.__lib_treecode.set_flux("heat")
 
         
-    def check_fmm_setting(self, setting):
-        """Check setting parameters for FMM calculation."""
+    def check_treecode_setting(self, setting):
+        """Check setting parameters for treecode calculation."""
         
         if setting.curp.flux_grain != 'group':
             raise ValueError('The flux grain should be "group"')
@@ -367,20 +367,20 @@ class HeatFluxCalculator(base.FluxCalculator):
 
         return flux_atm, flux_grp
     
-    def cal_coulomb_fmm(self, crd, vel):
-        """Calculate the energy flux for the coulomb term using FMM method."""
+    def cal_coulomb_treecode(self, crd, vel):
+        """Calculate the energy flux for the coulomb term using treecode method."""
 
         t0 = time.time()
-        self.__lib_fmm.initialize(crd, vel)
+        self.__lib_treecode.initialize(crd, vel)
         
-        all_cells = self.__lib_fmm.setup_all_cells()
-        self.__lib_fmm.cal_coulomb_flux_fmm(all_cells)
+        all_cells = self.__lib_treecode.setup_all_cells()
+        self.__lib_treecode.cal_coulomb_flux_treecode(all_cells)
         flux_atm = None
-        flux_grp = lib_flux_fmm.hflux_to_numpy(self.__lib_fmm.hflux_ij) # convert to numpy array
+        flux_grp = lib_flux_treecode.hflux_to_numpy(self.__lib_treecode.hflux_ij) # convert to numpy array
 
         t1 = time.time()
 
-        self.store_time('coulomb flux(fmm)' , t1 - t0)
+        self.store_time('coulomb flux(treecode)' , t1 - t0)
 
         return flux_atm, flux_grp
 

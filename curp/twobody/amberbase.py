@@ -29,9 +29,6 @@ class TwoBodyForceBase:
     def set_module(self, module):
         self.__mod = module
         
-    def set_module_fmm(self, module):
-        self.__mod_fmm = module
-
     def get_module(self):
         return self.__mod
 
@@ -54,7 +51,7 @@ class TwoBodyForceBase:
         self._setup_vdw14()
         
         # choose coulomb method
-        if self.__setting.curp.coulomb_method == 'cutoff':            
+        if self.__setting.curp.nonbonded_method == 'cutoff':            
             self._setup_coulomb()
             
             self._setup_vdw()
