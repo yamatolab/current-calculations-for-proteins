@@ -61,6 +61,11 @@ public:
                         std::find(atoms_j.begin(), atoms_j.end(), atom2) != atoms_j.end()) {
                         extracted_bonded_pairs.push_back({ atom1, atom2 });
                     }
+                    // Check if atom1 is in group j and atom2 is in group i
+                    else if (std::find(atoms_i.begin(), atoms_i.end(), atom2) != atoms_i.end() &&
+                             std::find(atoms_j.begin(), atoms_j.end(), atom1) != atoms_j.end()) {
+                        extracted_bonded_pairs.push_back({ atom2, atom1 });
+                    }
                 }
             }
         }
