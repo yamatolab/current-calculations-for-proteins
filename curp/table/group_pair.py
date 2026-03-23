@@ -64,6 +64,11 @@ class GroupPair:
                 if idx_i > idx_j:
                     raise ValueError("Group pair table should be in order with atomgroup "
                             "but {} is before {}".format(gname_i, gname_j))
+            len_jgnames = len(jgnames)
+            set_jgnames = set(jgnames)
+            if len_jgnames != len(set_jgnames):
+                raise ValueError("Group pair table should not have duplicated group names "
+                        "but {} has duplicated group names {}".format(gname_i, jgnames))
                 
 
     def gen_inttable(self):
