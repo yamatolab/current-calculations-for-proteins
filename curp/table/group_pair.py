@@ -63,7 +63,7 @@ class GroupPair:
             for gname_j in jgnames:
                 idx_j = gnames.index(gname_j)
                 if idx_i > idx_j:
-                    msg = ("In a group pair file, the group number of [{}] in atomgroup file ".format(gname_i)
+                    msg = ("In the group pair file, the group number of [{}] in atomgroup file ".format(gname_i)
                          + "should be smaller than that of {}. ".format(gname_j)
                          + "Please see *Group file specification* in https://curp.jp. ")
                     raise InvalidGroupPair(msg)
@@ -75,8 +75,9 @@ class GroupPair:
                     if jgnames.count(gname_j) > 1:
                         duplicated_gnames = []
                         duplicated_gnames.append(gname_j)
-                msg = ("Group pair table should not have duplicated group names "
-                     + "but [{}] has duplicated group name {}".format(gname_i, *duplicated_gnames))
+                msg = ("Group pair table should not have duplicated group pairs "
+                     + "but the group pair(s) with [{}] and (each of) {} is duplicated in the group pair file."
+                     .format(gname_i, *duplicated_gnames))
                 raise InvalidGroupPair(msg)
                 
 
