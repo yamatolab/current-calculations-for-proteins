@@ -76,7 +76,7 @@ class GroupPair:
                         duplicated_gnames = []
                         duplicated_gnames.append(gname_j)
                 msg = ("Group pair table should not have duplicated group pairs "
-                     + "but the group pair(s) with [{}] and (each of) {} is duplicated in the group pair file."
+                     + "but the group pair with [{}] and (each of) {} is duplicated in the group pair file."
                      .format(gname_i, *duplicated_gnames))
                 raise InvalidGroupPair(msg)
                 
