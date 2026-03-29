@@ -220,7 +220,6 @@ def gen_respair_table_over_traj(respair_table_traj, is_union=True):
     rnames = []
 
     for itrj_1, respair_table in enumerate(respair_table_traj):
-        print('# itraj = ', itrj_1+1)
 
         for rname_i, rnames_j in respair_table:
 
