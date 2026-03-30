@@ -30,6 +30,11 @@ Installation
    CURP version 1.x requires Numpy version 1.11.2 ~ 1.16.x to build the package before installation.
    Please install Numpy before installation.
 
+.. note::
+
+   CURP version 3.0 require Conda environment and eigen to build the package before installation.
+   Please install eigen before installation.
+
 Pip Installation
 ----------------
 
@@ -46,13 +51,13 @@ you can create a virtual environment with the required dependencies using conda:
 
 .. code-block:: bash
 
-   conda create -n curp-v2 python=3.6 pygraphviz mpi4py netcdf4
+   conda create -n curp-v3 python=3.6 pygraphviz mpi4py netcdf4 eigen
 
 Activate the environment and install CURP:
 
 .. code-block:: bash
 
-   conda activate curp-v2
+   conda activate curp-v3
    pip install curp
 
 This method ensures that dependencies, including Fortran and C/C++ compilers, 
