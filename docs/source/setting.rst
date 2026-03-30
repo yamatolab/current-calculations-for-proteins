@@ -77,7 +77,7 @@ input_amber section
 volume section
 ~~~~~~~~~~~~~~
 
-.. tip::
+.. note::
     This section is used for calculating the stress tensor.
 
 
@@ -188,7 +188,7 @@ curp section
 
     **nonbonded_method = cutoff** (default) : Choice[cutoff|treecode]
 
-        .. tip::
+        .. note::
             New option in version 3.0.
 
         The method to calculate coulomb interaction.
@@ -211,21 +211,21 @@ curp section
 
     **treecode_cell_contains = 99.9** (default) : Float
         
-        .. tip::
+        .. note::
             New option in version 3.0.
 
         The max number of atoms that the a cell contains.
 
     **treecode_direct_parm = 99.9** (default) : Float
         
-        .. tip::
+        .. note::
             New option in version 3.0.
 
         The parameter that is used to decide whether to perform direct nonbonded calculation.
 
     **treecode_cutoff_length = 99.9** (default) : Float
         
-        .. tip::
+        .. note::
             New option in version 3.0.
 
         The cutoff length for the treecode calculation.
@@ -261,7 +261,7 @@ curp section
 
     **table_length_limit = 0** (default) : Int
 
-        .. tip::
+        .. note::
             New option in version 3.0.
 
         The limit of nonbonded interaction table length. 
@@ -275,7 +275,7 @@ curp section
 dynamics section
 ~~~~~~~~~~~~~~~~
 
-.. tip::
+.. note::
     This section is used for performing microcanonical simulation(**method** in curp section is "microcanonical").
 
 
