@@ -32,35 +32,35 @@ Options
 
         The filename of tc data(output).
 
-    `-a FILE, --acf-file FILE` (default: none)
+    `-a FILE, --acf-file FILE` (default: None)
 
         The filename of auto correlation function(acf) data.
 
 
-    `-af FORMAT, --acf-file-format FORMAT` (default: netcdf|ascii)
+    `-af FORMAT, --acf-file-format FORMAT {netcdf|ascii}` (default: netcdf)
 
         The file format of acf data.
         Supported formats are netcdf and ascii.
 
-    `-r FIRST LAST INTER, --frame-range FIRST LAST INTER` (default: 1, -1, 1)
+    `-r FIRST LAST INTER, --frame-range FIRST LAST INTER` (type: int, default: 1, -1, 1)
 
         The range of flux frame; fist frame, last frame, interval step.
 
-    `-s SHIFT, --average-shift SHIFT` (default: 1)
+    `-s SHIFT, --average-shift SHIFT` (type: int, default: 1)
 
         The frame to shift for averaging.
 
-    `--sample-number NSAMPLE` (default: 0)
+    `--sample-number NSAMPLE` (type: int, default: 0)
 
         number of sample for one flux data file.
         Default value is 0 that present to make samples as much as possible.
 
-    `-dt DT, --dt DT` (default: 1.0)
+    `-dt DT, --dt DT` (type: float, default: None)
 
         t of between the neighbour frames. The unit is in ps. 
         Default value is determined by time variable in flux data.
 
-    `-c COEFFICIENT, --coefficient COEFFICIENT` (default: False)
+    `-c COEFFICIENT, --coefficient COEFFICIENT` (type: float, default: False)
 
         Multiply acf by given coefficient.
 
