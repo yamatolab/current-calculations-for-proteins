@@ -28,7 +28,9 @@ Citation
 ========
 
 Please cite the following references when you use the CURP program.
+
 (1) The most recent version of the CURP program (v.1.3)
+
 T. Yamato et al. "Computational study on the thermal conductivity of a protein" (to be submitted)
 
 (2) The main citation of the CURP program
