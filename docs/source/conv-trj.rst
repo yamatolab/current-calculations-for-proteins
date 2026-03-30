@@ -59,7 +59,7 @@ Common options
         Specify the format of the trajectory.
         This argument allows you specify multiple formats.
 
-    `--irange FIRST LAST INTER`
+    `--irange FIRST LAST INTER` (type: int, default: none)
 
         The trajectory range to process over all trajectory file.
 
@@ -71,7 +71,7 @@ Common options
 
         The trajectory file format for output.
 
-    `--orange FIRST LAST INTER`
+    `--orange FIRST LAST INTER` (type: int, default: 0, -1, 1)
                     
         The trajectory range for output.
 
@@ -83,7 +83,7 @@ Common options
 
         Specify the topology file.
 
-    `-nf DIST_FORMAT, --name-format DIST_FORMAT`
+    `-nf DIST_FORMAT, --name-format DIST_FORMAT` (default: {rid:05}_{rname})
 
         Specify the format for representing residue identify.
 
@@ -111,10 +111,10 @@ Additional options
     
     `dist` options
 
-        `-m DISTANCE_METHOD, --method DISTANCE_METHOD`
+        `-m DISTANCE_METHOD, --method DISTANCE_METHOD {cog|nearest|farthest}`
             
             The method used in calculating the inter-residue distances.
         
-        `-c CUTOFF_LENGTH, --cutoff-length CUTOFF_LENGTH`
+        `-c CUTOFF_LENGTH, --cutoff-length CUTOFF_LENGTH` (type: float, default: 5.0)
             
             The distance cutoff in angstrom.
