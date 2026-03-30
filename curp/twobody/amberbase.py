@@ -19,7 +19,8 @@ class TwoBodyForceBase:
         self.__ptype_to_energy = {}
         self.__ptype_to_forces = {}
         self.__ptype_to_displacement = {}
-
+        self._cal_nonbonded_terms = None # Callable
+        
     def get_pottypes(self):
         return ['bond','angle','torsion','improper',
                 'coulomb14','vdw14','coulomb','vdw']
@@ -47,7 +48,16 @@ class TwoBodyForceBase:
         self._setup_vdw14()
         self._setup_coulomb()
         self._setup_vdw()
-
+        self._setup_coulomb_and_vdw()
+        
+        if self.get_decompose_force_components() and self.get_coulomb_method() != 'fmm':
+            self._cal_nonbonded_terms = self._cal_coulomb_and_vdw_at_once
+        elif not self.get_decompose_force_components():
+            self._cal_nonbonded_terms = self._cal_coulomb_and_vdw_separately
+        else:
+            # use fmm method for coulomb and existing method for vdw
+            pass
+        
     def cal_force(self, crd):
         # initialize
         self.initialize(crd)
@@ -58,8 +68,7 @@ class TwoBodyForceBase:
 
         # calculate the nonbonded components.
         for t in self.__interact_table:
-            self.cal_coulomb(t)
-            self.cal_vdw(t)
+            self._cal_nonbonded_terms(t)
 
         return self.__forces
 
@@ -119,6 +128,20 @@ class TwoBodyForceBase:
         vdw.c6s        = info['c6s']
         vdw.c12s       = info['c12s']
         vdw.cutoff_length = self.__setting.curp.vdw_cutoff_length
+    
+    def _setup_coulomb_and_vdw(self):
+        coulomb_and_vdw = self.__mod.coulomb_and_vdw
+        coulomb_info = self.__tpl.get_coulomb_info()
+        vdw_info = self.__tpl.get_vdw_info()
+        logger.info("DEBUG: hoge")
+        coulomb_and_vdw.charges = coulomb_info['charges']
+        coulomb_and_vdw.atom_types = vdw_info['atom_types']
+        coulomb_and_vdw.c6s        = vdw_info['c6s']
+        coulomb_and_vdw.c12s       = vdw_info['c12s']
+        # Expect that the cutoff length of coulomb and vdw are the same.
+        coulomb_and_vdw.cutoff_length = self.__setting.curp.coulomb_cutoff_length
+        logger.info("DEBUG: piyo" + str(coulomb_and_vdw.cutoff_length))
+        logger.info("DEBUG: fuga")
 
     def _setup_coulomb14(self):
         """Prepare the parameter for the coulomb calculation."""
@@ -203,6 +226,13 @@ class TwoBodyForceBase:
 
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
+
+    def _cal_coulomb_and_vdw_at_once(self, table):
+        return self._cal_nonbond(table, 'coulomb_and_vdw')
+    
+    def _cal_coulomb_and_vdw_separately(self, table):
+        self.cal_coulomb(table)
+        self.cal_vdw(table)
 
     def _cal_nonbond(self, table, pottype):
         """Calculate the pairwise forces using the bonded type modules.
@@ -329,6 +359,23 @@ class TwoBodyForceBase:
             maxpair = max(maxpair, npair)
 
         return maxpair
+    
+    def get_setting(self):
+        return self.__setting
+    
+    def get_decompose_force_components(self) -> bool:
+        """
+        Whether to output decomposed force components.
+        """
+        
+        return self.get_setting().output.decomp
+    
+    def get_coulomb_method(self) -> str:
+        """
+        Get the method for the coulomb calculation.
+        """
+        
+        return self.get_setting().curp.coulomb_method
 
 class TwoBodyForce(TwoBodyForceBase):
 
