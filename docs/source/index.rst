@@ -19,6 +19,7 @@ CURP (CURrent calculation for Proteins) document ver. |latest-version| (2025)
    intro
    install
    tutorials
+   commands
    reference
    developer/participate
 
