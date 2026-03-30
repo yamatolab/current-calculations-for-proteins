@@ -150,5 +150,4 @@ Furo-cho, Chikusa-ku, Nagoya, 4648602, Japan.
 
 Email: yamato@nagoya-u.jp
 
-http://www.tb.phys.nagoya-u.ac.jp/~yamato
-
+https://www.comp-biophys.com/
