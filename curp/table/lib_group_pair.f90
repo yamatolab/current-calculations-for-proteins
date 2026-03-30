@@ -93,7 +93,7 @@ contains
                         itab_new = itab_new + 1
                         if (itab_new > len_table) then
                             write(0,*) "Error: The length of the interaction table is too short (len_table=", len_table, ")."
-                            error stop "Please set **table_length** in your config file to a larger value."
+                            error stop "Please set *table_length_limit* in your config file to a larger value."
                             exit
                         end if
                         nonbonded_table(itab_new, 1) = iatm
