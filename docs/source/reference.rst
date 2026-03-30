@@ -48,7 +48,12 @@ dimensions
       The number of group pairs.
 
    ncomponent
-      The number of components that contains total, bond, angle, torsion, improper torsion, coulomb14, vdw14, coulomb and vdw of flux if user turn on the keyword, decomp.
+      The number of components.
+
+      .. note::
+         The contents of the ncomponent is determined by the setting of `output.decomp`, `curp.potential` and `curp.nonbonded_method` in the setting file.
+
+         .. include:: components.rst
 
    nchar
       The number of character array.
@@ -86,7 +91,12 @@ dimensions
       The number of group pairs. This dimension is unlimited.
 
    ncomponent
-      The number of components that contains total, bond, angle, torsion, improper torsion, coulomb14, vdw14, coulomb and vdw of conductivity if user turn on the keyword, decomp.
+      The number of components.
+
+      .. note::
+         The contents of the ncomponent is determined by the setting of `output.decomp`, `curp.potential` and `curp.nonbonded_method` in the setting file.
+         See "NetCDF specification of flux data file" section for more details.
+
 
    nchar
       The number of character array.
