@@ -9,9 +9,9 @@
 | yes            | "amber19SB"         | "cutoff"            | 10(total, bond, angle, torsion, improper,|
 |                |                     |                     |    cmap, coulomb14, vdw14, coulomb, vdw) |
 +----------------+--------+------------+----------+----------+------------------------------------------+
-| yes            | (anything           | "cutoff"            |  8(total, bond, angle, torsion, improper,|
+| yes            | (anything           | "treecode"          |  8(total, bond, angle, torsion, improper,|
 |                |  except "amber19SB")|                     |    coulomb14, vdw14, nonbonded)          |
 +----------------+--------+------------+----------+----------+------------------------------------------+
-| yes            | "amber19SB"         | "cutoff"            |  9(total, bond, angle, torsion, improper,|
+| yes            | "amber19SB"         | "treecode"          |  9(total, bond, angle, torsion, improper,|
 |                |                     |                     |    cmap, coulomb14, vdw14, nonbonded)    |
 +----------------+--------+------------+----------+----------+------------------------------------------+
