@@ -22,7 +22,7 @@ def ext_modules(config, _dir):
     
     try:
         conda_prefix = Path(os.environ["CONDA_PREFIX"])
-    except None:
+    except KeyError:
         conda_prefix = Path("/usr")
     MPI_DIR = os.environ.get("MPI_DIR", conda_prefix)
     NETCDF_DIR = os.environ.get("NETCDF_DIR", conda_prefix)
