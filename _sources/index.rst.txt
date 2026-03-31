@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 CURP (CURrent calculation for Proteins) document ver. |latest-version| (2026)
-============================================================
+==============================================================================
 
 .. image:: curp_logo.png
    :align: center
