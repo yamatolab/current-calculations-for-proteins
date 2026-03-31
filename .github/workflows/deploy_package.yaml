@@ -49,7 +49,6 @@ jobs:
             PATH=/usr/lib64/openmpi/bin:$PATH
             LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
             LIBRARY_PATH=/usr/lib64/openmpi/lib:$LIBRARY_PATH
-
         with:
           output-dir: ./dist
       
