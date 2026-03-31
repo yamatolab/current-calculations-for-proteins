@@ -236,14 +236,14 @@ curp section
 
         The method to cut off the van der Waals interaction.
 
-        This option is used when `nonbonded_method` is set to `cutoff`.
+        This option is used when **nonbonded_method** is set to `cutoff`.
 
 
     **vdw_cutoff_length = 99.9** (default) : Float
 
         The cutoff length for the van der Waals interaction. 
         
-        This option is used when `nonbonded_method` is set to `cutoff`.
+        This option is used when **nonbonded_method** is set to `cutoff`.
 
     **enable_inverse_pair = no** (default) : Bool
 
