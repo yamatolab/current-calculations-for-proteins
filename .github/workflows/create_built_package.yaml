@@ -45,13 +45,6 @@ jobs:
           CIBW_ARCHS: x86_64
           CIBW_BUILD: cp36-*
           CIBW_BUILD_VERBOSITY: 3
-          CIBW_ENVIRONMENT: >
-            CC=mpicc
-            CXX=mpicxx
-            FC=mpifort
-            F77=mpifort
-            F90=mpifort
-            LDSHARED="mpicxx -shared"
         with:
           output-dir: ./dist
       
