@@ -125,10 +125,10 @@ Atom group file
 :: 
 
    [GROUP1]
-   (the number of atoms in "GLOUP1")
+   (the array of atom indices in "GROUP1")
 
    [GROUP2]
-   (the number of atoms in "GROUP2")
+   (the array of atom indices in "GROUP2")
    ...
 
 For example, you can separate the main chain and the side chain parts by
