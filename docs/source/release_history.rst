@@ -8,9 +8,9 @@ Release History
    environment and will not be updated unless bugs are found. 
    All planned feature additions and performance improvements will be 
    made in versions v2.0 and later. 
-   It is recommended to use the CURP v2 series.
+   It is recommended to use the CURP v2 and later series.
 
-v3.0 (2025-03-31)
+v3.0 (2026-03-31)
 ------------------
 - Initial release of CURP v3 series.
 - Added `treecode` calculation method for nonbonded interactions, which significantly improves performance for large systems. 
