@@ -194,7 +194,7 @@ curp section
         The method to calculate coulomb interaction.
         
         "cutoff" means to perform perfect atomwise nonbonded calculation.
-        "Treecode" means to perform atomwise nonbonded calculation when the distance between the pair is near, 
+        "treecode" means to perform atomwise nonbonded calculation when the distance between the pair is near, 
         and to perform atom-cell coulomb calculation when the distance is far(van der Waals is ignored). 
     
     **coulomb_cutoff_method = atom** (default) : Choice[atom]
