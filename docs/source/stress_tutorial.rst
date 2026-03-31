@@ -2,6 +2,9 @@
 Atomic stress tensor analysis 
 =============================
 
+.. warning::
+   From version 1.3 CURP don't support the stress tensor calculation.
+
 CURP performs atomistic stress tensor analysis. According to Hardy's forluma,
 the Cauchy stress tensor of the *i*\ th atom is given by:
 
