@@ -12,10 +12,15 @@ The CURP program has been tested on the following systems:
 Linux
 -----
 
-*  OS Version: CentOS 6.x, Ubuntu 18.x
+*  OS Version: CentOS 6.x, Ubuntu 22.x
 
 Mac
 ---
+
+.. note::
+
+   CURP v3.0 is not tested on macOS. 
+   If you want to use on Mac, using version 2.0 or earlier is recommended.
 
 *  OS Version: Mavericks or Yosemite with XCode 6.1
 
