@@ -5,7 +5,9 @@ About CURP
 What is CURP for?
 ============================
 
-CURrent calculation for Proteins (CURP) permits to compute energy/heat currents and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD).
+CURrent calculation for Proteins (CURP) permits to compute energy/heat currents and atomic stress tensors(*) in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD).
+
+(*) NOTE: CURP does not support atomic stress calculations on and after version 1.3.
 
 Flow diagram of CURP calculations
 =================================
