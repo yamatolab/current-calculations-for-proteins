@@ -45,6 +45,10 @@ jobs:
           CIBW_ARCHS: x86_64
           CIBW_BUILD: cp36-*
           CIBW_BUILD_VERBOSITY: 3
+          CIBW_ENVIRONMENT: >
+            PATH=/usr/lib64/openmpi/bin:$PATH
+            LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+            LIBRARY_PATH=/usr/lib64/openmpi/lib:$LIBRARY_PATH
         with:
           output-dir: ./dist
       
