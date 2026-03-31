@@ -1,6 +1,6 @@
-============
+===================
 Installation Guide
-============
+===================
 Welcome to the CURP installation guide. This document will help you set up CURP on Mac, 
 Linux, and WSL (Windows Subsystem for Linux) systems.
 
