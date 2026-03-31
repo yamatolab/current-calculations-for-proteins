@@ -196,6 +196,7 @@ In the atom group file, the "GROUP1" should be defined earlier than the "GROUP2"
 In the case of the example above, you cannot specify "01_ALA_M" in the fifth line because "01_ALA_M" is defined earlier than "01_ALA_S" in the atom group file.
 If the "GROUP1" is defined later than the "GROUP2", the error will be raised. 
 
+The calculation of group pair "GROUP1" and "GROUP1" is available when you perform heat current calculation.
 
 Contact
 ========
