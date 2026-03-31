@@ -182,7 +182,7 @@ curp section
 
     **group_pair_file = none** (default) : File
 
-        Path to file to define group pair. If you didn't given, all of pairs within the targets will be calculated.
+        Path to file to define group pair. If this is not given, all of pairs within the targets will be calculated.
 
         This option is used when **flux_grain** is set to `group` or `both`.
 
@@ -214,7 +214,7 @@ curp section
         .. note::
             New option in version 3.0.
 
-        The max number of atoms that the a cell contains.
+        The max number of atoms that the a cell can contain.
 
     **treecode_direct_parm = 0.02** (default) : Float
         
