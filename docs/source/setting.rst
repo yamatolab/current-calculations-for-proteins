@@ -209,21 +209,21 @@ curp section
 
         The unit is in Angstrom. This option is used when `nonbonded_method` is set to `cutoff`.
 
-    **treecode_cell_contains = 99.9** (default) : Float
+    **treecode_cell_contains = 50** (default) : Float
         
         .. note::
             New option in version 3.0.
 
         The max number of atoms that the a cell contains.
 
-    **treecode_direct_parm = 99.9** (default) : Float
+    **treecode_direct_parm = 0.02** (default) : Float
         
         .. note::
             New option in version 3.0.
 
         The parameter that is used to decide whether to perform direct nonbonded calculation.
 
-    **treecode_cutoff_length = 99.9** (default) : Float
+    **treecode_cutoff_length = 12.0** (default) : Float
         
         .. note::
             New option in version 3.0.
