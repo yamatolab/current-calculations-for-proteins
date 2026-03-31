@@ -36,37 +36,37 @@ input_amber section
 
         Coordinate trajectory file path.
 
-        This option is used when `target` is set to `trajectory`.
+        This option is used when **target** is set to `trajectory`.
 
     **velocity_file = none** (default) : File
 
         Velocity trajectory file path.
 
-        This option is used when `target` is set to `trajectory`.
+        This option is used when **target** is set to `trajectory`.
 
     **restart_file = none** (default) : File
 
         Restart file path.
 
-        This option is used when `target` is set to `restart`.
+        This option is used when **target** is set to `restart`.
 
     **coordinate_format = ascii** (default) : Choice[ascii|netcdf]
 
         The format of coordinate file.
 
-        This option is used when `target` is set to `trajectory`.
+        This option is used when **target** is set to `trajectory`.
 
     **velocity_format = ascii** (default) : Choice[ascii|netcdf]
 
         The format of velocity file.
 
-        This option is used when `target` is set to `trajectory`.
+        This option is used when **target** is set to `trajectory`.
 
     **restart_format = restart** (default) : Choice[restart]
 
         The format of restart file.
 
-        This option is used when `target` is set to `restart`.
+        This option is used when **target** is set to `restart`.
 
     **dump_parameters = no** (default) : Bool
 
@@ -184,7 +184,7 @@ curp section
 
         Path to file to define group pair. If you didn't given, all of pairs within the targets will be calculated.
 
-        This option is used when `flux_grain` is set to `group` or `both`.
+        This option is used when **flux_grain** is set to `group` or `both`.
 
     **nonbonded_method = cutoff** (default) : Choice[cutoff|treecode]
 
@@ -276,7 +276,7 @@ dynamics section
 ~~~~~~~~~~~~~~~~
 
 .. note::
-    This section is used for performing microcanonical simulation(**method** in curp section is "microcanonical").
+    This section is used for performing microcanonical simulation(**method** in curp section is `microcanonical`).
 
 
     **integrator = vverlet** (default) : Choice[vverlet|leapfrog]
