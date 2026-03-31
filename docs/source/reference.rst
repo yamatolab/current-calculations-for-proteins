@@ -188,7 +188,7 @@ For example, when you use the atom group file above, you can specify the group p
    03_ALA_S  02_ALA_S  03_ALA_M
 
 
-Here the first and second lines mean that the flux from 01_ALA_S to 01_ALA_M and the flux from 02_ALA_M to 01_ALA_M will be calculated.
+Here the first and second lines mean that the two fluxes are calculated and written: flux from 01_ALA_S to 01_ALA_M and the flux from 02_ALA_M to 01_ALA_M.
 
 You cannot specify the same group pair more than once. If you specify the same group pair more than once, the error will be raised.
 
