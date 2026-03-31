@@ -1,6 +1,6 @@
-======================================
+=======================================
 CURP: CURrent calculations for Proteins
-======================================
+=======================================
 
 .. image:: https://pepy.tech/badge/curp
     :target: https://pepy.tech/project/curp
