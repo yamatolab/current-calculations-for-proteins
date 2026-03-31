@@ -99,15 +99,21 @@ Additional options
 
     `dry-run` options
     
-        No additional options.
+        `-h, --help`
+        
+            Show this help message and exit
 
     `adjust-vel` options
     
-        No additional options.
+        `-h, --help`
+        
+            Show this help message and exit
 
     `mask` options
             
-        No additional options.
+        `-h, --help`
+        
+            Show this help message and exit
     
     `dist` options
 
