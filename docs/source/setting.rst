@@ -362,6 +362,3 @@ output section
     **energy_compress = yes** (default) : Bool
 
         Flag whether compress with gnu zip for energy_file, then the extension of the file name became ".gz".
-
-
-W
