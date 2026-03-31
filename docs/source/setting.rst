@@ -228,7 +228,9 @@ curp section
         .. note::
             New option in version 3.0.
 
-        The cutoff length for the treecode calculation.
+        The cutoff length for the treecode calculation. The unit is in Angstrom.
+        
+        This option is used when **nonbonded_method** is set to `treecode`.
 
     **vdw_cutoff_method = atom** (default) : Choice[atom]
 
@@ -245,7 +247,8 @@ curp section
 
     **enable_inverse_pair = no** (default) : Bool
 
-        Calculate and write out inverse pairs j <- i for flux adding normal group pairs: i <- j. This option is used in the case for calculating energy flux.
+        Calculate and write out inverse pairs j <- i for flux adding normal group pairs: i <- j. 
+        This option is used in the case for calculating energy flux(**method** == `energy-flux`).
 
     **remove_trans = yes** (default) : Bool
 
