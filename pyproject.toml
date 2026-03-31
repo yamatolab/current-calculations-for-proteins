@@ -8,7 +8,7 @@ before-all = [
     'yum install -y yum-utils wget || true',
     'wget https://archives.fedoraproject.org/pub/archive/epel/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm || echo "epel-release is already installed, ignoring..."',
     'yum install -y ./epel-release-7-14.noarch.rpm || true',
-    'yum install -y netcdf-devel graphviz-devel openmpi-devel eigen-devel || true'
+    'yum install -y netcdf-devel graphviz-devel openmpi-devel eigen3-devel || true'
 ]
 
 [[tool.cibuildwheel.overrides]]
