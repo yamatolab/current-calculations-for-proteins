@@ -1,53 +1,117 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.2. Atomic stress tensor analysis &mdash; CURP 3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/base.css?v=3fcee4af" />
 
-    <title>3.2. Atomic stress tensor analysis &#8212; CURP 1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7114dff0"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex/" />
     <link rel="search" title="Search" href="../search/" />
     <link rel="next" title="3.3. Energy flow analysis" href="../eflow_tutorial/" />
     <link rel="prev" title="3.1. General instructions" href="../general_tutorial/" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex/" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../eflow_tutorial/" title="3.3. Energy flow analysis"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="../general_tutorial/" title="3.1. General instructions"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../">CURP 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../tutorials/" accesskey="U"><span class="section-number">3. </span>Tutorials</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.2. </span>Atomic stress tensor analysis</a></li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            CURP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/">1. About CURP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/">2. Installation Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials/">3. Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../general_tutorial/">3.1. General instructions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.2. Atomic stress tensor analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#obtaining-the-md-trajectory">3.2.1. Obtaining the MD trajectory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stress-tensor-calculation">3.2.2. Stress tensor calculation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-program">Running the program</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-run-cfg">Setting run.cfg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-group-ndx">Setting group.ndx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#output-files">Output files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#analysis-of-stress-tensor">3.2.3. Analysis of stress tensor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#result">Result</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../eflow_tutorial/">3.3. Energy flow analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hflow_tutorial/">3.4. Heat current analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/">4. Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/">5. Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/participate/">6. How to participate ?</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">CURP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorials/"><span class="section-number">3. </span>Tutorials</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3.2. </span>Atomic stress tensor analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/stress_tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="atomic-stress-tensor-analysis">
-<h1><span class="section-number">3.2. </span>Atomic stress tensor analysis<a class="headerlink" href="#atomic-stress-tensor-analysis" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.2. </span>Atomic stress tensor analysis<a class="headerlink" href="#atomic-stress-tensor-analysis" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>On and after version 1.3 CURP does not support the stress tensor calculation.</p>
+</div>
 <p>CURP performs atomistic stress tensor analysis. According to Hardy’s forluma,
 the Cauchy stress tensor of the <em>i</em>th atom is given by:</p>
-<a class="reference internal image-reference" href="../_images/stress.png"><img alt="../_images/stress.png" class="align-center" src="../_images/stress.png" style="height: 60px;" /></a>
+<a class="reference internal image-reference" href="../_images/stress.png"><img alt="../_images/stress.png" class="align-center" src="../_images/stress.png" style="height: 60px;" />
+</a>
 <p>where <span class="math notranslate nohighlight">\(\Omega_i\)</span> is the volume of atom <span class="math notranslate nohighlight">\(i\)</span>,
 <span class="math notranslate nohighlight">\(\boldsymbol{F}_{ij}\)</span> is the pairwise interatomic force
 acting on <span class="math notranslate nohighlight">\(i\)</span> from <span class="math notranslate nohighlight">\(j\)</span>,
@@ -58,22 +122,22 @@ from atom <span class="math notranslate nohighlight">\(j\)</span> to atom <span 
 <p>As can be seen from the above formula, the atomic stress tensor of atom <span class="math notranslate nohighlight">\(i\)</span> depends on both the
 position and the velocity trajectories during the MD simulations.</p>
 <p>The calculation procedure consists of the following steps:</p>
-<div class="contents local topic" id="contents">
+<nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#obtaining-the-md-trajectory" id="id1">Obtaining the MD trajectory</a></p></li>
 <li><p><a class="reference internal" href="#stress-tensor-calculation" id="id2">Stress tensor calculation</a></p></li>
 <li><p><a class="reference internal" href="#analysis-of-stress-tensor" id="id3">Analysis of stress tensor</a></p></li>
 </ul>
-</div>
+</nav>
 <section id="obtaining-the-md-trajectory">
-<h2><a class="toc-backref" href="#id1"><span class="section-number">3.2.1. </span>Obtaining the MD trajectory</a><a class="headerlink" href="#obtaining-the-md-trajectory" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">3.2.1. </span>Obtaining the MD trajectory</a><a class="headerlink" href="#obtaining-the-md-trajectory" title="Link to this heading"></a></h2>
 <p>We show two examples of calculations for <strong>ALA-ALA-ALA in vacuum/solvent</strong>.
 NVT MD simulations were performed using the Amber12 program with the time step
 of 0.5 fs at room temperature. In addition to the trajectory files,
 a parameter topology file is required for each system.</p>
 </section>
 <section id="stress-tensor-calculation">
-<h2><a class="toc-backref" href="#id2"><span class="section-number">3.2.2. </span>Stress tensor calculation</a><a class="headerlink" href="#stress-tensor-calculation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">3.2.2. </span>Stress tensor calculation</a><a class="headerlink" href="#stress-tensor-calculation" title="Link to this heading"></a></h2>
 <p>Examples for the alanine tripeptide in the vacuum and solvent environments
 are found in the directories <code class="docutils literal notranslate"><span class="pre">ala3invac-stress</span></code> and <code class="docutils literal notranslate"><span class="pre">ala3insol-stress</span></code>,
 respectively.
@@ -88,18 +152,18 @@ To overcome this issue, a united-atom approach has been employed.</p>
    \right)}\]</div>
 <p>,where <span class="math notranslate nohighlight">\(J\)</span> represents a group of atoms. Here, each unit of the atom group could be either (1) united atom (heavy atom together with the attached hydrogen) or (2) amino acid residue, or (3) the whole molecule.</p>
 <section id="running-the-program">
-<h3>Running the program<a class="headerlink" href="#running-the-program" title="Permalink to this headline">¶</a></h3>
+<h3>Running the program<a class="headerlink" href="#running-the-program" title="Link to this heading"></a></h3>
 <p>First, change the directory to the working directory for the stress tensor analysis.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> tutorial/ala3invac-stress/united
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>tutorial/ala3invac-stress/united
 </pre></div>
 </div>
 <p>To start the calculations, type the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curp compute run.cfg &gt; log
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>curp<span class="w"> </span>compute<span class="w"> </span>run.cfg<span class="w"> </span>&gt;<span class="w"> </span>log
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">run.cfg</span></code> (see below for details) is the configuration file
 for the analysis. An alternative way is to run the following script:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./run.sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./run.sh
 </pre></div>
 </div>
 <p>The calculations will be completed shortly and the prompt will appear at the shell.
@@ -116,7 +180,7 @@ The timging information is currently incorrect. Please ignore these lines for no
 </div>
 </section>
 <section id="setting-run-cfg">
-<h3>Setting run.cfg<a class="headerlink" href="#setting-run-cfg" title="Permalink to this headline">¶</a></h3>
+<h3>Setting run.cfg<a class="headerlink" href="#setting-run-cfg" title="Link to this heading"></a></h3>
 <p>An example of <cite>run.cfg</cite> is shown below.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="nb">input</span><span class="p">]</span>
 <span class="nb">format</span> <span class="o">=</span> <span class="n">amber</span>
@@ -160,7 +224,7 @@ The timging information is currently incorrect. Please ignore these lines for no
 </pre></div>
 </div>
 <section id="input">
-<h4>[input]<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h4>
+<h4>[input]<a class="headerlink" href="#input" title="Link to this heading"></a></h4>
 <p>In this section, we specify the input file format.</p>
 <dl class="simple">
 <dt>format = amber</dt><dd><p>CURP reads the input files in the Amber format.</p>
@@ -172,7 +236,7 @@ The timging information is currently incorrect. Please ignore these lines for no
 </dl>
 </section>
 <section id="input-amber">
-<h4>[input_amber]<a class="headerlink" href="#input-amber" title="Permalink to this headline">¶</a></h4>
+<h4>[input_amber]<a class="headerlink" href="#input-amber" title="Link to this heading"></a></h4>
 <p>This section name depends on the <cite>format</cite> keyword specified in the <code class="docutils literal notranslate"><span class="pre">[input]</span></code> section. The name of this section is <cite>[input_amber]</cite> because the <cite>format</cite> keyword in the <code class="docutils literal notranslate"><span class="pre">[input]</span></code> section is “amber”.</p>
 <p>For the <code class="docutils literal notranslate"><span class="pre">[input_amber]</span></code> section, the following parameters must be specified.</p>
 <dl class="simple">
@@ -191,7 +255,7 @@ The timging information is currently incorrect. Please ignore these lines for no
 </dl>
 </section>
 <section id="curp">
-<h4>[curp]<a class="headerlink" href="#curp" title="Permalink to this headline">¶</a></h4>
+<h4>[curp]<a class="headerlink" href="#curp" title="Link to this heading"></a></h4>
 <p>In this section, we set the parameters for the calculations of pairwise interatomic forces.</p>
 <dl class="simple">
 <dt>potential = amberbase | amber94 | amber96 | amber99 | amber99SB | amber03 | amber12SB</dt><dd><p>Type of force-field functions.</p>
@@ -218,7 +282,7 @@ In this case, atomic stress tensors are calculated for the 1st to the 33rd atoms
 </dl>
 </section>
 <section id="volume">
-<h4>[volume]<a class="headerlink" href="#volume" title="Permalink to this headline">¶</a></h4>
+<h4>[volume]<a class="headerlink" href="#volume" title="Link to this heading"></a></h4>
 <p>For the atomic stress tensor analysis, CURP performs Voronoi tessellation
 to calculate the atomic volumes.</p>
 <dl>
@@ -255,7 +319,7 @@ If voronoi_solvation is set, CURP removes water molecules within
 </dl>
 </section>
 <section id="output">
-<h4>[output]<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h4>
+<h4>[output]<a class="headerlink" href="#output" title="Link to this heading"></a></h4>
 <p>Output format specification.</p>
 <dl>
 <dt>filename = outdata/stress.dat</dt><dd><p>Specify the naming convention of the datafile for the stress tensor analysis.
@@ -271,7 +335,7 @@ In this example, the file name is <cite>outdata/stress_grp.dat00001</cite>,
 </section>
 </section>
 <section id="setting-group-ndx">
-<h3>Setting group.ndx<a class="headerlink" href="#setting-group-ndx" title="Permalink to this headline">¶</a></h3>
+<h3>Setting group.ndx<a class="headerlink" href="#setting-group-ndx" title="Link to this heading"></a></h3>
 <p>As mentioned above, the user can define any group of atoms for the
 stress tensor analysis. When the <cite>group_method</cite> keyword is set to be
 <cite>file</cite> in the [curp] section, and <cite>group_file</cite> name is specified in the
@@ -303,9 +367,9 @@ by a space, tab or a blank line. Alternatively, a range of atoms can
 be indicated by using <cite>-</cite>.</p>
 </section>
 <section id="output-files">
-<h3>Output files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h3>
+<h3>Output files<a class="headerlink" href="#output-files" title="Link to this heading"></a></h3>
 <section id="stress-tensor-data-file">
-<h4>stress tensor data file<a class="headerlink" href="#stress-tensor-data-file" title="Permalink to this headline">¶</a></h4>
+<h4>stress tensor data file<a class="headerlink" href="#stress-tensor-data-file" title="Link to this heading"></a></h4>
 <p>For each snapshot of the MD trajectory, 3x3 stress tensors are output to
 <cite>outdata/stress_grp.dat00000</cite>. An example is shown below:</p>
 <img alt="../_images/stress_grp.png" class="align-center" src="../_images/stress_grp.png" />
@@ -313,7 +377,7 @@ be indicated by using <cite>-</cite>.</p>
 For each time frame, nine elements (xx, xy, xz, yx, yy, yz, zx, zy, zz) are printed for each group.</p>
 </section>
 <section id="voluemes-dat-gvoluems-dat">
-<h4>voluemes.dat, gvoluems.dat<a class="headerlink" href="#voluemes-dat-gvoluems-dat" title="Permalink to this headline">¶</a></h4>
+<h4>voluemes.dat, gvoluems.dat<a class="headerlink" href="#voluemes-dat-gvoluems-dat" title="Link to this heading"></a></h4>
 <p>Atomic volumes and group volumes are printed to the files
 specified by the <cite>output_volume_file</cite> and
 <cite>output_gvolume_file</cite> keywards in the [volume] section.
@@ -322,7 +386,7 @@ If no file names are specified, no data is printed.</p>
 </section>
 </section>
 <section id="analysis-of-stress-tensor">
-<h2><a class="toc-backref" href="#id3"><span class="section-number">3.2.3. </span>Analysis of stress tensor</a><a class="headerlink" href="#analysis-of-stress-tensor" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">3.2.3. </span>Analysis of stress tensor</a><a class="headerlink" href="#analysis-of-stress-tensor" title="Link to this heading"></a></h2>
 <p>The direct output of the stress tensor analysis itself is inconvenient for
 two reasons: (1) the output file contains a large amount of data
 of the time-series of the MD trajectory and (2) the stress tensor has 3x3=9
@@ -347,12 +411,12 @@ we show how to diagonalize and time average the stress tensor as follows:</p>
    \sqrt {\sigma _{x'x'}^2 + \sigma _{y'y'}^2 + \sigma _{z'z'}^2}\]</div>
 <p>The last quantity is used to measure the magnitude of the stress tensor.</p>
 <p>These calculations are performed by the <cite>ana.sh</cite> script.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./ana.sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./ana.sh
 </pre></div>
 </div>
 <p><cite>ana.sh</cite> uses  <cite>curp script simplify-tensor</cite>,</p>
 <section id="result">
-<h3>Result<a class="headerlink" href="#result" title="Permalink to this headline">¶</a></h3>
+<h3>Result<a class="headerlink" href="#result" title="Link to this heading"></a></h3>
 <p>Finally, a detailed summary of the calculated data is output to <cite>grp-sim.dat</cite>.</p>
 <img alt="../_images/grp-sim.png" class="align-center" src="../_images/grp-sim.png" />
 <p>Examination of these results reveals the following characteristic features:</p>
@@ -367,95 +431,34 @@ we show how to diagonalize and time average the stress tensor as follows:</p>
 </section>
 
 
-            <div class="clearer"></div>
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <div>
-    <h3><a href="../">Table of Contents</a></h3>
-    <ul>
-<li><a class="reference internal" href="#">3.2. Atomic stress tensor analysis</a><ul>
-<li><a class="reference internal" href="#obtaining-the-md-trajectory">3.2.1. Obtaining the MD trajectory</a></li>
-<li><a class="reference internal" href="#stress-tensor-calculation">3.2.2. Stress tensor calculation</a><ul>
-<li><a class="reference internal" href="#running-the-program">Running the program</a></li>
-<li><a class="reference internal" href="#setting-run-cfg">Setting run.cfg</a><ul>
-<li><a class="reference internal" href="#input">[input]</a></li>
-<li><a class="reference internal" href="#input-amber">[input_amber]</a></li>
-<li><a class="reference internal" href="#curp">[curp]</a></li>
-<li><a class="reference internal" href="#volume">[volume]</a></li>
-<li><a class="reference internal" href="#output">[output]</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#setting-group-ndx">Setting group.ndx</a></li>
-<li><a class="reference internal" href="#output-files">Output files</a><ul>
-<li><a class="reference internal" href="#stress-tensor-data-file">stress tensor data file</a></li>
-<li><a class="reference internal" href="#voluemes-dat-gvoluems-dat">voluemes.dat, gvoluems.dat</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#analysis-of-stress-tensor">3.2.3. Analysis of stress tensor</a><ul>
-<li><a class="reference internal" href="#result">Result</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../general_tutorial/" class="btn btn-neutral float-left" title="3.1. General instructions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../eflow_tutorial/" class="btn btn-neutral float-right" title="3.3. Energy flow analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014-2026, Yamato Labaratory.</p>
   </div>
-  <div>
-    <h4>Previous topic</h4>
-    <p class="topless"><a href="../general_tutorial/"
-                          title="previous chapter"><span class="section-number">3.1. </span>General instructions</a></p>
-  </div>
-  <div>
-    <h4>Next topic</h4>
-    <p class="topless"><a href="../eflow_tutorial/"
-                          title="next chapter"><span class="section-number">3.3. </span>Energy flow analysis</a></p>
-  </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/stress_tutorial.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search/" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex/" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../eflow_tutorial/" title="3.3. Energy flow analysis"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="../general_tutorial/" title="3.1. General instructions"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../">CURP 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../tutorials/" ><span class="section-number">3. </span>Tutorials</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.2. </span>Atomic stress tensor analysis</a></li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2014-2022, Yamato Labaratory.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
-    </div>
-  </body>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

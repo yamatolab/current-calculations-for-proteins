@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.4. curp graph-een &mdash; CURP 3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/base.css?v=3fcee4af" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7114dff0"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="4.5. curp sum-acf" href="../sum-acf/" />
+    <link rel="prev" title="4.3. curp conv-trj" href="../conv-trj/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            CURP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/">1. About CURP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/">2. Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/">3. Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../commands/">4. Commands</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../compute/">4.1. curp compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cal-tc/">4.2. curp cal-tc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../conv-trj/">4.3. curp conv-trj</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.4. curp graph-een</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">4.4.1. Positional arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#options">4.4.2. Options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sum-acf/">4.5. curp sum-acf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyze_commands/">4.6. curp analyze</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/">5. Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/participate/">6. How to participate ?</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">CURP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../commands/"><span class="section-number">4. </span>Commands</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4.4. </span>curp graph-een</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/graph-een.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="curp-graph-een">
+<h1><span class="section-number">4.4. </span>curp graph-een<a class="headerlink" href="#curp-graph-een" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This command is not supported in CURP 3.0.
+Please use the previous version of CURP for this command.</p>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">curp graph-een [-h] [-t [TARGETS [TARGETS ...]]]</span>
+<span class="go">               [--forced-output-nodes [FORCE_NODES [FORCE_NODES ...]]]</span>
+<span class="go">               [-p [CLOSE_PAIRS [CLOSE_PAIRS ...]]] [-c CLUSTER_FN]</span>
+<span class="go">               [-n NODE_FN] [--with-one-letter] [-f FIG_FN]</span>
+<span class="go">               [-r THRESHOLD] [-R TPL_THRESHOLD] [--ratio RATIO]</span>
+<span class="go">               [-s GRAPH_SIZE] [--title TITLE] [--direction {LR,TB}]</span>
+<span class="go">               [-I] [--show-negative-values] [--alpha ALPHA]</span>
+<span class="go">               [-lv [LINE_VALUES [LINE_VALUES ...]]]</span>
+<span class="go">               [-lc [LINE_COLORS [LINE_COLORS ...]]]</span>
+<span class="go">               [-lt [LINE_THICKS [LINE_THICKS ...]]]</span>
+<span class="go">               [-lw [LINE_WEIGHTS [LINE_WEIGHTS ...]]]</span>
+<span class="go">               data_fns [data_fns ...]</span>
+</pre></div>
+</div>
+<p>Show network chart of the energy conductivities.</p>
+<section id="positional-arguments">
+<h2><span class="section-number">4.4.1. </span>Positional arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p><cite>data_fns</cite></p>
+<blockquote>
+<div><p>Specify filenames.</p>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="options">
+<h2><span class="section-number">4.4.2. </span>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p><cite>-h, –help</cite></p>
+<blockquote>
+<div><p>Show this help message and exit.</p>
+</div></blockquote>
+<p><cite>-t [TARGETS [TARGETS …]], –targets [TARGETS [TARGETS …]]</cite> (defalut: 1-)</p>
+<blockquote>
+<div><p>This option allow you to show only target and thier neighbhor nodes.
+ex), [-t 1-5], [-t 2-9 15 17], [-t 25-].</p>
+</div></blockquote>
+<p><cite>–forced-output-nodes [FORCE_NODES [FORCE_NODES …]]</cite> defalut: [])</p>
+<blockquote>
+<div><p>nodes to forcibly show.
+ex), [-t 1-5], [-t 2-9 15 17], [-t 25-].</p>
+</div></blockquote>
+<p><cite>-p [CLOSE_PAIRS [CLOSE_PAIRS …]], –bring-node-pair-close-together [CLOSE_PAIRS [CLOSE_PAIRS …]]</cite> (defalut: [])</p>
+<blockquote>
+<div><p>bring the node pair close together on the EEN graph.
+ex), 1:2, 3:5, 3:15.</p>
+</div></blockquote>
+<p><cite>-c CLUSTER_FN, –cluster-filename CLUSTER_FN</cite> (defalut: None)</p>
+<blockquote>
+<div><p>Specify a cluster file name.</p>
+</div></blockquote>
+<p><cite>-n NODE_FN, –node-style-filename NODE_FN</cite> (defalut: None)</p>
+<blockquote>
+<div><p>Specify a file name which node style difinitions are written.</p>
+</div></blockquote>
+<p><cite>–with-one-letter</cite> (defalut: False)</p>
+<blockquote>
+<div><p>use 1 letter representation for amino acid name.</p>
+</div></blockquote>
+<p><cite>-f FIG_FN, –output-een-filename FIG_FN</cite></p>
+<blockquote>
+<div><p>Specify a filename to graph EEN.</p>
+</div></blockquote>
+<p><cite>-r THRESHOLD, –threshold THRESHOLD</cite> (type: float, defalut: False)</p>
+<blockquote>
+<div><p>Threshold value to show nodes on chart figure.</p>
+</div></blockquote>
+<p><cite>-R TPL_THRESHOLD, –topology-threshold TPL_THRESHOLD</cite> (type: float, defalut: None)</p>
+<blockquote>
+<div><p>Threshold value to define graph topology.
+If you don’t give this parameter, the value of threshold to show nodes will be used.</p>
+</div></blockquote>
+<p><cite>–ratio RATIO</cite> (type: float, defalut: None)</p>
+<blockquote>
+<div><p>Ratio of height/width to chart a figure.
+If ‘–graph-size’ is set, this option will be overwritten by it.</p>
+</div></blockquote>
+<p><cite>-s GRAPH_SIZE, –graph-size GRAPH_SIZE</cite> (defalut: None)</p>
+<blockquote>
+<div><p>The graph size in inch unit.
+ex) -s ‘3.4,2.5’</p>
+</div></blockquote>
+<p><cite>–title TITLE</cite> (defalut: None)</p>
+<blockquote>
+<div><p>Specify the title of the figure.</p>
+</div></blockquote>
+<p><cite>–direction {LR,TB}</cite> (defalut: TB)</p>
+<blockquote>
+<div><p>Specify the kind of the direction.</p>
+</div></blockquote>
+<p><cite>-I, –hide-isolated-nodes</cite></p>
+<blockquote>
+<div><p>Hide isolated nodes when appling multiple irEC files.</p>
+</div></blockquote>
+<p><cite>–show-negative-values</cite></p>
+<blockquote>
+<div><p>show the nodes pair which have negative values.</p>
+</div></blockquote>
+<p><cite>–alpha ALPHA</cite> (type: int, defalut: None)</p>
+<blockquote>
+<div><p>The transparency value of the background color.</p>
+</div></blockquote>
+<p><cite>-lv [LINE_VALUES [LINE_VALUES …]], –line-values [LINE_VALUES [LINE_VALUES …]]</cite>  (type: float, default: [0.015, 0.008, 0.003])</p>
+<blockquote>
+<div><p>The threshold values for line attributes.
+Number of elements in the list must be equal with all line attribute.</p>
+</div></blockquote>
+<p><cite>-lc [LINE_COLORS [LINE_COLORS …]], –line-colors [LINE_COLORS [LINE_COLORS …]]</cite> (type: str, default: [‘red’, ‘blue’, ‘green’])</p>
+<blockquote>
+<div><p>The colors of line.
+Number of elements in the list must be equal with all line attribute.</p>
+</div></blockquote>
+<p><cite>-lt [LINE_THICKS [LINE_THICKS …]], –line-thicks [LINE_THICKS [LINE_THICKS …]]</cite> (type: float, default: [4.0, 4.0, 2.5])</p>
+<blockquote>
+<div><p>The thickness of line.
+Number of elements in the list must be equal with all line attribute.</p>
+</div></blockquote>
+<p><cite>-lw [LINE_WEIGHTS [LINE_WEIGHTS …]], –line-weights [LINE_WEIGHTS [LINE_WEIGHTS …]]</cite> (type: float, default: [5.0, 3.0, 1.0])</p>
+<blockquote>
+<div><p>The weight of line.
+Number of elements in the list must be equal with all line attribute.</p>
+</div></blockquote>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../conv-trj/" class="btn btn-neutral float-left" title="4.3. curp conv-trj" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../sum-acf/" class="btn btn-neutral float-right" title="4.5. curp sum-acf" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014-2026, Yamato Labaratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

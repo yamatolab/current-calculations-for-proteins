@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; CURP 3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/base.css?v=3fcee4af" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7114dff0"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            CURP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/">1. About CURP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/">2. Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/">3. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/">4. Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/">5. Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/participate/">6. How to participate ?</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">CURP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/components.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>output.decomp</p></th>
+<th class="head"><p>curp.potential</p></th>
+<th class="head"><p>curp.nonbonded_method</p></th>
+<th class="head"><p>ncomponent</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>no</p></td>
+<td><p>(anything)</p></td>
+<td><p>(anything)</p></td>
+<td><p>1 (total)</p></td>
+</tr>
+<tr class="row-odd"><td><p>yes</p></td>
+<td><dl class="simple">
+<dt>(anything</dt><dd><p>except “amber19SB”)</p>
+</dd>
+</dl>
+</td>
+<td><p>“cutoff”</p></td>
+<td><dl class="simple">
+<dt>9 (total, bond, angle, torsion, improper,</dt><dd><p>coulomb14, vdw14, coulomb, vdw)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p>yes</p></td>
+<td><p>“amber19SB”</p></td>
+<td><p>“cutoff”</p></td>
+<td><dl class="simple">
+<dt>10(total, bond, angle, torsion, improper,</dt><dd><p>cmap, coulomb14, vdw14, coulomb, vdw)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td><p>yes</p></td>
+<td><dl class="simple">
+<dt>(anything</dt><dd><p>except “amber19SB”)</p>
+</dd>
+</dl>
+</td>
+<td><p>“treecode”</p></td>
+<td><dl class="simple">
+<dt>8(total, bond, angle, torsion, improper,</dt><dd><p>coulomb14, vdw14, nonbonded)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p>yes</p></td>
+<td><p>“amber19SB”</p></td>
+<td><p>“treecode”</p></td>
+<td><dl class="simple">
+<dt>9(total, bond, angle, torsion, improper,</dt><dd><p>cmap, coulomb14, vdw14, nonbonded)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014-2026, Yamato Labaratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
