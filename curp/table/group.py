@@ -9,6 +9,7 @@ import curp.clog as logger
 
 class SectionNotFoundError(exception.CurpException): pass
 class ParserError(exception.CurpException): pass
+class DuplicatedAtomsError(exception.CurpException): pass
 
 
 def get_group_iatoms_pairs(setting, target_atoms, res_info, atom_info):
@@ -37,6 +38,8 @@ def get_group_iatoms_pairs(setting, target_atoms, res_info, atom_info):
 
     else:
         raise Exception
+
+    check_iatoms(gname_iatoms_pairs)
 
     logger.info_title('Group information')
     for gname, iatoms in gname_iatoms_pairs:
@@ -241,3 +244,23 @@ def get_iatm_to_itars(target_atoms, natom):
         iatm_to_itars[iatm-1] = itar_1 + 1
     return iatm_to_itars
 
+
+def check_iatoms(gname_iatoms_pairs):
+    iatoms = [iatm for gname, iatoms in gname_iatoms_pairs for iatm in iatoms]    
+    iatoms_set = set(iatoms)
+    
+    # check iatoms
+    if len(iatoms) != len(iatoms_set):
+        atom_duplicate = []
+        for iatm in iatoms_set:
+            if iatoms.count(iatm) > 1:
+                atom_duplicate.append(iatm)
+        if len(atom_duplicate) > 0:
+            msg = ('Atom number {} is included in multiple groups. '.format(atom_duplicate)
+                 + 'Please check the atomgroup file.')
+            raise DuplicatedAtomsError(msg)
+        else:
+            msg = ('Some atoms are included in multiple groups. '
+                  +'Please check the atomgroup file.')
+            raise DuplicatedAtomsError(msg)
+    

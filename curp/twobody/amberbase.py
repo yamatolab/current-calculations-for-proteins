@@ -21,19 +21,21 @@ class TwoBodyForceBase:
         self.__ptype_to_displacement = {}
 
     def get_pottypes(self):
-        return ['bond','angle','torsion','improper',
-                'coulomb14','vdw14','coulomb','vdw']
+        if self.__setting.curp.potential == "amber19SB":
+            return self.__tpl.get_decomp_list("all_19SB")
+        else:
+            return self.__tpl.get_decomp_list()
 
     def set_module(self, module):
         self.__mod = module
-
+        
     def get_module(self):
         return self.__mod
 
     def get_natom(self):
         return self.__natom
-
-    def setup(self, interact_table, check=False):
+    
+    def setup(self, interact_table, gname_iatoms_pairs, gpair_table,  check=False):
         self.__interact_table = interact_table
         max_tbf = self.get_maxpair(interact_table)
         self._setup_init(max_tbf, check)
@@ -42,11 +44,17 @@ class TwoBodyForceBase:
         self._setup_angle()
         self._setup_torsion()
         self._setup_improper()
+        if self.__setting.curp.potential == 'amber19SB':
+            self._setup_cmap()
 
         self._setup_coulomb14()
         self._setup_vdw14()
-        self._setup_coulomb()
-        self._setup_vdw()
+        
+        # choose coulomb method
+        if self.__setting.curp.nonbonded_method == 'cutoff':            
+            self._setup_coulomb()
+            
+            self._setup_vdw()
 
     def cal_force(self, crd):
         # initialize
@@ -86,6 +94,11 @@ class TwoBodyForceBase:
         """Prepare the parameter for the improper torsion calculation."""
         mod = self.__setup_bondtype('improper')
         mod.itor_to_itbf = self.__tpl.get_iimp_to_ipair()
+        
+    def _setup_cmap(self):
+        """Prepare the parameter for the CMAP calculation."""
+        mod = self.__setup_bondtype('cmap')
+        mod.icmp_to_itbf = self.__tpl.get_icmp_to_ipair()
 
     def __setup_bondtype(self, btype_name):
         """Prepare the parameter for the calculations without coulomb and vdw.
@@ -110,7 +123,7 @@ class TwoBodyForceBase:
         info = self.__tpl.get_coulomb_info()
         coulomb.charges = info['charges']
         coulomb.cutoff_length = self.__setting.curp.coulomb_cutoff_length
-
+        
     def _setup_vdw(self):
         """Prepare the parameter for the vdw calculation."""
         vdw = self.__mod.vdw
@@ -200,7 +213,7 @@ class TwoBodyForceBase:
 
     def cal_coulomb(self, table):
         return self._cal_nonbond(table, 'coulomb')
-
+    
     def cal_vdw(self, table):
         return self._cal_nonbond(table, 'vdw')
 
@@ -336,7 +349,6 @@ class TwoBodyForce(TwoBodyForceBase):
         TwoBodyForceBase.__init__(self, topology, setting)
         from . import lib_amberbase
         self.set_module(lib_amberbase)
-
 
 if __name__ == '__main__':
     class Setting:

@@ -224,7 +224,6 @@ def gen_respair_table_over_traj(respair_table_traj, is_union=True):
     rnames = []
 
     for itrj, respair_table in enumerate(respair_table_traj,1):
-        print('# itraj = ', itrj)
 
         for rname_i, rnames_j in respair_table:
 

@@ -7,7 +7,7 @@ module within_gpair
     integer, allocatable :: ends(:)   ! (natom)
 
     integer :: iatm, jatm
-    integer :: i, ipair
+    integer :: i, ipair, jpair
 
 contains
 
@@ -32,30 +32,46 @@ contains
         implicit none
         integer, intent(in) :: iatm, jatm
         integer :: jatm_beg, jatm_end
+        integer :: iatm_beg, iatm_end
 
         is_within_gpair = .false.
-        do ipair=begins(iatm), ends(iatm)
-            jatm_beg = gpair_table(ipair, 2)
-            jatm_end = gpair_table(ipair, 3)
+        if (begins(iatm) /= 0) then
+            do ipair=begins(iatm), ends(iatm)
+                jatm_beg = gpair_table(ipair, 2)
+                jatm_end = gpair_table(ipair, 3)
 
-            if ((jatm_beg<=jatm) .and. (jatm<=jatm_end)) then
-                is_within_gpair = .true.
-                exit
-            end if
-        end do
+                if ((jatm_beg<=jatm) .and. (jatm<=jatm_end)) then
+                    is_within_gpair = .true.
+                    exit
+                end if
+            end do
+        end if
+
+        if ((is_within_gpair .neqv. .true.) .and. (begins(jatm) /= 0)) then
+            do jpair=begins(jatm), ends(jatm)
+                iatm_beg = gpair_table(jpair, 2)
+                iatm_end = gpair_table(jpair, 3)
+
+                if ((iatm_beg<=iatm) .and. (iatm<=iatm_end)) then
+                    is_within_gpair = .true.
+                    exit
+                end if
+            end do
+        end if
 
     end function
 
     subroutine get_nonbonded_table(nonbonded_table, ntable_new, &
-                            & base_table, ntable)
+                            & base_table, len_table, ntable)
 
         implicit none
 
+        integer, intent(in) :: len_table
         integer, intent(in) :: ntable
         integer, intent(in) :: base_table(ntable, 3)
 
         integer, intent(out) :: ntable_new
-        integer, intent(out) :: nonbonded_table(ntable*10, 3)
+        integer, intent(out) :: nonbonded_table(len_table, 3)
 
         integer :: itab, jatm_beg, jatm_end, jatm_beg_new, jatm_end_new
         integer :: itab_new
@@ -75,6 +91,11 @@ contains
 
                     if (jatm_beg_new > 0) then
                         itab_new = itab_new + 1
+                        if (itab_new > len_table) then
+                            write(0,*) "Error: The length of the interaction table is too short (len_table=", len_table, ")."
+                            error stop "Please set *table_length_limit* in your config file to a larger value."
+                            exit
+                        end if
                         nonbonded_table(itab_new, 1) = iatm
                         nonbonded_table(itab_new, 2) = jatm_beg_new
                         nonbonded_table(itab_new, 3) = jatm_end_new
@@ -93,6 +114,12 @@ contains
 
             if (jatm_beg_new > 0) then
                 itab_new = itab_new + 1
+                if (itab_new > len_table) then
+                    write(0,*) "Error: The length of the interaction table is too short (len_table=", len_table, ")."
+                    error stop "Please set **table_length** in your config file to a larger value."
+                    exit
+                end if
+
                 nonbonded_table(itab_new, 1) = iatm
                 nonbonded_table(itab_new, 2) = jatm_beg_new
                 nonbonded_table(itab_new, 3) = jatm_end_new

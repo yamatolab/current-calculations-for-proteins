@@ -8,6 +8,7 @@ from curp import exception
 import curp.table.interact_table as it
 
 class InvalidGroupName(exception.CurpException): pass
+class InvalidGroupPair(exception.CurpException): pass
 
 import curp.table.ini_parser as ini
 class GroupPairParser(ini.IniParser):
@@ -44,11 +45,41 @@ class GroupPairParser(ini.IniParser):
 
 class GroupPair:
 
-    def __init__(self, gpair_table, gname_to_iatoms, natom):
+    def __init__(self, gpair_table, gname_to_iatoms, len_table, natom):
         self.__gpair_table = gpair_table
         self.__gname_to_iatoms = gname_to_iatoms
         self.__natom = natom
         self.__table_with_gpair = None
+        self.check_gpair_table(gpair_table, gname_to_iatoms)
+        if len_table == 0:
+            self.__len_table = 10 * natom
+        else:
+            self.__len_table = len_table
+            
+    def check_gpair_table(self, gpair_table, gname_to_iatoms):
+        gnames = [ gname for gname, iatoms in gname_to_iatoms ]
+        for gname_i, jgnames in gpair_table:
+            idx_i = gnames.index(gname_i)
+            for gname_j in jgnames:
+                idx_j = gnames.index(gname_j)
+                if idx_i > idx_j:
+                    msg = ("In the group pair file, the group number of [{}] in atomgroup file ".format(gname_i)
+                         + "should be smaller than that of {}. ".format(gname_j)
+                         + "Please see *Group file specification* in https://curp.jp. ")
+                    raise InvalidGroupPair(msg)
+            len_jgnames = len(jgnames)
+            set_jgnames = set(jgnames)
+            if len_jgnames != len(set_jgnames):
+                duplicated_gnames = []
+                for gname_j in jgnames:
+                    if jgnames.count(gname_j) > 1:
+                        duplicated_gnames = []
+                        duplicated_gnames.append(gname_j)
+                msg = ("Group pair table should not have duplicated group pairs "
+                     + "but the group pair with [{}] and (each of) {} is duplicated in the group pair file."
+                     .format(gname_i, *duplicated_gnames))
+                raise InvalidGroupPair(msg)
+                
 
     def gen_inttable(self):
         """Generate the object equivalent with interaction table
@@ -83,7 +114,7 @@ class GroupPair:
         lib_gpair.setup(table_with_gpair, self.__natom)
 
         # make interaction table
-        new_table, ntable = lib_gpair.get_nonbonded_table(base_table)
+        new_table, ntable = lib_gpair.get_nonbonded_table(base_table, self.__len_table)
         new_table = new_table[:ntable].tolist()
         return it.InteractionTable(base_table=new_table)
 

@@ -4,6 +4,8 @@ import os
 import sys
 from collections import OrderedDict as odict
 
+from curp import exception
+class InvalidGroupName(exception.CurpException): pass
 
 class IniParser:
 
@@ -61,7 +63,10 @@ class IniParser:
 
         with open(self.__filename, 'r') as file:
             secname_lines_pairs = self._parse_secname_lines_pairs(file)
-
+        
+        # check if there are duplicated section names
+        self._check_secname(secname_lines_pairs)
+        
         # parse vals
         self.__secname_to_vals = odict()
         for secname, lines in secname_lines_pairs:
@@ -77,6 +82,21 @@ class IniParser:
         """Generate section_name: columns pair."""
         for secname in self.get_secnames():
             yield secname, self[secname]
+
+    def _check_secname(self, secname_lines_pairs):
+        secnames = [secname for secname, lines in secname_lines_pairs]
+        secnames_set = set(secnames)
+        if len(secnames) != len(secnames_set):
+            secname_duplicate = []
+            for secname in secnames_set:
+                if secnames.count(secname) > 1:
+                    secname_duplicate.append(secname)
+            if len(secname_duplicate) > 0:
+                msg = 'Group name [{}] is duplicated. Please check input files.'.format(secname_duplicate)
+                raise InvalidGroupName(msg)
+            else:
+                msg = 'Some group names are duplicated. Please check input files.'
+                raise InvalidGroupName(msg)
 
     def _gen_col(self, lines):
         for line in lines:
