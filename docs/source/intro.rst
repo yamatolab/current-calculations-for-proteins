@@ -29,7 +29,7 @@ Citation
 
 Please cite the following references when you use the CURP program.
 
-(1) Compatibility with CMAP. Implementation of Irving-Kirkwookd/treecode formalism.
+(1) Compatibility with CMAP. Implementation of Irving-Kirkwood/treecode formalism.
 
 Y. Arita, F. Yoshimura, T. Yamato (to be submitted)
 
