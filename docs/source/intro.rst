@@ -33,24 +33,24 @@ Please cite the following references when you use the CURP program.
 
 (1) Compatibility with CMAP. Implementation of Irving-Kirkwood/treecode formalism.
 
-Y. Arita, F. Yoshimura, T. Yamato (to be submitted)
+   Y. Arita, F. Yoshimura, T. Yamato (to be submitted)
 
 (2) Heat current analysis
 
-T. Yamato et al. "Computational study on the thermal conductivity of a protein", J. Phys. Chem. B. 2022, 126: 3029–3036.
+   T. Yamato et al. "Computational study on the thermal conductivity of a protein", J. Phys. Chem. B. 2022, 126: 3029–3036.
 
 (3) The main citation of the CURP program
 
-T.Ishikura, Y.Iwata, T.Hatano and T.Yamato, "Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study" *J. Comput. Chem.* 36:1709-1718 (2015).
+   T.Ishikura, Y.Iwata, T.Hatano and T.Yamato, "Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study" *J. Comput. Chem.* 36:1709-1718 (2015).
 
 (4) Atomic stress tensor analysis
 
-T.Ishikura, T.Hatano and T.Yamato,  "Atomic  stress  tensor analysis of proteins", *Chem. Phys. Lett.* 539:144-150 (2012).
+   T.Ishikura, T.Hatano and T.Yamato,  "Atomic  stress  tensor analysis of proteins", *Chem. Phys. Lett.* 539:144-150 (2012).
 
 (5) Energy flow analysis of proteins
 
-T.Yamato, "Energy flow pathways in photoactive yellow proteins", in *Proteins: energy, heat, and signal flow*, eds. D.M. Leitner & J.E. Straub, pp. 129-147, (2009), Taylor and Francis.
+   T.Yamato, "Energy flow pathways in photoactive yellow proteins", in *Proteins: energy, heat, and signal flow*, eds. D.M. Leitner & J.E. Straub, pp. 129-147, (2009), Taylor and Francis.
 
-T.Ishikura and T.Yamato, "Energy transfer pathways relevant for long-range intramolecular signaling of photosensory protein revealed by microscopic energy conductivity", *Chem. Phys. Lett.* 432:533-537, (2006).
+   T.Ishikura and T.Yamato, "Energy transfer pathways relevant for long-range intramolecular signaling of photosensory protein revealed by microscopic energy conductivity", *Chem. Phys. Lett.* 432:533-537, (2006).
 
-D.Leitner and T. Yamato, "Mapping energy transport networks in proteins" *Rev. Comput. Chem.* 31: 63-113 (2018).
+   D.Leitner and T. Yamato, "Mapping energy transport networks in proteins" *Rev. Comput. Chem.* 31: 63-113 (2018).
