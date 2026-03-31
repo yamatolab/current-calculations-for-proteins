@@ -268,8 +268,8 @@ curp section
             New option in version 3.0.
 
         The limit of nonbonded interaction table length. 
-        If this value is not given, the length is determined by "10 * (the max atom number in the system)". 
-        If the value is give, the limit of the table length is determined by the given value. 
+        If this value is not given(0), the length is determined by "10 * (the max atom number in the system)". 
+        If the value is given, the limit of the table length is determined by the given value. 
 
         If the number of pairs exceeds the limit, the error will be raised.
 
