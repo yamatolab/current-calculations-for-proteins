@@ -182,7 +182,7 @@ curp section
 
     **group_pair_file = none** (default) : File
 
-        Path to file to define group pair. If this is not given, all of pairs within the targets will be calculated.
+        Path to file to define group pairs. If this is not given, all of pairs within the targets will be calculated.
 
         This option is used when **flux_grain** is set to `group` or `both`.
 
