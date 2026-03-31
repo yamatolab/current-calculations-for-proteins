@@ -371,7 +371,7 @@ format = ascii | netcdf
    Format of the energy flow data. (netcdf format is highly recommended.)
 
 decomp = no | yes
-   Flag whether decompose and output the total current/flux,
+   Flag whether to decompose and output the total current/flux,
    autocorrelation function and heat conductivity
    to bonded (bond, angle, torsion and improper), coulomb, and van der Waals interaction.
 
@@ -419,5 +419,5 @@ NOTE: `\--no-axes` option should not be used here.
 Format of :math:`\Lambda` data file
 -------------------------
 
-In each line of the data file, `Lambda.dat`, a pair of residues and the corresponding value of :math:`\Lambda_{AB}` is written as <residue_A> <residue_B> :math:`\Lambda_{AB}`. The unit of :math:`\Lambda_{AB}` is measured in :math:`(\AA \rm{\cdot kcal/mol)^2/fs}`.
+In each line of the data file, `Lambda.dat`, a pair of residues and the corresponding value of :math:`\Lambda_{AB}` is written as <residue_A> <residue_B> :math:`\Lambda_{AB}`. The unit of :math:`\Lambda_{AB}` is measured in :math:`(Å \rm{\cdot kcal/mol)^2/fs}`.
 

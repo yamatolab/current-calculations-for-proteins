@@ -5,7 +5,9 @@ About CURP
 What is CURP for?
 ============================
 
-CURrent calculation for Proteins (CURP) permits to compute energy/heat currents and atomic stress tensors in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD).
+CURrent calculation for Proteins (CURP) permits to compute energy/heat currents and atomic stress tensors(*) in a protein, given atomic coordinates and velocity trajectories obtained through molecular dynamics (MD).
+
+(*) NOTE: CURP does not support atomic stress calculations on and after version 1.3.
 
 Flow diagram of CURP calculations
 =================================
@@ -28,18 +30,24 @@ Citation
 ========
 
 Please cite the following references when you use the CURP program.
-(1) The most recent version of the CURP program (v.1.3)
-T. Yamato et al. "Computational study on the thermal conductivity of a protein" (to be submitted)
 
-(2) The main citation of the CURP program
+(1) Compatibility with CMAP. Implementation of Irving-Kirkwood/treecode formalism.
+
+Y. Arita, F. Yoshimura, T. Yamato (to be submitted)
+
+(2) Heat current analysis
+
+T. Yamato et al. "Computational study on the thermal conductivity of a protein", J. Phys. Chem. B. 2022, 126: 3029–3036.
+
+(3) The main citation of the CURP program
 
 T.Ishikura, Y.Iwata, T.Hatano and T.Yamato, "Energy exchange network of inter-residue interactions within a thermally fluctuating protein molecule: A computational study" *J. Comput. Chem.* 36:1709-1718 (2015).
 
-(3) Atomic stress tensor analysis
+(4) Atomic stress tensor analysis
 
 T.Ishikura, T.Hatano and T.Yamato,  "Atomic  stress  tensor analysis of proteins", *Chem. Phys. Lett.* 539:144-150 (2012).
 
-(4) Energy flow analysis of proteins
+(5) Energy flow analysis of proteins
 
 T.Yamato, "Energy flow pathways in photoactive yellow proteins", in *Proteins: energy, heat, and signal flow*, eds. D.M. Leitner & J.E. Straub, pp. 129-147, (2009), Taylor and Francis.
 
