@@ -151,7 +151,7 @@ curp section
     **method = momentum-current** (default) : Choice[energy-flux|momentum-current|microcanonical|heat-flux]
 
         .. warning::
-            The "momentum-current" and "microcanonical" methods are not supported from version 1.3.
+            The "momentum-current" and "microcanonical" methods are not supported on and after version 1.3.
 
         The method of calculation. 
         "momentum-current" calculates the stress tensor for systems. 
