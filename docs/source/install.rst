@@ -37,7 +37,7 @@ Installation
 
 .. note::
 
-   CURP version 3.0 require Conda environment and eigen to build the package before installation.
+   CURP version 3.0 requires Conda environment and eigen to build the package before installation.
    Please install eigen before installation.
 
 Pip Installation
