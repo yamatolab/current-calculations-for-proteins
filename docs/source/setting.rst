@@ -223,6 +223,8 @@ curp section
 
         The parameter that is used to decide whether to perform direct nonbonded calculation.
 
+        This option is used when **nonbonded_method** is set to `treecode`.
+
     **treecode_cutoff_length = 12.0** (default) : Float
         
         .. note::
