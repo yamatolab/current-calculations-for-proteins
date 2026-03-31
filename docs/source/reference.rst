@@ -122,6 +122,15 @@ Group file specification
 Atom group file
 ~~~~~~~~~~~~~~~
 
+:: 
+
+   [GROUP1]
+   (the number of atoms in "GLOUP1")
+
+   [GROUP2]
+   (the number of atoms in "GROUP2")
+   ...
+
 For example, you can separate the main chain and the side chain parts by
 using the following specification:
 
@@ -155,7 +164,15 @@ Each atom can belong to only one group. If one atom belongs to multiple groups, 
 Group pair file
 ~~~~~~~~~~~~~~~~
 
-When you want to calculate the flux from group B to group A, you can specify the group pair as "[A]" and "B" in the group pair file.
+::
+   
+   [GROUP1]
+   GROUP1  GROUP2  GROUP3 ...
+
+   [GROUP2]
+   GROUP2  GROUP3 ...
+
+When you want to calculate the flux from "GROUP2" to "GROUP1", you can specify the group pair as "[GROUP1]" and "GROUP2" in the group pair file.
 
 For example, when you use the atom group file above, you can specify the group pairs as follows:
 
@@ -175,9 +192,10 @@ Here the first and second lines mean that the flux from 01_ALA_S to 01_ALA_M and
 
 You cannot specify the same group pair more than once. If you specify the same group pair more than once, the error will be raised.
 
-In the atom group file, the group A should define earlier than the group B when you specify the flux from group B to group A. 
-In the case of the example above, you cannot specify "01_ALA_M" in the fifth line because "01_ALA_M" is defined later than "02_ALA_M" in the atom group file.
-If the group A is defined later than the group B, the error will be raised. 
+In the atom group file, the "GROUP1" should be defined earlier than the "GROUP2" when you perform flux calculation from "GROUP2" to "GROUP1". 
+In the case of the example above, you cannot specify "01_ALA_M" in the fifth line because "01_ALA_M" is defined earlier than "01_ALA_S" in the atom group file.
+If the "GROUP1" is defined later than the "GROUP2", the error will be raised. 
+
 
 Contact
 ========
