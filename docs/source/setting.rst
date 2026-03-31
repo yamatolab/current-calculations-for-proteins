@@ -99,7 +99,7 @@ volume section
 
     **voronoi_no_hydrogen = no** (default) : Bool
 
-        Flag to determine whether include hydrogen atoms for the voronoi calculation.
+        Flag to determine whether to include hydrogen atoms for the voronoi calculation.
 
     **voronoi_solvation = none** (default) : Choice[none|RANDOM20]
 
@@ -177,7 +177,7 @@ curp section
 
     **decomp_group_current = no** (default) : Bool
 
-        Flag whether decompose the group current into inside and outside contributions of group region. 
+        Flag whether to decompose the group current into inside and outside contributions of group region. 
         This option is used for calculating momentum current.
 
     **group_pair_file = none** (default) : File
@@ -334,7 +334,7 @@ output section
 
     **decomp = no** (default) : Bool
 
-        Flag whether decompose the total current or flux to bonded, coulomb, and van der Waals interaction.
+        Flag whether to decompose the total current or flux to bonded, coulomb, and van der Waals interaction.
 
     **frequency = 0** (default) : Int
 
@@ -342,7 +342,7 @@ output section
 
     **compress = no** (default) : Bool
 
-        Flag whether compress with gnu zip, then the extension of the file name became ".gz".
+        Flag whether to compress with gnu zip, then the extension of the file name became ".gz".
 
 
     .. warning::
@@ -351,7 +351,7 @@ output section
 
     **output_energy = no** (default) : Bool
 
-        Flag whether output the energy information or not.
+        Flag whether to output the energy information or not.
 
     **energy_file = energy.dat** (default) : File
 
@@ -359,7 +359,7 @@ output section
 
     **energy_decomp = no** (default) : Bool
 
-        Flag whether decompose the total energy to bonded, coulomb, and van der Waals interaction.
+        Flag whether to decompose the total energy to bonded, coulomb, and van der Waals interaction.
 
     **energy_freqency = 0** (default) : Int
 
@@ -367,4 +367,4 @@ output section
 
     **energy_compress = yes** (default) : Bool
 
-        Flag whether compress with gnu zip for energy_file, then the extension of the file name became ".gz".
+        Flag whether to compress with gnu zip for energy_file, then the extension of the file name became ".gz".

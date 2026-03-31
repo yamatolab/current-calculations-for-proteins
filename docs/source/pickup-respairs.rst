@@ -78,4 +78,4 @@ Options
 
     `-b, --enable-residues-both-cxcluded`
 
-        Whether include residue pairs that exclude residues
+        Whether to include residue pairs that exclude residues

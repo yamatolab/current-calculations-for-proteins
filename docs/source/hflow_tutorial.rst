@@ -371,7 +371,7 @@ format = ascii | netcdf
    Format of the energy flow data. (netcdf format is highly recommended.)
 
 decomp = no | yes
-   Flag whether decompose and output the total current/flux,
+   Flag whether to decompose and output the total current/flux,
    autocorrelation function and heat conductivity
    to bonded (bond, angle, torsion and improper), coulomb, and van der Waals interaction.
 
