@@ -8,7 +8,7 @@ import numpy as np
 from curp import utility
 import curp.clog as logger
 
-from curp.current import base, lib_flux, lib_hflux, lib_keflux
+from curp.current import base, lib_flux, lib_hflux, lib_keflux, lib_flux_treecode
 ################################################################################
 class EnergyFluxCalculator(base.FluxCalculator):
 
@@ -43,10 +43,57 @@ class EnergyFluxCalculator(base.FluxCalculator):
             lib = lib_keflux
         else: 
             pass
+        
+        self.__coulomb_method = self.get_setting().curp.nonbonded_method
+        if self.__coulomb_method == 'treecode':
+            self.__coulomb_func = self.cal_coulomb_treecode
+            self.setup_coulomb_treecode()
+        else:
+            self.__coulomb_func = self.cal_coulomb
 
         self.fcal = EnergyFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
-                lib, flag_atom, flag_group)
+                self.__coulomb_method, lib, flag_atom, flag_group)
+        
+    def setup_coulomb_treecode(self):
+        """Setup the treecode method for the coulomb calculation."""
+        
+        if self.check_treecode_setting(self.get_setting()):
+            natom = self.get_topology().get_natom()
+            n_crit = self.get_setting().curp.treecode_cell_contains
+            theta = self.get_setting().curp.treecode_direct_parm
+            cutoff = self.get_setting().curp.treecode_cutoff_length
+            info = self.get_topology().get_coulomb_info()
+            info_vdw = self.get_topology().get_vdw_info()
+            charges = info['charges']
+            atom_types = info_vdw['atom_types']
+            c6s = info_vdw['c6s']
+            c12s = info_vdw['c12s']
+            self.__lib_treecode = lib_flux_treecode.cal_treecode()
+            
+            bonded_pairs = self.get_bonded_pairs()
+            gname_iatoms_pairs = self.get_gname_iatoms_pairs()
+            gpair_table = self.get_gpair_table()
+            iatm_to_igrp = self.get_iatm_to_igrp()
+            
+            extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
+            
+            self.__lib_treecode.setup( int(natom), int(n_crit), float(theta), float(cutoff),
+                    charges, extracted_bonded_pairs, gname_iatoms_pairs,          
+                    gpair_table, iatm_to_igrp,
+                    atom_types, c6s, c12s
+                    )
+            self.__lib_treecode.set_flux("energy")
+        
+    def check_treecode_setting(self, setting):
+        """Check setting parameters for treecode calculation."""
+
+        if setting.curp.flux_grain != 'group':
+            raise ValueError('The flux grain should be "group"')
+        elif setting.output.output_energy:
+            raise ValueError('The output energy should be false')
+        else:
+            return True
 
     def cal_bonded(self, crd, vel, bond_type):
         """Calculate the energy flux for the bonded term."""
@@ -70,6 +117,9 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
         return flux_atm, flux_grp
 
+    def get_coulomb_func(self, crd, vel):
+        return self.__coulomb_func(crd, vel)
+
     def cal_coulomb(self, crd, vel):
         """Calculate the energy flux for the coulomb term."""
 
@@ -86,6 +136,23 @@ class EnergyFluxCalculator(base.FluxCalculator):
 
         self.store_time('coulomb pairwise' , t1 - t0 - dt_flux)
         self.store_time('coulomb flux' , dt_flux)
+
+        return flux_atm, flux_grp
+
+    def cal_coulomb_treecode(self, crd, vel):
+        """Calculate the energy flux for the coulomb term using treecode method."""
+
+        t0 = time.time()
+        self.__lib_treecode.initialize(crd, vel)
+        
+        all_cells = self.__lib_treecode.setup_all_cells()
+        self.__lib_treecode.cal_coulomb_flux_treecode(all_cells)
+        flux_atm = None
+        flux_grp = self.__lib_treecode.eflux_ij
+
+        t1 = time.time()
+
+        self.store_time('coulomb flux(treecode)' , t1 - t0)
 
         return flux_atm, flux_grp
 
@@ -112,8 +179,8 @@ class EnergyFluxCalculator(base.FluxCalculator):
 ################################################################################
 class EnergyFlux:
 
-    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs, lib,
-                       flag_atm=True, flag_grp=True):
+    def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
+                       coulomb_method, lib, flag_atm=True, flag_grp=True):
         self.__flag_atm = flag_atm
         self.__flag_grp = flag_grp
         self.__lib = lib
@@ -122,6 +189,7 @@ class EnergyFlux:
                 bonded_pairs, flag_atm, flag_grp)
         self.__lib.nonbonded.initialize( target_atoms, iatm_to_igrp,
                 flag_atm, flag_grp)
+
 
     def cal_bonded(self, vel, tbfs):
         """Calculate the flux due to bonded potentials."""
@@ -168,7 +236,7 @@ class EnergyFlux:
         self.dt = t_total
 
         return flux_atm, flux_grp
-
+    
 ################################################################################
 ################################## HEAT FLUX ###################################
 
@@ -197,10 +265,59 @@ class HeatFluxCalculator(base.FluxCalculator):
             flag_group = True
         else:
             pass
-
+        
+        # choose the coulomb calculation method
+        self.__coulomb_method = self.get_setting().curp.nonbonded_method
+        if self.__coulomb_method == 'treecode':
+            self.__coulomb_func = self.cal_coulomb_treecode
+            self.setup_coulomb_treecode()
+        else:
+            self.__coulomb_func = self.cal_coulomb
+        
         self.fcal = HeatFlux( self.get_target_atoms(),
                 self.get_iatm_to_igrp(), self.get_bonded_pairs(),
-                flag_atom, flag_group)
+                self.__coulomb_method, flag_atom, flag_group)
+        
+    def setup_coulomb_treecode(self):
+        """Setup the treecode method for the coulomb calculation."""
+        
+        if self.check_treecode_setting(self.get_setting()):
+            natom = self.get_topology().get_natom()
+            n_crit = self.get_setting().curp.treecode_cell_contains
+            theta = self.get_setting().curp.treecode_direct_parm
+            cutoff = self.get_setting().curp.treecode_cutoff_length
+            info = self.get_topology().get_coulomb_info()
+            info_vdw = self.get_topology().get_vdw_info()
+            charges = info['charges']
+            atom_types = info_vdw['atom_types']
+            c6s = info_vdw['c6s']
+            c12s = info_vdw['c12s']
+            self.__lib_treecode = lib_flux_treecode.cal_treecode()
+            
+            bonded_pairs = self.get_bonded_pairs()
+            gname_iatoms_pairs = self.get_gname_iatoms_pairs()
+            gpair_table = self.get_gpair_table()
+            iatm_to_igrp = self.get_iatm_to_igrp()
+            
+            extracted_bonded_pairs = self.extract_bonded_pairs(bonded_pairs, gname_iatoms_pairs, gpair_table)
+            
+            self.__lib_treecode.setup( int(natom), int(n_crit), float(theta), float(cutoff),
+                    charges, extracted_bonded_pairs, gname_iatoms_pairs,          
+                    gpair_table, iatm_to_igrp,
+                    atom_types, c6s, c12s
+                    )
+            self.__lib_treecode.set_flux("heat")
+
+        
+    def check_treecode_setting(self, setting):
+        """Check setting parameters for treecode calculation."""
+        
+        if setting.curp.flux_grain != 'group':
+            raise ValueError('The flux grain should be "group"')
+        elif setting.output.output_energy:
+            raise ValueError('The output energy should be false')
+        else:
+            return True
 
     def cal_bonded(self, crd, vel, bond_type):
         """Calculate the energy flux for the bonded term."""
@@ -223,6 +340,9 @@ class HeatFluxCalculator(base.FluxCalculator):
         self.store_time(bond_type+' flux' , t2-t1)
 
         return flux_atm, flux_grp
+    
+    def get_coulomb_func(self, crd, vel):
+        return self.__coulomb_func(crd, vel)
 
     def cal_coulomb(self, crd, vel):
         """Calculate the energy flux for the coulomb term."""
@@ -246,6 +366,24 @@ class HeatFluxCalculator(base.FluxCalculator):
         self.store_time('coulomb flux' , dt_flux)
 
         return flux_atm, flux_grp
+    
+    def cal_coulomb_treecode(self, crd, vel):
+        """Calculate the energy flux for the coulomb term using treecode method."""
+
+        t0 = time.time()
+        self.__lib_treecode.initialize(crd, vel)
+        
+        all_cells = self.__lib_treecode.setup_all_cells()
+        self.__lib_treecode.cal_coulomb_flux_treecode(all_cells)
+        flux_atm = None
+        flux_grp = lib_flux_treecode.hflux_to_numpy(self.__lib_treecode.hflux_ij) # convert to numpy array
+
+        t1 = time.time()
+
+        self.store_time('coulomb flux(treecode)' , t1 - t0)
+
+        return flux_atm, flux_grp
+
 
     def cal_vdw(self, crd, vel):
         """Calculate the energy flux for the vdW term."""
@@ -275,7 +413,7 @@ class HeatFluxCalculator(base.FluxCalculator):
 class HeatFlux:
 
     def __init__(self, target_atoms, iatm_to_igrp, bonded_pairs,
-                       flag_atm=True, flag_grp=True):
+                       coulomb_method, flag_atm=True, flag_grp=True):
         self.__flag_atm = flag_atm
         self.__flag_grp = flag_grp
 
@@ -338,9 +476,6 @@ class HeatFlux:
         self.dt = t_total
 
         return hflux_atm, hflux_grp
-
-
-
 
 ################################################################################
 #TODO

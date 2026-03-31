@@ -224,7 +224,14 @@ def init_current(setting, par):
     t_0 = time.time()
     topology, natom = do_topology(setting)
     # Get the list that decomposes all potential.
-    decomp_list = topology.get_decomp_list()
+    if setting.curp.nonbonded_method == "treecode" and setting.curp.potential != 'amber19SB':
+        decomp_list = topology.get_decomp_list('treecode')
+    elif setting.curp.nonbonded_method != "treecode" and setting.curp.potential == 'amber19SB':
+        decomp_list = topology.get_decomp_list(dtype='all_19SB')
+    elif setting.curp.nonbonded_method == "treecode" and setting.curp.potential == 'amber19SB':
+        decomp_list = topology.get_decomp_list(dtype='treecode_19SB')
+    else:
+        decomp_list = topology.get_decomp_list()
     label_time_pairs += [("Topology", time.time()-t_0)]
 
     # Determine target atoms.
@@ -293,6 +300,7 @@ def init_current(setting, par):
     cal.prepare(topology=topology, setting=setting,
                 target_atoms=target_atoms,
                 gname_iatoms_pairs=gname_iatoms_pairs,
+                gpair_table=gpair_table,
                 interact_table=interact_table)
     label_time_pairs += [("calculator setting", time.time()-t_0)]
 

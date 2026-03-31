@@ -230,7 +230,7 @@ class Setting(SettingBase):
         potential = Choice(default='amberbase', require=True,
             desc='The potential function to calculate the pairwise forces.',
             values=['amberbase', 'amber94', 'amber96', 'amber99', 'amber99SB',
-                'amber03', 'amber12SB'], # 'amber-polar'],
+                'amber03', 'amber12SB', 'amber19SB'], # 'amber-polar'],
             value_type=String),
 
         target_atoms = List(default=['1-'], require=False, value_type=String,
@@ -277,9 +277,9 @@ class Setting(SettingBase):
                   "If you didn't given, all of pairs within the targets "
                   "will be calculated.")),
 
-        coulomb_method = Choice(default='cutoff', require=False,
+        nonbonded_method = Choice(default='cutoff', require=False,
             desc='The method to calculate coulomb interaction.',
-            values=['cutoff',], # 'multipole'],
+            values=['cutoff', 'treecode'],
             value_type=String),
 
         coulomb_cutoff_method = Choice(default='atom', require=False,
@@ -289,6 +289,16 @@ class Setting(SettingBase):
 
         coulomb_cutoff_length = Float(default=99.9, require=False,
             desc='The cutoff length for the coulomb interaction.'),
+
+        treecode_cell_contains = Int(default=50, require=False,
+            desc='The max number of atoms that the a cell contains.'),
+        
+        treecode_direct_parm = Float(default=0.02, require=False,
+            desc='The parameter that is used to decide  '
+                'wethert to perform direct nonbonded calculation.'),
+        
+        treecode_cutoff_length = Float(default=12.0, require=False,
+            desc='The cutoff length for the treecode calculation.'),
 
         # vdw_method = Choice(default='cutoff', require=False,
         #     desc='The method to calculate van der Waals interaction.',
