@@ -4,10 +4,10 @@ curp cal-tc
 
 .. code-block:: console
 
-   $ curp cal-tc [-h] -o FILE [-a FILE] [-af FORMAT] [-r FIRST LAST INTER]
-                 [-s SHIFT] [--sample-number NSAMPLE] [-dt DT] [-c COEFFICIENT]
-                 [-v]
-                 FLUX_FILENAME 
+    curp cal-tc [-h] -o FILE [-a FILE] [-af FORMAT] [-r FIRST LAST INTER]
+                [-s SHIFT] [--sample-number NSAMPLE] [-dt DT] [-c COEFFICIENT]
+                [-v]
+                FLUX_FILENAME 
 
 
 Calculate transport coefficients(tc) from energy and heat flux data.
