@@ -5,13 +5,13 @@ curp analyze pickup-respairs
 
 .. code-block:: console
 
-    $ curp analyze pickup-respairs [-h] -if FORMAT -p PRMTOP_FN -pf PRMTOP_FMT
-                                   [-i INTERVAL] [-m {com,nearest,farthest}]
-                                   [-c CUTOFF]
-                                   [-t [TRIM_RESNAMES [TRIM_RESNAMES ...]]]
-                                   [-f FORMAT] [-U]
-                                   [-e [FIRST:LAST [FIRST:LAST ...]]] [-b]
-                                   trj_fns [trj_fns ...]
+    curp analyze pickup-respairs [-h] -if FORMAT -p PRMTOP_FN -pf PRMTOP_FMT
+                                 [-i INTERVAL] [-m {com,nearest,farthest}]
+                                 [-c CUTOFF]
+                                 [-t [TRIM_RESNAMES [TRIM_RESNAMES ...]]]
+                                 [-f FORMAT] [-U]
+                                 [-e [FIRST:LAST [FIRST:LAST ...]]] [-b]
+                                 trj_fns [trj_fns ...]
 
 
 Pick up the residue pair table to given file as a ndx format.

@@ -4,7 +4,7 @@ curp compute
 
 .. code-block:: console
 
-   $ curp compute [-h] [-v] [-s] [--output-conf-default] [--output-conf-formatted] [input_]
+    curp compute [-h] [-v] [-s] [--output-conf-default] [--output-conf-formatted] [input_]
 
 
 Launch flux or stress tensor computations given a configuration file.

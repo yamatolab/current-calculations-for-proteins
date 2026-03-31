@@ -4,11 +4,11 @@ curp conv-trj
 
 .. code-block:: console
 
-   $ curp conv-trj [-h] [-crd | -vel] -i TRJ_FILENAME [TRJ_FILENAME ...] -if FORMAT 
-                   [--irange FIRST LAST INTER] [-o TRJ_FILENAME]
-                   [-of FORMAT] [--orange FIRST LAST INTER] -pf FORMAT -p TPL_FILENAME 
-                   [-nf DIST_FORMAT]
-                   {convert-only, dry-run, adjust-vel, mask, dist} ... 
+    curp conv-trj [-h] [-crd | -vel] -i TRJ_FILENAME [TRJ_FILENAME ...] -if FORMAT 
+                  [--irange FIRST LAST INTER] [-o TRJ_FILENAME]
+                  [-of FORMAT] [--orange FIRST LAST INTER] -pf FORMAT -p TPL_FILENAME 
+                  [-nf DIST_FORMAT]
+                  {convert-only, dry-run, adjust-vel, mask, dist} ... 
 
 
 Various scripts to process and analyze trajectories.

@@ -5,7 +5,7 @@ curp analyze sum-tc
 
 .. code-block:: console
 
-   $ curp analyze sum-tc [-h] tc_fps [tc_fps ...]
+    curp analyze sum-tc [-h] tc_fps [tc_fps ...]
 
 
 Summarize transport coefficient.

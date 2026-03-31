@@ -5,8 +5,8 @@ curp analyze simplify-tensor
 
 .. code-block:: console
 
-   $ curp analyze simplify-tensor [-h] -i FILENAME [-l LABELS] [-s]
-                                  [fns [fns ...]]
+    curp analyze simplify-tensor [-h] -i FILENAME [-l LABELS] [-s]
+                                 [fns [fns ...]]
 
 
 Show and make figure for stress ratio.

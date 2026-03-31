@@ -5,9 +5,9 @@ curp analyze divide-flux
 
 .. code-block:: console
 
-    $ curp analyze divide-flux [-h] -o OUTPUT_FN [-d DONOR_LINE]
-                               [-a ACCEPTOR_LINE] -t DT [-c COLUMN_LINE]
-                               flux_fns [flux_fns ...]
+    curp analyze divide-flux [-h] -o OUTPUT_FN [-d DONOR_LINE]
+                             [-a ACCEPTOR_LINE] -t DT [-c COLUMN_LINE]
+                             flux_fns [flux_fns ...]
 
 Divide the flux data of all into the flux data for each donor and acceptor.
 

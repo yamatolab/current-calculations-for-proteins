@@ -4,7 +4,7 @@ curp sum-acf
 
 .. code-block:: console
 
-   $ sum-acf [-h] -a FILE [-t FILE] [-c COEFFICIENT] ACF_FILE [ACF_FILE ...]
+    sum-acf [-h] -a FILE [-t FILE] [-c COEFFICIENT] ACF_FILE [ACF_FILE ...]
 
 Average auto-correlation function(acf) over the given trajectories.
 
