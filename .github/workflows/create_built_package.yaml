@@ -45,7 +45,10 @@ jobs:
           CIBW_ARCHS: x86_64
           CIBW_BUILD: cp36-*
           CIBW_BUILD_VERBOSITY: 3
-          CXX: mpicxx
+          CIBW_ENVIRONMENT: >
+            CC=mpicc
+            CXX=mpicxx
+            LDSHARED="mpicxx -shared"
         with:
           output-dir: ./dist
       
