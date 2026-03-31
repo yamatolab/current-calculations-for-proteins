@@ -20,10 +20,13 @@ def ext_modules(config, _dir):
     pattern = "*.f90"
     pattern_cpp = "*.cpp"
     
-    conda_prefix = Path(os.environ["CONDA_PREFIX"])
-    MPI_DIR = os.environ.get("MPI_DIR", "/usr")
-    NETCDF_DIR = os.environ.get("NETCDF_DIR", "/usr")
-    GRAPHVIZ_DIR = os.environ.get("GRAPHVIZ_DIR", "/usr")
+    try:
+        conda_prefix = Path(os.environ["CONDA_PREFIX"])
+    except None:
+        conda_prefix = Path("/usr")
+    MPI_DIR = os.environ.get("MPI_DIR", conda_prefix)
+    NETCDF_DIR = os.environ.get("NETCDF_DIR", conda_prefix)
+    GRAPHVIZ_DIR = os.environ.get("GRAPHVIZ_DIR", conda_prefix)
     EIGEN_DIR = os.environ.get("EIGEN3_INCLUDE_DIR", conda_prefix)
 
     # Typical library/include paths:
