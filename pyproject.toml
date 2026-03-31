@@ -10,16 +10,7 @@ before-all = [
     'yum install -y ./epel-release-7-14.noarch.rpm || true',
     'yum install -y netcdf-devel graphviz-devel openmpi-devel eigen3-devel || true'
 ]
-before-build = """
-echo "===== PATH ====="
-echo $PATH
 
-echo "===== LD_LIBRARY_PATH ====="
-echo ${LD_LIBRARY_PATH:-"(empty)"}
-
-echo "===== LIBRARY_PATH ====="
-echo ${LIBRARY_PATH:-"(empty)"}
-"""
 [[tool.cibuildwheel.overrides]]
 select = "*-musllinux_*"
 before-all = [
