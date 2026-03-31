@@ -12,7 +12,8 @@ before-all = [
 ]
 before-build = [
     'export PATH=/usr/lib64/openmpi/bin:$PATH' ,
-    'export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH'
+    'export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH',
+    'export LIBRARY_PATH=/usr/lib64/openmpi/lib:$LIBRARY_PATH'
 ]
 
 [[tool.cibuildwheel.overrides]]
