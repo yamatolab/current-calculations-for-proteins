@@ -5,9 +5,9 @@ curp analyze get-ncdata
 
 .. code-block:: console
 
-   $ curp analyze get-ncdata [-h] -r [FIRST:LAST [FIRST:LAST ...]] [-n DATANAME]
-                             [-o PREFIX]
-                             ACF_FILE
+    curp analyze get-ncdata [-h] -r [FIRST:LAST [FIRST:LAST ...]] [-n DATANAME]
+                            [-o PREFIX]
+                            ACF_FILE
 
 
 Get simple text data from file in netcdf format by given arguments.

@@ -77,8 +77,8 @@ input_amber section
 volume section
 ~~~~~~~~~~~~~~
 
-.. note::
-    This section is used for calculating the stress tensor.
+    .. note::
+        This section is used for calculating the stress tensor.
 
 
     **method = voronoi** (default) : Choice[none|vdw|voronoi|outer]
@@ -133,9 +133,9 @@ volume section
 curp section
 ~~~~~~~~~~~~
 
-.. warning::
-    The parameters "coulomb_method" is deprecated in version 3.0.
-    Please use "nonbonded_method" instead.
+    .. warning::
+        The parameters "coulomb_method" is deprecated in version 3.0.
+        Please use "nonbonded_method" instead.
 
 
     **potential = amberbase** (default) : Choice[amberbase|amber94|amber96|amber99|amber99SB|amber03|amber12SB|amber19SB]
@@ -281,8 +281,8 @@ curp section
 dynamics section
 ~~~~~~~~~~~~~~~~
 
-.. note::
-    This section is used for performing microcanonical simulation(**method** in curp section is `microcanonical`).
+    .. note::
+        This section is used for performing microcanonical simulation(**method** in curp section is `microcanonical`).
 
 
     **integrator = vverlet** (default) : Choice[vverlet|leapfrog]

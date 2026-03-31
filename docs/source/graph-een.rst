@@ -9,18 +9,18 @@ curp graph-een
 
 .. code-block:: console
 
-    $ curp graph-een [-h] [-t [TARGETS [TARGETS ...]]]
-                     [--forced-output-nodes [FORCE_NODES [FORCE_NODES ...]]]
-                     [-p [CLOSE_PAIRS [CLOSE_PAIRS ...]]] [-c CLUSTER_FN]
-                     [-n NODE_FN] [--with-one-letter] [-f FIG_FN]
-                     [-r THRESHOLD] [-R TPL_THRESHOLD] [--ratio RATIO]
-                     [-s GRAPH_SIZE] [--title TITLE] [--direction {LR,TB}]
-                     [-I] [--show-negative-values] [--alpha ALPHA]
-                     [-lv [LINE_VALUES [LINE_VALUES ...]]]
-                     [-lc [LINE_COLORS [LINE_COLORS ...]]]
-                     [-lt [LINE_THICKS [LINE_THICKS ...]]]
-                     [-lw [LINE_WEIGHTS [LINE_WEIGHTS ...]]]
-                     data_fns [data_fns ...]
+    curp graph-een [-h] [-t [TARGETS [TARGETS ...]]]
+                   [--forced-output-nodes [FORCE_NODES [FORCE_NODES ...]]]
+                   [-p [CLOSE_PAIRS [CLOSE_PAIRS ...]]] [-c CLUSTER_FN]
+                   [-n NODE_FN] [--with-one-letter] [-f FIG_FN]
+                   [-r THRESHOLD] [-R TPL_THRESHOLD] [--ratio RATIO]
+                   [-s GRAPH_SIZE] [--title TITLE] [--direction {LR,TB}]
+                   [-I] [--show-negative-values] [--alpha ALPHA]
+                   [-lv [LINE_VALUES [LINE_VALUES ...]]]
+                   [-lc [LINE_COLORS [LINE_COLORS ...]]]
+                   [-lt [LINE_THICKS [LINE_THICKS ...]]]
+                   [-lw [LINE_WEIGHTS [LINE_WEIGHTS ...]]]
+                   data_fns [data_fns ...]
 
 Show network chart of the energy conductivities.
 
