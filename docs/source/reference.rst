@@ -158,8 +158,8 @@ The group names are surrounded by `[` and `]`.
 Each group name should be unique.
 Then the range of the constituent atoms are provided. 
 You can spacify the range by using `-` symbol.
-You can provide multiple data saparated by space, empty line, or tab.
-Each atom can belong to only one group. If one atom belongs to multiple groups, the error will be raised.
+You can provide multiple data separated by space, empty line, or tab.
+Each atom can belong to only one group. If an atom belongs to multiple groups, the error will be raised.
 
 Group pair file
 ~~~~~~~~~~~~~~~~
