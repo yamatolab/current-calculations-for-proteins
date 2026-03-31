@@ -215,7 +215,7 @@ curp section
         .. note::
             New option in version 3.0.
 
-        The max number of atoms that the a cell can contain.
+        The max number of atoms that a cell can contain.
 
     **treecode_direct_parm = 0.02** (default) : Float
         
