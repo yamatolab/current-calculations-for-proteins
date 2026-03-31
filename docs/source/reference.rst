@@ -119,6 +119,9 @@ variables
 Group file specification
 --------------------------
 
+Atom group file
+~~~~~~~~~~~~~~~
+
 For example, you can separate the main chain and the side chain parts by
 using the following specification:
 
@@ -143,11 +146,38 @@ using the following specification:
    27-30
 
 The group names are surrounded by `[` and `]`.
+Each group name should be unique.
 Then the range of the constituent atoms are provided. 
 You can spacify the range by using `-` symbol.
-You can provide 
-multiple data saparated by space, empty line, or tab.
+You can provide multiple data saparated by space, empty line, or tab.
+Each atom can belong to only one group. If one atom belongs to multiple groups, the error will be raised.
 
+Group pair file
+~~~~~~~~~~~~~~~~
+
+When you want to calculate the flux from group B to group A, you can specify the group pair as "[A]" and "B" in the group pair file.
+
+For example, when you use the atom group file above, you can specify the group pairs as follows:
+
+::
+
+   [01_ALA_M]
+   01_ALA_S  02_ALA_M
+
+   [01_ALA_S]
+   03_ALA_S  02_ALA_S  03_ALA_M
+
+   [02_ALA_M]
+   03_ALA_S  02_ALA_S  03_ALA_M
+
+
+Here the first and second lines mean that the flux from 01_ALA_S to 01_ALA_M and the flux from 02_ALA_M to 01_ALA_M will be calculated.
+
+You cannot specify the same group pair more than once. If you specify the same group pair more than once, the error will be raised.
+
+In the atom group file, the group A should define earlier than the group B when you specify the flux from group B to group A. 
+In the case of the example above, you cannot specify "01_ALA_M" in the fifth line because "01_ALA_M" is defined later than "02_ALA_M" in the atom group file.
+If the group A is defined later than the group B, the error will be raised. 
 
 Contact
 ========
