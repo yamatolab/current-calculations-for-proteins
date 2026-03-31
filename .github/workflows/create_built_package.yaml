@@ -45,6 +45,7 @@ jobs:
           CIBW_ARCHS: x86_64
           CIBW_BUILD: cp36-*
           CIBW_BUILD_VERBOSITY: 3
+          CXX: mpicxx
         with:
           output-dir: ./dist
       
