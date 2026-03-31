@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
 
     steps:
       - name: Checkout
@@ -19,11 +19,11 @@ jobs:
 
       - name: Install build dependencies for ${{ matrix.os }}
         run: |
-          if [[ ${{ matrix.os }} == "ubuntu-20.04" ]]; then
+          if [[ ${{ matrix.os }} == "ubuntu-22.04" ]]; then
             sudo apt-get update
-            sudo apt-get install -y build-essential gfortran libnetcdf-dev libhdf5-dev graphviz-dev libopenmpi-dev
+            sudo apt-get install -y build-essential gfortran libnetcdf-dev libhdf5-dev graphviz-dev libopenmpi-dev libeigen3-dev
           elif [[ ${{ matrix.os }} == "macos-13" ]]; then
-            brew install gcc netcdf graphviz open-mpi
+            brew install gcc netcdf graphviz open-mpi eigen
             # Ensure gfortran is linked correctly
             brew link --overwrite gcc
             # Add gfortran to PATH
