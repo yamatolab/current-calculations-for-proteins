@@ -163,13 +163,13 @@ curp section
     **group_method = none** (default) : Choice[united|residue|file|none]
 
         The method to construct the group. 
-        "united" means that hydrogen atoms are included in hevy atoms covalent to them. 
+        "united" means that hydrogen atoms are included in heavy atoms covalent to them. 
         "residue" means that the groups are calculated by residue level. 
-        If "file" is specified, the groups definition is givenby the group file in input section.
+        If "file" is specified, the groups definition is given by the group file in input section.
     
     **flux_grain = group** (default) : Choice[atom|group|both]
 
-        The grain to calculate the flux."atom", "group" and "both" values mean that the flux for atom parirs, group pairs and both of them will be calculated, respectively.
+        The grain to calculate the flux. "atom", "group" and "both" values mean that the flux for atom pairs, group pairs and both of them will be calculated, respectively.
 
         .. warning::
             When **nonbonded_method** is set to `treecode`, only "group" value is available.
