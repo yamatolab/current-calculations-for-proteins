@@ -1,0 +1,26 @@
+## Auto pytest workflow
+
+name: Auto pytest
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.6.15
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran libnetcdf-dev libhdf5-dev graphviz-dev libopenmpi-dev
+
+      - name: Run pytest
+        run: |
+          pip install -e .
+          cd test/pytests
+          pytest
