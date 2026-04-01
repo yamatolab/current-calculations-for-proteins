@@ -54,7 +54,7 @@ jobs:
       
       - name: Check external libraries are bundled
         run: |
-          for whl in dist/Curp-*.whl; do
+          for whl in dist/curp-*.whl; do
             echo "=== Inspecting $whl ==="
             unzip -l "$whl" | grep "\.so" || echo "(No .so found)"
             auditwheel show "$whl"
