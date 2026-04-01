@@ -99,7 +99,7 @@ def run_setup():
     ext_modules(config, "curp")
     config.add_data_files(os.path.join("curp", "LICENSE-short.txt"))
     setup(
-        name="Curp",
+        name="curp",
         version=__version__,
         author="Yamato's Lab",
         author_email="yamato@nagoya-u.jp",

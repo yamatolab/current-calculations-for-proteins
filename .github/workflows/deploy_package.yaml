@@ -49,13 +49,12 @@ jobs:
             PATH=/usr/lib64/openmpi/bin:$PATH
             LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
             LIBRARY_PATH=/usr/lib64/openmpi/lib:$LIBRARY_PATH
-
         with:
           output-dir: ./dist
       
       - name: Check external libraries are bundled
         run: |
-          for whl in dist/Curp-*.whl; do
+          for whl in dist/curp-*.whl; do
             echo "=== Inspecting $whl ==="
             unzip -l "$whl" | grep "\.so" || echo "(No .so found)"
             auditwheel show "$whl"
@@ -91,6 +90,7 @@ jobs:
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
+          verbose: true
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
           repository-url: https://upload.pypi.org/legacy/
