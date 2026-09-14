@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-from __future__ import print_function
 import itertools as it
 import pygraphviz as pgv
 
@@ -171,9 +170,10 @@ class EnergyConductivityParser:
 
     def _open(self, filename):
         if filename.endswith('.gz'):
-            fd = gzip.open(filename, 'rb')
+            import io
+            fd = io.TextIOWrapper(gzip.open(filename, 'rb'), encoding='utf-8')
         else:
-            fd = open(filename, 'rb')
+            fd = open(filename, 'r', encoding='utf-8')
 
         return fd
 
@@ -187,12 +187,7 @@ class EnergyConductivityParser:
 
         lines = ( line for line in fd if line.startswith('#') )
 
-        try:
-            enum_line = it.izip(lines, range(100))
-        except AttributeError:
-            enum_line = zip(lines, range(100))
-        except:
-            raise
+        enum_line = zip(lines, range(100))
 
         for line, iline in enum_line:
             if line.startswith('#title'):
