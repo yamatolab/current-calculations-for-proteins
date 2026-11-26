@@ -57,8 +57,8 @@ public:
         gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
         iatom_to_igroup(std::vector<int>()),
         atom_types(std::vector<int>()),
-        c6s(MatrixXd::Zero(0, 0)),
-        c12s(MatrixXd::Zero(0, 0)),
+        c6s(std::vector<double>()),
+        c12s(std::vector<double>()),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0))
     {};
@@ -157,6 +157,21 @@ private:
             iatom_to_igroup[i] = input_iatom_to_igroup(i);
         }
         ngrp = input_iatom_to_igroup.maxCoeff();
+    };
+
+    void set_vdw_coeffs(const MatrixXd& input_c6s, const MatrixXd& input_c12s) {
+
+        num_types = static_cast<int>(input_c6s.rows());
+        c6s.resize(num_types * num_types);
+        c12s.resize(num_types * num_types);
+        for (int i = 0; i < num_types; i++){
+            for (int j = 0; j < num_types; j++){
+
+                int idx = i * num_types + j;
+                c6s[idx] = input_c6s(i, j);
+                c12s[idx] = input_c12s(i, j);
+            }
+        }
     };
 
 public:
@@ -678,8 +693,8 @@ private:
                     int type_source = atom_types[idx_source] - 1;
                     int type_target = atom_types[idx_target] - 1;
 
-                    double c6  = c6s(type_source, type_target);
-                    double c12 = c12s(type_source, type_target);
+                    double c6  = c6s[type_pair];
+                    double c12 = c12s[type_pair];
                     double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
                 
                     Vector3d fij = rij * (coulomb + vdw); // electrostatic + vdw force
@@ -1010,8 +1025,8 @@ private:
             int type_target = atom_types[idx_target] - 1;
 
 
-            double c6  = c6s(type_source, type_target);
-            double c12 = c12s(type_source, type_target);
+            double c6  = c6s[type_pair];
+            double c12 = c12s[type_pair];
             double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
 
             Vector3d fij = rij * (coulomb + vdw);
