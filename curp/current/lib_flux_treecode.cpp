@@ -716,6 +716,102 @@ private:
         }
     };
 
+    // calculate force and flux for near atom-atom pairs
+    void cal_force_eflux_near(const std::vector<Cell>& cells){
+        int t0 = time_now();
+
+        int size_source = pairs_near.size();
+        for (int i = 0; i < size_source; i++){
+
+            int num_source = pairs_near[i].first;
+            std::vector<int>& pairs = pairs_near[i].second;
+
+            int size_pairs = pairs.size();
+            if (size_pairs == 0){
+                continue;
+            }
+
+            int      idx_source = num_source - 1;
+            Vector3d crd_source = t_crd.row(idx_source);
+            Vector3d vi         = t_vel.row(idx_source);
+            double   charge_i   = charges[idx_source];
+            
+            int type_source = atom_types[idx_source];
+            Vector3d fij = Vector3d::Zero();
+            int igrp = iatom_to_igroup[idx_source];
+
+
+            for (int j = 0; j < size_pairs; j++){
+
+                int idx_cell = pairs[j];
+                const std::vector<int>& atom_pairs = cells[idx_cell].leaf;
+                int num_target = atom_pairs.size();
+
+
+                count_near += num_target;
+                
+                for (int k = 0; k < num_target; k++){
+
+                    int idx_target = atom_pairs[k] - 1;
+
+                    if (idx_target == idx_source){
+                        continue;
+                    }
+
+                    Vector3d crd_target = t_crd.row(idx_target);
+                    Vector3d rij = crd_source - crd_target;
+                
+                    double r = sqrt(rij(0) * rij(0) + rij(1) * rij(1) + rij(2) * rij(2));
+
+                    double inv_r   = 1.0 / r;
+                    double coeff   = 332.05221729;
+                    double inv_r2  = inv_r * inv_r;
+                    double inv_r3  = inv_r * inv_r2;            // 1/r^3
+                    double inv_r6  = inv_r3 * inv_r3;           // 1/r^6
+                    double inv_r8  = inv_r2 * inv_r6;           // 1/r^8
+                    double inv_r14 = inv_r6 * inv_r8;           // 1/r^14
+
+                    double charge_j = charges[idx_target];
+                    double coulomb  = coeff * charge_i * charge_j * inv_r3;
+
+                    int type_target = atom_types[idx_target];
+
+                    int type_pair = type_source * num_types + type_target;
+                    double c6  = c6s[type_pair];
+                    double c12 = c12s[type_pair];
+                    double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
+                
+                    // double e_ij = rij.dot(vi) * (coulomb + vdw)* 0.5;
+
+                    Vector3d f = rij * (coulomb + vdw); // electrostatic + vdw force
+                    int jgrp = iatom_to_igroup[idx_target]; 
+                    if (igrp != jgrp){
+                        fij += f;                    
+                    }
+                    else if (idx_source < idx_target) {
+                        fij += f;
+                    }
+                    else {
+                        fij -= f;
+                    }
+                }
+            }
+            double e_ij = fij.dot(vi) * 0.5;
+
+            int idx_target = cells[0].leaf[0] - 1;
+            int jgrp = iatom_to_igroup[idx_target];
+            
+            eflux_ij_near(igrp-1, jgrp-1) += e_ij;
+            if (igrp != jgrp){
+                eflux_ij_near(jgrp-1, igrp-1) -= e_ij;
+            }
+        }
+        int t1 = time_now();
+        if (output_to_err_file == true){
+            std::cerr << "cal_force_near time: " << t1 - t0 << std::endl;
+        }
+    };
+
     // calculate force and flux for far atom-cell pairs
     void cal_force_far(const std::vector<Cell>& cells){
 
