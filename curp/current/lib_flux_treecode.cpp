@@ -32,7 +32,7 @@ public:
     std::vector<std::pair<int, int>> bonded_pairs;                              // list of bonded pairs
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;   // list of group name and number of atoms in the group
     std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;  // table of target group pairs
-    VectorXi iatom_to_igroup;                                                   // mapping from atom index to group index
+    std::vector<int> iatom_to_igroup;                                                   // mapping from atom index to group index
 
     // vars for vdw
     std::vector<int> atom_types;
@@ -55,7 +55,7 @@ public:
         bonded_pairs(std::vector<std::pair<int, int>>()),
         gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
         gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
-        iatom_to_igroup(VectorXi::Zero(0)),
+        iatom_to_igroup(std::vector<int>()),
         atom_types(std::vector<int>()),
         c6s(MatrixXd::Zero(0, 0)),
         c12s(MatrixXd::Zero(0, 0)),
@@ -150,6 +150,14 @@ private:
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void set_iatom_to_igroup(const VectorXi& input_iatom_to_igroup) {
+
+        iatom_to_igroup.resize(natom);
+        for (int i = 0; i < natom; i++){
+            iatom_to_igroup[i] = input_iatom_to_igroup(i);
+        }
+        ngrp = input_iatom_to_igroup.maxCoeff();
+    };
 
 public:
     // setup parameters
@@ -1008,8 +1016,8 @@ private:
 
             Vector3d fij = rij * (coulomb + vdw);
 
-            int igrp = iatom_to_igroup(idx_source);
-            int jgrp = iatom_to_igroup(idx_target);
+            int igrp = iatom_to_igroup[idx_source];
+            int jgrp = iatom_to_igroup[idx_target];
 
             cal_flux_near_bonded(fij, vij, rij, igrp, jgrp);
         }
