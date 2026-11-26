@@ -241,6 +241,9 @@ public:
         }
     };
 
+    // read trajectory, initialize variables for flux calculation
+    void initialize(const MatrixXd& crd, const MatrixXd& vel){
+        int t0 = time_now();
 
         // initialize variables
         t_crd = MatrixX3dRowMajor::Zero(natom, 3);
