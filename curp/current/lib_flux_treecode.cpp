@@ -116,8 +116,8 @@ public:
             parent(0),
             rc(Vector3d::Zero()),
             r(0.0),
-            multipole(VectorXd::Zero(10)),
-            multipole_j(MatrixXd::Zero(3, 10))
+            multipole(Matrix<double, 10, 1>::Zero()),
+            multipole_j(Matrix<double, 3, 10>::Zero())
         {}
     };
 
@@ -446,7 +446,9 @@ public:
 
 private:
     // calculate multipole/multipole_j of a cell
-    void cal_multipole(VectorXd& multipole, MatrixXd& multipole_j, Vector3d& rc, std::vector<int>& atoms){
+    void cal_multipole(
+        Matrix<double, 10, 1>& multipole, Matrix<double, 3, 10>& multipole_j,
+        Vector3d& rc, std::vector<int>& atoms){
         
         int size_atoms = atoms.size();
         
@@ -464,7 +466,7 @@ private:
             double qjdy = qj * dy;
             double qjdz = qj * dz;
             
-            VectorXd multipole_atom = VectorXd::Zero(10);
+            Matrix<double, 10, 1> multipole_atom = Matrix<double, 10, 1>::Zero();
 
             // calculate multipole
             multipole_atom(0) = qj * 1.0;
@@ -528,8 +530,8 @@ private:
                 int idx_p = cells[i_inv].parent;    // index of parent cell
                 int idx_c = i_inv;                  // index of child cell
             
-                VectorXd& p_multipole = cells[idx_p].multipole;
-                VectorXd& c_multipole = cells[idx_c].multipole;
+                Matrix<double, 10, 1>& p_multipole = cells[idx_p].multipole;
+                Matrix<double, 10, 1>& c_multipole = cells[idx_c].multipole;
                 Vector3d& p_rc = cells[idx_p].rc;
                 Vector3d& c_rc = cells[idx_c].rc;
                 
@@ -552,8 +554,8 @@ private:
                 p_multipole(8) += c_multipole(8) + dz * c_multipole(2) + dy * c_multipole(3) + My * dz;
                 p_multipole(9) += c_multipole(9) + dx * c_multipole(3) + dz * c_multipole(1) + Mz * dx;
 
-                MatrixXd& p_multipole_j = cells[idx_p].multipole_j;
-                MatrixXd& c_multipole_j = cells[idx_c].multipole_j;
+                Matrix<double, 3, 10>& p_multipole_j = cells[idx_p].multipole_j;
+                Matrix<double, 3, 10>& c_multipole_j = cells[idx_c].multipole_j;
 
                 // calculate multipole_j of parent cell from child cell
                 for (int j = 0; j < 3; j++){
