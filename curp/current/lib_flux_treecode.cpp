@@ -233,6 +233,13 @@ public:
             eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_far  = MatrixXd::Zero(ngrp, ngrp);
 
+        }
+        else{
+            std::cerr << "Invalid flux type" << std::endl;
+            std::exit(1);
+        }
+    };
+
 
         // initialize variables
         t_crd = MatrixX3dRowMajor::Zero(natom, 3);
