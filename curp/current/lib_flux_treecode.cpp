@@ -1250,12 +1250,9 @@ private:
 
         double e_ij = fij.dot(vij) * 0.5;
         
+        eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
         if (igrp != jgrp){
-            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
             eflux_ij_near(jgrp-1, igrp-1) += e_ij;
-        }
-        else{
-            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
         }
     };
 
