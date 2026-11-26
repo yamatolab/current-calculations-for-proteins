@@ -5,14 +5,15 @@
 #include <cmath>
 #include <algorithm>
 #include <queue>
-#include <functional>
 #include <chrono>
+#include <stdexcept>
 #include <Eigen/Dense>
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
 #include <pybind11/stl.h>
 namespace py = pybind11;
 using namespace Eigen;
+using MatrixX3dRowMajor = Matrix<double, Dynamic, 3, RowMajor>;
 
 class cal_treecode{
         
@@ -25,19 +26,18 @@ public:
     float cutoff;                   // cutoff length for near_field interaction
 
     std::vector<double> charges;    // charges of atoms
-    MatrixXd t_crd;                 // coordinates of atoms
-    MatrixXd t_vel;                 // velocities of atoms
+    MatrixX3dRowMajor t_crd;        // coordinates of atoms
+    MatrixX3dRowMajor t_vel;        // velocities of atoms
 
     std::vector<std::pair<int, int>> bonded_pairs;                              // list of bonded pairs
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;   // list of group name and number of atoms in the group
     std::vector<std::pair<std::string, std::vector<std::string>>> gpair_table;  // table of target group pairs
-    VectorXi iatom_to_igroup;                                                   // mapping from atom index to group index
+    std::vector<int> iatom_to_igroup;                                                   // mapping from atom index to group index
 
     // vars for vdw
     std::vector<int> atom_types;
-    MatrixXd c6s;
-    MatrixXd c12s;
-
+    std::vector<double> c6s;
+    std::vector<double> c12s; 
     // vectors for heat flux
     std::vector<std::vector<Vector3d>> hflux_ij;
 
@@ -54,10 +54,10 @@ public:
         bonded_pairs(std::vector<std::pair<int, int>>()),
         gname_iatoms_pairs(std::vector<std::pair<std::string, std::vector<int>>>()),
         gpair_table(std::vector<std::pair<std::string, std::vector<std::string>>>()),
-        iatom_to_igroup(VectorXi::Zero(0)),
+        iatom_to_igroup(std::vector<int>()),
         atom_types(std::vector<int>()),
-        c6s(MatrixXd::Zero(0, 0)),
-        c12s(MatrixXd::Zero(0, 0)),
+        c6s(std::vector<double>()),
+        c12s(std::vector<double>()),
         hflux_ij(std::vector<std::vector<Vector3d>>()),
         eflux_ij(MatrixXd::Zero(0, 0))
     {};
@@ -67,6 +67,9 @@ private:
 
     // number of group
     int ngrp = 0;
+
+    // number of atom types
+    int num_types = 0;
 
     // flags for flux type
     bool flag_heat   = false;
@@ -80,19 +83,13 @@ private:
     MatrixXd eflux_ij_near = MatrixXd::Zero(0, 0);
     MatrixXd eflux_ij_far  = MatrixXd::Zero(0, 0);
 
-
-    // function for calculating flux
-    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near;
-    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near_bonded;
-    std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_far;
-
     // near and far pairs for each source atom
     std::vector<std::pair<int, std::vector<int>>> pairs_near;   // [[1, [atom1, atom2, ...]], [2, [atom1, atom2, ...]], ...]
     std::vector<std::pair<int, std::vector<int>>> pairs_far;    // [[1, [cell1, cell2, ...]], [2, [cell1, cell2, ...]], ...]
 
     // for debugging
-    int count_near = 0;     // counter of atom-atom pairs
-    int count_far  = 0;     // counter of atom-cell pairs
+    double count_near = 0.0;     // counter of atom-atom pairs
+    double count_far  = 0.0;     // counter of atom-cell pairs
 
     bool output_to_err_file = false; // if true, output process time for each function to error file
 
@@ -108,8 +105,8 @@ public:
         int               parent;       // index of parent cell
         Vector3d          rc;           // center of the cell
         double            r;            // radius of the cell
-        VectorXd          multipole;    // 10 multipoles
-        MatrixXd          multipole_j;  // 3x10 multipoles_j
+        Matrix<double, 10, 1> multipole;    // 10 multipoles
+        Matrix<double, 3, 10> multipole_j;  // 3x10 multipoles_j
 
         Cell():
             nleaf(0),
@@ -119,8 +116,8 @@ public:
             parent(0),
             rc(Vector3d::Zero()),
             r(0.0),
-            multipole(VectorXd::Zero(10)),
-            multipole_j(MatrixXd::Zero(3, 10))
+            multipole(Matrix<double, 10, 1>::Zero()),
+            multipole_j(Matrix<double, 3, 10>::Zero())
         {}
     };
 
@@ -149,7 +146,38 @@ private:
     };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void set_iatom_to_igroup(const VectorXi& input_iatom_to_igroup) {
 
+        iatom_to_igroup.resize(natom);
+        for (int i = 0; i < natom; i++){
+            iatom_to_igroup[i] = input_iatom_to_igroup(i);
+        }
+        ngrp = input_iatom_to_igroup.maxCoeff();
+    };
+
+    void set_atom_type(const std::vector<int>& input_atom_types) {
+        atom_types = input_atom_types;
+        for (int i = 0; i < natom; i++){
+            atom_types[i] = input_atom_types[i] - 1;
+        }
+    };
+
+    void set_vdw_coeffs(const MatrixXd& input_c6s, const MatrixXd& input_c12s) {
+
+        num_types = static_cast<int>(input_c6s.rows());
+        c6s.resize(num_types * num_types);
+        c12s.resize(num_types * num_types);
+        for (int i = 0; i < num_types; i++){
+            for (int j = 0; j < num_types; j++){
+
+                int idx = i * num_types + j;
+                c6s[idx] = input_c6s(i, j);
+                c12s[idx] = input_c12s(i, j);
+            }
+        }
+    };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 public:
     // setup parameters
     void setup(const int& input_natom, const int& input_n_crit, const float& input_theta, const float& input_cutoff,
@@ -174,13 +202,11 @@ public:
         bonded_pairs       = input_bonded_pairs;
         gname_iatoms_pairs = input_gname_iatoms_pairs;
         gpair_table        = input_gpair_table;
-        iatom_to_igroup    = input_iatom_to_igroup;
-        
-        atom_types = input_atom_types;
-        c6s        = input_c6s;
-        c12s       = input_c12s;
 
-        ngrp = iatom_to_igroup.maxCoeff();
+        // convert input tables to std::vector format
+        set_iatom_to_igroup(input_iatom_to_igroup);        
+        set_atom_type(input_atom_types);
+        set_vdw_coeffs(input_c6s, input_c12s);
 
         int t1 = time_now();
         if (output_to_err_file == true){
@@ -199,17 +225,6 @@ public:
             hflux_ij_near.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             hflux_ij_far.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
 
-            // determine flux calculation function for heat flux
-            cal_flux_far  = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
-                cal_hflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
-            };
-            cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
-                cal_hflux_near(fij, vi, rij, idx_source, idx_target);
-            };
-            cal_flux_near_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_hflux_near_bonded(fij, vij, rij, igrp, jgrp);
-            };
-
         }
         else if (flux_type == "energy"){
             flag_energy = true;
@@ -219,16 +234,6 @@ public:
             eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_far  = MatrixXd::Zero(ngrp, ngrp);
 
-            // determine flux calculation function for energy flux
-            cal_flux_far  = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
-                cal_eflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
-            };
-            cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
-                cal_eflux_near(fij, vi, rij, idx_source, idx_target);
-            };
-            cal_flux_near_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_eflux_near_bonded(fij, vij, rij, igrp, jgrp);
-            };
         }
         else{
             std::cerr << "Invalid flux type" << std::endl;
@@ -241,13 +246,13 @@ public:
         int t0 = time_now();
 
         // initialize variables
-        t_crd = MatrixXd::Zero(natom, 3);
-        t_vel = MatrixXd::Zero(natom, 3);
+        t_crd = MatrixX3dRowMajor::Zero(natom, 3);
+        t_vel = MatrixX3dRowMajor::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
 
-        count_near = 0;
-        count_far  = 0;
+        count_near = 0.0;
+        count_far  = 0.0;
 
         // initialize flux variables
         if (flag_heat == true){
@@ -444,7 +449,9 @@ public:
 
 private:
     // calculate multipole/multipole_j of a cell
-    void cal_multipole(VectorXd& multipole, MatrixXd& multipole_j, Vector3d& rc, std::vector<int>& atoms){
+    void cal_multipole(
+        Matrix<double, 10, 1>& multipole, Matrix<double, 3, 10>& multipole_j,
+        Vector3d& rc, std::vector<int>& atoms){
         
         int size_atoms = atoms.size();
         
@@ -462,7 +469,7 @@ private:
             double qjdy = qj * dy;
             double qjdz = qj * dz;
             
-            VectorXd multipole_atom = VectorXd::Zero(10);
+            Matrix<double, 10, 1> multipole_atom = Matrix<double, 10, 1>::Zero();
 
             // calculate multipole
             multipole_atom(0) = qj * 1.0;
@@ -526,8 +533,8 @@ private:
                 int idx_p = cells[i_inv].parent;    // index of parent cell
                 int idx_c = i_inv;                  // index of child cell
             
-                VectorXd& p_multipole = cells[idx_p].multipole;
-                VectorXd& c_multipole = cells[idx_c].multipole;
+                Matrix<double, 10, 1>& p_multipole = cells[idx_p].multipole;
+                Matrix<double, 10, 1>& c_multipole = cells[idx_c].multipole;
                 Vector3d& p_rc = cells[idx_p].rc;
                 Vector3d& c_rc = cells[idx_c].rc;
                 
@@ -550,8 +557,8 @@ private:
                 p_multipole(8) += c_multipole(8) + dz * c_multipole(2) + dy * c_multipole(3) + My * dz;
                 p_multipole(9) += c_multipole(9) + dx * c_multipole(3) + dz * c_multipole(1) + Mz * dx;
 
-                MatrixXd& p_multipole_j = cells[idx_p].multipole_j;
-                MatrixXd& c_multipole_j = cells[idx_c].multipole_j;
+                Matrix<double, 3, 10>& p_multipole_j = cells[idx_p].multipole_j;
+                Matrix<double, 3, 10>& c_multipole_j = cells[idx_c].multipole_j;
 
                 // calculate multipole_j of parent cell from child cell
                 for (int j = 0; j < 3; j++){
@@ -578,7 +585,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // determine near and far cells for each source atom
-    void determine_near_far(int num_source, int idx_p, int idx_pair, std::vector<Cell>& cells){
+    void determine_near_far(int num_source, int idx_p, int idx_pair, const std::vector<Cell>& cells){
 
         int      idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
@@ -597,7 +604,7 @@ private:
                     if (cells[idx_p].nchild & (1 << octant)) {
                         
                         int       idx_c = cells[idx_p].child[octant]; // index of current child cell
-                        Vector3d& rc    = cells[idx_c].rc;
+                        const Vector3d& rc    = cells[idx_c].rc;
                         
                         double dx = crd_source(0) - rc(0);
                         double dy = crd_source(1) - rc(1);
@@ -623,7 +630,7 @@ private:
     };
 
     // calculate force and flux for near atom-atom pairs
-    void cal_force_near(std::vector<Cell>& cells){
+    void cal_force_hflux_near(const std::vector<Cell>& cells){
         int t0 = time_now();
 
         int size_source = pairs_near.size();
@@ -632,16 +639,119 @@ private:
             int num_source = pairs_near[i].first;
             std::vector<int>& pairs = pairs_near[i].second;
 
+            int size_pairs = pairs.size();
+            if (size_pairs == 0){
+                continue;
+            }
+            
             int      idx_source = num_source - 1;
             Vector3d crd_source = t_crd.row(idx_source);
             Vector3d vi         = t_vel.row(idx_source);
+            double   charge_i   = charges[idx_source];
+            int igrp = iatom_to_igroup[idx_source];
+            
+            int type_source = atom_types[idx_source];
 
-            int size_pairs = pairs.size();
+            Matrix3d temp = Matrix3d::Zero();
+
             for (int j = 0; j < size_pairs; j++){
 
                 int idx_cell = pairs[j];
-                std::vector<int>& atom_pairs = cells[idx_cell].leaf;
+                const std::vector<int>& atom_pairs = cells[idx_cell].leaf;
                 int num_target = atom_pairs.size();
+
+                count_near += num_target;
+                
+                for (int k = 0; k < num_target; k++){
+
+                    int idx_target = atom_pairs[k] - 1;
+
+                    if (idx_target == idx_source){
+                        continue;
+                    }
+
+                    Vector3d crd_target = t_crd.row(idx_target);
+                    Vector3d rij = crd_source - crd_target;
+                    double rx = rij(0);
+                    double ry = rij(1);
+                    double rz = rij(2);
+                
+                    double r = sqrt(rx * rx + ry * ry + rz * rz);
+
+                    double inv_r   = 1.0 / r;
+                    double coeff   = 332.05221729;
+                    double inv_r2  = inv_r * inv_r;
+                    double inv_r3  = inv_r * inv_r2;            // 1/r^3
+                    double inv_r6  = inv_r3 * inv_r3;           // 1/r^6
+                    double inv_r8  = inv_r2 * inv_r6;           // 1/r^8
+                    double inv_r14 = inv_r6 * inv_r8;           // 1/r^14
+
+                    double charge_j = charges[idx_target];
+                    double coulomb  = coeff * charge_i * charge_j * inv_r3;
+
+                    int type_target = atom_types[idx_target];
+
+                    int type_pair = type_source * num_types + type_target;
+                    double c6  = c6s[type_pair];
+                    double c12 = c12s[type_pair];
+                    double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
+                
+                    Vector3d fij = rij * (coulomb + vdw); // electrostatic + vdw force
+
+                    temp.row(0) += rx * fij;
+                    temp.row(1) += ry * fij;
+                    temp.row(2) += rz * fij;
+                }
+            }
+            Vector3d h_ij = temp * vi * 0.5;
+
+            int idx_target = cells[0].leaf[0] - 1;
+            int jgrp = iatom_to_igroup[idx_target];
+
+            hflux_ij_near[igrp-1][jgrp-1] += h_ij;
+            if (igrp != jgrp){
+                hflux_ij_near[jgrp-1][igrp-1] += h_ij;
+            }
+        }
+        int t1 = time_now();
+        if (output_to_err_file == true){
+            std::cerr << "cal_force_near time: " << t1 - t0 << std::endl;
+        }
+    };
+
+    // calculate force and flux for near atom-atom pairs
+    void cal_force_eflux_near(const std::vector<Cell>& cells){
+        int t0 = time_now();
+
+        int size_source = pairs_near.size();
+        for (int i = 0; i < size_source; i++){
+
+            int num_source = pairs_near[i].first;
+            std::vector<int>& pairs = pairs_near[i].second;
+
+            int size_pairs = pairs.size();
+            if (size_pairs == 0){
+                continue;
+            }
+
+            int      idx_source = num_source - 1;
+            Vector3d crd_source = t_crd.row(idx_source);
+            Vector3d vi         = t_vel.row(idx_source);
+            double   charge_i   = charges[idx_source];
+            
+            int type_source = atom_types[idx_source];
+            Vector3d fij = Vector3d::Zero();
+            int igrp = iatom_to_igroup[idx_source];
+
+
+            for (int j = 0; j < size_pairs; j++){
+
+                int idx_cell = pairs[j];
+                const std::vector<int>& atom_pairs = cells[idx_cell].leaf;
+                int num_target = atom_pairs.size();
+
+
+                count_near += num_target;
                 
                 for (int k = 0; k < num_target; k++){
 
@@ -654,29 +764,49 @@ private:
                     Vector3d crd_target = t_crd.row(idx_target);
                     Vector3d rij = crd_source - crd_target;
                 
-                    double r = sqrt(rij.dot(rij));
+                    double r = sqrt(rij(0) * rij(0) + rij(1) * rij(1) + rij(2) * rij(2));
 
                     double inv_r   = 1.0 / r;
                     double coeff   = 332.05221729;
-                    double inv_r3  = inv_r * inv_r * inv_r;             // 1/r^3
-                    double inv_r8  = inv_r3 * inv_r3 * inv_r * inv_r;   // 1/r^8
-                    double inv_r14 = inv_r8 * inv_r3 * inv_r3;          // 1/r^14
+                    double inv_r2  = inv_r * inv_r;
+                    double inv_r3  = inv_r * inv_r2;            // 1/r^3
+                    double inv_r6  = inv_r3 * inv_r3;           // 1/r^6
+                    double inv_r8  = inv_r2 * inv_r6;           // 1/r^8
+                    double inv_r14 = inv_r6 * inv_r8;           // 1/r^14
 
-                    double charge_i = charges[idx_source];
                     double charge_j = charges[idx_target];
                     double coulomb  = coeff * charge_i * charge_j * inv_r3;
 
-                    int type_source = atom_types[idx_source] - 1;
-                    int type_target = atom_types[idx_target] - 1;
+                    int type_target = atom_types[idx_target];
 
-                    double c6  = c6s(type_source, type_target);
-                    double c12 = c12s(type_source, type_target);
+                    int type_pair = type_source * num_types + type_target;
+                    double c6  = c6s[type_pair];
+                    double c12 = c12s[type_pair];
                     double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
                 
-                    Vector3d fij = rij * (coulomb + vdw); // electrostatic + vdw force
+                    // double e_ij = rij.dot(vi) * (coulomb + vdw)* 0.5;
 
-                    cal_flux_near(fij, vi, rij, idx_source, idx_target);
+                    Vector3d f = rij * (coulomb + vdw); // electrostatic + vdw force
+                    int jgrp = iatom_to_igroup[idx_target]; 
+                    if (igrp != jgrp){
+                        fij += f;                    
+                    }
+                    else if (idx_source < idx_target) {
+                        fij += f;
+                    }
+                    else {
+                        fij -= f;
+                    }
                 }
+            }
+            double e_ij = fij.dot(vi) * 0.5;
+
+            int idx_target = cells[0].leaf[0] - 1;
+            int jgrp = iatom_to_igroup[idx_target];
+            
+            eflux_ij_near(igrp-1, jgrp-1) += e_ij;
+            if (igrp != jgrp){
+                eflux_ij_near(jgrp-1, igrp-1) -= e_ij;
             }
         }
         int t1 = time_now();
@@ -686,7 +816,7 @@ private:
     };
 
     // calculate force and flux for far atom-cell pairs
-    void cal_force_far(std::vector<Cell>& cells){
+    void cal_force_hflux_far(const std::vector<Cell>& cells){
 
         int t0 = time_now();
 
@@ -697,15 +827,27 @@ private:
         for (int i = 0; i < size_source; i++){
 
             int num_source = pairs_far[i].first;
-            int idx_source = num_source - 1;
+            std::vector<int>& pairs = pairs_far[i].second;
 
+            int size_pairs = pairs.size();
+            if (size_pairs == 0){
+                continue;
+            }
+
+            int idx_source = num_source - 1;
+            
+            Vector3d vi = t_vel.row(idx_source);
+            double charge = charges[idx_source];
+
+            int igrp    = iatom_to_igroup[idx_source];
             Vector3d crd_source = t_crd.row(idx_source);
-            int size_pairs      = pairs_far[i].second.size();
+
+            Matrix3d temp = Matrix3d::Zero();
 
             for (int j = 0; j < size_pairs; j++){
 
-                int   idx_cell = pairs_far[i].second[j];
-                Cell& cell     = cells[idx_cell];
+                int   idx_cell = pairs[j];
+                const Cell& cell     = cells[idx_cell];
 
                 Vector3d rc = cell.rc;
                 double   dx = crd_source(0) - rc(0);
@@ -713,16 +855,11 @@ private:
                 double   dz = crd_source(2) - rc(2);
                 double   r  = sqrt(dx * dx + dy * dy + dz * dz);
 
-                bJx.setZero();
-                bJy.setZero();
-                bJz.setZero();
-                bJ.setZero();
-
                 double inv_r = 1.0 / r;                     // 1/r
                 double r2 = inv_r * inv_r;                  // 1/r^2
-                double r3 = r2 * inv_r;                     // 1/r^3
-                double r5 = r3 * r2;                        // 1/r^5
-                double r7 = r5 * r2;                        // 1/r^7
+                double r3 = inv_r * r2;                     // 1/r^3
+                double r5 = 3.0 * r2 * r3;                  // 3/r^5
+                double r7 = 5.0 * r2 * r5;                  // 15/r^7
 
                 double dx2 = dx * dx;                       // dx^2
                 double dy2 = dy * dy;                       // dy^2
@@ -732,24 +869,24 @@ private:
                 double dydz = dy * dz;                      // dydz
                 double dzdx = dz * dx;                      // dzdx
 
-                double dxr5 = 3 * dx * r5;                  // 3dx/r^5
-                double dyr5 = 3 * dy * r5;                  // 3dy/r^5
-                double dzr5 = 3 * dz * r5;                  // 3dx/r^5
+                double dxr5 = dx * r5;                  // 3dx/r^5
+                double dyr5 = dy * r5;                  // 3dy/r^5
+                double dzr5 = dz * r5;                  // 3dz/r^5
 
-                double dxdydz = 15 * dxdy * dz * r7;        // 15dxdydz/r^7
-                double dx2dy  = 15 * dx2 * dy * r7;         // 15dx^2dy/r^7
-                double dy2dz  = 15 * dy2 * dz * r7;         // 15dy^2dz/r^7
-                double dz2dx  = 15 * dz2 * dx * r7;         // 15dz^2dx/r^7
-                double dy2dx  = 15 * dy2 * dx * r7;         // 15dy^2dx/r^7
-                double dz2dy  = 15 * dz2 * dy * r7;         // 15dz^2dy/r^7
-                double dx2dz  = 15 * dx2 * dz * r7;         // 15dx^2dz/r^7
+                double dxdydz = dxdy * dz * r7;        // 15dxdydz/r^7
+                double dx2dy  = dx2 * dy * r7;         // 15dx^2dy/r^7
+                double dy2dz  = dy2 * dz * r7;         // 15dy^2dz/r^7
+                double dz2dx  = dz2 * dx * r7;         // 15dz^2dx/r^7
+                double dy2dx  = dy2 * dx * r7;         // 15dy^2dx/r^7
+                double dz2dy  = dz2 * dy * r7;         // 15dz^2dy/r^7
+                double dx2dz  = dx2 * dz * r7;         // 15dx^2dz/r^7
 
                 // calculate bJx
                 bJx(0) = -dx * r3;                          // -dx/r^3
-                bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
-                bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
-                bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
-                bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
+                bJx(1) = -r3 + dx2 * r5;                    // -1/r^3  + 3dx^2/r^5
+                bJx(2) = dxdy * r5;                         // 0       + 3dydx/r^5
+                bJx(3) = dzdx * r5;                         // 0       + 3dzdx/r^5
+                bJx(4) = 3 * dxr5 - dx2 * dx * r7;          // 9dx/r^5 - 15dx^3/r^7
                 bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
                 bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
                 bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
@@ -759,12 +896,12 @@ private:
                 // calculate bJy
                 bJy(0) = -dy * r3;                          // -dy/r^3
                 bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
-                bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
-                bJy(3) = 3 * dydz * r5;                     // 0       + 3dzdy/r^5
-                bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
-                bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
+                bJy(2) = -r3 + dy2 * r5;                    // -1/r^3  + 3dy^2/r^5
+                bJy(3) = dydz * r5;                         // 0       + 3dzdy/r^5
+                bJy(4) = bJx(7);                            // 3dy/r^5 - 15dx^2dy/r^7
+                bJy(5) = 3 * dyr5 - dy2 * dy * r7;          // 9dy/r^5 - 15dy^3/r^7
                 bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
-                bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
+                bJy(7) = bJx(5);                            // 3dx/r^5 - 15dxdy^2/r^7
                 bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydzdy/r^7
                 bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
 
@@ -772,37 +909,46 @@ private:
                 bJz(0) = -dz * r3;                          // -dz/r^3
                 bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
                 bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
-                bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
-                bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-                bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
-                bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
+                bJz(3) = -r3 + dz2 * r5;                    // -1/r^3  + 3dz^2/r^5
+                bJz(4) = bJx(9);                            // 3dz/r^5 - 15dx^2dz/r^7
+                bJz(5) = bJy(8);                            // 3dz/r^5 - 15dy^2dz/r^7
+                bJz(6) = 3 * dzr5 - dz2 * dz * r7;          // 9dz/r^5 - 15dz^3/r^7
                 bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
-                bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
-                bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
+                bJz(8) = bJy(6);                            // 3dy/r^5 - 15dydz^2/r^7
+                bJz(9) = bJx(6);                            // 3dx/r^5 - 15dzdxdz/r^7
 
                 // calculate multipole
-                VectorXd& multipole = cell.multipole;
-                double charge = charges[idx_source];
-                double coeff  = 332.05221729;
-                VectorXd multi = coeff * multipole * charge;
+                const Matrix<double, 10, 1>& multipole = cell.multipole;
+                double coeff  = 332.05221729 * charge;
 
-                double   fx = multi.dot(bJx);
-                double   fy = multi.dot(bJy);
-                double   fz = multi.dot(bJz);
-                Vector3d f  = Vector3d(-fx, -fy, -fz);
+                double   fx = multipole.dot(bJx);
+                double   fy = multipole.dot(bJy);
+                double   fz = multipole.dot(bJz);
+                Vector3d f  = Vector3d(-fx, -fy, -fz) * coeff;
 
-                MatrixXd& multipole_j = cell.multipole_j;
+                const Matrix<double, 3, 10>& multipole_j = cell.multipole_j;
                 bJ.col(0) = bJx;
                 bJ.col(1) = bJy;
                 bJ.col(2) = bJz;
-                Matrix3d multi_j = -multipole_j * bJ * coeff * charge;
+                Matrix<double, 3, 3> multi_j = -multipole_j * bJ * coeff;
 
-                int igrp = iatom_to_igroup(idx_source);
-                int Jgrp = iatom_to_igroup(cell.leaf[0] - 1);
-                Vector3d vi = t_vel.row(idx_source);
+                temp.row(0) += crd_source(0) * f;
+                temp.row(1) += crd_source(1) * f;
+                temp.row(2) += crd_source(2) * f;
 
-                cal_flux_far(f, vi, crd_source, multi_j, igrp, Jgrp);
+                temp -= multi_j;
             }
+            Vector3d h_ij = ( temp * vi ) * 0.5;
+
+            int idx_target = cells[0].leaf[0] - 1;
+            int Jgrp = iatom_to_igroup[idx_target];
+
+            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
+            if (igrp != Jgrp){
+                hflux_ij_far[Jgrp-1][igrp-1] += h_ij;
+            }
+            count_far += size_pairs;
+
         }
         int t1 = time_now();
         if (output_to_err_file == true){
@@ -810,101 +956,157 @@ private:
         }
     };
 
-    // calculate heat flux for near atom-atom pairs
-    void cal_hflux_near(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
-        
-        Vector3d h_ij = rij * (fij.dot(vi)) * 0.5;
+    // calculate force and flux for far atom-cell pairs
+    void cal_force_eflux_far(const std::vector<Cell>& cells){
 
-        int igrp = iatom_to_igroup(idx_source);
-        int jgrp = iatom_to_igroup(idx_target);
+        int t0 = time_now();
 
-        if (igrp != jgrp){
-            hflux_ij_near[igrp-1][jgrp-1] += h_ij;
-            hflux_ij_near[jgrp-1][igrp-1] += h_ij;
-        }
-        else {
-            hflux_ij_near[igrp-1][jgrp-1] += h_ij;
-        }
-        count_near += 1;
-    };
+        int size_source = pairs_far.size();
+        Matrix<double, 10, 1> bJx, bJy, bJz;
 
-    // calculate heat flux for far atom-cell pairs
-    void cal_hflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d multi_j, int igrp, int Jgrp){
-        
-        Vector3d h_ij = r * (fiJ.dot(vi)) * 0.5 - multi_j * vi * 0.5;
+        for (int i = 0; i < size_source; i++){
 
-        if (igrp != Jgrp){
-            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
-            hflux_ij_far[Jgrp-1][igrp-1] += h_ij;
-        }
-        else{
-            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
-        }
-        count_far += 1;
-    };
+            int num_source = pairs_far[i].first;
+            std::vector<int>& pairs = pairs_far[i].second;
 
-    // calculate energy flux for near atom-atom pairs
-    void cal_eflux_near(Vector3d fij, Vector3d vi, Vector3d rij, int idx_source, int idx_target){
+            int size_pairs = pairs.size();
+            if (size_pairs == 0){
+                continue;
+            }
 
-        double e_ij = fij.dot(vi) * 0.5;
+            int idx_source = num_source - 1;
+            
+            Vector3d   vi = t_vel.row(idx_source);
+            double charge = charges[idx_source];
+            int      igrp = iatom_to_igroup[idx_source];
 
-        int igrp = iatom_to_igroup(idx_source);
-        int jgrp = iatom_to_igroup(idx_target);
+            Vector3d crd_source = t_crd.row(idx_source);
+            Vector3d        fiJ = Vector3d::Zero();
 
-        if (igrp != jgrp){
-            eflux_ij_near(igrp-1, jgrp-1) += e_ij;
-            eflux_ij_near(jgrp-1, igrp-1) -= e_ij;
-        }
-        else if (idx_source < idx_target) {
-            eflux_ij_near(igrp-1, jgrp-1) += e_ij;
-        }
-        else {
-            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
-        }
-        count_near += 1;
-    };
+            for (int j = 0; j < size_pairs; j++){
 
-    // calculate energy flux for far atom-cell pairs
-    void cal_eflux_far(Vector3d fiJ, Vector3d vi, Vector3d r, Matrix3d multi_j, int igrp, int Jgrp){
-        
-        double e_ij = fiJ.dot(vi) * 0.5;
+                int   idx_cell = pairs[j];
+                const Cell& cell     = cells[idx_cell];
 
-        if (igrp != Jgrp){
+                Vector3d rc = cell.rc;
+                double   dx = crd_source(0) - rc(0);
+                double   dy = crd_source(1) - rc(1);
+                double   dz = crd_source(2) - rc(2);
+                double   r  = sqrt(dx * dx + dy * dy + dz * dz);
+
+                double inv_r = 1.0 / r;                     // 1/r
+                double r2 = inv_r * inv_r;                  // 1/r^2
+                double r3 = r2 * inv_r;                     // 1/r^3
+                double r5 = r3 * r2 * 3;                    // 3/r^5
+                double r7 = r5 * r2 * 5;                    // 15/r^7
+
+                double dx2 = dx * dx;                       // dx^2
+                double dy2 = dy * dy;                       // dy^2
+                double dz2 = dz * dz;                       // dz^2
+
+                double dxdy = dx * dy;                      // dxdy
+                double dydz = dy * dz;                      // dydz
+                double dzdx = dz * dx;                      // dzdx
+
+                double dxr5 = dx * r5;                  // 3dx/r^5
+                double dyr5 = dy * r5;                  // 3dy/r^5
+                double dzr5 = dz * r5;                  // 3dx/r^5
+
+                double dxdydz = dxdy * dz * r7;        // 15dxdydz/r^7
+                double dx2dy  = dx2 * dy * r7;         // 15dx^2dy/r^7
+                double dy2dz  = dy2 * dz * r7;         // 15dy^2dz/r^7
+                double dz2dx  = dz2 * dx * r7;         // 15dz^2dx/r^7
+                double dy2dx  = dy2 * dx * r7;         // 15dy^2dx/r^7
+                double dz2dy  = dz2 * dy * r7;         // 15dz^2dy/r^7
+                double dx2dz  = dx2 * dz * r7;         // 15dx^2dz/r^7
+
+                // calculate bJx
+                bJx(0) = -dx * r3;                          // -dx/r^3
+                bJx(1) = -r3 + dx2 * r5;                    // -1/r^3  + 3dx^2/r^5
+                bJx(2) = dxdy * r5;                         // 0       + 3dydx/r^5
+                bJx(3) = dzdx * r5;                         // 0       + 3dzdx/r^5
+                bJx(4) = 3 * dxr5 - dx2 * dx * r7;          // 9dx/r^5 - 15dx^3/r^7
+                bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
+                bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
+                bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
+                bJx(8) =          - dxdydz;                 // 0       - 15dydzdx/r^7
+                bJx(9) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
+
+                // calculate bJy
+                bJy(0) = -dy * r3;                          // -dy/r^3
+                bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
+                bJy(2) = -r3 + dy2 * r5;                    // -1/r^3  + 3dy^2/r^5
+                bJy(3) = dydz * r5;                         // 0       + 3dzdy/r^5
+                bJy(4) = bJx(7);                            // 3dy/r^5 - 15dx^2dy/r^7
+                bJy(5) = 3 * dyr5 - dy2 * dy * r7;          // 9dy/r^5 - 15dy^3/r^7
+                bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
+                bJy(7) = bJx(5);                            // 3dx/r^5 - 15dxdy^2/r^7
+                bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydzdy/r^7
+                bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
+
+                // calculate bJz
+                bJz(0) = -dz * r3;                          // -dz/r^3
+                bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
+                bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
+                bJz(3) = -r3 + dz2 * r5;                    // -1/r^3  + 3dz^2/r^5
+                bJz(4) = bJx(9);                            // 3dz/r^5 - 15dx^2dz/r^7
+                bJz(5) = bJy(8);                            // 3dz/r^5 - 15dy^2dz/r^7
+                bJz(6) = 3 * dzr5 - dz2 * dz * r7;          // 9dz/r^5 - 15dz^3/r^7
+                bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
+                bJz(8) = bJy(6);                            // 3dy/r^5 - 15dydz^2/r^7
+                bJz(9) = bJx(6);                            // 3dx/r^5 - 15dzdxdz/r^7
+
+                // calculate multipole
+                const Matrix<double, 10, 1>& multipole = cell.multipole;
+                double coeff  = 332.05221729 * charge;
+
+                double   fx = multipole.dot(bJx);
+                double   fy = multipole.dot(bJy);
+                double   fz = multipole.dot(bJz);
+                Vector3d f  = Vector3d(-fx, -fy, -fz) * coeff;
+                fiJ += f;
+
+            }
+            int idx_target = cells[0].leaf[0] - 1;
+            int Jgrp = iatom_to_igroup[idx_target];
+
+            double e_ij = fiJ.dot(vi) * 0.5;
+
             eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
-            eflux_ij_far(Jgrp-1, igrp-1) -= e_ij;
+            if (igrp != Jgrp){
+                eflux_ij_far(Jgrp-1, igrp-1) -= e_ij;
+            }
+            count_far += size_source;
+
         }
-        else{
-            eflux_ij_far(igrp-1, Jgrp-1) += e_ij;
+        int t1 = time_now();
+        if (output_to_err_file == true){
+            std::cerr << "cal_force_far time: " << t1 - t0 << std::endl;
         }
-        count_far += 1;
     };
 
     // get atoms vector of a group
-    std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
+    const std::vector<int>& get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
 
-        std::vector<int> atoms;
         for (const auto& pair : pairs) {
 
             if (pair.first == source) {
-                atoms = pair.second;
-                break;
+                return pair.second;
             }
         }
-        return atoms;
+        throw std::runtime_error("Group name" + source + "not found in pairs.");
     };
 
     // get cells vector of a group
-    std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cell>& all_cells) {
+    const std::vector<Cell>& get_cells(const std::string& source, const std::vector<All_cell>& all_cells) {
         
-        std::vector<Cell> cells;
         for (const auto& all_cell : all_cells) {
 
             if (all_cell.group == source) {
-                cells =  all_cell.cells;
-                break;
+                return all_cell.cells;
             }
         }
-        return cells;
+        throw std::runtime_error("Group name" + source + "not found in all_cells.");
     };
 
     // calculate forces and fluxes for all required group pairs
@@ -917,7 +1119,7 @@ private:
             std::vector<std::string> targets = gpair_table[i].second;
             int size_targets = targets.size();
         
-            std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
+            const std::vector<int>& source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
 
             for (int j = 0; j < size_targets; j++){
@@ -927,7 +1129,7 @@ private:
                 pairs_near.resize(source_size);
                 pairs_far.resize(source_size);
                 std::string target = targets[j];
-                std::vector<Cell> cells = get_cells(target, all_cells);
+                const std::vector<Cell>& cells = get_cells(target, all_cells);
 
                 for (int k = 0; k < source_size; k++){
 
@@ -936,18 +1138,24 @@ private:
                     pairs_far[k].first  = num_source;
                     determine_near_far(num_source, 0, k, cells);
                 }
-                cal_force_near(cells);
-                cal_force_far(cells);
+                if (flag_heat == true){
+                    cal_force_hflux_near(cells);
+                    cal_force_hflux_far(cells);
+                }
+                else if (flag_energy == true){
+                    cal_force_eflux_near(cells);
+                    cal_force_eflux_far(cells);
+                }
             }
 
-            std::vector<Cell> cells_source = get_cells(source, all_cells);
+            const std::vector<Cell>& cells_source = get_cells(source, all_cells);
             for (int l = 0; l < size_targets; l++){
 
                 std::string target = targets[l];
                 if (target == source){
                     continue;
                 }
-                std::vector<int> target_atoms = get_atoms(target, gname_iatoms_pairs);
+                const std::vector<int>& target_atoms = get_atoms(target, gname_iatoms_pairs);
                 int target_size = target_atoms.size();
                 pairs_near.clear();
                 pairs_far.clear();
@@ -960,8 +1168,14 @@ private:
                     pairs_far[m].first  = num_target;
                     determine_near_far(num_target, 0, m, cells_source);
                 }
-                cal_force_near(cells_source);
-                cal_force_far(cells_source);
+                if (flag_heat == true){
+                    cal_force_hflux_near(cells_source);
+                    cal_force_hflux_far(cells_source);
+                }
+                else if (flag_energy == true){
+                    cal_force_eflux_near(cells_source);
+                    cal_force_eflux_far(cells_source);
+                }
             }
         }
     };
@@ -986,7 +1200,7 @@ private:
             Vector3d vj  = t_vel.row(idx_target);
             Vector3d vij = vi + vj;
 
-            double r       = sqrt(rij.dot(rij));
+            double r       = sqrt(rij(0) * rij(0) + rij(1) * rij(1) + rij(2) * rij(2));
             double inv_r   = 1.0 / r;
             double inv_r3  = inv_r * inv_r * inv_r;              // 1/r^3
             double inv_r8  = inv_r3 * inv_r3 * inv_r * inv_r;    // 1/r^8
@@ -997,20 +1211,26 @@ private:
             double charge_j = charges[idx_target];
             double coulomb  = coeff * charge_i * charge_j * inv_r3;
 
-            int type_source = atom_types[idx_source] - 1;
-            int type_target = atom_types[idx_target] - 1;
+            int type_source = atom_types[idx_source];
+            int type_target = atom_types[idx_target];
 
 
-            double c6  = c6s(type_source, type_target);
-            double c12 = c12s(type_source, type_target);
+            int type_pair = type_source * num_types + type_target;
+            double c6  = c6s[type_pair];
+            double c12 = c12s[type_pair];
             double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
 
             Vector3d fij = rij * (coulomb + vdw);
 
-            int igrp = iatom_to_igroup(idx_source);
-            int jgrp = iatom_to_igroup(idx_target);
+            int igrp = iatom_to_igroup[idx_source];
+            int jgrp = iatom_to_igroup[idx_target];
 
-            cal_flux_near_bonded(fij, vij, rij, igrp, jgrp);
+            if (flag_heat == true){
+                cal_hflux_near_bonded(fij, vij, rij, igrp, jgrp);
+            }
+            else if (flag_energy == true){
+                cal_eflux_near_bonded(fij, vij, rij, igrp, jgrp);
+            }
         }
         if (output_to_err_file == true){
             std::cerr << "count_atom_bonded: " << size_bonded << std::endl;
@@ -1021,13 +1241,10 @@ private:
     void cal_hflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
         
         Vector3d h_ij = rij * (fij.dot(vij)) * 0.5;
-
+        
+        hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
         if (igrp != jgrp){
-            hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
             hflux_ij_near[jgrp-1][igrp-1] -= h_ij;
-        }
-        else{
-            hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
         }
     };
 
@@ -1036,12 +1253,9 @@ private:
 
         double e_ij = fij.dot(vij) * 0.5;
         
+        eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
         if (igrp != jgrp){
-            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
             eflux_ij_near(jgrp-1, igrp-1) += e_ij;
-        }
-        else{
-            eflux_ij_near(igrp-1, jgrp-1) -= e_ij;
         }
     };
 
