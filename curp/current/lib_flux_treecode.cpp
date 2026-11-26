@@ -1139,11 +1139,17 @@ private:
                     pairs_far[k].first  = num_source;
                     determine_near_far(num_source, 0, k, cells);
                 }
-                cal_force_near(cells);
-                cal_force_far(cells);
+                if (flag_heat == true){
+                    cal_force_hflux_near(cells);
+                    cal_force_hflux_far(cells);
+                }
+                else if (flag_energy == true){
+                    cal_force_eflux_near(cells);
+                    cal_force_eflux_far(cells);
+                }
             }
 
-            std::vector<Cell> cells_source = get_cells(source, all_cells);
+            const std::vector<Cell>& cells_source = get_cells(source, all_cells);
             for (int l = 0; l < size_targets; l++){
 
                 std::string target = targets[l];
@@ -1163,8 +1169,14 @@ private:
                     pairs_far[m].first  = num_target;
                     determine_near_far(num_target, 0, m, cells_source);
                 }
-                cal_force_near(cells_source);
-                cal_force_far(cells_source);
+                if (flag_heat == true){
+                    cal_force_hflux_near(cells_source);
+                    cal_force_hflux_far(cells_source);
+                }
+                else if (flag_energy == true){
+                    cal_force_eflux_near(cells_source);
+                    cal_force_eflux_far(cells_source);
+                }
             }
         }
     };
