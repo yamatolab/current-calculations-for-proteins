@@ -88,8 +88,8 @@ private:
     std::vector<std::pair<int, std::vector<int>>> pairs_far;    // [[1, [cell1, cell2, ...]], [2, [cell1, cell2, ...]], ...]
 
     // for debugging
-    int count_near = 0;     // counter of atom-atom pairs
-    int count_far  = 0;     // counter of atom-cell pairs
+    double count_near = 0.0;     // counter of atom-atom pairs
+    double count_far  = 0.0;     // counter of atom-cell pairs
 
     bool output_to_err_file = false; // if true, output process time for each function to error file
 
@@ -248,8 +248,8 @@ public:
         t_crd = crd;
         t_vel = vel;
 
-        count_near = 0;
-        count_far  = 0;
+        count_near = 0.0;
+        count_far  = 0.0;
 
         // initialize flux variables
         if (flag_heat == true){
