@@ -1083,7 +1083,7 @@ private:
     };
 
     // get atoms vector of a group
-    std::vector<int> get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
+    const std::vector<int>& get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
 
         std::vector<int> atoms;
         for (const auto& pair : pairs) {
@@ -1120,7 +1120,7 @@ private:
             std::vector<std::string> targets = gpair_table[i].second;
             int size_targets = targets.size();
         
-            std::vector<int> source_atoms = get_atoms(source, gname_iatoms_pairs);
+            const std::vector<int>& source_atoms = get_atoms(source, gname_iatoms_pairs);
             int source_size = source_atoms.size();
 
             for (int j = 0; j < size_targets; j++){
@@ -1156,7 +1156,7 @@ private:
                 if (target == source){
                     continue;
                 }
-                std::vector<int> target_atoms = get_atoms(target, gname_iatoms_pairs);
+                const std::vector<int>& target_atoms = get_atoms(target, gname_iatoms_pairs);
                 int target_size = target_atoms.size();
                 pairs_near.clear();
                 pairs_far.clear();
