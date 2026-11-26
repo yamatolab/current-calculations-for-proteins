@@ -5,7 +5,6 @@
 #include <cmath>
 #include <algorithm>
 #include <queue>
-#include <functional>
 #include <chrono>
 #include <Eigen/Dense>
 #include <pybind11/pybind11.h>
@@ -82,12 +81,6 @@ private:
     // Matrices for energy flux
     MatrixXd eflux_ij_near = MatrixXd::Zero(0, 0);
     MatrixXd eflux_ij_far  = MatrixXd::Zero(0, 0);
-
-
-    // function for calculating flux
-    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near;
-    std::function<void(Vector3d, Vector3d, Vector3d, int, int)> cal_flux_near_bonded;
-    std::function<void(Vector3d, Vector3d, Vector3d, Matrix3d, int, int)> cal_flux_far;
 
     // near and far pairs for each source atom
     std::vector<std::pair<int, std::vector<int>>> pairs_near;   // [[1, [atom1, atom2, ...]], [2, [atom1, atom2, ...]], ...]
@@ -231,17 +224,6 @@ public:
             hflux_ij_near.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
             hflux_ij_far.resize(ngrp, std::vector<Vector3d>(ngrp, Vector3d::Zero()));
 
-            // determine flux calculation function for heat flux
-            cal_flux_far  = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
-                cal_hflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
-            };
-            cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
-                cal_hflux_near(fij, vi, rij, idx_source, idx_target);
-            };
-            cal_flux_near_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_hflux_near_bonded(fij, vij, rij, igrp, jgrp);
-            };
-
         }
         else if (flux_type == "energy"){
             flag_energy = true;
@@ -262,16 +244,6 @@ public:
                 cal_eflux_near_bonded(fij, vij, rij, igrp, jgrp);
             };
         }
-        else{
-            std::cerr << "Invalid flux type" << std::endl;
-            std::exit(1);
-        }
-    };
-
-    // read trajectory, initialize variables for flux calculation
-    void initialize(const MatrixXd& crd, const MatrixXd& vel){
-        int t0 = time_now();
-
         // initialize variables
         t_crd = MatrixX3dRowMajor::Zero(natom, 3);
         t_vel = MatrixX3dRowMajor::Zero(natom, 3);
