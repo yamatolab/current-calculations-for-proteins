@@ -813,7 +813,7 @@ private:
     };
 
     // calculate force and flux for far atom-cell pairs
-    void cal_force_far(const std::vector<Cell>& cells){
+    void cal_force_hflux_far(const std::vector<Cell>& cells){
 
         int t0 = time_now();
 
@@ -824,15 +824,27 @@ private:
         for (int i = 0; i < size_source; i++){
 
             int num_source = pairs_far[i].first;
-            int idx_source = num_source - 1;
+            std::vector<int>& pairs = pairs_far[i].second;
 
+            int size_pairs = pairs.size();
+            if (size_pairs == 0){
+                continue;
+            }
+
+            int idx_source = num_source - 1;
+            
+            Vector3d vi = t_vel.row(idx_source);
+            double charge = charges[idx_source];
+
+            int igrp    = iatom_to_igroup[idx_source];
             Vector3d crd_source = t_crd.row(idx_source);
-            int size_pairs      = pairs_far[i].second.size();
+
+            Matrix3d temp = Matrix3d::Zero();
 
             for (int j = 0; j < size_pairs; j++){
 
-                int   idx_cell = pairs_far[i].second[j];
-                Cell& cell     = cells[idx_cell];
+                int   idx_cell = pairs[j];
+                const Cell& cell     = cells[idx_cell];
 
                 Vector3d rc = cell.rc;
                 double   dx = crd_source(0) - rc(0);
@@ -840,16 +852,11 @@ private:
                 double   dz = crd_source(2) - rc(2);
                 double   r  = sqrt(dx * dx + dy * dy + dz * dz);
 
-                bJx.setZero();
-                bJy.setZero();
-                bJz.setZero();
-                bJ.setZero();
-
                 double inv_r = 1.0 / r;                     // 1/r
                 double r2 = inv_r * inv_r;                  // 1/r^2
-                double r3 = r2 * inv_r;                     // 1/r^3
-                double r5 = r3 * r2;                        // 1/r^5
-                double r7 = r5 * r2;                        // 1/r^7
+                double r3 = inv_r * r2;                     // 1/r^3
+                double r5 = 3.0 * r2 * r3;                  // 3/r^5
+                double r7 = 5.0 * r2 * r5;                  // 15/r^7
 
                 double dx2 = dx * dx;                       // dx^2
                 double dy2 = dy * dy;                       // dy^2
@@ -859,24 +866,24 @@ private:
                 double dydz = dy * dz;                      // dydz
                 double dzdx = dz * dx;                      // dzdx
 
-                double dxr5 = 3 * dx * r5;                  // 3dx/r^5
-                double dyr5 = 3 * dy * r5;                  // 3dy/r^5
-                double dzr5 = 3 * dz * r5;                  // 3dx/r^5
+                double dxr5 = dx * r5;                  // 3dx/r^5
+                double dyr5 = dy * r5;                  // 3dy/r^5
+                double dzr5 = dz * r5;                  // 3dz/r^5
 
-                double dxdydz = 15 * dxdy * dz * r7;        // 15dxdydz/r^7
-                double dx2dy  = 15 * dx2 * dy * r7;         // 15dx^2dy/r^7
-                double dy2dz  = 15 * dy2 * dz * r7;         // 15dy^2dz/r^7
-                double dz2dx  = 15 * dz2 * dx * r7;         // 15dz^2dx/r^7
-                double dy2dx  = 15 * dy2 * dx * r7;         // 15dy^2dx/r^7
-                double dz2dy  = 15 * dz2 * dy * r7;         // 15dz^2dy/r^7
-                double dx2dz  = 15 * dx2 * dz * r7;         // 15dx^2dz/r^7
+                double dxdydz = dxdy * dz * r7;        // 15dxdydz/r^7
+                double dx2dy  = dx2 * dy * r7;         // 15dx^2dy/r^7
+                double dy2dz  = dy2 * dz * r7;         // 15dy^2dz/r^7
+                double dz2dx  = dz2 * dx * r7;         // 15dz^2dx/r^7
+                double dy2dx  = dy2 * dx * r7;         // 15dy^2dx/r^7
+                double dz2dy  = dz2 * dy * r7;         // 15dz^2dy/r^7
+                double dx2dz  = dx2 * dz * r7;         // 15dx^2dz/r^7
 
                 // calculate bJx
                 bJx(0) = -dx * r3;                          // -dx/r^3
-                bJx(1) = -r3 + 3 * dx2 * r5;                // -1/r^3  + 3dx^2/r^5
-                bJx(2) = 3 * dxdy * r5;                     // 0       + 3dydx/r^5
-                bJx(3) = 3 * dzdx * r5;                     // 0       + 3dzdx/r^5
-                bJx(4) = 3 * dxr5 - 15 * dx2 * dx * r7;     // 9dx/r^5 - 15dx^3/r^7
+                bJx(1) = -r3 + dx2 * r5;                    // -1/r^3  + 3dx^2/r^5
+                bJx(2) = dxdy * r5;                         // 0       + 3dydx/r^5
+                bJx(3) = dzdx * r5;                         // 0       + 3dzdx/r^5
+                bJx(4) = 3 * dxr5 - dx2 * dx * r7;          // 9dx/r^5 - 15dx^3/r^7
                 bJx(5) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dy^2dx/r^7
                 bJx(6) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dz^2dx/r^7
                 bJx(7) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
@@ -886,12 +893,12 @@ private:
                 // calculate bJy
                 bJy(0) = -dy * r3;                          // -dy/r^3
                 bJy(1) = bJx(2);                            // 0       + 3dxdy/r^5
-                bJy(2) = -r3 + 3 * dy2 * r5;                // -1/r^3  + 3dy^2/r^5
-                bJy(3) = 3 * dydz * r5;                     // 0       + 3dzdy/r^5
-                bJy(4) =     dyr5 - dx2dy;                  // 3dy/r^5 - 15dx^2dy/r^7
-                bJy(5) = 3 * dyr5 - 15 * dy2 * dy * r7;     // 9dy/r^5 - 15dy^3/r^7
+                bJy(2) = -r3 + dy2 * r5;                    // -1/r^3  + 3dy^2/r^5
+                bJy(3) = dydz * r5;                         // 0       + 3dzdy/r^5
+                bJy(4) = bJx(7);                            // 3dy/r^5 - 15dx^2dy/r^7
+                bJy(5) = 3 * dyr5 - dy2 * dy * r7;          // 9dy/r^5 - 15dy^3/r^7
                 bJy(6) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dz^2dy/r^7
-                bJy(7) =     dxr5 - dy2dx;                  // 3dx/r^5 - 15dxdy^2/r^7
+                bJy(7) = bJx(5);                            // 3dx/r^5 - 15dxdy^2/r^7
                 bJy(8) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dydzdy/r^7
                 bJy(9) = bJx(8);                            // 0       - 15dzdxdy/r^7
 
@@ -899,37 +906,46 @@ private:
                 bJz(0) = -dz * r3;                          // -dz/r^3
                 bJz(1) = bJx(3);                            // 0       + 3dxdz/r^5
                 bJz(2) = bJy(3);                            // 0       + 3dydz/r^5
-                bJz(3) = -r3 + 3 * dz2 * r5;                // -1/r^3  + 3dz^2/r^5
-                bJz(4) =     dzr5 - dx2dz;                  // 3dz/r^5 - 15dx^2dz/r^7
-                bJz(5) =     dzr5 - dy2dz;                  // 3dz/r^5 - 15dy^2dz/r^7
-                bJz(6) = 3 * dzr5 - 15 * dz2 * dz * r7;     // 9dz/r^5 - 15dz^3/r^7
+                bJz(3) = -r3 + dz2 * r5;                    // -1/r^3  + 3dz^2/r^5
+                bJz(4) = bJx(9);                            // 3dz/r^5 - 15dx^2dz/r^7
+                bJz(5) = bJy(8);                            // 3dz/r^5 - 15dy^2dz/r^7
+                bJz(6) = 3 * dzr5 - dz2 * dz * r7;          // 9dz/r^5 - 15dz^3/r^7
                 bJz(7) = bJx(8);                            // 0       - 15dxdydz/r^7
-                bJz(8) =     dyr5 - dz2dy;                  // 3dy/r^5 - 15dydz^2/r^7
-                bJz(9) =     dxr5 - dz2dx;                  // 3dx/r^5 - 15dzdxdz/r^7
+                bJz(8) = bJy(6);                            // 3dy/r^5 - 15dydz^2/r^7
+                bJz(9) = bJx(6);                            // 3dx/r^5 - 15dzdxdz/r^7
 
                 // calculate multipole
-                VectorXd& multipole = cell.multipole;
-                double charge = charges[idx_source];
-                double coeff  = 332.05221729;
-                VectorXd multi = coeff * multipole * charge;
+                const Matrix<double, 10, 1>& multipole = cell.multipole;
+                double coeff  = 332.05221729 * charge;
 
-                double   fx = multi.dot(bJx);
-                double   fy = multi.dot(bJy);
-                double   fz = multi.dot(bJz);
-                Vector3d f  = Vector3d(-fx, -fy, -fz);
+                double   fx = multipole.dot(bJx);
+                double   fy = multipole.dot(bJy);
+                double   fz = multipole.dot(bJz);
+                Vector3d f  = Vector3d(-fx, -fy, -fz) * coeff;
 
-                MatrixXd& multipole_j = cell.multipole_j;
+                const Matrix<double, 3, 10>& multipole_j = cell.multipole_j;
                 bJ.col(0) = bJx;
                 bJ.col(1) = bJy;
                 bJ.col(2) = bJz;
-                Matrix3d multi_j = -multipole_j * bJ * coeff * charge;
+                Matrix<double, 3, 3> multi_j = -multipole_j * bJ * coeff;
 
-                int igrp = iatom_to_igroup(idx_source);
-                int Jgrp = iatom_to_igroup(cell.leaf[0] - 1);
-                Vector3d vi = t_vel.row(idx_source);
+                temp.row(0) += crd_source(0) * f;
+                temp.row(1) += crd_source(1) * f;
+                temp.row(2) += crd_source(2) * f;
 
-                cal_flux_far(f, vi, crd_source, multi_j, igrp, Jgrp);
+                temp -= multi_j;
             }
+            Vector3d h_ij = ( temp * vi ) * 0.5;
+
+            int idx_target = cells[0].leaf[0] - 1;
+            int Jgrp = iatom_to_igroup[idx_target];
+
+            hflux_ij_far[igrp-1][Jgrp-1] += h_ij;
+            if (igrp != Jgrp){
+                hflux_ij_far[Jgrp-1][igrp-1] += h_ij;
+            }
+            count_far += size_pairs;
+
         }
         int t1 = time_now();
         if (output_to_err_file == true){
