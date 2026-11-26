@@ -68,6 +68,9 @@ private:
     // number of group
     int ngrp = 0;
 
+    // number of atom types
+    int num_types = 0;
+
     // flags for flux type
     bool flag_heat   = false;
     bool flag_energy = false;
@@ -692,6 +695,7 @@ private:
                     int type_source = atom_types[idx_source] - 1;
                     int type_target = atom_types[idx_target] - 1;
 
+                    int type_pair = type_source * num_types + type_target;
                     double c6  = c6s[type_pair];
                     double c12 = c12s[type_pair];
                     double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
@@ -1024,6 +1028,7 @@ private:
             int type_target = atom_types[idx_target] - 1;
 
 
+            int type_pair = type_source * num_types + type_target;
             double c6  = c6s[type_pair];
             double c12 = c12s[type_pair];
             double vdw = 12.0 * c12 * inv_r14 - 6.0 * c6 * inv_r8;
