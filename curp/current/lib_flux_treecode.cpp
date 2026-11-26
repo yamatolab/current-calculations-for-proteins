@@ -161,6 +161,13 @@ private:
         ngrp = input_iatom_to_igroup.maxCoeff();
     };
 
+    void set_atom_type(const std::vector<int>& input_atom_types) {
+        atom_types = input_atom_types;
+        for (int i = 0; i < natom; i++){
+            atom_types[i] = input_atom_types[i] - 1;
+        }
+    };
+
     void set_vdw_coeffs(const MatrixXd& input_c6s, const MatrixXd& input_c12s) {
 
         num_types = static_cast<int>(input_c6s.rows());
@@ -200,13 +207,11 @@ public:
         bonded_pairs       = input_bonded_pairs;
         gname_iatoms_pairs = input_gname_iatoms_pairs;
         gpair_table        = input_gpair_table;
-        iatom_to_igroup    = input_iatom_to_igroup;
-        
-        atom_types = input_atom_types;
-        c6s        = input_c6s;
-        c12s       = input_c12s;
 
-        ngrp = iatom_to_igroup.maxCoeff();
+        // convert input tables to std::vector format
+        set_iatom_to_igroup(input_iatom_to_igroup);        
+        set_atom_type(input_atom_types);
+        set_vdw_coeffs(input_c6s, input_c12s);
 
         int t1 = time_now();
         if (output_to_err_file == true){
@@ -692,8 +697,7 @@ private:
                     double charge_j = charges[idx_target];
                     double coulomb  = coeff * charge_i * charge_j * inv_r3;
 
-                    int type_source = atom_types[idx_source] - 1;
-                    int type_target = atom_types[idx_target] - 1;
+                    int type_target = atom_types[idx_target];
 
                     int type_pair = type_source * num_types + type_target;
                     double c6  = c6s[type_pair];
@@ -1024,8 +1028,8 @@ private:
             double charge_j = charges[idx_target];
             double coulomb  = coeff * charge_i * charge_j * inv_r3;
 
-            int type_source = atom_types[idx_source] - 1;
-            int type_target = atom_types[idx_target] - 1;
+            int type_source = atom_types[idx_source];
+            int type_target = atom_types[idx_target];
 
 
             int type_pair = type_source * num_types + type_target;
