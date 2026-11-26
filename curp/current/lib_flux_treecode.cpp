@@ -1085,15 +1085,13 @@ private:
     // get atoms vector of a group
     const std::vector<int>& get_atoms(const std::string& source, const std::vector<std::pair<std::string, std::vector<int>>>& pairs) {
 
-        std::vector<int> atoms;
         for (const auto& pair : pairs) {
 
             if (pair.first == source) {
-                atoms = pair.second;
-                break;
+                return pair.second;
             }
         }
-        return atoms;
+        throw std::runtime_error("Group name" + source + "not found in pairs.");
     };
 
     // get cells vector of a group
