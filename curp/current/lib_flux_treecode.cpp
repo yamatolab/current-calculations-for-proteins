@@ -36,9 +36,8 @@ public:
 
     // vars for vdw
     std::vector<int> atom_types;
-    MatrixXd c6s;
-    MatrixXd c12s;
-
+    std::vector<double> c6s;
+    std::vector<double> c12s; 
     // vectors for heat flux
     std::vector<std::vector<Vector3d>> hflux_ij;
 
