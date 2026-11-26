@@ -582,7 +582,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // determine near and far cells for each source atom
-    void determine_near_far(int num_source, int idx_p, int idx_pair, std::vector<Cell>& cells){
+    void determine_near_far(int num_source, int idx_p, int idx_pair, const std::vector<Cell>& cells){
 
         int      idx_source = num_source - 1;
         Vector3d crd_source = t_crd.row(idx_source);
@@ -601,7 +601,7 @@ private:
                     if (cells[idx_p].nchild & (1 << octant)) {
                         
                         int       idx_c = cells[idx_p].child[octant]; // index of current child cell
-                        Vector3d& rc    = cells[idx_c].rc;
+                        const Vector3d& rc    = cells[idx_c].rc;
                         
                         double dx = crd_source(0) - rc(0);
                         double dy = crd_source(1) - rc(1);
@@ -627,7 +627,7 @@ private:
     };
 
     // calculate force and flux for near atom-atom pairs
-    void cal_force_near(std::vector<Cell>& cells){
+    void cal_force_near(const std::vector<Cell>& cells){
         int t0 = time_now();
 
         int size_source = pairs_near.size();
@@ -644,7 +644,7 @@ private:
             for (int j = 0; j < size_pairs; j++){
 
                 int idx_cell = pairs[j];
-                std::vector<int>& atom_pairs = cells[idx_cell].leaf;
+                const std::vector<int>& atom_pairs = cells[idx_cell].leaf;
                 int num_target = atom_pairs.size();
                 
                 for (int k = 0; k < num_target; k++){
@@ -690,7 +690,7 @@ private:
     };
 
     // calculate force and flux for far atom-cell pairs
-    void cal_force_far(std::vector<Cell>& cells){
+    void cal_force_far(const std::vector<Cell>& cells){
 
         int t0 = time_now();
 
@@ -898,7 +898,7 @@ private:
     };
 
     // get cells vector of a group
-    std::vector<Cell> get_cells(const std::string& source, const std::vector<All_cell>& all_cells) {
+    const std::vector<Cell>& get_cells(const std::string& source, const std::vector<All_cell>& all_cells) {
         
         std::vector<Cell> cells;
         for (const auto& all_cell : all_cells) {
@@ -931,7 +931,7 @@ private:
                 pairs_near.resize(source_size);
                 pairs_far.resize(source_size);
                 std::string target = targets[j];
-                std::vector<Cell> cells = get_cells(target, all_cells);
+                const std::vector<Cell>& cells = get_cells(target, all_cells);
 
                 for (int k = 0; k < source_size; k++){
 
