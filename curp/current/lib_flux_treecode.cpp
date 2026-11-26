@@ -1097,15 +1097,13 @@ private:
     // get cells vector of a group
     const std::vector<Cell>& get_cells(const std::string& source, const std::vector<All_cell>& all_cells) {
         
-        std::vector<Cell> cells;
         for (const auto& all_cell : all_cells) {
 
             if (all_cell.group == source) {
-                cells =  all_cell.cells;
-                break;
+                return all_cell.cells;
             }
         }
-        return cells;
+        throw std::runtime_error("Group name" + source + "not found in all_cells.");
     };
 
     // calculate forces and fluxes for all required group pairs
