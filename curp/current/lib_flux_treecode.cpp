@@ -1238,13 +1238,10 @@ private:
     void cal_hflux_near_bonded(Vector3d fij, Vector3d vij, Vector3d rij, int igrp, int jgrp){
         
         Vector3d h_ij = rij * (fij.dot(vij)) * 0.5;
-
+        
+        hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
         if (igrp != jgrp){
-            hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
             hflux_ij_near[jgrp-1][igrp-1] -= h_ij;
-        }
-        else{
-            hflux_ij_near[igrp-1][jgrp-1] -= h_ij;
         }
     };
 
