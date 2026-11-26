@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <queue>
 #include <chrono>
+#include <stdexcept>
 #include <Eigen/Dense>
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
@@ -104,8 +105,8 @@ public:
         int               parent;       // index of parent cell
         Vector3d          rc;           // center of the cell
         double            r;            // radius of the cell
-        VectorXd          multipole;    // 10 multipoles
-        MatrixXd          multipole_j;  // 3x10 multipoles_j
+        Matrix<double, 10, 1> multipole;    // 10 multipoles
+        Matrix<double, 3, 10> multipole_j;  // 3x10 multipoles_j
 
         Cell():
             nleaf(0),
