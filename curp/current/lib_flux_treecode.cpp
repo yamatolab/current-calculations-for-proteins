@@ -1197,7 +1197,7 @@ private:
             Vector3d vj  = t_vel.row(idx_target);
             Vector3d vij = vi + vj;
 
-            double r       = sqrt(rij.dot(rij));
+            double r       = sqrt(rij(0) * rij(0) + rij(1) * rij(1) + rij(2) * rij(2));
             double inv_r   = 1.0 / r;
             double inv_r3  = inv_r * inv_r * inv_r;              // 1/r^3
             double inv_r8  = inv_r3 * inv_r3 * inv_r * inv_r;    // 1/r^8
@@ -1222,7 +1222,12 @@ private:
             int igrp = iatom_to_igroup[idx_source];
             int jgrp = iatom_to_igroup[idx_target];
 
-            cal_flux_near_bonded(fij, vij, rij, igrp, jgrp);
+            if (flag_heat == true){
+                cal_hflux_near_bonded(fij, vij, rij, igrp, jgrp);
+            }
+            else if (flag_energy == true){
+                cal_eflux_near_bonded(fij, vij, rij, igrp, jgrp);
+            }
         }
         if (output_to_err_file == true){
             std::cerr << "count_atom_bonded: " << size_bonded << std::endl;
