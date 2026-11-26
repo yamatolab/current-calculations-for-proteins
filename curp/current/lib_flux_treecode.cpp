@@ -233,17 +233,7 @@ public:
             eflux_ij_near = MatrixXd::Zero(ngrp, ngrp);
             eflux_ij_far  = MatrixXd::Zero(ngrp, ngrp);
 
-            // determine flux calculation function for energy flux
-            cal_flux_far  = [=](const Vector3d fiJ, const Vector3d vi, const Vector3d r, const Matrix3d multi_j, const int igrp, const int Jgrp) {
-                cal_eflux_far(fiJ, vi, r, multi_j, igrp, Jgrp);
-            };
-            cal_flux_near = [=](const Vector3d fij, const Vector3d vi, const Vector3d rij, const int idx_source, const int idx_target) {
-                cal_eflux_near(fij, vi, rij, idx_source, idx_target);
-            };
-            cal_flux_near_bonded = [=](const Vector3d fij, const Vector3d vij, const Vector3d rij, const int igrp, const int jgrp) {
-                cal_eflux_near_bonded(fij, vij, rij, igrp, jgrp);
-            };
-        }
+
         // initialize variables
         t_crd = MatrixX3dRowMajor::Zero(natom, 3);
         t_vel = MatrixX3dRowMajor::Zero(natom, 3);
