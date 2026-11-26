@@ -13,6 +13,7 @@
 #include <pybind11/stl.h>
 namespace py = pybind11;
 using namespace Eigen;
+using MatrixX3dRowMajor = Matrix<double, Dynamic, 3, RowMajor>;
 
 class cal_treecode{
         
@@ -25,8 +26,8 @@ public:
     float cutoff;                   // cutoff length for near_field interaction
 
     std::vector<double> charges;    // charges of atoms
-    MatrixXd t_crd;                 // coordinates of atoms
-    MatrixXd t_vel;                 // velocities of atoms
+    MatrixX3dRowMajor t_crd;        // coordinates of atoms
+    MatrixX3dRowMajor t_vel;        // velocities of atoms
 
     std::vector<std::pair<int, int>> bonded_pairs;                              // list of bonded pairs
     std::vector<std::pair<std::string, std::vector<int>>> gname_iatoms_pairs;   // list of group name and number of atoms in the group
@@ -241,8 +242,8 @@ public:
         int t0 = time_now();
 
         // initialize variables
-        t_crd = MatrixXd::Zero(natom, 3);
-        t_vel = MatrixXd::Zero(natom, 3);
+        t_crd = MatrixX3dRowMajor::Zero(natom, 3);
+        t_vel = MatrixX3dRowMajor::Zero(natom, 3);
         t_crd = crd;
         t_vel = vel;
 
